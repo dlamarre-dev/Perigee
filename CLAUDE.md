@@ -51,6 +51,8 @@ Cross-cutting features:
 - **astronomy-engine** (Don Cross, MIT) for: planetary positions, the Moon, sidereal time, IAU rotation axes
   (`RotationAxis`) of the Moon, Mars and the planets.
 - **Web Workers** for bulk SGP4 propagation; results transferred as `Float32Array` (transferable).
+  Vite builds workers as ES modules (`worker.format: 'es'`): satellite.js 7 re-exports a WASM build that uses
+  top-level `await`.
 - Tests: **Vitest** (unit, reference values), **Playwright** (render smoke tests).
 - Lint/format: ESLint + Prettier. No heavy UI framework; UI in native TS/DOM, or Lit if needed.
 
@@ -58,8 +60,9 @@ Cross-cutting features:
 
 ### 4.1 CelesTrak — orbital elements (view A)
 - Endpoint: `https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON` (OMM JSON).
-  Groups useful for filters: `starlink`, `oneweb`, `gps-ops`, `galileo`, `glonass-ops`, `beidou`,
-  `stations`, `weather`, `geo`, etc.
+  Groups useful for filters: `starlink`, `oneweb`, `kuiper`, `qianfan`, `hulianwang`, `gps-ops`, `galileo`,
+  `glo-ops` (not `glonass-ops`), `beidou`, `stations`, `weather`, etc. The authoritative list is the index page
+  `https://celestrak.org/NORAD/elements/`; the groups actually fetched are the keys of `catalog/operators.json`.
 - **Strict usage policy**: data updated every ~2 h; a single fetch per update cycle, enforced since March 2026
   on the `active` and `starlink` groups. Exceeding it → IP block (often without a clear HTTP code). Any M2M code
   must **stop immediately** on any non-200 response and report.
@@ -72,7 +75,11 @@ Cross-cutting features:
 - Always use `celestrak.org` (not `.com`, which 301-redirects).
 
 ### 4.2 CelesTrak SATCAT — metadata (info panel, filters)
-- `https://celestrak.org/satcat/records.php?ACTIVE=true&FORMAT=CSV` (or the full `/pub/satcat.csv`).
+- `https://celestrak.org/satcat/records.php?GROUP=active&FORMAT=JSON` (same set as the GP `active` group).
+  `records.php` requires a search field (`GROUP`, `CATNR`, `INTDES`, `NAME`…): `ACTIVE=true` alone is rejected.
+  `/pub/satcat.csv` answered HTTP 406 to the pipeline on 2026-09-26 — do not use it.
+- CelesTrak may refuse some datacenter IP ranges; if the GitHub Actions runs fail systematically, check this
+  first and report it rather than retrying.
 - Useful fields: `OBJECT_NAME`, `OBJECT_ID` (COSPAR), `NORAD_CAT_ID`, `OBJECT_TYPE`, `OPS_STATUS_CODE`,
   `OWNER`, `LAUNCH_DATE`, `LAUNCH_SITE`, `PERIOD`, `INCLINATION`, `APOGEE`, `PERIGEE`, `RCS`.
 - `OWNER` is mostly a country/organisation code (US, PRC, CIS, ESA, ISS, JPN, IND…), not a commercial operator.
@@ -122,8 +129,12 @@ No single API provides "active probes + landing sites". We maintain:
   nutation. Document the approximation.
 - The scene lives in the **Earth-fixed** frame (the Earth does not rotate on screen; an "inertial frame" option
   makes the Earth rotate with fixed orbits).
+- TEME → scene: satellites live in one `Group` rotated by −GMST (Earth-fixed view) or 0 (inertial view); the GMST
+  is the IAU-82 formula in `src/astro/time.ts` (same as `satellite.gstime`).
 - Propagation in a worker pool (N = `navigator.hardwareConcurrency - 1`, max 4). Budget: 15k objects propagated
-  at ≥ 10 Hz; linear interpolation at render time between two propagations for 60 fps.
+  at ≥ 10 Hz (measured: ~17 ms for 16.6k objects on one thread). Between two samples the vertex shader uses
+  **cubic Hermite interpolation on position + velocity** (instead of linear), so motion stays on the orbit even
+  when samples are minutes apart at ×1000–×10000 (`src/earth/SampleTimeline.ts`, `src/render/SatellitePoints.ts`).
 - Objects with SGP4 errors (`satrec.error != 0`, decay): hidden and counted in an "invalid" counter.
 - Element age = `now - EPOCH`; beyond 14 days, flag as "stale elements".
 

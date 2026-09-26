@@ -8,25 +8,34 @@ GitHub Pages. The interface is available in English and French.
 
 ## Status
 
-Milestone **M0**: Vite/Three.js skeleton, quaternion orbit camera, textured Earth with a real day/night
-terminator, simulation clock (pause, ×1 to ×10,000, jump to date), EN/FR interface. See `CLAUDE.md` §15 for the
-roadmap.
+- **M0** — Vite/Three.js skeleton, quaternion orbit camera, textured Earth with a real day/night terminator,
+  simulation clock (pause, ×1 to ×10,000, jump to date), EN/FR interface.
+- **M1** — Earth view: every active catalogued satellite (~16.6k) propagated with SGP4 in Web Workers from
+  CelesTrak OMM data, GPU picking, info panel, faceted filters (operator, country, group, orbit, type), text
+  search, orbit trace, follow mode, shareable URL state. Data mirrored by GitHub Actions to the `data` branch.
+
+See `CLAUDE.md` §15 for the roadmap.
 
 ## Development
 
 ```bash
 npm install
+npm run data:pull  # download the latest published data (from the `data` branch on GitHub)
 npm run dev        # http://localhost:5173/Perigee/
-npm run test       # unit tests (Vitest)
-npm run build && npm run test:e2e   # smoke tests (Playwright)
+npm run test       # unit tests (Vitest), incl. Vallado SGP4 verification
+npm run build && npm run test:e2e   # end-to-end tests (Playwright, fixture data)
 npm run lint
 npm run textures   # regenerate Earth textures from NASA sources (offline, rarely needed)
 ```
 
-Controls: left-drag rotates (arcball), right-drag or two-finger twist rolls, wheel/pinch zooms.
-Keyboard: arrows rotate, Q/E roll, +/− zoom, R resets the view.
+`npm run data:fetch` runs the pipeline against CelesTrak directly. Avoid it: CelesTrak enforces a strict usage
+policy, and a local guard refuses to fetch the same resource twice within 2 h. Prefer `data:pull`.
 
-URL parameters: `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`.
+Controls: left-drag rotates (arcball), right-drag or two-finger twist rolls, wheel/pinch zooms, click selects
+an object, double-click selects and follows it. Keyboard: arrows rotate, Q/E roll, +/− zoom, R resets the view.
+
+URL parameters: `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
+`q=<search>`, and filters `op`, `own`, `grp`, `reg`, `type` (comma-separated values).
 
 ## Credits
 
