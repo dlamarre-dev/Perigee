@@ -1,0 +1,9 @@
+dist/
+node_modules/
+.venv/
+.idea/
+public/textures/
+playwright-report/
+test-results/
+package-lock.json
+CLAUDE.md

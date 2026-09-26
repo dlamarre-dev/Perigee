@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.venv/
+.idea/workspace.xml
+*.log
+
+# Texture sources are downloaded by tools/textures and never committed.
+tools/textures/src/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
