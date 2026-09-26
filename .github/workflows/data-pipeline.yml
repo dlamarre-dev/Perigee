@@ -1,0 +1,82 @@
+# Reusable data pipeline: fetch → validate → publish to the orphan `data` branch → redeploy Pages.
+# Called by data-celestrak.yml and data-satcat.yml. Never computes positions (CLAUDE.md §2).
+name: Data pipeline
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: 'pipeline/run.ts command (gp | satcat)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: data-branch
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check out current data branch
+        run: |
+          mkdir -p data-branch
+          if git ls-remote --exit-code --heads origin data >/dev/null; then
+            git fetch --depth 1 origin data
+            git --work-tree=data-branch checkout FETCH_HEAD -- .
+            git reset -q
+          else
+            echo "No data branch yet: starting empty."
+          fi
+
+      - name: Fetch and validate
+        run: npx tsx pipeline/run.ts ${{ inputs.command }} --data-dir data-branch
+
+      - name: Publish orphan data branch
+        run: |
+          cd data-branch
+          git init -q -b data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "data: ${{ inputs.command }} $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Redeploy site
+        run: gh workflow run deploy.yml --ref "${{ github.event.repository.default_branch }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report failure
+        if: failure()
+        run: |
+          title="Data pipeline failed: ${{ inputs.command }}"
+          body="Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          Previously published data was left untouched. The pipeline stops on any non-200 response;
+          check the log before re-running (CelesTrak usage policy)."
+          existing=$(gh issue list --state open --label data-pipeline --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh label create data-pipeline --color B60205 --force >/dev/null
+            gh issue create --title "$title" --label data-pipeline --body "$body"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

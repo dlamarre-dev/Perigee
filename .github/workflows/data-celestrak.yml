@@ -1,0 +1,18 @@
+# GP "active" elements from CelesTrak, one request every 4 h (CelesTrak refreshes every ~2 h).
+name: Data — CelesTrak GP
+
+on:
+  schedule:
+    - cron: '17 */4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  gp:
+    uses: ./.github/workflows/data-pipeline.yml
+    with:
+      command: gp

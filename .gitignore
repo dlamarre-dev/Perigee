@@ -11,3 +11,6 @@ tools/textures/src/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Local copy of the published data branch (npm run data:pull / data:fetch)
+public/data/

@@ -19,12 +19,14 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "textures": "tsx tools/textures/fetch-earth.ts",
-    "data:fetch": "node -e \"console.log('data:fetch is available from milestone M1.')\"",
-    "data:pull": "node -e \"console.log('data:pull is available from milestone M1.')\""
+    "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat",
+    "data:pull": "tsx pipeline/pull.ts"
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
-    "three": "^0.186.1"
+    "satellite.js": "^7.1.0",
+    "three": "^0.186.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
