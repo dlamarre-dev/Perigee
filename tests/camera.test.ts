@@ -34,6 +34,12 @@ describe('quaternion orbit camera', () => {
     expect(screenUp[2]).toBeCloseTo(1, 12);
   });
 
+  it('orbitStateLookingFrom copes with up parallel to the view direction (over a pole)', () => {
+    const s = orbitStateLookingFrom([0, 0, 7000], [0, 0, 1], [0, 0, 1], 1000);
+    expect(Object.values(s.orientation).every(Number.isFinite)).toBe(true);
+    expect(cameraPositionKm(s)[2]).toBeCloseTo(8000, 6);
+  });
+
   it('does not drift after 10⁶ small rotations', () => {
     const axis = normalize([0.3, -0.8, 0.52]);
     const stepRad = 1e-4;

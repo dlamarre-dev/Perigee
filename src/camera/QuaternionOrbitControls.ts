@@ -51,6 +51,7 @@ export class QuaternionOrbitControls {
   /** Angular velocity in the camera frame (rad/s), used for inertia. */
   private angularVelocity: Vec3 = [0, 0, 0];
   private fly: FlyAnimation | undefined;
+  private follow: (() => Vec3 | undefined) | undefined;
   private readonly pointers = new Map<number, { x: number; y: number; button: number }>();
   private lastMoveTimeMs = 0;
   private readonly abort = new AbortController();
@@ -93,7 +94,14 @@ export class QuaternionOrbitControls {
 
   setLimits(limits: OrbitLimits): void {
     this.limitsValue = limits;
-    this.setState({ ...this.stateValue, distanceKm: clampDistance(this.stateValue.distanceKm, limits) });
+    // Clamp without cancelling a running fly-to animation.
+    this.stateValue = { ...this.stateValue, distanceKm: clampDistance(this.stateValue.distanceKm, limits) };
+    if (this.fly) {
+      this.fly = {
+        ...this.fly,
+        to: { ...this.fly.to, distanceKm: clampDistance(this.fly.to.distanceKm, limits) },
+      };
+    }
   }
 
   setHome(home: OrbitState): void {
@@ -112,20 +120,36 @@ export class QuaternionOrbitControls {
     this.fly = { from: this.stateValue, to: clamped, durationS, elapsedS: 0 };
   }
 
-  /** Back to the home view of the current body. */
+  /** Back to the home view of the current body (stops following). */
   reset(): void {
+    this.follow = undefined;
     this.flyTo(this.home);
   }
 
-  /** Advances inertia and fly-to animations. Call once per frame. */
+  /**
+   * Keeps the target locked on a moving point (e.g. the selected satellite), evaluated every frame.
+   * Combined with flyTo, the animation glides towards the live position. Undefined stops following.
+   */
+  setFollow(target: (() => Vec3 | undefined) | undefined): void {
+    this.follow = target;
+  }
+
+  get following(): boolean {
+    return this.follow !== undefined;
+  }
+
+  /** Advances inertia, follow and fly-to animations. Call once per frame. */
   update(dtS: number): void {
+    const followed = this.follow?.();
     if (this.fly) {
       this.fly.elapsedS += dtS;
       const t = this.fly.elapsedS / this.fly.durationS;
-      this.stateValue = interpolateOrbit(this.fly.from, this.fly.to, smoothstep(t));
+      const to = followed ? { ...this.fly.to, targetKm: followed } : this.fly.to;
+      this.stateValue = interpolateOrbit(this.fly.from, to, smoothstep(t));
       if (t >= 1) this.fly = undefined;
       return;
     }
+    if (followed) this.stateValue = { ...this.stateValue, targetKm: followed };
     if (this.pointers.size === 0 && this.inertiaTimeS > 0) {
       const w = this.angularVelocity;
       if (Math.hypot(w[0], w[1], w[2]) > MIN_INERTIA_RAD_PER_S) {

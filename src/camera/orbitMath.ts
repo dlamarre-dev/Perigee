@@ -127,7 +127,7 @@ export function cameraPositionKm(state: OrbitState): Vec3 {
 
 /**
  * Orbit state seeing `targetKm` from `directionFromTarget` (any length), with `up` projected to screen up.
- * `up` must not be parallel to the direction.
+ * If `up` is (nearly) parallel to the direction, an arbitrary perpendicular up is used instead.
  */
 export function orbitStateLookingFrom(
   targetKm: Vec3,
@@ -136,7 +136,11 @@ export function orbitStateLookingFrom(
   distanceKm: number,
 ): OrbitState {
   const zAxis = normalize(directionFromTarget);
-  const xAxis = normalize(cross(up, zAxis));
+  let side = cross(up, zAxis);
+  if (Math.hypot(side[0], side[1], side[2]) < 1e-6) {
+    side = cross(Math.abs(zAxis[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0], zAxis);
+  }
+  const xAxis = normalize(side);
   const yAxis = cross(zAxis, xAxis);
   return { targetKm, distanceKm, orientation: quatFromBasis(xAxis, yAxis, zAxis) };
 }

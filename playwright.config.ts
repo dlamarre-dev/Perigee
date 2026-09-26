@@ -5,6 +5,8 @@ const PORT = 4173;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // Each page runs software WebGL plus SGP4 workers; more parallel pages starve the CPU.
+  workers: 2,
   forbidOnly: !!process.env['CI'],
   retries: 0,
   reporter: process.env['CI'] ? 'github' : 'list',
@@ -23,8 +25,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Serves the production build; run `npm run build` first.
-    command: `npx vite preview --port ${PORT} --strictPort`,
+    // Serves the production build (run `npm run build` first) with deterministic fixture data.
+    command: `npx tsx tests/e2e/prepare-data.ts && npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/Perigee/`,
     reuseExistingServer: !process.env['CI'],
   },

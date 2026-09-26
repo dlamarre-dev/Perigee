@@ -36,6 +36,28 @@ export class I18n {
     return tables[this.langValue][key];
   }
 
+  /** Translation with `{name}` placeholders replaced. */
+  format(key: MessageKey, vars: Record<string, string | number>): string {
+    return this.t(key).replace(/\{(\w+)\}/g, (m, name: string) => {
+      const v = vars[name];
+      return v === undefined ? m : typeof v === 'number' ? this.number(v) : v;
+    });
+  }
+
+  /** Lookup for keys built at runtime (e.g. `status.${code}`); undefined when absent. */
+  maybe(key: string): string | undefined {
+    return (tables[this.langValue] as Record<string, string>)[key];
+  }
+
+  /** BCP 47 locale used for number/date formatting. */
+  get locale(): string {
+    return this.langValue === 'fr' ? 'fr-CA' : 'en-CA';
+  }
+
+  number(value: number, maximumFractionDigits = 0): string {
+    return value.toLocaleString(this.locale, { maximumFractionDigits });
+  }
+
   setLang(lang: Lang): void {
     if (lang === this.langValue) return;
     this.langValue = lang;

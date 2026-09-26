@@ -1,6 +1,7 @@
-import { Mesh, ShaderMaterial, SphereGeometry, Vector3, type Texture } from 'three';
+import { Mesh, MeshBasicMaterial, ShaderMaterial, SphereGeometry, Vector3, type Texture } from 'three';
 import { EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import type { Vec3 } from '../astro/vec3';
+import { PICK_LAYER } from './SatellitePoints';
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -65,6 +66,10 @@ export class EarthMesh {
     });
     this.mesh = new Mesh(geometry, material);
     this.mesh.name = 'earth';
+    // Black occluder in the pick pass, so objects behind the Earth cannot be picked.
+    const occluder = new Mesh(geometry, new MeshBasicMaterial({ color: 0x000000 }));
+    occluder.layers.set(PICK_LAYER);
+    this.mesh.add(occluder);
   }
 
   setDayMap(texture: Texture): void {

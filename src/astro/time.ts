@@ -59,6 +59,7 @@ export class SimClock {
   private anchorSimMs: number;
   private anchorMonoMs: number;
   private rateValue = 1;
+  private epochValue = 0;
 
   constructor(
     private readonly monotonic: MonotonicClock = defaultMonotonic,
@@ -90,9 +91,15 @@ export class SimClock {
     return this.rateValue === 0;
   }
 
+  /** Incremented on every discontinuity (jump), so time-dependent caches know to reset. */
+  get epoch(): number {
+    return this.epochValue;
+  }
+
   jumpTo(date: Date): void {
     this.anchorSimMs = date.getTime();
     this.anchorMonoMs = this.monotonic();
+    this.epochValue++;
   }
 
   /** Back to real time at ×1. */

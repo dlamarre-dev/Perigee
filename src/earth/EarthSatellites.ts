@@ -1,0 +1,248 @@
+/**
+ * View A satellite layer: owns the worker pool, the sample timeline, the GPU points, the selection
+ * (marker + orbit line) and the filter-derived display state.
+ */
+import { Color, Group } from 'three';
+import { rotZ } from '../astro/frames';
+import type { Vec3 } from '../astro/vec3';
+import { GpuPicker } from '../render/GpuPicker';
+import { OrbitLine, SelectionMarker } from '../render/OrbitLine';
+import { SatState, SatellitePoints } from '../render/SatellitePoints';
+import type { SatRec } from 'satellite.js';
+import { isStale, type SatCatalog, type SatObject } from './catalog';
+import { EMPTY_FILTERS, matchesFilters, type FilterState } from './filters';
+import { PropagatorPool, type Sample } from './PropagatorPool';
+import { SampleTimeline } from './SampleTimeline';
+import { makeSatrec, propagateTeme, type TemeState } from './sgp4';
+import type { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+
+const REGIME_COLORS: Record<SatObject['regime'], string> = {
+  LEO: '#8fb3e8',
+  MEO: '#c9a0dc',
+  GEO: '#f5d76e',
+  HEO: '#f28b82',
+};
+const ORBIT_SAMPLES = 360;
+/** Re-evaluate staleness (depends on simulated time) at most this often. */
+const STATE_REFRESH_MS = 1000;
+
+export interface SatStats {
+  readonly total: number;
+  readonly shown: number;
+  readonly invalid: number;
+  readonly stale: number;
+}
+
+export interface Selection {
+  readonly object: SatObject;
+  readonly state: TemeState | undefined;
+}
+
+export class EarthSatellites {
+  /** TEME objects; rotated by −GMST (Earth-fixed view) or 0 (inertial view) every frame. */
+  readonly group = new Group();
+  readonly points: SatellitePoints;
+  private readonly pool: PropagatorPool;
+  private readonly timeline = new SampleTimeline<Sample>();
+  private readonly picker: GpuPicker;
+  private readonly orbit = new OrbitLine();
+  private readonly marker: SelectionMarker;
+  private readonly states: Float32Array;
+  private filters: FilterState = EMPTY_FILTERS;
+  private filterMatch: Uint8Array;
+  private statesDirty = true;
+  private lastStateRefreshWallMs = 0;
+  private selected: { object: SatObject; satrec: SatRec | undefined } | undefined;
+  private selectedState: TemeState | undefined;
+  private orbitComputedAtMs = Number.NaN;
+  private orbitEpoch = -1;
+  private lastOk: Uint8Array | undefined;
+  private statsValue: SatStats;
+  private disposed = false;
+
+  constructor(
+    readonly catalog: SatCatalog,
+    renderer: WebGLRenderer,
+  ) {
+    const n = catalog.objects.length;
+    const pixelRatio = renderer.getPixelRatio();
+    this.points = new SatellitePoints(n, pixelRatio);
+    this.marker = new SelectionMarker(pixelRatio);
+    this.picker = new GpuPicker(renderer);
+    this.pool = new PropagatorPool(catalog.objects.map((o) => o.omm));
+    this.states = new Float32Array(n);
+    this.filterMatch = new Uint8Array(n).fill(1);
+    this.statsValue = { total: n, shown: 0, invalid: 0, stale: 0 };
+    this.group.name = 'inertial';
+    this.group.add(this.points.points, this.points.pickPoints, this.orbit.line, this.marker.points);
+    this.points.setColors(this.buildColors());
+  }
+
+  get ready(): Promise<{ initFailed: number }> {
+    return this.pool.ready;
+  }
+
+  get stats(): SatStats {
+    return this.statsValue;
+  }
+
+  get selection(): Selection | undefined {
+    if (!this.selected) return undefined;
+    return { object: this.selected.object, state: this.selectedState };
+  }
+
+  setFilters(filters: FilterState): void {
+    this.filters = filters;
+    const objects = this.catalog.objects;
+    for (let i = 0; i < objects.length; i++) {
+      const obj = objects[i];
+      this.filterMatch[i] = obj && matchesFilters(obj, filters) ? 1 : 0;
+    }
+    this.statesDirty = true;
+  }
+
+  get currentFilters(): FilterState {
+    return this.filters;
+  }
+
+  /** Indices of objects passing the filters (for the accessible list). */
+  filteredObjects(): SatObject[] {
+    return this.catalog.objects.filter((o) => this.filterMatch[o.index] === 1);
+  }
+
+  select(object: SatObject | undefined): void {
+    this.selected = object ? { object, satrec: makeSatrec(object.omm) } : undefined;
+    this.orbitComputedAtMs = Number.NaN;
+    if (!object) {
+      this.orbit.set(undefined);
+      this.marker.set(undefined);
+      this.selectedState = undefined;
+    }
+  }
+
+  /** World-frame position of the selected object (for camera follow). */
+  selectedWorldPositionKm(frameAngleRad: number): Vec3 | undefined {
+    const s = this.selectedState;
+    return s ? rotZ(s.posKm, frameAngleRad) : undefined;
+  }
+
+  pick(scene: Scene, camera: PerspectiveCamera, xCss: number, yCss: number): SatObject | undefined {
+    const index = this.picker.pick(scene, camera, xCss, yCss);
+    return index === undefined ? undefined : this.catalog.objects[index];
+  }
+
+  /**
+   * Per-frame update. `frameAngleRad` rotates TEME into the scene frame; `originKm` is the camera position
+   * (floating origin) in the scene frame.
+   */
+  update(simNowMs: number, rate: number, clockEpoch: number, frameAngleRad: number, originKm: Vec3): void {
+    // Group matrix = T(−origin) · Rz(angle): rotate TEME into the scene frame, then apply the floating origin.
+    this.group.rotation.set(0, 0, frameAngleRad);
+    this.group.position.set(-originKm[0], -originKm[1], -originKm[2]);
+
+    this.schedule(simNowMs, rate, clockEpoch);
+    const interp = this.timeline.interpolation(simNowMs);
+    if (interp) this.points.setInterpolation(interp);
+
+    const wallMs = performance.now();
+    if (this.statesDirty || wallMs - this.lastStateRefreshWallMs > STATE_REFRESH_MS) {
+      this.refreshStates(simNowMs);
+      this.lastStateRefreshWallMs = wallMs;
+    }
+    this.updateSelection(simNowMs, clockEpoch);
+  }
+
+  dispose(): void {
+    this.disposed = true;
+    this.pool.dispose();
+    this.points.dispose();
+    this.orbit.dispose();
+    this.picker.dispose();
+  }
+
+  private schedule(simNowMs: number, rate: number, clockEpoch: number): void {
+    const t = this.timeline.nextRequest(simNowMs, rate, clockEpoch);
+    if (t === undefined) return;
+    const epoch = this.timeline.begin();
+    const started = performance.now();
+    this.pool
+      .propagate(t)
+      .then((sample) => {
+        if (this.disposed) return;
+        if (this.timeline.accept(sample, epoch, performance.now() - started)) {
+          const { a, b } = this.timeline;
+          if (a && b) this.points.setSamples(a, b);
+          this.lastOk = sample.ok;
+          this.statesDirty = true;
+        }
+      })
+      .catch((err: unknown) => {
+        this.timeline.cancel();
+        console.error(err);
+      });
+  }
+
+  private refreshStates(simNowMs: number): void {
+    const objects = this.catalog.objects;
+    let shown = 0;
+    let invalid = 0;
+    let stale = 0;
+    for (let i = 0; i < objects.length; i++) {
+      const obj = objects[i];
+      if (!obj) continue;
+      const ok = this.lastOk ? this.lastOk[i] === 1 : true;
+      if (!ok) invalid++;
+      const isOld = isStale(obj, simNowMs);
+      if (isOld) stale++;
+      const visible = ok && this.filterMatch[i] === 1;
+      if (visible) shown++;
+      this.states[i] = visible ? (isOld ? SatState.Stale : SatState.Normal) : SatState.Hidden;
+    }
+    this.points.setStates(this.states);
+    this.statsValue = { total: objects.length, shown, invalid, stale };
+    this.statesDirty = false;
+  }
+
+  private updateSelection(simNowMs: number, clockEpoch: number): void {
+    const sel = this.selected;
+    if (!sel) return;
+    this.selectedState = sel.satrec ? propagateTeme(sel.satrec, new Date(simNowMs)) : undefined;
+    this.marker.set(this.selectedState?.posKm);
+
+    const periodMs = sel.object.periodMin * 60_000;
+    const needsOrbit =
+      Number.isNaN(this.orbitComputedAtMs) ||
+      clockEpoch !== this.orbitEpoch ||
+      Math.abs(simNowMs - this.orbitComputedAtMs) > periodMs / 8;
+    if (needsOrbit && sel.satrec) {
+      this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs));
+      this.orbitComputedAtMs = simNowMs;
+      this.orbitEpoch = clockEpoch;
+    }
+  }
+
+  private buildColors(): Float32Array {
+    const colors = new Float32Array(this.catalog.objects.length * 3);
+    const c = new Color();
+    for (const obj of this.catalog.objects) {
+      const op = obj.operatorId ? this.catalog.operators.operators[obj.operatorId] : undefined;
+      c.set(op?.color ?? REGIME_COLORS[obj.regime]);
+      colors.set([c.r, c.g, c.b], obj.index * 3);
+    }
+    return colors;
+  }
+}
+
+/** One revolution centred on `simNowMs`, TEME km, packed xyz; undefined if propagation fails. */
+export function orbitTrace(satrec: SatRec, simNowMs: number, periodMs: number): Float32Array | undefined {
+  const out = new Float32Array((ORBIT_SAMPLES + 1) * 3);
+  let written = 0;
+  for (let i = 0; i <= ORBIT_SAMPLES; i++) {
+    const t = simNowMs + (i / ORBIT_SAMPLES - 0.5) * periodMs;
+    const s = propagateTeme(satrec, new Date(t));
+    if (!s) continue;
+    out.set(s.posKm, written * 3);
+    written++;
+  }
+  return written > 1 ? out.subarray(0, written * 3) : undefined;
+}

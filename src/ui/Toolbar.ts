@@ -7,6 +7,7 @@ export interface ToolbarCallbacks {
   readonly onFrameChange: (mode: FrameMode) => void;
   readonly onLangChange: (lang: Lang) => void;
   readonly onAbout: () => void;
+  readonly onToggleFilters: () => void;
 }
 
 /** Top bar: title, recenter, frame toggle, language switch, about. */
@@ -23,6 +24,12 @@ export class Toolbar {
   private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons: HTMLButtonElement[];
   private readonly about = h('button', { type: 'button', class: 'btn' });
+  private readonly filters = h('button', {
+    type: 'button',
+    class: 'btn',
+    'aria-controls': 'filters-panel',
+    'aria-expanded': 'false',
+  });
   private frame: FrameMode;
 
   constructor(
@@ -33,6 +40,7 @@ export class Toolbar {
     this.frame = initialFrame;
     this.recenter.addEventListener('click', callbacks.onRecenter);
     this.about.addEventListener('click', callbacks.onAbout);
+    this.filters.addEventListener('click', callbacks.onToggleFilters);
     for (const mode of ['fixed', 'inertial'] as const) {
       this.frameButtons[mode].addEventListener('click', () => {
         if (this.frame === mode) return;
@@ -52,6 +60,7 @@ export class Toolbar {
 
     this.element = h('header', { class: 'panel toolbar' }, [
       this.title,
+      this.filters,
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
@@ -73,7 +82,13 @@ export class Toolbar {
     this.frameButtons.inertial.textContent = t('toolbar.frame.inertial');
     this.langGroup.setAttribute('aria-label', t('toolbar.language'));
     this.about.textContent = t('toolbar.about');
+    this.filters.textContent = t('toolbar.filters');
     this.renderState();
+  }
+
+  setFiltersOpen(open: boolean): void {
+    this.filters.setAttribute('aria-expanded', String(open));
+    this.filters.setAttribute('aria-pressed', String(open));
   }
 
   private renderState(): void {

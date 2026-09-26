@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import sharp from 'sharp';
 
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -9,28 +10,16 @@ function collectErrors(page: Page): string[] {
   return errors;
 }
 
-/** Fraction of sampled pixels that are not background-black. */
+/** Fraction of pixels that are not background-black (decoded in Node, not in the page). */
 async function nonBlackFraction(page: Page): Promise<number> {
   const png = await page.locator('canvas').screenshot();
-  return page.evaluate(
-    async (bytes) => {
-      const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' });
-      const bmp = await createImageBitmap(blob);
-      const c = new OffscreenCanvas(bmp.width, bmp.height);
-      const ctx = c.getContext('2d');
-      if (!ctx) return 0;
-      ctx.drawImage(bmp, 0, 0);
-      const { data } = ctx.getImageData(0, 0, bmp.width, bmp.height);
-      let lit = 0;
-      let total = 0;
-      for (let i = 0; i < data.length; i += 4 * 97) {
-        total++;
-        if ((data[i] ?? 0) + (data[i + 1] ?? 0) + (data[i + 2] ?? 0) > 60) lit++;
-      }
-      return lit / total;
-    },
-    [...png],
-  );
+  const { data, info } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  let lit = 0;
+  const pixels = info.width * info.height;
+  for (let i = 0; i < data.length; i += 3) {
+    if ((data[i] ?? 0) + (data[i + 1] ?? 0) + (data[i + 2] ?? 0) > 60) lit++;
+  }
+  return lit / pixels;
 }
 
 test('renders the Earth in English', async ({ page }) => {
