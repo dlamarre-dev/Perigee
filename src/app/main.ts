@@ -248,6 +248,9 @@ function main(): void {
   const handleClick = (e: MouseEvent, double: boolean): void => {
     if (!view || !downAt) return;
     if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > CLICK_TOLERANCE_PX) return;
+    // Pick against the current camera state, not the last rendered frame (slow GPUs, fresh setState).
+    controls.applyTo(renderer.camera);
+    view.placeOrigin(controls.cameraPositionKm);
     const rect = renderer.canvas.getBoundingClientRect();
     view.click(e.clientX - rect.left, e.clientY - rect.top, double);
   };

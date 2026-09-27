@@ -37,16 +37,18 @@ test('landing sites show coordinates and sources, restored from the URL', async 
 test('picking selects the orbiter under the pointer', async ({ page }) => {
   await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
   await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
-  await page.waitForTimeout(500);
-  const ok = await page.evaluate(() =>
-    (window as unknown as { __perigeeTest: { lookAt(id: string): boolean } }).__perigeeTest.lookAt('lro'),
-  );
-  expect(ok).toBe(true);
-  await page.waitForTimeout(300);
   const box = await page.locator('canvas').boundingBox();
   if (!box) throw new Error('no canvas');
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  await expect(page.locator('aside.info .panel-title')).toHaveText('Lunar Reconnaissance Orbiter (LRO)');
+  await expect(async () => {
+    const ok = await page.evaluate(() =>
+      (window as unknown as { __perigeeTest: { lookAt(id: string): boolean } }).__perigeeTest.lookAt('lro'),
+    );
+    expect(ok).toBe(true);
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page.locator('aside.info .panel-title')).toHaveText('Lunar Reconnaissance Orbiter (LRO)', {
+      timeout: 1000,
+    });
+  }).toPass({ timeout: 20_000 });
 });
 
 test('switching views keeps the time and language', async ({ page }) => {

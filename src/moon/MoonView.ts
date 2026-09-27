@@ -172,7 +172,11 @@ class MoonView implements View {
 
     const pixelRatio = renderer.renderer.getPixelRatio();
     const drawable = this.missions.filter((m) => m.ephemeris === 'horizons');
-    this.missionMarkers = new MarkerPoints(Math.max(1, drawable.length), 11 * pixelRatio);
+    // No GPU depth test: a screen-sized sprite has a single depth and would be half-buried in the curved
+    // surface when seen from afar. Occlusion by the Moon is computed on the CPU instead (placeOrigin).
+    this.missionMarkers = new MarkerPoints(Math.max(1, drawable.length), 11 * pixelRatio, {
+      depthTest: false,
+    });
     this.missionGroup.add(this.missionMarkers.points);
     drawable.forEach((mission, index) => {
       const color = mission.color ?? DEFAULT_MISSION_COLOR;
@@ -196,7 +200,7 @@ class MoonView implements View {
     this.missionRing = new SelectionMarker(pixelRatio);
     this.missionGroup.add(this.missionRing.points);
 
-    this.siteMarkers = new MarkerPoints(Math.max(1, this.sites.length), 8 * pixelRatio);
+    this.siteMarkers = new MarkerPoints(Math.max(1, this.sites.length), 8 * pixelRatio, { depthTest: false });
     this.sites.forEach((s, i) => {
       const p = this.siteBodyKm[i] ?? [0, 0, 0];
       this.siteMarkers.setPosition(i, p[0], p[1], p[2]);
@@ -274,7 +278,6 @@ class MoonView implements View {
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
       if (s) {
-        this.missionMarkers.setPosition(t.index, s.posKm[0], s.posKm[1], s.posKm[2]);
         this.missionMarkers.setColor(
           t.index,
           this.colors.get(t.mission.id) ?? DEFAULT_MISSION_COLOR,
@@ -282,11 +285,9 @@ class MoonView implements View {
         );
         t.scene = quatRotate(sceneQ, s.posKm);
       } else {
-        this.missionMarkers.hide(t.index);
         t.scene = undefined;
       }
     }
-    this.missionMarkers.commit();
     this.siteScene = this.siteBodyKm.map((p) => quatRotate(this.bodyScene, p));
 
     const wall = performance.now();
@@ -308,6 +309,21 @@ class MoonView implements View {
     const e = sub(this.earthScene, originKm);
     this.earth.mesh.position.set(e[0], e[1], e[2]);
     this.missionGroup.position.set(-originKm[0], -originKm[1], -originKm[2]);
+    for (const t of this.tracked) {
+      const p = t.sample.state?.posKm;
+      if (p && t.scene && !occludedBySphere(originKm, t.scene, R))
+        this.missionMarkers.setPosition(t.index, p[0], p[1], p[2]);
+      else this.missionMarkers.hide(t.index);
+    }
+    this.missionMarkers.commit();
+    this.sites.forEach((_, i) => {
+      const scene = this.siteScene[i];
+      const p = this.siteBodyKm[i];
+      if (p && scene && !occludedBySphere(originKm, scene, R))
+        this.siteMarkers.setPosition(i, p[0], p[1], p[2]);
+      else this.siteMarkers.hide(i);
+    });
+    this.siteMarkers.commit();
     this.placeLabels();
   }
 
