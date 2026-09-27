@@ -596,12 +596,14 @@ input[type='checkbox'] {
 
 .label {
   position: absolute;
+  z-index: 2;
   left: 0;
   top: 0;
-  margin: 8px 0 0 10px;
   padding: 1px 6px;
   border-left: 2px solid var(--accent);
-  background: rgb(3 9 16 / 72%);
+  /* Nearly opaque: overlapped text underneath must not show through. */
+  background: rgb(3 9 16 / 92%);
+  transition: opacity 140ms ease-out;
   color: var(--text);
   font-size: 11px;
   font-weight: 600;
@@ -611,8 +613,19 @@ input[type='checkbox'] {
   will-change: transform;
 }
 
-.label[hidden] {
-  display: none;
+/* Hidden with visibility (not display) so the size stays measurable for collision avoidance. */
+.label[data-shown='false'] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 140ms ease-out,
+    visibility 0s linear 140ms;
+}
+
+/* Ground labels sit under labels of objects in orbit. */
+.label-site,
+.label-launch {
+  z-index: 1;
 }
 
 .label-site {
@@ -712,4 +725,11 @@ input[type='checkbox'] {
 .label-natural {
   border-left-color: #c9b8a6;
   color: #e8dccd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label,
+  .label[data-shown='false'] {
+    transition: none;
+  }
 }

@@ -10,7 +10,7 @@ import { quatRotate, type Quat } from '../astro/quat';
 import { length, scale, sub, type Vec3 } from '../astro/vec3';
 import type { LaunchSite } from '../data/schemas';
 import type { Lang } from '../i18n';
-import { LabelLayer, occludedBySphere } from '../render/Labels';
+import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 
@@ -78,6 +78,7 @@ export class LaunchSiteLayer {
 
   placeOrigin(originKm: Vec3, camera: PerspectiveCamera, widthCss: number, heightCss: number): void {
     this.originKm = originKm;
+    this.labels.begin();
     this.sites.forEach((site, i) => {
       const scene = this.sceneKm[i];
       const body = this.bodyKm[i];
@@ -95,8 +96,10 @@ export class LaunchSiteLayer {
         R,
         widthCss,
         heightCss,
+        site.id === this.selectedId ? LabelPriority.Selected : LabelPriority.Site,
       );
     });
+    this.labels.layout(widthCss, heightCss);
     this.markers.commit();
   }
 
