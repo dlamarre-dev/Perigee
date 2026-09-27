@@ -2,6 +2,13 @@
  * Application shell: renderer, clock, camera controller, toolbar, time bar, URL state, follow mode and
  * view switching. Views (Earth, Moon, …) are loaded on demand and implement `View` (./View.ts).
  */
+// Bundled OFL fonts (latin subset only: covers English and French).
+import '@fontsource/rajdhani/latin-500.css';
+import '@fontsource/rajdhani/latin-600.css';
+import '@fontsource/rajdhani/latin-700.css';
+import '@fontsource/saira-semi-condensed/latin-400.css';
+import '@fontsource/saira-semi-condensed/latin-500.css';
+import '@fontsource/saira-semi-condensed/latin-600.css';
 import '../styles.css';
 import {
   QUAT_IDENTITY,

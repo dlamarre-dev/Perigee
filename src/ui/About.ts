@@ -25,6 +25,8 @@ const SOFTWARE_CREDITS: readonly Credit[] = [
   { name: 'astronomy-engine (MIT)', url: 'https://github.com/cosinekitty/astronomy' },
   { name: 'satellite.js (MIT)', url: 'https://github.com/shashwatak/satellite-js' },
   { name: 'three.js (MIT)', url: 'https://threejs.org' },
+  { name: 'Rajdhani — Indian Type Foundry (OFL-1.1)', url: 'https://github.com/itfoundry/rajdhani' },
+  { name: 'Saira — Omnibus-Type (OFL-1.1)', url: 'https://github.com/Omnibus-Type/Saira' },
 ];
 
 function creditList(credits: readonly Credit[]): HTMLUListElement {

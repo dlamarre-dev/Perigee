@@ -1,7 +1,8 @@
 /*
  * Visual language inspired by modern sci-fi HUDs (Halo Infinite): dark translucent panels with chamfered
  * corners and corner brackets, thin cyan lines, condensed uppercase labels, faint scanlines.
- * Fonts are system fonts only (licensing: CLAUDE.md §14); Bahnschrift / DIN give the condensed look.
+ * Fonts: Rajdhani (display: titles, buttons, labels) and Saira Semi Condensed (text), both OFL-1.1, bundled
+ * locally through @fontsource (no third-party font CDN).
  */
 :root {
   color-scheme: dark;
@@ -24,8 +25,8 @@
   --cut-btn: 6px;
   --gap: 8px;
   --gutter: 16px;
-  --font:
-    'Bahnschrift', 'DIN Alternate', 'DIN Condensed', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font: 'Saira Semi Condensed', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-display: 'Rajdhani', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
   font-family: var(--font);
   font-size: 14px;
   line-height: 1.4;
@@ -650,4 +651,60 @@ input[type='checkbox'] {
   border-left-color: var(--paused);
   color: #ffd98a;
   font-size: 10px;
+}
+
+/* Display font for HUD-style elements. */
+.brand,
+.btn,
+.panel-title,
+.about h2,
+.group-label,
+.facets summary,
+.results-title,
+.about h3,
+.fields dt,
+.label,
+.badge,
+.notice,
+.time-value,
+.loading {
+  font-family: var(--font-display);
+}
+
+.btn {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.panel-title,
+.about h2 {
+  font-size: 17px;
+}
+
+.brand {
+  font-size: 20px;
+}
+
+.time-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.fields dt,
+.facets summary,
+.results-title,
+.about h3,
+.group-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.label-site,
+.label-launch {
+  font-size: 11px;
 }

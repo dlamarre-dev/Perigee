@@ -197,8 +197,8 @@ the "up" vector and causes gimbal lock at the poles).
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
 - Bilingual **EN/FR** interface (see §0), strings in `src/i18n/`. Brand: "Perigee" in English, "Périgée" in French.
 - Visual style: sci-fi HUD inspired by recent Halo games (chamfered translucent panels, corner brackets, cyan
-  accents, condensed uppercase labels) in `src/styles.css`. System fonts only (Bahnschrift/DIN/Roboto Condensed):
-  web fonts under the OFL are not in the allowed licence list (§14) unless the maintainer approves them.
+  accents, condensed uppercase labels) in `src/styles.css`. Fonts: Rajdhani (display) and Saira Semi Condensed
+  (text), OFL-1.1, bundled via `@fontsource` (latin subset).
 - Screen-sized markers on a body surface (sites) do not depth-test: occlusion is computed on the CPU
   (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar.
 
@@ -306,7 +306,9 @@ Known statuses at end of September 2026 — **re-check before each release**:
 - No `localStorage` for large data; IndexedDB via the Service Worker.
 - Conventional commits (`feat:`, `fix:`, `data:`, `catalog:`). Any change to `catalog/` must include the source
   in the PR.
-- Before adding a dependency: check the license (MIT/BSD/Apache/public domain only) and weight.
+- Before adding a dependency: check the license (MIT/BSD/Apache/public domain only; **fonts may also be
+  OFL-1.1**, approved by the maintainer on 2026-09-27) and weight. Fonts are bundled locally (`@fontsource`),
+  never loaded from a third-party CDN.
 
 ## 15. Roadmap
 

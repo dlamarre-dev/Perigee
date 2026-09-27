@@ -55,3 +55,5 @@ coordinates of Luna 9/13 are of lower confidence; see the `note` field of each e
 - [astronomy-engine](https://github.com/cosinekitty/astronomy) — MIT
 - [satellite.js](https://github.com/shashwatak/satellite-js) — MIT
 - [zod](https://zod.dev) — MIT
+- [Rajdhani](https://github.com/itfoundry/rajdhani) (Indian Type Foundry) — SIL Open Font License 1.1, bundled via @fontsource
+- [Saira Semi Condensed](https://github.com/Omnibus-Type/Saira) (Omnibus-Type) — SIL Open Font License 1.1, bundled via @fontsource
