@@ -169,7 +169,11 @@
       "latDeg": -4.82514,
       "lonDeg": 137.38885,
       "note": "NASA MMGIS current waypoint fetched 2026-09-27: sol 5021, site 125 drive 558, 137.3888471 E, -4.82513971. Date computed from sol number (approx +/-1 d). Changes as the rover drives; refresh from feed.",
-      "sources": ["https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints_current.json"]
+      "sources": ["https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints_current.json"],
+      "feed": {
+        "url": "https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints_current.json",
+        "solZeroDate": "2012-08-06"
+      }
     },
     {
       "id": "insight",
@@ -220,7 +224,11 @@
       "latDeg": 18.43687,
       "lonDeg": 77.23205,
       "note": "NASA MMGIS current waypoint fetched 2026-09-27: sol 1980, end-of-drive localization, 77.23205444 E, 18.43687407 N. Date computed from sol number (approx +/-1 d); refresh from feed.",
-      "sources": ["https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints_current.json"]
+      "sources": ["https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints_current.json"],
+      "feed": {
+        "url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints_current.json",
+        "solZeroDate": "2021-02-18"
+      }
     },
     {
       "id": "ingenuity-final",

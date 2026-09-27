@@ -32,6 +32,7 @@ export const createMarsView: ViewFactory = (host) =>
     sites: LandingSitesSchema.parse(sitesJson),
     sunFromBodyKm: marsToSunKm,
     siteLabelDistanceKm: 9000,
+    roverFeed: true,
     keys: {
       panel: 'mars.panel',
       loading: 'mars.loading',

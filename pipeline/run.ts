@@ -4,6 +4,7 @@
  *   tsx pipeline/run.ts gp      [--data-dir <dir>]   # GP "active" elements (every 4 h in CI)
  *   tsx pipeline/run.ts satcat  [--data-dir <dir>]   # SATCAT + group membership (daily in CI)
  *   tsx pipeline/run.ts horizons [--data-dir <dir>]  # JPL Horizons vectors for catalog/missions.json (daily)
+ *   tsx pipeline/run.ts rovers  [--data-dir <dir>]   # Mars rover positions from NASA MMGIS feeds (daily)
  *
  * The data directory holds the currently published files and is updated in place.
  * Outside CI a local guard refuses to hit CelesTrak twice for the same resource within 2 h.
@@ -11,10 +12,16 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { MissionsCatalogSchema, OperatorsCatalogSchema, type Groups } from '../src/data/schemas';
+import {
+  LandingSitesSchema,
+  MissionsCatalogSchema,
+  OperatorsCatalogSchema,
+  type Groups,
+} from '../src/data/schemas';
 import { NotUpdatedError, SATCAT_URL, fetchGp, fetchSatcatActive, gpUrl } from './celestrak';
 import { CENTER_CODES, fetchMissionVectors, float64LittleEndian } from './horizons';
 import { publishDatasets, publishEphemerides, type EphemerisToWrite } from './publish';
+import { fetchRoverPositions } from './rovers';
 
 const LOCAL_MIN_INTERVAL_MS = 2 * 3600_000;
 const LOCAL_LOG = resolve('node_modules/.cache/perigee/fetch-log.json');
@@ -161,6 +168,28 @@ async function runHorizons(dataDir: string): Promise<void> {
   await publishEphemerides(dataDir, out);
 }
 
+/** One request per rover feed declared in catalog/landing-sites/*.json. */
+async function runRovers(dataDir: string): Promise<void> {
+  const mars = LandingSitesSchema.parse(
+    JSON.parse(await readFile(resolve('catalog/landing-sites/mars.json'), 'utf8')),
+  );
+  const fetchedAt = new Date();
+  const positions = await fetchRoverPositions([mars]);
+  for (const [id, p] of Object.entries(positions)) {
+    console.log(`${id}: sol ${p.sol}, ${p.latDeg.toFixed(5)}, ${p.lonDeg.toFixed(5)}`);
+  }
+  await publishDatasets(dataDir, [
+    {
+      key: 'mars.rovers',
+      path: 'mars/rovers.json.gz',
+      source: 'https://mars.nasa.gov/mmgis-maps/',
+      fetchedAt,
+      count: Object.keys(positions).length,
+      payload: positions,
+    },
+  ]);
+}
+
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2);
   const dirFlag = rest.indexOf('--data-dir');
@@ -178,8 +207,11 @@ async function main(): Promise<void> {
     case 'horizons':
       await runHorizons(dataDir);
       break;
+    case 'rovers':
+      await runRovers(dataDir);
+      break;
     default:
-      throw new Error('Usage: tsx pipeline/run.ts <gp|satcat|horizons> [--data-dir <dir>]');
+      throw new Error('Usage: tsx pipeline/run.ts <gp|satcat|horizons|rovers> [--data-dir <dir>]');
   }
 }
 

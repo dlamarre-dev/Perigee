@@ -30,12 +30,20 @@ import {
 } from '../astro/track';
 import { length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
-import { loadEphemeris, loadManifest } from '../data/loader';
-import type { CentralBody, EphemerisEntry, LandingSite, LandingSites, Mission } from '../data/schemas';
+import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
+import {
+  RoverPositionsSchema,
+  type CentralBody,
+  type EphemerisEntry,
+  type LandingSite,
+  type LandingSites,
+  type Mission,
+  type RoverPositions,
+} from '../data/schemas';
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
-import { LabelLayer, occludedBySphere } from '../render/Labels';
+import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
@@ -66,6 +74,8 @@ export interface PlanetaryConfig {
   /** Earth centre relative to the body centre (shown when defined). */
   readonly earthFromBodyKm?: (date: Date) => Vec3;
   readonly siteLabelDistanceKm: number;
+  /** Override feed-backed sites (rovers) with the published `mars.rovers` dataset. */
+  readonly roverFeed?: boolean;
   readonly keys: {
     readonly panel: MessageKey;
     readonly loading: MessageKey;
@@ -141,6 +151,8 @@ export class PlanetaryView implements View {
   private readonly tracked: Tracked[] = [];
   private readonly colors = new Map<string, string>();
   private readonly siteBodyKm: Vec3[];
+  /** Live rover positions (by site id) when a feed dataset is published. */
+  private rovers: RoverPositions = {};
   private siteScene: Vec3[] = [];
   private earthScene: Vec3 = [0, 0, 0];
   private bodyScene: Quat = { x: 0, y: 0, z: 0, w: 1 };
@@ -474,6 +486,10 @@ export class PlanetaryView implements View {
         }),
       );
       if (this.disposed) return;
+      if (this.config.roverFeed) {
+        const rovers = await loadOptionalDataset(host.baseUrl, manifest, 'mars.rovers', RoverPositionsSchema);
+        if (rovers && !this.disposed) this.applyRovers(rovers.data);
+      }
       this.panel.setFetched(oldest);
       this.lastTrajectoryWallMs = -Infinity;
       host.showNotice(undefined);
@@ -482,6 +498,18 @@ export class PlanetaryView implements View {
       console.error(err);
       host.showNotice(host.i18n.t(this.config.keys.unavailable));
     }
+  }
+
+  private applyRovers(rovers: RoverPositions): void {
+    this.rovers = rovers;
+    this.sites.forEach((site, i) => {
+      const p = rovers[site.id];
+      if (p) this.siteBodyKm[i] = this.siteSurfaceKm(p.latDeg, p.lonDeg);
+    });
+  }
+
+  private siteSurfaceKm(latDeg: number, lonDeg: number): Vec3 {
+    return scale(latLonToUnit(latDeg * DEG_TO_RAD, lonDeg * DEG_TO_RAD), this.R * (1 + 3e-4));
   }
 
   private refreshTrajectories(): void {
@@ -545,28 +573,49 @@ export class PlanetaryView implements View {
     const hgt = canvas.clientHeight;
     const o = this.originKm;
     const R = this.R;
+    const sel = this.selection;
+    this.labels.begin();
     for (const t of this.tracked) {
       const s = t.scene;
-      this.labels.place(`m:${t.mission.id}`, s && sub(s, o), s, camera, o, R, w, hgt);
-    }
-    if (!this.sitesVisible) return;
-    const sel = this.selection;
-    this.sites.forEach((site, i) => {
-      const s = this.siteScene[i];
-      const near = s && length(sub(s, o)) < this.config.siteLabelDistanceKm;
-      const selected = sel?.kind === 'site' && sel.site.id === site.id;
-      const show = s && (near || selected);
+      if (!s) continue;
+      const r = sub(s, o);
+      const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
       this.labels.place(
-        `s:${site.id}`,
-        show ? sub(s, o) : undefined,
-        show ? s : undefined,
+        `m:${t.mission.id}`,
+        r,
+        s,
         camera,
         o,
         R,
         w,
         hgt,
+        selected ? LabelPriority.Selected : LabelPriority.Orbiting,
       );
-    });
+      // Ground-site labels must not cover the markers of orbiting objects.
+      const p = this.labels.project(r, s, camera, o, R, w, hgt);
+      if (p) this.labels.obstacle(p.x, p.y, 8, LabelPriority.Orbiting);
+    }
+    if (this.sitesVisible) {
+      this.sites.forEach((site, i) => {
+        const s = this.siteScene[i];
+        if (!s) return;
+        const near = length(sub(s, o)) < this.config.siteLabelDistanceKm;
+        const selected = sel?.kind === 'site' && sel.site.id === site.id;
+        if (!near && !selected) return;
+        this.labels.place(
+          `s:${site.id}`,
+          sub(s, o),
+          s,
+          camera,
+          o,
+          R,
+          w,
+          hgt,
+          selected ? LabelPriority.Selected : LabelPriority.Site,
+        );
+      });
+    }
+    this.labels.layout(w, hgt);
   }
 
   private restoreFromUrl(p: URLSearchParams): void {
@@ -698,18 +747,30 @@ export class PlanetaryView implements View {
   private siteDetail(site: LandingSite): DetailContent {
     const { i18n } = this.host;
     const t = (k: MessageKey): string => i18n.t(k);
-    const rows: [string, string][] = [
-      [t('info.type'), i18n.maybe(`site.${site.type}`) ?? site.type],
-      [t('info.date'), site.date],
-      [t('info.agency'), site.agency],
-    ];
+    const live = this.rovers[site.id];
+    const rows: [string, string][] = [[t('info.type'), i18n.maybe(`site.${site.type}`) ?? site.type]];
+    if (live && site.feed) {
+      // Mars solar day = 88 775.244 s; sol 0 is the landing day.
+      const date = new Date(Date.parse(`${site.feed.solZeroDate}T00:00:00Z`) + live.sol * 88_775_244);
+      rows.push([t('info.sol'), `${i18n.number(live.sol)} (≈ ${date.toISOString().slice(0, 10)})`]);
+      if (live.distanceTotalM !== undefined) {
+        rows.push([t('info.odometry'), `${i18n.number(live.distanceTotalM / 1000, 2)} km`]);
+      }
+    } else {
+      rows.push([t('info.date'), site.date]);
+    }
+    rows.push([t('info.agency'), site.agency]);
     if (site.country) rows.push([t('info.country'), countryName(i18n, site.country)]);
-    rows.push([t('info.coordinates'), formatLatLon(site.latDeg, site.lonDeg)]);
+    rows.push([
+      t('info.coordinates'),
+      formatLatLon(live?.latDeg ?? site.latDeg, live?.lonDeg ?? site.lonDeg),
+    ]);
     return {
       title: site.name[i18n.lang],
+      ...(live ? { badge: { text: t('info.liveFeed'), state: 'fresh' as const } } : {}),
       rows,
-      ...(site.note ? { notes: site.note } : {}),
-      sources: site.sources,
+      ...(site.note && !live ? { notes: site.note } : {}),
+      sources: live ? [live.source, ...site.sources.filter((u) => u !== live.source)] : site.sources,
       footnote: i18n.format('info.verified', { date: this.config.sites.verified }),
       followable: true,
     };

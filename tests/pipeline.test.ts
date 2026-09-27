@@ -80,3 +80,32 @@ $$EOE
     expect(buf.readDoubleLE(8)).toBe(-2);
   });
 });
+
+describe('rover waypoint feeds', () => {
+  it('parses the latest MMGIS waypoint and normalises longitudes', async () => {
+    const { parseWaypointFeed } = await import('../pipeline/rovers');
+    const feed = {
+      type: 'FeatureCollection',
+      features: [{ properties: { sol: 5021, lon: 137.3888471, lat: -4.82513971, dist_total_m: 38383.67 } }],
+    };
+    const p = parseWaypointFeed(feed, 'https://example.test/feed');
+    expect(p).toMatchObject({
+      sol: 5021,
+      latDeg: -4.82513971,
+      lonDeg: 137.3888471,
+      distanceTotalM: 38383.67,
+    });
+    const west = parseWaypointFeed(
+      { type: 'FeatureCollection', features: [{ properties: { sol: 1, lon: 354.5, lat: -2 } }] },
+      'https://example.test/feed',
+    );
+    expect(west.lonDeg).toBeCloseTo(-5.5, 9);
+  });
+
+  it('rejects an unexpected payload', async () => {
+    const { parseWaypointFeed } = await import('../pipeline/rovers');
+    expect(() =>
+      parseWaypointFeed({ type: 'FeatureCollection', features: [] }, 'https://example.test/feed'),
+    ).toThrow();
+  });
+});

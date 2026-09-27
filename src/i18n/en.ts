@@ -160,6 +160,9 @@ export const en = {
 
   'country.su': 'Soviet Union',
   'info.radius': 'Mean radius',
+  'info.sol': 'Sol',
+  'info.odometry': 'Distance driven',
+  'info.liveFeed': 'Position updated daily from NASA’s rover waypoint feed',
 
   'mars.loading': 'Loading Mars ephemerides…',
   'mars.unavailable': 'Mars ephemerides are unavailable right now.',

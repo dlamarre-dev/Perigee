@@ -61,7 +61,7 @@ export const SatcatListSchema = z.array(SatcatRecordSchema);
 export const GroupsSchema = z.record(z.string(), z.array(z.number().int().positive()));
 export type Groups = z.infer<typeof GroupsSchema>;
 
-export const DatasetKeySchema = z.enum(['earth.gp', 'earth.satcat', 'earth.groups']);
+export const DatasetKeySchema = z.enum(['earth.gp', 'earth.satcat', 'earth.groups', 'mars.rovers']);
 export type DatasetKey = z.infer<typeof DatasetKeySchema>;
 
 export const DatasetEntrySchema = z.object({
@@ -169,12 +169,27 @@ export const LandingSitesSchema = z.object({
       lonDeg: z.number().min(-180).max(180),
       /** Precision caveats or source discrepancies (English, shown in the info panel). */
       note: z.string().optional(),
+      /** Live position feed (NASA MMGIS current waypoint, GeoJSON), refreshed daily by the pipeline. */
+      feed: z.object({ url: z.url(), solZeroDate: isoDate }).optional(),
       sources: z.array(z.url()).min(1),
     }),
   ),
 });
 export type LandingSites = z.infer<typeof LandingSitesSchema>;
 export type LandingSite = LandingSites['sites'][number];
+
+/** data/mars/rovers.json.gz: latest published rover positions, keyed by landing-site id. */
+export const RoverPositionsSchema = z.record(
+  z.string(),
+  z.object({
+    latDeg: z.number().min(-90).max(90),
+    lonDeg: z.number().min(-180).max(180),
+    sol: z.number().int().nonnegative(),
+    distanceTotalM: z.number().nonnegative().optional(),
+    source: z.url(),
+  }),
+);
+export type RoverPositions = z.infer<typeof RoverPositionsSchema>;
 
 /** catalog/launch-sites.json — orbital spaceports, geodetic coordinates, SATCAT LAUNCH_SITE codes. */
 export const LaunchSitesSchema = z.object({

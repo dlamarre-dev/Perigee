@@ -19,7 +19,7 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "textures": "tsx tools/textures/fetch-textures.ts",
-    "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat && tsx pipeline/run.ts horizons",
+    "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat && tsx pipeline/run.ts horizons && tsx pipeline/run.ts rovers",
     "data:pull": "tsx pipeline/pull.ts"
   },
   "dependencies": {

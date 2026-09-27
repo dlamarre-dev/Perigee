@@ -165,6 +165,9 @@ export const fr: Messages = {
 
   'country.su': 'Union soviétique',
   'info.radius': 'Rayon moyen',
+  'info.sol': 'Sol',
+  'info.odometry': 'Distance parcourue',
+  'info.liveFeed': 'Position mise à jour chaque jour depuis le flux de points de passage de la NASA',
 
   'mars.loading': 'Chargement des éphémérides martiennes…',
   'mars.unavailable': 'Les éphémérides martiennes sont indisponibles pour le moment.',
