@@ -109,3 +109,34 @@ describe('rover waypoint feeds', () => {
     ).toThrow();
   });
 });
+
+describe('Horizons window clamping', () => {
+  const day = 86_400_000;
+  const start = new Date('2026-08-01T00:00:00Z');
+  const stop = new Date('2027-09-27T00:00:00Z');
+  const span = stop.getTime() - start.getTime();
+
+  it('truncates the end when coverage stops inside the window (now stays covered)', async () => {
+    const { clampWindow } = await import('../pipeline/horizons');
+    const limit = { kind: 'after' as const, date: new Date('2026-11-04T01:00:00Z') };
+    const w = clampWindow(start, stop, limit, day, span);
+    expect(w.start).toEqual(start);
+    expect(w.stop.toISOString()).toBe('2026-11-03T01:00:00.000Z');
+  });
+
+  it('moves the whole window back when coverage ended before it', async () => {
+    const { clampWindow } = await import('../pipeline/horizons');
+    const limit = { kind: 'after' as const, date: new Date('2026-03-01T00:00:00Z') };
+    const w = clampWindow(start, stop, limit, day, span);
+    expect(w.stop.toISOString()).toBe('2026-02-28T00:00:00.000Z');
+    expect(w.stop.getTime() - w.start.getTime()).toBe(span);
+  });
+
+  it('truncates the start when coverage begins inside the window', async () => {
+    const { clampWindow } = await import('../pipeline/horizons');
+    const limit = { kind: 'prior' as const, date: new Date('2026-09-01T00:00:00Z') };
+    const w = clampWindow(start, stop, limit, day, span);
+    expect(w.start.toISOString()).toBe('2026-09-02T00:00:00.000Z');
+    expect(w.stop).toEqual(stop);
+  });
+});

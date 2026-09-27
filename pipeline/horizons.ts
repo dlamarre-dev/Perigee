@@ -13,7 +13,8 @@ export const HORIZONS_API = 'https://ssd.jpl.nasa.gov/api/horizons.api';
 export const CENTER_CODES: Record<CentralBody, string> = {
   moon: '500@301',
   mars: '500@499',
-  sun: '500@0',
+  // Heliocentric (Sun centre), consistent with astronomy-engine HelioVector and two-body Kepler around the Sun.
+  sun: '500@10',
 };
 
 /** Horizons accepts "YYYY-MM-DD HH:MM" (UT). */
@@ -122,6 +123,31 @@ async function query(url: string): Promise<string> {
 }
 
 /**
+ * Adapts a request window to a coverage limit. A limit inside the window truncates it (so "now" stays covered,
+ * e.g. an ephemeris that ends in two months); a limit before the window start (after-limit) or after its end
+ * (prior-limit) moves the whole window to the covered side (e.g. a mission whose public ephemeris stopped).
+ */
+export function clampWindow(
+  start: Date,
+  stop: Date,
+  limit: CoverageLimit,
+  marginMs: number,
+  spanMs: number,
+): { start: Date; stop: Date } {
+  const t = limit.date.getTime();
+  if (limit.kind === 'after') {
+    const newStop = t - marginMs;
+    return newStop > start.getTime()
+      ? { start, stop: new Date(newStop) }
+      : { start: new Date(newStop - spanMs), stop: new Date(newStop) };
+  }
+  const newStart = t + marginMs;
+  return newStart < stop.getTime()
+    ? { start: new Date(newStart), stop }
+    : { start: new Date(newStart), stop: new Date(newStart + spanMs) };
+}
+
+/**
  * Fetches the mission's window around `now`. If Horizons reports that coverage ends (or starts) inside the
  * window, the window is moved once to the covered side — e.g. a mission whose public ephemeris stopped.
  */
@@ -141,13 +167,8 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
     clamped = parseCoverageLimit(result);
     if (!clamped) throw new ProviderError(`${mission.id}: no vectors in Horizons result`, url, 200);
     const marginMs = sampling.stepMin * 60_000;
-    if (clamped.kind === 'after') {
-      stop = new Date(clamped.date.getTime() - marginMs);
-      start = new Date(stop.getTime() - spanMs);
-    } else {
-      start = new Date(clamped.date.getTime() + marginMs);
-      stop = new Date(start.getTime() + spanMs);
-    }
+    ({ start, stop } = clampWindow(start, stop, clamped, marginMs, spanMs));
+    if (stop <= start) throw new ProviderError(`${mission.id}: empty window after clamping`, url, 200);
     url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
     result = await query(url);
     data = parseVectors(result);

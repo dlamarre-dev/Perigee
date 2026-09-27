@@ -38,20 +38,20 @@ describe('label collision avoidance', () => {
     inputs.push(label('top', 502, 401, 100));
     const { results } = run(inputs);
     expect(results.get('top')).toBeDefined();
-    const shown = [...results.values()].filter(Boolean);
-    for (let i = 0; i < shown.length; i++)
-      for (let j = i + 1; j < shown.length; j++) expect(rectsOverlap(shown[i]!, shown[j]!)).toBe(false);
+    const shown = [...results.values()].filter((r): r is NonNullable<typeof r> => r !== undefined);
+    shown.forEach((a, i) => shown.slice(i + 1).forEach((b) => expect(rectsOverlap(a, b)).toBe(false)));
     expect(shown.length).toBeLessThan(inputs.length);
   });
 
   it('keeps higher-priority labels and respects obstacles for lower priorities', () => {
     const states = new Map();
-    const obstacles = [{ x: 505, y: 400, w: 16, h: 16, priority: 50 }];
+    const obstacle = { x: 505, y: 400, w: 16, h: 16, priority: 50 };
+    const obstacles = [obstacle];
     const r = new Map(
       layoutLabels([label('site', 500, 400, 10)], obstacles, states, W, H).map((x) => [x.id, x.rect]),
     );
     const rect = r.get('site');
-    if (rect) expect(rectsOverlap(rect, obstacles[0]!, 0)).toBe(false);
+    if (rect) expect(rectsOverlap(rect, obstacle, 0)).toBe(false);
   });
 
   it('does not flicker: a label hidden by a collision waits several frames before reappearing', () => {
