@@ -9,7 +9,7 @@ import {
 } from '../earth/filters';
 import type { SatStats } from '../earth/EarthSatellites';
 import type { I18n, MessageKey } from '../i18n';
-import { h } from './dom';
+import { h, markCurrent, sidePanel } from './dom';
 import { facetLabel, formatUtcDate } from './labels';
 
 const FACET_TITLES: Record<FacetKey, MessageKey> = {
@@ -77,7 +77,7 @@ export class FilterPanel {
       this.renderFacets();
     });
 
-    this.element = h('aside', { class: 'panel side-panel filters', 'aria-labelledby': 'filters-title' }, [
+    this.element = sidePanel({ class: 'panel side-panel filters', 'aria-labelledby': 'filters-title' }, [
       this.title,
       this.stats,
       this.fetched,
@@ -89,6 +89,20 @@ export class FilterPanel {
     ]);
     i18n.onChange(() => this.renderAll());
     this.renderAll();
+  }
+
+  private selectedNorad: number | undefined;
+
+  /** Highlights the selected object in the result list (scrolls to it when the selection changes). */
+  setSelected(norad: number | undefined): void {
+    const changed = norad !== this.selectedNorad;
+    this.selectedNorad = norad;
+    this.applySelected(changed);
+  }
+
+  private applySelected(scroll: boolean): void {
+    const key = this.selectedNorad === undefined ? undefined : String(this.selectedNorad);
+    markCurrent(this.results, (el) => el.dataset['norad'] === key, scroll);
   }
 
   get state(): FilterState {
@@ -224,6 +238,7 @@ export class FilterPanel {
       return h('li', {}, [b]);
     });
     this.results.replaceChildren(...list);
+    this.applySelected(false);
     const rest = this.matching.length - MAX_LISTED;
     this.more.textContent =
       this.matching.length === 0

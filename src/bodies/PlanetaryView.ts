@@ -164,6 +164,8 @@ export class PlanetaryView implements View {
   private lastTrajectoryWallMs = -Infinity;
   private lastEpoch = -1;
   private disposed = false;
+  /** Frame the selection once its position is known (next update). */
+  private pendingFrame = false;
   private readonly v = new Vector3();
 
   constructor(
@@ -266,8 +268,8 @@ export class PlanetaryView implements View {
       this.colors,
       (m) => m.ephemeris === 'horizons',
       {
-        onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true }),
-        onSelectSite: (s) => this.select({ kind: 'site', site: s }, { focus: true }),
+        onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true, frame: true }),
+        onSelectSite: (s) => this.select({ kind: 'site', site: s }, { focus: true, frame: true }),
         onToggleSites: (visible) => {
           this.sitesVisible = visible;
           this.siteGroup.visible = visible;
@@ -362,6 +364,12 @@ export class PlanetaryView implements View {
     const selTracked = sel?.kind === 'mission' ? this.trackedFor(sel.mission.id) : undefined;
     this.missionRing.set(selTracked?.sample.state?.posKm);
     this.siteRing.set(sel?.kind === 'site' ? this.siteBodyKm[this.sites.indexOf(sel.site)] : undefined);
+    if (this.pendingFrame) {
+      const pos = this.scenePositionOf(sel);
+      if (pos) this.host.frameObject(pos);
+      // Objects without a 3D position (no ephemeris) cannot be framed: give up rather than wait forever.
+      this.pendingFrame = false;
+    }
   }
 
   placeOrigin(originKm: Vec3): void {
@@ -628,20 +636,24 @@ export class PlanetaryView implements View {
     if (!sel) return;
     if (sel.startsWith('site:')) {
       const site = this.sites.find((s) => s.id === sel.slice(5));
-      if (site) this.select({ kind: 'site', site });
+      if (site) this.select({ kind: 'site', site }, { frame: true });
     } else {
       const mission = this.missions.find((m) => m.id === sel);
-      if (mission) this.select({ kind: 'mission', mission });
+      if (mission) this.select({ kind: 'mission', mission }, { frame: true });
     }
   }
 
-  private select(sel: Selection, options: { follow?: boolean; focus?: boolean } = {}): void {
+  private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
     const cur = this.selection;
     const same =
       (sel?.kind === 'mission' && cur?.kind === 'mission' && sel.mission.id === cur.mission.id) ||
       (sel?.kind === 'site' && cur?.kind === 'site' && sel.site.id === cur.site.id);
     if (!same) this.host.follow.stop();
     this.selection = sel;
+    this.panel.setSelected(
+      sel?.kind === 'mission' ? `mission:${sel.mission.id}` : sel ? `site:${sel.site.id}` : undefined,
+    );
+    this.pendingFrame = sel !== undefined && (options.frame ?? false) && !options.follow;
     this.lastTrajectoryWallMs = -Infinity;
     if (!sel) this.detail.hide();
     else this.renderDetail(options.focus ?? false);

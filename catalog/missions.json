@@ -1798,6 +1798,122 @@
       },
       "verified": "2026-09-27",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"]
+    },
+    {
+      "id": "ceres",
+      "name": {
+        "en": "Ceres",
+        "fr": "Cérès"
+      },
+      "objectType": "natural",
+      "radiusKm": 469.7,
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Main asteroid belt, ~2.8 AU, 4.6-year period",
+        "fr": "Ceinture principale d’astéroïdes, ~2,8 AU, période de 4,6 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "1;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#8f8b86",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/dwarf-planets/ceres/",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Ceres"
+      ]
+    },
+    {
+      "id": "haumea",
+      "name": {
+        "en": "Haumea",
+        "fr": "Hauméa"
+      },
+      "objectType": "natural",
+      "radiusKm": 798,
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Kuiper Belt, ~43 AU, 284-year period",
+        "fr": "Ceinture de Kuiper, ~43 AU, période de 284 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "136108;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#d9d6d0",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/dwarf-planets/haumea/",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Haumea"
+      ]
+    },
+    {
+      "id": "makemake",
+      "name": {
+        "en": "Makemake",
+        "fr": "Makémaké"
+      },
+      "objectType": "natural",
+      "radiusKm": 715,
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Kuiper Belt, ~45 AU, 305-year period",
+        "fr": "Ceinture de Kuiper, ~45 AU, période de 305 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "136472;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#c69a7a",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/dwarf-planets/makemake/",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Makemake"
+      ]
+    },
+    {
+      "id": "eris",
+      "name": {
+        "en": "Eris",
+        "fr": "Éris"
+      },
+      "objectType": "natural",
+      "radiusKm": 1163,
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Scattered disc, ~68 AU, 559-year period",
+        "fr": "Disque des objets épars, ~68 AU, période de 559 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "136199;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#e8e6e3",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/dwarf-planets/eris/",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Eris"
+      ]
     }
   ]
 }

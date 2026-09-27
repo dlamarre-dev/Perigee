@@ -1,5 +1,5 @@
 import type { I18n } from '../i18n';
-import { h } from './dom';
+import { h, sidePanel } from './dom';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
 
@@ -45,8 +45,7 @@ export class DetailPanel {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
     this.action.addEventListener('click', () => this.actionRun?.());
-    this.element = h(
-      'aside',
+    this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'detail-title', hidden: true },
       [
         h('div', { class: 'panel-header' }, [this.title, this.close]),

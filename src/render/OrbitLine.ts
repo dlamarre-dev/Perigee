@@ -52,10 +52,12 @@ const markerVertex = /* glsl */ `
   #include <common>
   #include <logdepthbuf_pars_vertex>
   uniform float uSize;
+  uniform float uTime;
   void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     #include <logdepthbuf_vertex>
-    gl_PointSize = uSize;
+    // Gentle pulse so the selection stands out.
+    gl_PointSize = uSize * (1.0 + 0.22 * sin(uTime * 5.0));
   }
 `;
 
@@ -71,6 +73,9 @@ const markerFragment = /* glsl */ `
     #include <colorspace_fragment>
   }
 `;
+
+/** Shared by every selection ring (one clock for all). */
+const PULSE_TIME = { value: 0 };
 
 /**
  * Ring around the selected object; its position is computed exactly on the CPU each frame.
@@ -89,7 +94,8 @@ export class SelectionMarker {
         this.geometry,
         new ShaderMaterial({
           uniforms: {
-            uSize: { value: 18 * pixelRatio },
+            uSize: { value: 20 * pixelRatio },
+            uTime: PULSE_TIME,
             uColor: { value: new Color(1, 0.82, 0.3) },
             uOpacity: { value: opacity },
           },
@@ -102,6 +108,9 @@ export class SelectionMarker {
       );
       p.frustumCulled = false;
       p.renderOrder = renderOrder;
+      p.onBeforeRender = () => {
+        PULSE_TIME.value = performance.now() / 1000;
+      };
       return p;
     };
     this.points = new Group();

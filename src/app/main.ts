@@ -19,13 +19,14 @@ import {
   type Quat,
 } from '../astro/quat';
 import { SimClock } from '../astro/time';
-import { length, type Vec3 } from '../astro/vec3';
+import { add, cross, dot, length, normalize, scale, type Vec3 } from '../astro/vec3';
 import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
 import { orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { createStarfield } from '../render/starfield';
 import { About } from '../ui/About';
+import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
 import { h } from '../ui/dom';
@@ -200,7 +201,8 @@ function main(): void {
       if (panelToggle) toolbar.setPanelOpen(panelToggle());
     },
   });
-  app.append(toolbar.element, timeControl.element, notice, about.element);
+  const music = new MusicPanel(i18n);
+  app.append(toolbar.element, timeControl.element, music.element, notice, about.element);
   app.querySelector('.loading')?.remove();
 
   const host: ViewHost = {
@@ -213,6 +215,35 @@ function main(): void {
     e2e: startParams.has('e2e'),
     follow,
     frame: () => frame,
+    frameObject: (
+      pos: Vec3,
+      options: {
+        tiltRad?: number;
+        minDistanceKm?: number;
+        targetFraction?: number;
+        distanceKm?: number;
+      } = {},
+    ) => {
+      if (!view) return;
+      follow.stop();
+      const r = length(pos);
+      if (r === 0) return;
+      const radial = normalize(pos);
+      // Tilt the viewpoint towards the scene north (or any perpendicular when the object is on the pole).
+      const tilt = options.tiltRad ?? 0;
+      let up: Vec3 = [0, 0, 1];
+      if (Math.abs(dot(radial, up)) > 0.98) up = [1, 0, 0];
+      const side = normalize(cross(radial, up));
+      const toNorth = cross(side, radial);
+      const dir = normalize(add(scale(radial, Math.cos(tilt)), scale(toNorth, Math.sin(tilt))));
+      const distanceKm = Math.min(
+        view.limits.maxDistanceKm,
+        options.distanceKm ??
+          Math.max(controls.state.distanceKm, r * 1.6, options.minDistanceKm ?? 0, view.limits.minDistanceKm),
+      );
+      const target = scale(pos, options.targetFraction ?? 0);
+      controls.flyTo(orbitStateLookingFrom(target, dir, [0, 0, 1], distanceKm));
+    },
     sceneFromInertial,
     mount: (el) => {
       viewDom.push(el);

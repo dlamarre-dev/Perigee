@@ -738,3 +738,105 @@ input[type='checkbox'] {
   border-left-color: #ffd27a;
   color: #ffe9b8;
 }
+
+/* Side panels: the frame stays put, the body scrolls (vertically only). */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+
+.side-panel > .panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 14px;
+  overflow-wrap: break-word;
+}
+
+/* Short values (years, counts, statuses) never break inside a word. */
+.side-panel .result-id,
+.side-panel .count {
+  flex-shrink: 0;
+  max-width: 55%;
+  overflow-wrap: normal;
+  text-align: right;
+}
+
+.side-panel .result-name {
+  min-width: 0;
+}
+
+.side-panel .fields,
+.side-panel .facet-list,
+.side-panel .results {
+  min-width: 0;
+}
+
+/* Selected object in a side-panel list. */
+.result[aria-current='true'] {
+  border-left-color: var(--accent);
+  background: rgb(90 215 255 / 20%);
+  color: var(--accent-strong);
+  box-shadow: inset 0 0 0 1px rgb(90 215 255 / 35%);
+}
+
+/* Soundtrack player, bottom right. */
+.music {
+  right: var(--gutter);
+  bottom: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 6px;
+}
+
+.music.is-open {
+  width: min(340px, calc(100% - 2 * var(--gutter)));
+  padding: 10px 12px 8px;
+}
+
+.music-body {
+  width: 100%;
+}
+
+.music-body[hidden] {
+  display: none;
+}
+
+.music-frame iframe {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
+.music-credit {
+  margin: 6px 0 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.music-credit a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.music-credit a:hover {
+  color: var(--accent-strong);
+}
+
+/* Keep the detail panel clear of the open player. */
+body.music-open .info {
+  max-height: calc(100% - 200px - 380px);
+}
+
+@media (max-width: 640px) {
+  .music {
+    bottom: 150px;
+  }
+}

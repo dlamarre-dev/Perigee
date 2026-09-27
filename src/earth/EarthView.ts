@@ -70,6 +70,8 @@ class EarthView implements View {
   private selectedNorad: number | undefined;
   private frameAngleRad = 0;
   private disposed = false;
+  /** Frame the selection once its position is known (next update). */
+  private pendingFrame = false;
 
   constructor(private readonly host: ViewHost) {
     const initial = parseEarthUrl(host.initialParams);
@@ -120,6 +122,11 @@ class EarthView implements View {
     this.earth.setSunDirection(quatRotate(f.sceneFromInertial, sunDirectionEci(date)));
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
+    if (this.pendingFrame && this.sats) {
+      const pos = this.sats.selectedWorldPositionKm(this.frameAngleRad);
+      if (pos) this.host.frameObject(pos);
+      this.pendingFrame = false;
+    }
     this.launch.update(quatMultiply(f.sceneFromInertial, f.bodyQ));
   }
 
@@ -179,13 +186,18 @@ class EarthView implements View {
     this.infoPanel.following = started;
   }
 
-  private select(obj: SatObject | undefined, options: { follow?: boolean; focus?: boolean } = {}): void {
+  private select(
+    obj: SatObject | undefined,
+    options: { follow?: boolean; focus?: boolean; frame?: boolean } = {},
+  ): void {
     if (!this.sats) return;
     if (!obj || obj.noradId !== this.selectedNorad) this.host.follow.stop();
     if (obj && this.selectedSite) this.clearSite();
     this.sats.select(obj);
     this.selectedNorad = obj?.noradId;
     this.infoPanel.show(obj, options.focus ?? false);
+    this.filterPanel?.setSelected(obj?.noradId);
+    this.pendingFrame = obj !== undefined && (options.frame ?? false) && !options.follow;
     if (obj && options.follow) {
       // The selected state is computed on the next update; follow once it exists.
       this.sats.update(
@@ -303,7 +315,7 @@ class EarthView implements View {
           panel.setResults(layer.filteredObjects(), layer.stats);
           host.syncUrl();
         },
-        onSelect: (obj) => this.select(obj, { focus: true }),
+        onSelect: (obj) => this.select(obj, { focus: true, frame: true }),
       });
       this.filterPanel = panel;
       const toggle = h('input', {
@@ -334,7 +346,9 @@ class EarthView implements View {
       );
       panel.setResults(layer.filteredObjects(), layer.stats);
 
-      if (this.selectedNorad !== undefined) this.select(catalog.byNorad.get(this.selectedNorad));
+      if (this.selectedNorad !== undefined) {
+        this.select(catalog.byNorad.get(this.selectedNorad), { frame: true });
+      }
       host.showNotice(undefined);
       if (host.e2e) this.installTestHook(catalog);
     } catch (err) {

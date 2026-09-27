@@ -48,6 +48,22 @@ export interface ViewHost {
   /** `?e2e` was present at startup: views may expose test hooks. */
   readonly e2e: boolean;
   readonly follow: FollowApi;
+  /**
+   * Flies the camera (without following) to a viewpoint that shows a scene-frame point in front of the central
+   * body, north up. `tiltRad` lifts the viewpoint above the radial direction (so the object does not sit on top
+   * of the body). The camera never moves closer than it is, only further out when needed to show the object.
+   */
+  frameObject(
+    scenePositionKm: Vec3,
+    options?: {
+      tiltRad?: number;
+      minDistanceKm?: number;
+      /** Aim between the body centre (0) and the object (1). */
+      targetFraction?: number;
+      /** Exact distance, overriding the "never closer" rule. */
+      distanceKm?: number;
+    },
+  ): void;
   frame(): FrameMode;
   /** scene ← inertial rotation for the current frame mode. */
   sceneFromInertial(date: Date): Quat;

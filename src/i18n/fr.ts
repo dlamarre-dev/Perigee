@@ -193,5 +193,10 @@ export const fr: Messages = {
   'info.phase': 'Phase',
   'info.next': 'Prochain événement',
   'unit.years': 'ans',
+  'music.show': 'Bande sonore',
+  'music.hide': 'Masquer le lecteur',
+  'music.title': 'Bande sonore',
+  'music.frameTitle': 'Lecteur SoundCloud : NASA Explorers: Apollo Soundtrack',
+  'music.note': 'Lecteur fourni par SoundCloud, chargé seulement à l’ouverture.',
   'unit.days': 'j',
 };

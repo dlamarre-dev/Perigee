@@ -27,7 +27,7 @@ import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { bodyOrientationEqj, earthOrientation } from '../astro/bodies';
 import { AU_KM, DEG_TO_RAD, J2000_JD, MS_PER_DAY, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
-import { GM_KM3_S2 } from '../astro/kepler';
+import { GM_KM3_S2, osculatingElements, propagateKepler } from '../astro/kepler';
 import {
   OBLIQUITY_J2000_RAD,
   PLANETS,
@@ -49,6 +49,7 @@ import { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
+import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture } from '../render/textures';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
@@ -81,6 +82,9 @@ interface PlanetObject {
 interface ProbeObject {
   readonly mission: Mission;
   readonly index: number;
+  /** Dwarf planet / small body: drawn like a planet, with its full osculating orbit. */
+  readonly natural: boolean;
+  readonly mesh: BodyMesh | undefined;
   readonly line: Line<BufferGeometry, Material>;
   track: EphemerisTrack;
   entry: EphemerisEntry | undefined;
@@ -137,6 +141,9 @@ class SolarView implements View {
   private orbitsKey = '';
   private trajectoriesKey = '';
   private disposed = false;
+  private readonly ring: SelectionMarker;
+  /** Frame the selection once its position is known (next update). */
+  private pendingFrame = false;
 
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
@@ -188,18 +195,32 @@ class SolarView implements View {
     });
     const palette = ['#7cc4ff', '#ffb74d', '#81c784', '#ce93d8', '#f48fb1', '#4dd0e1', '#fff176', '#a1887f'];
     this.missions.forEach((mission, index) => {
+      const natural = mission.objectType === 'natural';
       const color = mission.color ?? palette[index % palette.length] ?? DEFAULT_PROBE_COLOR;
       this.colors.set(mission.id, color);
       this.probeMarkers.setColor(index, color);
       const line = new Line(
         new BufferGeometry(),
-        new LineBasicMaterial({ color, transparent: true, opacity: 0.6 }),
+        new LineBasicMaterial({ color, transparent: true, opacity: natural ? 0.35 : 0.6 }),
       );
       line.frustumCulled = false;
       this.lineGroup.add(line);
+      const mesh =
+        natural && mission.radiusKm
+          ? new BodyMesh({
+              name: mission.id,
+              radiusKm: mission.radiusKm,
+              dayMap: placeholderTexture(hexToRgb(color)),
+              nightMap: black,
+              ambient: 0.03,
+            })
+          : undefined;
+      if (mesh) renderer.scene.add(mesh.mesh);
       this.probes.push({
         mission,
         index,
+        natural,
+        mesh,
         line,
         track: this.makeTrack(undefined),
         entry: undefined,
@@ -216,8 +237,8 @@ class SolarView implements View {
       (m) => m.ephemeris === 'horizons',
       this.logScale,
       {
-        onSelectPlanet: (p) => this.select({ kind: 'planet', planet: p }, { focus: true }),
-        onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true }),
+        onSelectPlanet: (p) => this.select({ kind: 'planet', planet: p }, { focus: true, frame: true }),
+        onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true, frame: true }),
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -229,6 +250,8 @@ class SolarView implements View {
       },
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
+    this.ring = new SelectionMarker(pixelRatio);
+    renderer.scene.add(this.ring.points);
     this.detail = new DetailPanel(host.i18n, {
       onClose: () => this.select(undefined),
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
@@ -278,6 +301,10 @@ class SolarView implements View {
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
       t.scene = s ? quatRotate(this.sceneQ, map(s.posKm)) : undefined;
+      if (t.mesh) {
+        t.mesh.mesh.visible = !this.logScale && t.scene !== undefined;
+        if (t.scene) t.mesh.setSunDirection(normalize(scale(t.scene, -1)));
+      }
       this.probeMarkers.setColor(
         t.index,
         this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR,
@@ -293,6 +320,18 @@ class SolarView implements View {
         const pts = orbitPolyline(p.info, date, ORBIT_POINTS);
         p.orbit.geometry.setAttribute('position', new Float32BufferAttribute(mapPacked(pts, map), 3));
       }
+    }
+    if (this.pendingFrame) {
+      const pos = this.scenePositionOf(this.selection);
+      // Look from above the ecliptic so the object does not sit on top of the Sun.
+      // Aim between the Sun and the object so both are in view.
+      if (pos)
+        this.host.frameObject(pos, {
+          tiltRad: 50 * DEG_TO_RAD,
+          targetFraction: 0.5,
+          distanceKm: length(pos) * 1.9,
+        });
+      this.pendingFrame = false;
     }
     const trajectoriesKey = `${this.logScale}|${this.probes.map((t) => (t.entry ? 1 : 0)).join('')}|${this.probes.map((t) => t.sample.kind).join()}`;
     if (trajectoriesKey !== this.trajectoriesKey) {
@@ -318,10 +357,13 @@ class SolarView implements View {
       if (t.scene) {
         const r = rel(t.scene);
         this.probeMarkers.setPosition(t.index, r[0], r[1], r[2]);
+        t.mesh?.mesh.position.set(r[0], r[1], r[2]);
       } else {
         this.probeMarkers.hide(t.index);
       }
     }
+    const selected = this.scenePositionOf(this.selection);
+    this.ring.set(selected ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
     this.placeLabels();
@@ -373,6 +415,13 @@ class SolarView implements View {
     }
     this.planetMarkers.dispose();
     this.probeMarkers.dispose();
+    scene.remove(this.ring.points);
+    for (const t of this.probes) {
+      if (t.mesh) {
+        scene.remove(t.mesh.mesh);
+        t.mesh.dispose();
+      }
+    }
     this.labels.dispose();
     delete (window as { __perigeeTest?: unknown }).__perigeeTest;
   }
@@ -420,8 +469,19 @@ class SolarView implements View {
     const kind = t.sample.kind;
     t.line.visible = table !== undefined;
     if (!table) return;
-    const pts = new Float64Array(table.rows * 3);
-    for (let i = 0; i < table.rows; i++) pts.set(table.state(i).posKm, i * 3);
+    let pts: Float64Array;
+    const state = t.sample.state ?? t.track.lastState();
+    const periodS = state ? osculatingElements(state, GM_KM3_S2.sun).periodS : undefined;
+    if (t.natural && state && periodS) {
+      // Small bodies: one full osculating orbit (their ephemeris window covers only a small arc).
+      pts = new Float64Array((ORBIT_POINTS + 1) * 3);
+      for (let i = 0; i <= ORBIT_POINTS; i++) {
+        pts.set(propagateKepler(state, (i / ORBIT_POINTS) * periodS, GM_KM3_S2.sun).posKm, i * 3);
+      }
+    } else {
+      pts = new Float64Array(table.rows * 3);
+      for (let i = 0; i < table.rows; i++) pts.set(table.state(i).posKm, i * 3);
+    }
     t.line.geometry.setAttribute('position', new Float32BufferAttribute(mapPacked(pts, map), 3));
     const color = this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR;
     const dashed = kind === 'extrapolated';
@@ -462,7 +522,7 @@ class SolarView implements View {
       ...this.probes.map((t) => ({
         id: `m:${t.mission.id}`,
         text: t.mission.name[lang],
-        className: 'label-mission',
+        className: t.natural ? 'label-planet' : 'label-mission',
       })),
     ]);
   }
@@ -503,7 +563,7 @@ class SolarView implements View {
         0,
         w,
         hgt,
-        selected ? LabelPriority.Selected : LabelPriority.Orbiting,
+        selected ? LabelPriority.Selected : t.natural ? PLANET_PRIORITY : LabelPriority.Orbiting,
       );
     }
     this.labels.layout(w, hgt);
@@ -514,20 +574,24 @@ class SolarView implements View {
     if (!sel) return;
     const planet = PLANETS.find((x) => x.id === sel);
     if (planet) {
-      this.select({ kind: 'planet', planet });
+      this.select({ kind: 'planet', planet }, { frame: true });
       return;
     }
     const mission = this.missions.find((m) => m.id === sel);
-    if (mission) this.select({ kind: 'mission', mission });
+    if (mission) this.select({ kind: 'mission', mission }, { frame: true });
   }
 
-  private select(sel: Selection, options: { follow?: boolean; focus?: boolean } = {}): void {
+  private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
     const cur = this.selection;
     const same =
       (sel?.kind === 'planet' && cur?.kind === 'planet' && sel.planet.id === cur.planet.id) ||
       (sel?.kind === 'mission' && cur?.kind === 'mission' && sel.mission.id === cur.mission.id);
     if (!same) this.host.follow.stop();
     this.selection = sel;
+    this.panel.setSelected(
+      sel?.kind === 'planet' ? `planet:${sel.planet.id}` : sel ? `mission:${sel.mission.id}` : undefined,
+    );
+    this.pendingFrame = sel !== undefined && (options.frame ?? false) && !options.follow;
     if (!sel) this.detail.hide();
     else this.renderDetail(options.focus ?? false);
     if (sel && options.follow) this.startFollowing();
@@ -625,7 +689,12 @@ class SolarView implements View {
     if (m.agency) rows.push([t('info.agency'), m.agency]);
     if (m.country) rows.push([t('info.country'), countryName(i18n, m.country)]);
     if (m.launchDate) rows.push([t('info.launch'), m.launchDate]);
-    rows.push([t('info.status'), i18n.maybe(`mission.status.${m.status}`) ?? m.status]);
+    if (m.objectType === 'natural') {
+      if (m.radiusKm) rows.push([t('info.radius'), `${num(m.radiusKm)} km`]);
+      if (m.orbit) rows.push([t('info.orbit'), m.orbit[i18n.lang]]);
+    } else {
+      rows.push([t('info.status'), i18n.maybe(`mission.status.${m.status}`) ?? m.status]);
+    }
     if (m.phase) rows.push([t('info.phase'), m.phase[i18n.lang]]);
     if (m.nextEvent) {
       rows.push([
@@ -633,7 +702,8 @@ class SolarView implements View {
         `${m.nextEvent[i18n.lang]}${m.nextEvent.date ? ` (${m.nextEvent.date})` : ''}`,
       ]);
     }
-    if (m.horizonsId) rows.push([t('info.horizons'), m.horizonsId]);
+    // Small bodies use Horizons' "<number>;" syntax; show the number only.
+    if (m.horizonsId) rows.push([t('info.horizons'), m.horizonsId.replace(/;$/, '')]);
 
     const sample = probe?.sample;
     let badge: { text: string; state: BadgeState };

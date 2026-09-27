@@ -5,7 +5,7 @@ import { elementAgeDays, isStale, type SatObject } from '../earth/catalog';
 import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
-import { h } from './dom';
+import { h, sidePanel } from './dom';
 import { facetLabel, formatUtcDate } from './labels';
 
 export interface InfoPanelCallbacks {
@@ -36,8 +36,7 @@ export class InfoPanel {
   ) {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
-    this.element = h(
-      'aside',
+    this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'info-title', hidden: true },
       [
         h('div', { class: 'panel-header' }, [this.title, this.close]),

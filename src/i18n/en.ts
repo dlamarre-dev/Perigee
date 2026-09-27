@@ -188,6 +188,11 @@ export const en = {
   'info.phase': 'Phase',
   'info.next': 'Next event',
   'unit.years': 'yr',
+  'music.show': 'Soundtrack',
+  'music.hide': 'Hide the player',
+  'music.title': 'Soundtrack',
+  'music.frameTitle': 'SoundCloud player: NASA Explorers: Apollo Soundtrack',
+  'music.note': 'Player by SoundCloud, loaded only once opened.',
   'unit.days': 'd',
 } as const;
 

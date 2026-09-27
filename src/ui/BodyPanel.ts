@@ -4,7 +4,7 @@
  */
 import type { LandingSite, LandingSiteType, Mission } from '../data/schemas';
 import type { I18n, MessageKey } from '../i18n';
-import { h } from './dom';
+import { h, markCurrent, sidePanel } from './dom';
 import { formatUtcDate } from './labels';
 
 export interface BodyPanelCallbacks {
@@ -37,8 +37,7 @@ export class BodyPanel {
     private readonly callbacks: BodyPanelCallbacks,
   ) {
     this.sitesToggle.addEventListener('change', () => callbacks.onToggleSites(this.sitesToggle.checked));
-    this.element = h(
-      'aside',
+    this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'body-panel-title' },
       [
         this.title,
@@ -52,6 +51,28 @@ export class BodyPanel {
     );
     i18n.onChange(() => this.render());
     this.render();
+  }
+
+  private selectedKey: string | undefined;
+
+  /** Highlights the selection: "mission:<id>", "site:<id>" or "planet:<id>" (scrolls when it changes). */
+  setSelected(key: string | undefined): void {
+    const changed = key !== this.selectedKey;
+    this.selectedKey = key;
+    this.applySelected(changed);
+  }
+
+  private applySelected(scroll: boolean): void {
+    const key = this.selectedKey;
+    markCurrent(
+      this.element,
+      (el) =>
+        key !== undefined &&
+        ((el.dataset['mission'] !== undefined && `mission:${el.dataset['mission']}` === key) ||
+          (el.dataset['site'] !== undefined && `site:${el.dataset['site']}` === key) ||
+          (el.dataset['planet'] !== undefined && `planet:${el.dataset['planet']}` === key)),
+      scroll,
+    );
   }
 
   set visible(v: boolean) {
@@ -117,5 +138,6 @@ export class BodyPanel {
         ]);
       }),
     );
+    this.applySelected(false);
   }
 }

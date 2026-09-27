@@ -11,7 +11,8 @@ describe('curated catalogues', () => {
     const ids = missions.missions.map((m) => m.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const m of missions.missions.filter((x) => x.ephemeris === 'horizons')) {
-      expect(m.horizonsId, m.id).toMatch(/^-?\d+$/);
+      // Spacecraft and planetary IDs are integers; small bodies use Horizons' "<number>;" designation.
+      expect(m.horizonsId, m.id).toMatch(/^-?\d+;?$/);
       expect(m.sampling, m.id).toBeDefined();
     }
   });
