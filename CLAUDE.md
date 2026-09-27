@@ -291,9 +291,12 @@ Known statuses at end of September 2026 — **re-check before each release**:
   DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025). ICUBE-Q: presumed lost.
   **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to 2027. Artemis II flew
   1–10 April 2026 (ended).
-- Mars orbit (operational): Mars Odyssey, Mars Express, MRO, ExoMars TGO, Hope (EMM), Tianwen-1.
-  MAVEN: out of service (keep as "inactive", optionally displayable). ESCAPADE: cruising.
-  MMX (JAXA): launch planned October 2026.
+- Mars (verified 2026-09-27, details in `catalog/missions.json`): Mars Odyssey (−53, very low on propellant —
+  re-check), Mars Express (−41, extended June 2026), MRO (−74), ExoMars TGO (−143), Hope/EMM (−62, extended to
+  2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06, mission declared over
+  2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE Blue/Gold: launched
+  2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept 2027. MMX (JAXA):
+  launch 2026-10-19 19:41 UTC (H3 F10). Phobos (401) and Deimos (402) come from Horizons like the probes.
 - Interplanetary (view D, indicative list to confirm via Horizons): Voyager 1 and 2, New Horizons, Juno,
   Parker Solar Probe, Solar Orbiter, BepiColombo, JUICE, Europa Clipper, Psyche, Lucy, OSIRIS-APEX,
   Hera, Tianwen-2, Hayabusa2#, Aditya-L1, SOHO, JWST, Gaia (if still tracked), Euclid, ESCAPADE.

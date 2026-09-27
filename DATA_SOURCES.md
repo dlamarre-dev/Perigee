@@ -26,6 +26,19 @@ GitHub Actions (from milestone M1) and served from the same origin as the site.
 The pipeline (`pipeline/`) only fetches, validates (zod), reformats and compresses; it stops on any non-200
 response and never overwrites published data with a file under 50 % of the previous one.
 
+## In use (M3 — Mars view)
+
+| Dataset                                                                      | Source                                                                                                                                                          | Refresh                     | Published as            |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ----------------------- |
+| Orbiters, Phobos (401), Deimos (402) state vectors (ICRF, Mars-centred, TDB) | [NASA/JPL-Caltech Horizons](https://ssd.jpl.nasa.gov/horizons/)                                                                                                 | daily, 1 request per object | `data/ephem/<id>.bin`   |
+| Missions and statuses                                                        | Curated in `catalog/missions.json` (NASA, ESA, JAXA, UAE, CNSA sources)                                                                                         | reviewed by PR              | —                       |
+| Landing sites, rover positions                                               | Curated in `catalog/landing-sites/mars.json` (NASA GISS Mars24, NSSDCA, HiRISE, ESA; rover positions from NASA MMGIS waypoint feeds, dated)                     | reviewed by PR              | —                       |
+| Mars colour map                                                              | [USGS Astrogeology Viking MDIM2.1 colourised mosaic, 1 km/px](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m), public domain | offline                     | `public/textures/mars/` |
+| Mars orientation                                                             | IAU WGCCRE model via astronomy-engine `RotationAxis`                                                                                                            | —                           | —                       |
+
+Curiosity and Perseverance "last known" positions are snapshots (Sept 2026) and go stale; Mars 2/3/6 sites are
+predicted, never located.
+
 ## Launch sites (Earth view)
 
 `catalog/launch-sites.json`: 30 orbital spaceports with geodetic coordinates (mostly from Wikipedia articles, each entry
