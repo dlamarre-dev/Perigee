@@ -1,0 +1,110 @@
+import { describe, expect, it } from 'vitest';
+import { Astronomy } from '../src/astro/astronomy';
+import { bodyOrientationEqj, MOON_RADIUS_KM, moonToEarthKm } from '../src/astro/bodies';
+import { RAD_TO_DEG, SECONDS_PER_DAY } from '../src/astro/constants';
+import { EPHEM_ROW, EphemerisTable } from '../src/astro/hermite';
+import { GM_KM3_S2, osculatingElements, propagateKepler } from '../src/astro/kepler';
+import { quatConjugate, quatNorm, quatRotate } from '../src/astro/quat';
+import { length, sub, type Vec3 } from '../src/astro/vec3';
+
+const MU = GM_KM3_S2.moon;
+/** 100 km circular-ish polar lunar orbit, slightly eccentric, like LRO. */
+const initial = (() => {
+  const r = MOON_RADIUS_KM + 100;
+  const v = Math.sqrt(MU / r) * 1.01;
+  return { posKm: [r, 0, 0] as Vec3, velKmS: [0, v * 0.2, v * 0.98] as Vec3 };
+})();
+
+function syntheticTable(stepS: number, durationS: number, t0Jd = 2_461_310): EphemerisTable {
+  const n = Math.floor(durationS / stepS) + 1;
+  const data = new Float64Array(n * EPHEM_ROW);
+  for (let i = 0; i < n; i++) {
+    const s = propagateKepler(initial, i * stepS, MU);
+    data.set([t0Jd + (i * stepS) / SECONDS_PER_DAY, ...s.posKm, ...s.velKmS], i * EPHEM_ROW);
+  }
+  return new EphemerisTable(data);
+}
+
+describe('Kepler propagation', () => {
+  it('returns to the start after one period and conserves energy', () => {
+    const el = osculatingElements(initial, MU);
+    expect(el.periodS).toBeDefined();
+    const back = propagateKepler(initial, el.periodS ?? 0, MU);
+    expect(length(sub(back.posKm, initial.posKm))).toBeLessThan(1e-6);
+    const energy = (s: typeof initial) => length(s.velKmS) ** 2 / 2 - MU / length(s.posKm);
+    const later = propagateKepler(initial, 12_345, MU);
+    expect(Math.abs(energy(later) - energy(initial))).toBeLessThan(1e-10);
+  });
+
+  it('computes elements of the synthetic orbit', () => {
+    const el = osculatingElements(initial, MU);
+    expect(el.inclinationRad * RAD_TO_DEG).toBeCloseTo(78.46, 1);
+    expect(el.periapsisRadiusKm).toBeCloseTo(MOON_RADIUS_KM + 100, 3);
+    expect((el.periodS ?? 0) / 60).toBeGreaterThan(115);
+    expect((el.periodS ?? 0) / 60).toBeLessThan(125);
+  });
+
+  it('propagates backwards consistently', () => {
+    const fwd = propagateKepler(initial, 5000, MU);
+    const back = propagateKepler(fwd, -5000, MU);
+    expect(length(sub(back.posKm, initial.posKm))).toBeLessThan(1e-6);
+  });
+});
+
+describe('Hermite interpolation of ephemerides', () => {
+  it('reconstructs a Keplerian low lunar orbit to < 10 m with a 2 min step', () => {
+    const table = syntheticTable(120, 4 * 3600);
+    let maxErrKm = 0;
+    for (let tS = 0; tS <= 4 * 3600; tS += 7.3) {
+      const t = table.startTdbJd + tS / SECONDS_PER_DAY;
+      const got = table.interpolate(t);
+      const truth = propagateKepler(initial, tS, MU);
+      if (!got) throw new Error('outside table');
+      maxErrKm = Math.max(maxErrKm, length(sub(got.posKm, truth.posKm)));
+    }
+    expect(maxErrKm).toBeLessThan(0.01);
+  });
+
+  it('interpolates velocity too', () => {
+    const table = syntheticTable(120, 3600);
+    const tS = 1000;
+    const got = table.interpolate(table.startTdbJd + tS / SECONDS_PER_DAY);
+    const truth = propagateKepler(initial, tS, MU);
+    expect(length(sub(got?.velKmS ?? [0, 0, 0], truth.velKmS))).toBeLessThan(1e-4);
+  });
+
+  it('is exact at samples and undefined outside the table', () => {
+    const table = syntheticTable(120, 3600);
+    const s = table.state(5);
+    expect(length(sub(table.interpolate(table.time(5))?.posKm ?? [0, 0, 0], s.posKm))).toBeLessThan(1e-9);
+    expect(table.interpolate(table.endTdbJd + 1e-3)).toBeUndefined();
+  });
+
+  it('rejects malformed tables', () => {
+    expect(() => new EphemerisTable(new Float64Array(8))).toThrow();
+    const data = new Float64Array(14);
+    data[0] = 2;
+    data[7] = 1;
+    expect(() => new EphemerisTable(data)).toThrow();
+  });
+});
+
+describe('lunar rotation (IAU model)', () => {
+  it('returns a unit quaternion', () => {
+    expect(quatNorm(bodyOrientationEqj(Astronomy.Body.Moon, new Date()))).toBeCloseTo(1, 12);
+  });
+
+  it('puts the sub-Earth point at the optical libration given by astronomy-engine (< 1°)', () => {
+    for (const iso of ['2026-01-15T00:00:00Z', '2026-09-26T12:00:00Z', '2030-06-01T00:00:00Z']) {
+      const date = new Date(iso);
+      const q = bodyOrientationEqj(Astronomy.Body.Moon, date);
+      // Direction to the Earth in the Moon body-fixed frame.
+      const e = quatRotate(quatConjugate(q), moonToEarthKm(date));
+      const lonDeg = Math.atan2(e[1], e[0]) * RAD_TO_DEG;
+      const latDeg = Math.asin(e[2] / length(e)) * RAD_TO_DEG;
+      const lib = Astronomy.Libration(date);
+      expect(Math.abs(lonDeg - lib.elon), `longitude at ${iso}`).toBeLessThan(1);
+      expect(Math.abs(latDeg - lib.elat), `latitude at ${iso}`).toBeLessThan(1);
+    }
+  });
+});
