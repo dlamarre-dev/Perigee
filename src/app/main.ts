@@ -41,6 +41,7 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
   earth: () => import('../earth/EarthView').then((m) => m.createEarthView),
   moon: () => import('../moon/MoonView').then((m) => m.createMoonView),
   mars: () => import('../mars/MarsView').then((m) => m.createMarsView),
+  solar: () => import('../solar/SolarView').then((m) => m.createSolarView),
 };
 
 function main(): void {

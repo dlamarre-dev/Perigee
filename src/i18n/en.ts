@@ -16,6 +16,8 @@ export const en = {
   'view.earth': 'Earth',
   'view.moon': 'Moon',
   'view.mars': 'Mars',
+  'view.solar': 'Solar system',
+  'toolbar.frame.fixed.solar': 'Ecliptic',
   'toolbar.frame.fixed.mars': 'Mars-fixed',
   'toolbar.language': 'Language',
   'toolbar.about': 'About',
@@ -169,6 +171,24 @@ export const en = {
   'mars.panel': 'Around Mars',
   'mars.sites': 'Landing sites',
   'mars.showSites': 'Show sites on Mars',
+
+  'solar.loading': 'Loading spacecraft ephemerides…',
+  'solar.unavailable': 'Spacecraft ephemerides are unavailable right now.',
+  'solar.panel': 'Solar system',
+  'solar.planets': 'Planets',
+  'solar.probes': 'Spacecraft',
+  'solar.dwarf': 'dwarf planet',
+  'solar.logScale': 'Logarithmic distances (not to scale)',
+  'solar.logWarning': 'Logarithmic distance scale: positions are not to scale.',
+  'info.distSun': 'Distance to the Sun',
+  'info.distEarth': 'Distance to the Earth',
+  'info.lightTime': 'light time',
+  'info.speedSun': 'Heliocentric speed',
+  'info.orbitalPeriod': 'Orbital period',
+  'info.phase': 'Phase',
+  'info.next': 'Next event',
+  'unit.years': 'yr',
+  'unit.days': 'd',
 } as const;
 
 export type MessageKey = keyof typeof en;

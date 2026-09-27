@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-26",
+  "verified": "2026-09-27",
   "missions": [
     {
       "id": "lro",
@@ -803,6 +803,1001 @@
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Deimos"
       ]
+    },
+    {
+      "id": "voyager-1",
+      "name": {
+        "en": "Voyager 1",
+        "fr": "Voyager 1"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1977-09-05",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Interstellar mission, power-saving operations",
+        "fr": "Mission interstellaire, exploitation en mode économie d'énergie"
+      },
+      "nextEvent": {
+        "en": "'Big Bang' power-management reconfiguration (under way, completion expected in the coming months)",
+        "fr": "Reconfiguration énergétique « Big Bang » (en cours, achèvement prévu dans les prochains mois)",
+        "date": "2026"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-31",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "LECP instrument switched off on 2026-04-17; only the plasma wave instrument and magnetometer remain on. The same 'Big Bang' procedure tested on Voyager 2 is being applied; if it succeeds, LECP could be switched back on.",
+        "fr": "Instrument LECP éteint le 2026-04-17 ; seuls l'instrument d'ondes de plasma et le magnétomètre restent allumés. La procédure « Big Bang » testée sur Voyager 2 est en cours d'application ; en cas de succès, le LECP pourrait être rallumé."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/voyager/2026/04/17/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
+        "https://www.jpl.nasa.gov/news/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
+        "https://science.nasa.gov/blogs/voyager/2026/08/04/nasa-engineers-help-prolong-voyager-2s-science-mission/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Voyager%201"
+      ]
+    },
+    {
+      "id": "voyager-2",
+      "name": {
+        "en": "Voyager 2",
+        "fr": "Voyager 2"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1977-08-20",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Interstellar mission, three instruments operating",
+        "fr": "Mission interstellaire, trois instruments en service"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-32",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "LECP switched off in March 2025. The 'Big Bang' power reconfiguration (tests May-June, executed July 2026, announced 2026-08-04) keeps three science instruments on (magnetometer, plasma wave, cosmic ray) for at least one more year.",
+        "fr": "LECP éteint en mars 2025. La reconfiguration énergétique « Big Bang » (essais mai-juin, exécutée en juillet 2026, annoncée le 2026-08-04) garde trois instruments scientifiques allumés (magnétomètre, ondes de plasma, rayons cosmiques) pour au moins un an de plus."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/voyager/2026/08/04/nasa-engineers-help-prolong-voyager-2s-science-mission/",
+        "https://science.nasa.gov/blogs/voyager/2026/04/17/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Voyager%202"
+      ]
+    },
+    {
+      "id": "new-horizons",
+      "name": {
+        "en": "New Horizons",
+        "fr": "New Horizons"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2006-01-19",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Kuiper Belt extended mission (heliophysics focus)",
+        "fr": "Mission étendue dans la ceinture de Kuiper (orientée héliophysique)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-98",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Beyond 60 AU. Woke from its longest hibernation in good health (July 2026). Extended until it exits the Kuiper Belt (~2028-2029); a further KBO flyby remains possible if a target is found. No end date announced.",
+        "fr": "Au-delà de 60 UA. Sorti en bonne santé de sa plus longue hibernation (juillet 2026). Mission prolongée jusqu'à la sortie de la ceinture de Kuiper (~2028-2029) ; un nouveau survol d'objet de Kuiper reste possible si une cible est trouvée. Aucune date de fin annoncée."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/new-horizons/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=New%20Horizons"
+      ]
+    },
+    {
+      "id": "juno",
+      "name": {
+        "en": "Juno",
+        "fr": "Juno"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2011-08-05",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Jupiter orbit, second extended mission (rings and inner moons)",
+        "fr": "Orbite jovienne, deuxième mission étendue (anneaux et lunes internes)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-61",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Still operating in 2026: imaged the inner moon Thebe on 2026-05-01. Mission status was uncertain in late 2025 (FY2026 budget request zeroed it; first extension ended 2025-09-30). Wikipedia states a 3-year second extended mission began October 2025 (to ~September 2028) and that no deorbit is planned; NASA's mission page still shows the old 'through September 2025' text. No deliberate plunge into Jupiter is announced.",
+        "fr": "Toujours en service en 2026 : image de la lune interne Thébé le 2026-05-01. Statut incertain fin 2025 (financement supprimé dans la demande budgétaire FY2026 ; première extension terminée le 2025-09-30). Wikipédia indique une deuxième mission étendue de 3 ans depuis octobre 2025 (jusqu'à ~septembre 2028) sans désorbitation prévue ; la page NASA affiche encore « jusqu'en septembre 2025 ». Aucune plongée volontaire dans Jupiter n'est annoncée."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/photojournal/nasas-juno-misson-captures-jupiter-moon-thebe/",
+        "https://science.nasa.gov/mission/juno/",
+        "https://en.wikipedia.org/wiki/Juno_(spacecraft)",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Juno"
+      ]
+    },
+    {
+      "id": "parker-solar-probe",
+      "name": {
+        "en": "Parker Solar Probe",
+        "fr": "Sonde solaire Parker"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2018-08-12",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Extended mission, closest-approach orbit (~6.1 million km)",
+        "fr": "Mission étendue, orbite de passage au plus près (~6,1 millions de km)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-96",
+      "sampling": {
+        "stepMin": 360,
+        "pastDays": 30,
+        "futureDays": 120
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "29th perihelion on 2026-09-04 (3.8 million miles, 430,000 mph), healthy beacon 2026-09-07. Extended into 2029 by the 2026 Heliophysics Senior Review. Perihelia recur roughly every 88 days (next date not confirmed by an opened source).",
+        "fr": "29e périhélie le 2026-09-04 (6,1 millions de km, 692 000 km/h), signal de bonne santé le 2026-09-07. Prolongée jusqu'en 2029 par la revue héliophysique de 2026. Périhélies environ tous les 88 jours (prochaine date non confirmée par une source consultée)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/parker-solar-probe/2026/09/10/after-latest-swing-past-sun-nasas-parker-solar-probe-checks-in/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Parker%20Solar%20Probe"
+      ]
+    },
+    {
+      "id": "solar-orbiter",
+      "name": {
+        "en": "Solar Orbiter",
+        "fr": "Solar Orbiter"
+      },
+      "agency": "ESA / NASA",
+      "country": "eu",
+      "launchDate": "2020-02-10",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Science phase, raising orbital inclination",
+        "fr": "Phase scientifique, relèvement de l'inclinaison orbitale"
+      },
+      "nextEvent": {
+        "en": "Venus gravity assist: inclination to 24°, start of high-latitude mission",
+        "fr": "Assistance gravitationnelle de Vénus : inclinaison portée à 24°, début de la mission à haute latitude",
+        "date": "2026-12-24"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-144",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mission extension approved by ESA's Science Programme Committee (June 2026). Further Venus flybys 2028-03-18, 2029-06-10, 2030-09-02 raise inclination to 33°. Next perihelion 2027-02-06 (0.28 AU).",
+        "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA (juin 2026). Survols de Vénus suivants 2028-03-18, 2029-06-10, 2030-09-02 pour atteindre 33° d'inclinaison. Prochain périhélie 2027-02-06 (0,28 UA)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Solar_Orbiter/Solar_Orbiter_perihelia_and_flybys",
+        "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Solar%20Orbiter"
+      ]
+    },
+    {
+      "id": "bepicolombo",
+      "name": {
+        "en": "BepiColombo",
+        "fr": "BepiColombo"
+      },
+      "agency": "ESA / JAXA",
+      "country": "eu",
+      "launchDate": "2018-10-20",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Mercury arrival phase (transfer module jettisoned)",
+        "fr": "Phase d'arrivée à Mercure (module de transfert largué)"
+      },
+      "nextEvent": {
+        "en": "Mercury orbit insertion",
+        "fr": "Insertion en orbite de Mercure",
+        "date": "2026-11-21"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-121",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mercury Transfer Module separated 2026-09-03, all systems nominal. MPO (ESA) and Mio (JAXA) separate 2026-12-09/10; science phase from April 2027. Arrival had been delayed from 2025 by a 2024 thruster power anomaly.",
+        "fr": "Module de transfert séparé le 2026-09-03, systèmes nominaux. Séparation de MPO (ESA) et Mio (JAXA) les 2026-12-09/10 ; phase scientifique à partir d'avril 2027. Arrivée retardée de 2025 par une anomalie d'alimentation des propulseurs en 2024."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/BepiColombo/Latest_updates_BepiColombo_s_arrival_at_Mercury",
+        "https://www.esa.int/Enabling_Support/Operations/BepiColombo_begins_Mercury_arrival_with_MTM_separation_success",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=BepiColombo"
+      ]
+    },
+    {
+      "id": "juice",
+      "name": {
+        "en": "JUICE",
+        "fr": "JUICE"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2023-04-14",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to Jupiter, arrival July 2031",
+        "fr": "Croisière vers Jupiter, arrivée en juillet 2031"
+      },
+      "nextEvent": {
+        "en": "Earth gravity assist at 8,640 km (11:45 UTC)",
+        "fr": "Assistance gravitationnelle de la Terre à 8 640 km (11 h 45 UTC)",
+        "date": "2026-09-28"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-28",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Third gravity assist; instruments on from 23 Sept to 3 Oct for Earth/Moon calibration; eclipse in Earth's shadow night of 27-28 Sept. Final Earth flyby January 2029, Ganymede orbit 2034.",
+        "fr": "Troisième assistance gravitationnelle ; instruments allumés du 23 sept. au 3 oct. pour calibration sur la Terre et la Lune ; passage dans l'ombre de la Terre la nuit du 27 au 28 sept. Dernier survol de la Terre en janvier 2029, orbite de Ganymède en 2034."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Juice/Juice_to_fly_past_Earth_for_third_gravity_assist",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=JUICE"
+      ]
+    },
+    {
+      "id": "europa-clipper",
+      "name": {
+        "en": "Europa Clipper",
+        "fr": "Europa Clipper"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2024-10-14",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to Jupiter, arrival April 2030",
+        "fr": "Croisière vers Jupiter, arrivée en avril 2030"
+      },
+      "nextEvent": {
+        "en": "Earth gravity assist",
+        "fr": "Assistance gravitationnelle de la Terre",
+        "date": "2026-12-03"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-159",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mars flyby 2025-03-01. The Earth flyby (~3,200 km) also allows the only post-launch absolute magnetometer calibration. 49 Europa flybys planned.",
+        "fr": "Survol de Mars le 2025-03-01. Le survol de la Terre (~3 200 km) permet aussi la seule calibration absolue du magnétomètre après le lancement. 49 survols d'Europe prévus."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/europa-clipper/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Europa%20Clipper"
+      ]
+    },
+    {
+      "id": "psyche",
+      "name": {
+        "en": "Psyche",
+        "fr": "Psyché"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2023-10-13",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to asteroid Psyche, arrival summer 2029",
+        "fr": "Croisière vers l'astéroïde Psyché, arrivée à l'été 2029"
+      },
+      "nextEvent": {
+        "en": "Resume sustained solar-electric thrusting",
+        "fr": "Reprise de la poussée électrique solaire continue",
+        "date": "2026"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-255",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mars gravity assist 2026-05-15 at 4,609 km; all three instruments tested successfully. Thrusting resumes 'later this fall' (2026).",
+        "fr": "Assistance gravitationnelle de Mars le 2026-05-15 à 4 609 km ; les trois instruments testés avec succès. Reprise de la poussée « plus tard cet automne » (2026)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/psyche/2026/07/17/nasas-psyche-mission-delivers-mars-flyby-data-time-lapse-video/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Psyche"
+      ]
+    },
+    {
+      "id": "lucy",
+      "name": {
+        "en": "Lucy",
+        "fr": "Lucy"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2021-10-16",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to the L4 Jupiter Trojans",
+        "fr": "Croisière vers les Troyens de Jupiter (L4)"
+      },
+      "nextEvent": {
+        "en": "Flyby of Trojan (3548) Eurybates and its moon Queta",
+        "fr": "Survol du Troyen (3548) Eurybates et de sa lune Queta",
+        "date": "2027-08-12"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-49",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Camera tests on future targets in spring 2026. Then Polymele 2027-09-15, Leucus 2028-04-18, Orus 2028-11-11, Patroclus-Menoetius 2033-03-03. Past: Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20.",
+        "fr": "Essais de caméra sur les futures cibles au printemps 2026. Ensuite Polymèle 2027-09-15, Leucos 2028-04-18, Orus 2028-11-11, Patrocle-Ménoetios 2033-03-03. Déjà survolés : Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/lucy/2026/08/06/nasas-lucy-begins-camera-tests-ahead-of-2027-trojan-flybys/",
+        "https://lucy.swri.edu/mission/Tour.html",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Lucy"
+      ]
+    },
+    {
+      "id": "osiris-apex",
+      "name": {
+        "en": "OSIRIS-APEX",
+        "fr": "OSIRIS-APEX"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2016-09-08",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to asteroid Apophis, arrival April 2029",
+        "fr": "Croisière vers l'astéroïde Apophis, arrivée en avril 2029"
+      },
+      "nextEvent": {
+        "en": "Apophis close Earth approach; rendezvous about a week later",
+        "fr": "Passage rapproché d'Apophis près de la Terre ; rendez-vous environ une semaine après",
+        "date": "2029-04-13"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-64",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Former OSIRIS-REx (Bennu samples returned 2023). Earth gravity assist 2025-09-23 at 3,438 km, first of three. Planned 1.5-year stay at Apophis.",
+        "fr": "Ex-OSIRIS-REx (échantillons de Bénou rapportés en 2023). Assistance gravitationnelle de la Terre le 2025-09-23 à 3 438 km, la première de trois. Séjour prévu de 18 mois auprès d'Apophis."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.planetary.org/space-missions/osiris-apex",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=OSIRIS-REx"
+      ]
+    },
+    {
+      "id": "hera",
+      "name": {
+        "en": "Hera",
+        "fr": "Hera"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2024-10-07",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Final approach to Didymos-Dimorphos",
+        "fr": "Approche finale de Didymos-Dimorphos"
+      },
+      "nextEvent": {
+        "en": "Arrival at the Didymos binary asteroid",
+        "fr": "Arrivée à l'astéroïde double Didymos",
+        "date": "2026-11"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-91",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "ESA targets arrival in November 2026, a month earlier than planned (an older ESA ops page mentions an 'impulsive rendezvous' in October 2026). Second deep-space manoeuvre March 2026 (367 m/s). Six-month survey of DART's impact aftermath; releases CubeSats Milani and Juventas.",
+        "fr": "L'ESA vise une arrivée en novembre 2026, un mois plus tôt que prévu (une page ESA plus ancienne mentionne un « rendez-vous impulsif » en octobre 2026). Deuxième manœuvre en espace lointain en mars 2026 (367 m/s). Étude de six mois des suites de l'impact de DART ; largage des CubeSats Milani et Juventas."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Space_Safety/Hera/ESA_s_Hera_targets_early_arrival_at_Didymos_asteroids",
+        "https://www.esa.int/Enabling_Support/Operations/Hera_operations",
+        "https://en.wikipedia.org/wiki/Hera_(space_mission)",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Hera"
+      ]
+    },
+    {
+      "id": "tianwen-2",
+      "name": {
+        "en": "Tianwen-2",
+        "fr": "Tianwen-2"
+      },
+      "agency": "CNSA",
+      "country": "cn",
+      "launchDate": "2025-05-28",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Proximity operations at asteroid Kamoʻoalewa",
+        "fr": "Opérations de proximité à l'astéroïde Kamoʻoalewa"
+      },
+      "nextEvent": {
+        "en": "Sampling, then departure from Kamoʻoalewa",
+        "fr": "Échantillonnage, puis départ de Kamoʻoalewa",
+        "date": "2027-04"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Rendezvous 2026-06-07 (announced by CNSA 2026-07-06). Mapping and site selection July 2026-April 2027; sample (200-1000 g) by end of April 2027, departure ~2027-04-24. Earth flyby with capsule release November 2027, then cruise to main-belt comet 311P (~2035). Launch: 2025-05-29 Beijing time (17:31 UTC on 05-28).",
+        "fr": "Rendez-vous le 2026-06-07 (annoncé par la CNSA le 2026-07-06). Cartographie et choix du site juillet 2026-avril 2027 ; échantillon (200-1000 g) d'ici fin avril 2027, départ vers le 2027-04-24. Survol de la Terre avec largage de la capsule en novembre 2027, puis croisière vers la comète 311P (~2035). Lancement : 2025-05-29 heure de Pékin (17 h 31 UTC le 05-28)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.planetary.org/articles/chinas-tianwen-2-mission-has-probably-arrived-at-a-quasi-moon-of-earth",
+        "https://spacenews.com/tianwen-2-arrives-at-asteroid-kamooalewa-first-image-revealed/"
+      ]
+    },
+    {
+      "id": "hayabusa2",
+      "name": {
+        "en": "Hayabusa2 (Hayabusa2#)",
+        "fr": "Hayabusa2 (Hayabusa2#)"
+      },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2014-12-03",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Extended mission, cruise to 1998 KY26 (arrival 2031)",
+        "fr": "Mission étendue, croisière vers 1998 KY26 (arrivée en 2031)"
+      },
+      "nextEvent": {
+        "en": "Earth swing-by",
+        "fr": "Assistance gravitationnelle de la Terre",
+        "date": "2027"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-37",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Flew past asteroid Torifune (2001 CC21) on 2026-07-05 at ~400 m, the closest flyby of any Solar System body; first laser ranging during an asteroid flyby. Earth swing-bys 2027 and 2028.",
+        "fr": "Survol de l'astéroïde Torifune (2001 CC21) le 2026-07-05 à ~400 m, le survol le plus rapproché d'un corps du Système solaire ; première télémétrie laser lors d'un survol d'astéroïde. Assistances gravitationnelles de la Terre en 2027 et 2028."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://global.jaxa.jp/press/2026/07/20260730-1_e.html",
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hayabusa2.html",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Hayabusa%202"
+      ]
+    },
+    {
+      "id": "aditya-l1",
+      "name": {
+        "en": "Aditya-L1",
+        "fr": "Aditya-L1"
+      },
+      "agency": "ISRO",
+      "country": "in",
+      "launchDate": "2023-09-02",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Solar observatory in halo orbit around Sun-Earth L1",
+        "fr": "Observatoire solaire en orbite de halo autour de L1 Soleil-Terre"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-156",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Halo orbit insertion 2024-01-06. Operating: ISRO science release dated 2026-08-28; first guest-observer (AO) cycle April-June 2026. No end date published.",
+        "fr": "Insertion en orbite de halo le 2024-01-06. En service : communiqué scientifique de l'ISRO daté du 2026-08-28 ; premier cycle d'appel à propositions avril-juin 2026. Aucune date de fin publiée."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.isro.gov.in/Aditya_L1_Catches_the_Suns_Early_Warning_Signs.html",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Aditya-L1"
+      ]
+    },
+    {
+      "id": "soho",
+      "name": {
+        "en": "SOHO",
+        "fr": "SOHO"
+      },
+      "agency": "ESA / NASA",
+      "country": "eu",
+      "launchDate": "1995-12-02",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Extended mission at Sun-Earth L1",
+        "fr": "Mission étendue au point L1 Soleil-Terre"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-21",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Extension endorsed by ESA's Science Programme Committee on 10-11 June 2026 (13 missions). End date of the new extension not stated in the opened source.",
+        "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA les 10-11 juin 2026 (13 missions). Date de fin de la nouvelle extension non précisée dans la source consultée."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=SOHO"
+      ]
+    },
+    {
+      "id": "jwst",
+      "name": {
+        "en": "James Webb Space Telescope",
+        "fr": "Télescope spatial James-Webb"
+      },
+      "agency": "NASA / ESA / CSA",
+      "country": "us",
+      "launchDate": "2021-12-25",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Science operations at Sun-Earth L2 (Cycle 5)",
+        "fr": "Opérations scientifiques au point L2 Soleil-Terre (cycle 5)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-170",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Arrived at L2 2022-01-24; science since July 2022. Cycle 5 began July 2026 (STScI). ESA extended its Webb participation in June 2026.",
+        "fr": "Arrivé en L2 le 2022-01-24 ; science depuis juillet 2022. Cycle 5 commencé en juillet 2026 (STScI). L'ESA a prolongé sa participation à Webb en juin 2026."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/webb/",
+        "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=JWST"
+      ]
+    },
+    {
+      "id": "gaia",
+      "name": {
+        "en": "Gaia",
+        "fr": "Gaia"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2013-12-19",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired, passivated in heliocentric orbit",
+        "fr": "Retiré, passivé en orbite héliocentrique"
+      },
+      "nextEvent": {
+        "en": "Gaia Data Release 4 (data only; spacecraft silent)",
+        "fr": "Publication des données Gaia DR4 (données seulement ; satellite muet)",
+        "date": "2026"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-139479",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Confirmed: passivated and switched off 2025-03-27 after being moved from L2 to a heliocentric retirement orbit keeping it >10 million km from Earth for at least a century. Final legacy catalogue not before end of 2030. Not trackable (no ephemeris updates).",
+        "fr": "Confirmé : passivé et éteint le 2025-03-27 après avoir quitté L2 pour une orbite héliocentrique de retraite qui le maintient à plus de 10 millions de km de la Terre pendant au moins un siècle. Catalogue final pas avant fin 2030. Plus suivi (pas de mise à jour d'éphémérides)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Enabling_Support/Operations/Farewell_Gaia!_Spacecraft_operations_come_to_an_end",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Gaia"
+      ]
+    },
+    {
+      "id": "euclid",
+      "name": {
+        "en": "Euclid",
+        "fr": "Euclid"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2023-07-01",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Wide Survey at Sun-Earth L2",
+        "fr": "Relevé grand champ au point L2 Soleil-Terre"
+      },
+      "nextEvent": {
+        "en": "Data Release 1 - Foundation (~1,900 deg²)",
+        "fr": "Publication DR1-Foundation (~1 900 deg²)",
+        "date": "2026-11"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-680",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Quick release Q2 (Galactic Bulge) on 2026-06-24; complete DR1 mid-2027. Still in its prime science phase (not part of the June 2026 extension round).",
+        "fr": "Publication rapide Q2 (bulbe galactique) le 2026-06-24 ; DR1 complète mi-2027. Toujours en phase scientifique nominale (hors du cycle d'extension de juin 2026)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.cosmos.esa.int/web/euclid/dr1-timeline",
+        "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Euclid"
+      ]
+    },
+    {
+      "id": "dart",
+      "name": {
+        "en": "DART",
+        "fr": "DART"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2021-11-24",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended by design: impacted Dimorphos",
+        "fr": "Terminée comme prévu : impact sur Dimorphos"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Kinetic impact on Dimorphos 2022-09-26 (launch 2021-11-23 PST). Aftermath to be surveyed by ESA's Hera from late 2026. Show only as a historical marker, no trajectory after impact.",
+        "fr": "Impact cinétique sur Dimorphos le 2022-09-26 (lancement le 2021-11-23 heure du Pacifique). Suites étudiées par Hera (ESA) à partir de fin 2026. À afficher seulement comme repère historique, sans trajectoire après l'impact."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://science.nasa.gov/mission/dart/"]
+    },
+    {
+      "id": "imap",
+      "name": {
+        "en": "IMAP",
+        "fr": "IMAP"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2025-09-24",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Science operations at Sun-Earth L1",
+        "fr": "Opérations scientifiques au point L1 Soleil-Terre"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-43",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Entered final L1 orbit 2026-01-10; science mission began 2026-02-01. Maps the heliosphere boundary. Launched with Carruthers and SWFO-L1.",
+        "fr": "Orbite finale en L1 atteinte le 2026-01-10 ; mission scientifique depuis le 2026-02-01. Cartographie la frontière de l'héliosphère. Lancé avec Carruthers et SWFO-L1."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=IMAP"
+      ]
+    },
+    {
+      "id": "carruthers",
+      "name": {
+        "en": "Carruthers Geocorona Observatory",
+        "fr": "Observatoire de la géocouronne Carruthers"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2025-09-24",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Primary science mission at Sun-Earth L1 (24 months)",
+        "fr": "Mission scientifique principale au point L1 Soleil-Terre (24 mois)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-171",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "Reached L1 orbit 2026-01-08; 24-month primary mission started 2026-03-01 (to ~March 2028). Images Earth's hydrogen exosphere in ultraviolet.",
+        "fr": "Orbite en L1 atteinte le 2026-01-08 ; mission principale de 24 mois depuis le 2026-03-01 (jusqu'à ~mars 2028). Image l'exosphère d'hydrogène de la Terre en ultraviolet."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/blogs/carruthers-geocorona-observatory/2026/03/02/nasas-carruthers-geocorona-observatory-begins-primary-science-mission/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Carruthers"
+      ]
+    },
+    {
+      "id": "solar-1",
+      "name": {
+        "en": "SOLAR-1 (ex-SWFO-L1)",
+        "fr": "SOLAR-1 (ex-SWFO-L1)"
+      },
+      "agency": "NOAA",
+      "country": "us",
+      "launchDate": "2025-09-24",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Operational space-weather monitoring at Sun-Earth L1",
+        "fr": "Surveillance opérationnelle de la météo spatiale au point L1 Soleil-Terre"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Final L1 burn 2026-01-23, renamed SOLAR-1. NOAA said operational service would begin in spring 2026; a secondary search result reports full operations from 2026-06-10 (not confirmed on an opened NOAA page).",
+        "fr": "Dernière manœuvre en L1 le 2026-01-23, renommé SOLAR-1. La NOAA annonçait un service opérationnel au printemps 2026 ; un résultat secondaire indique un fonctionnement complet depuis le 2026-06-10 (non confirmé sur une page NOAA consultée)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.nesdis.noaa.gov/news/swfo-l1-renamed-solar-1-reaches-final-destination-one-million-miles-earth"
+      ]
+    },
+    {
+      "id": "stereo-a",
+      "name": {
+        "en": "STEREO-A",
+        "fr": "STEREO-A"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2006-10-26",
+      "centralBody": "sun",
+      "status": "active",
+      "phase": {
+        "en": "Heliocentric solar observatory, extended mission",
+        "fr": "Observatoire solaire héliocentrique, mission étendue"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-234",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "notes": {
+        "en": "STEREO-A remains active; STEREO-B lost in 2014. Earth-trailing/leading heliocentric orbit, useful for side views of the Sun.",
+        "fr": "STEREO-A reste actif ; STEREO-B perdu en 2014. Orbite héliocentrique proche de celle de la Terre, utile pour voir le Soleil de côté."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/stereo/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=STEREO-A"
+      ]
+    },
+    {
+      "id": "neo-surveyor",
+      "name": {
+        "en": "NEO Surveyor",
+        "fr": "NEO Surveyor"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "centralBody": "sun",
+      "status": "planned",
+      "phase": {
+        "en": "In development; infrared survey telescope bound for Sun-Earth L1",
+        "fr": "En développement ; télescope infrarouge de relevé destiné à L1 Soleil-Terre"
+      },
+      "nextEvent": {
+        "en": "Launch on Falcon 9 (no earlier than)",
+        "fr": "Lancement sur Falcon 9 (au plus tôt)",
+        "date": "2027-09"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Launch NET September 2027. Not displayed in 3D until launched.",
+        "fr": "Lancement au plus tôt en septembre 2027. Pas d'affichage 3D avant le lancement."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://science.nasa.gov/mission/neo-surveyor/"]
+    },
+    {
+      "id": "ema-mbr-explorer",
+      "name": {
+        "en": "Emirates Mission to the Asteroid Belt (MBR Explorer)",
+        "fr": "Mission émiratie vers la ceinture d'astéroïdes (MBR Explorer)"
+      },
+      "agency": "UAE Space Agency / MBRSC",
+      "country": "ae",
+      "centralBody": "sun",
+      "status": "planned",
+      "phase": {
+        "en": "Assembly, integration and test",
+        "fr": "Assemblage, intégration et essais"
+      },
+      "nextEvent": {
+        "en": "Launch on H3 (first quarter)",
+        "fr": "Lancement sur H3 (premier trimestre)",
+        "date": "2028"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Six main-belt asteroid flybys and a lander at a seventh ~2034; gravity assists at Venus, Earth, Mars. Other sources give March 2028.",
+        "fr": "Six survols d'astéroïdes de la ceinture principale et un atterrisseur sur un septième vers 2034 ; assistances de Vénus, de la Terre et de Mars. D'autres sources indiquent mars 2028."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.thenationalnews.com/news/uae/2026/04/27/uaes-mbr-explorer-mission-to-asteroid-belt-on-track-for-2028-launch-as-tests-begin/"
+      ]
+    },
+    {
+      "id": "destiny-plus",
+      "name": {
+        "en": "DESTINY+",
+        "fr": "DESTINY+"
+      },
+      "agency": "JAXA",
+      "country": "jp",
+      "centralBody": "sun",
+      "status": "planned",
+      "phase": {
+        "en": "In development; Phaethon flyby mission",
+        "fr": "En développement ; mission de survol de Phaéton"
+      },
+      "nextEvent": {
+        "en": "Launch on H3 (Japanese fiscal year 2028)",
+        "fr": "Lancement sur H3 (exercice japonais 2028)",
+        "date": "2028"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Moved from Epsilon S (2025) to H3 (FY2028) after the 2023 Epsilon S motor test failure. Phaethon flyby FY2030; Apophis observation 2029 also planned.",
+        "fr": "Passée d'Epsilon S (2025) à H3 (exercice 2028) après l'échec d'essai moteur d'Epsilon S en 2023. Survol de Phaéton en exercice 2030 ; observation d'Apophis en 2029 aussi prévue."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://destiny.isas.jaxa.jp/2024-10-15-15-26"]
+    },
+    {
+      "id": "comet-interceptor",
+      "name": {
+        "en": "Comet Interceptor",
+        "fr": "Comet Interceptor"
+      },
+      "agency": "ESA / JAXA",
+      "country": "eu",
+      "centralBody": "sun",
+      "status": "planned",
+      "phase": {
+        "en": "In construction; will wait at Sun-Earth L2 for a pristine comet",
+        "fr": "En construction ; attendra en L2 Soleil-Terre une comète vierge"
+      },
+      "nextEvent": {
+        "en": "Launch (late 2028 or early 2029, with Ariel)",
+        "fr": "Lancement (fin 2028 ou début 2029, avec Ariel)",
+        "date": "2029"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Three spacecraft (main + two probes, one from JAXA). Target not yet selected by design.",
+        "fr": "Trois engins (principal + deux sondes, dont une de la JAXA). Cible volontairement non choisie à l'avance."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"]
     }
   ]
 }

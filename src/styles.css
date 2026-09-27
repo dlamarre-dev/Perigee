@@ -733,3 +733,8 @@ input[type='checkbox'] {
     transition: none;
   }
 }
+
+.label-planet {
+  border-left-color: #ffd27a;
+  color: #ffe9b8;
+}

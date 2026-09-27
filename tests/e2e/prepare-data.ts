@@ -123,3 +123,29 @@ await publishEphemerides(
     bytes: float64LittleEndian(rows as Float64Array),
   })),
 );
+
+// Synthetic heliocentric "voyager-1" (hyperbolic escape, ~168 AU) around the frozen time — view D fixture.
+const AU = 149_597_870.7;
+const voyager: number[] = [];
+for (let k = -60; k <= 365; k++) {
+  const s = propagateKepler(
+    { posKm: [168 * AU, 0, 20 * AU], velKmS: [16.9, 0.5, 1.5] },
+    k * 86_400,
+    GM_KM3_S2.sun,
+  );
+  voyager.push(centreTdbJd + k, ...s.posKm, ...s.velKmS);
+}
+const voyagerRows = Float64Array.from(voyager);
+await publishEphemerides(dataDir, [
+  {
+    missionId: 'voyager-1',
+    horizonsId: '-31',
+    center: '500@10',
+    centralBody: 'sun',
+    stepMin: 1440,
+    source: 'fixture (synthetic Kepler orbit)',
+    fetchedAt,
+    rows: voyagerRows,
+    bytes: float64LittleEndian(voyagerRows),
+  },
+]);

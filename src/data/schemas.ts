@@ -103,6 +103,8 @@ const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i);
 const localized = z.object({ en: z.string(), fr: z.string() });
 const iso2 = z.string().regex(/^[a-z]{2}$/);
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+/** ISO date at the precision the source gives: YYYY, YYYY-MM or YYYY-MM-DD. */
+const partialDate = z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/);
 
 export const MissionStatusSchema = z.enum(['active', 'inactive', 'ended', 'cruise', 'planned', 'unknown']);
 export type MissionStatus = z.infer<typeof MissionStatusSchema>;
@@ -122,6 +124,10 @@ export const MissionSchema = z.object({
   status: MissionStatusSchema,
   /** Orbit description, e.g. "low polar", "NRHO". */
   orbit: localized.optional(),
+  /** Current mission phase, e.g. "cruise to Jupiter". */
+  phase: localized.optional(),
+  /** Next key event (flyby, arrival…), with its date when known. */
+  nextEvent: localized.extend({ date: partialDate.optional() }).optional(),
   ephemeris: z.enum(['horizons', 'kepler', 'none']),
   /** Resolved with horizons_lookup.api, never guessed. */
   horizonsId: z.string().optional(),
