@@ -18,8 +18,8 @@
     "test:e2e": "playwright test",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "textures": "tsx tools/textures/fetch-earth.ts",
-    "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat",
+    "textures": "tsx tools/textures/fetch-textures.ts",
+    "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat && tsx pipeline/run.ts horizons",
     "data:pull": "tsx pipeline/pull.ts"
   },
   "dependencies": {

@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   const outDir = resolve('public/data');
   const manifestBytes = await get(`${RAW}/manifest.json`);
   const manifest = ManifestSchema.parse(JSON.parse(manifestBytes.toString('utf8')));
-  for (const entry of Object.values(manifest.datasets)) {
+  for (const entry of [...Object.values(manifest.datasets), ...Object.values(manifest.ephemerides)]) {
     const bytes = await get(`${RAW}/${entry.path}`);
     const hash = createHash('sha256').update(bytes).digest('hex');
     if (hash !== entry.sha256) throw new Error(`Hash mismatch for ${entry.path}`);

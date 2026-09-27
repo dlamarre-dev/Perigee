@@ -7,12 +7,12 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
-import { ManifestSchema, type DatasetKey, type Manifest } from '../src/data/schemas';
+import { ManifestSchema, type DatasetKey, type EphemerisEntry, type Manifest } from '../src/data/schemas';
 
 export const MIN_RATIO_VS_PREVIOUS = 0.5;
 
 export class ShrinkGuardError extends Error {
-  constructor(key: DatasetKey, count: number, previous: number) {
+  constructor(key: string, count: number, previous: number) {
     super(`${key}: ${count} records is below ${MIN_RATIO_VS_PREVIOUS * 100} % of the previous ${previous}`);
     this.name = 'ShrinkGuardError';
   }
@@ -20,7 +20,8 @@ export class ShrinkGuardError extends Error {
 
 export async function readManifest(dataDir: string): Promise<Manifest> {
   const file = join(dataDir, 'manifest.json');
-  if (!existsSync(file)) return { version: 1, generatedAt: new Date(0).toISOString(), datasets: {} };
+  if (!existsSync(file))
+    return { version: 1, generatedAt: new Date(0).toISOString(), datasets: {}, ephemerides: {} };
   return ManifestSchema.parse(JSON.parse(await readFile(file, 'utf8')));
 }
 
@@ -61,6 +62,66 @@ export async function publishDatasets(
       sha256: createHash('sha256').update(gz).digest('hex'),
     };
     console.log(`wrote ${d.path}: ${d.count} records, ${(gz.byteLength / 1024).toFixed(0)} KiB`);
+  }
+  next.generatedAt = new Date().toISOString();
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+  return next;
+}
+
+export interface EphemerisToWrite {
+  readonly missionId: string;
+  readonly horizonsId: string;
+  readonly center: string;
+  readonly centralBody: EphemerisEntry['centralBody'];
+  readonly stepMin: number;
+  readonly source: string;
+  readonly fetchedAt: Date;
+  /** Rows of 7 Float64: t_TDB JD, x, y, z, vx, vy, vz. */
+  readonly rows: Float64Array;
+  /** Little-endian bytes of `rows`. */
+  readonly bytes: Buffer;
+}
+
+/**
+ * Writes data/ephem/<mission>.bin files and their manifest entries. Same guard as datasets: all
+ * ephemerides are checked first, then written together or not at all. Missions not listed keep
+ * their previously published file.
+ */
+export async function publishEphemerides(
+  dataDir: string,
+  list: readonly EphemerisToWrite[],
+): Promise<Manifest> {
+  const manifest = await readManifest(dataDir);
+  for (const e of list) {
+    const count = e.rows.length / 7;
+    const previous = manifest.ephemerides[e.missionId]?.count ?? 0;
+    if (count === 0 || count < previous * MIN_RATIO_VS_PREVIOUS) {
+      throw new ShrinkGuardError(`ephem.${e.missionId}`, count, previous);
+    }
+  }
+  const next: Manifest = { ...manifest, ephemerides: { ...manifest.ephemerides } };
+  for (const e of list) {
+    const path = `ephem/${e.missionId}.bin`;
+    const file = join(dataDir, path);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, e.bytes);
+    const count = e.rows.length / 7;
+    next.ephemerides[e.missionId] = {
+      path,
+      source: e.source,
+      fetchedAt: e.fetchedAt.toISOString(),
+      count,
+      bytes: e.bytes.byteLength,
+      sha256: createHash('sha256').update(e.bytes).digest('hex'),
+      horizonsId: e.horizonsId,
+      center: e.center,
+      centralBody: e.centralBody,
+      startTdbJd: e.rows[0] ?? 0,
+      endTdbJd: e.rows[e.rows.length - 7] ?? 0,
+      stepMin: e.stepMin,
+    };
+    console.log(`wrote ${path}: ${count} states, ${(e.bytes.byteLength / 1024).toFixed(0)} KiB`);
   }
   next.generatedAt = new Date().toISOString();
   ManifestSchema.parse(next);

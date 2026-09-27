@@ -1,0 +1,18 @@
+# JPL Horizons state vectors for every mission of catalog/missions.json with ephemeris "horizons", daily.
+name: Data — JPL Horizons
+
+on:
+  schedule:
+    - cron: '29 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  horizons:
+    uses: ./.github/workflows/data-pipeline.yml
+    with:
+      command: horizons

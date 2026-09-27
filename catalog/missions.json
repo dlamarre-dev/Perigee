@@ -1,0 +1,309 @@
+{
+  "verified": "2026-09-26",
+  "missions": [
+    {
+      "id": "lro",
+      "name": { "en": "Lunar Reconnaissance Orbiter (LRO)", "fr": "Lunar Reconnaissance Orbiter (LRO)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2009-06-18",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "Low polar lunar orbit", "fr": "Orbite lunaire polaire basse" },
+      "ephemeris": "horizons",
+      "horizonsId": "-85",
+      "norad": 35315,
+      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "lowOrbit": true,
+      "color": "#7cc4ff",
+      "verified": "2026-09-26",
+      "sources": [
+        "https://science.nasa.gov/mission/lro/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=LRO&group=sct"
+      ]
+    },
+    {
+      "id": "chandrayaan-2",
+      "name": { "en": "Chandrayaan-2 Orbiter", "fr": "Chandrayaan-2 (orbiteur)" },
+      "agency": "ISRO",
+      "country": "in",
+      "launchDate": "2019-07-22",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "100 km circular polar orbit", "fr": "Orbite polaire circulaire de 100 km" },
+      "ephemeris": "horizons",
+      "horizonsId": "-152",
+      "norad": 44441,
+      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "lowOrbit": true,
+      "color": "#ffb74d",
+      "notes": {
+        "en": "Planned 7-year life reached around mid-2026; no end-of-mission announcement found as of 2026-09-26.",
+        "fr": "Durée de vie prévue de 7 ans atteinte vers la mi-2026 ; aucune annonce de fin de mission au 2026-09-26."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://www.isro.gov.in/Chandrayaan_2.html",
+        "https://www.planetary.org/space-missions/chandrayaan-2",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Chandrayaan-2&group=sct"
+      ]
+    },
+    {
+      "id": "danuri",
+      "name": { "en": "Danuri (KPLO)", "fr": "Danuri (KPLO)" },
+      "agency": "KASA / KARI",
+      "country": "kr",
+      "launchDate": "2022-08-04",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "Frozen elliptical polar orbit, about 60 × 200 km",
+        "fr": "Orbite polaire elliptique gelée, environ 60 × 200 km"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-155",
+      "norad": 53365,
+      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "lowOrbit": true,
+      "color": "#81c784",
+      "notes": {
+        "en": "Extended through 2027; controlled impact planned in early 2028.",
+        "fr": "Prolongée jusqu’en 2027 ; impact contrôlé prévu début 2028."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://www.koreaherald.com/article/10416318",
+        "https://en.wikipedia.org/wiki/Danuri",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=KPLO&group=sct"
+      ]
+    },
+    {
+      "id": "artemis-p1",
+      "name": { "en": "ARTEMIS P1 (THEMIS-B)", "fr": "ARTEMIS P1 (THEMIS-B)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2007-02-17",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "High-eccentricity lunar orbit", "fr": "Orbite lunaire très excentrique" },
+      "ephemeris": "horizons",
+      "horizonsId": "-192",
+      "norad": 30581,
+      "sampling": { "stepMin": 10, "pastDays": 1, "futureDays": 3 },
+      "lowOrbit": false,
+      "color": "#ce93d8",
+      "verified": "2026-09-26",
+      "sources": [
+        "https://artemis.igpp.ucla.edu/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=THEMIS-B&group=sct"
+      ]
+    },
+    {
+      "id": "artemis-p2",
+      "name": { "en": "ARTEMIS P2 (THEMIS-C)", "fr": "ARTEMIS P2 (THEMIS-C)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2007-02-17",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "High-eccentricity lunar orbit", "fr": "Orbite lunaire très excentrique" },
+      "ephemeris": "horizons",
+      "horizonsId": "-193",
+      "norad": 30582,
+      "sampling": { "stepMin": 10, "pastDays": 1, "futureDays": 3 },
+      "lowOrbit": false,
+      "color": "#f48fb1",
+      "verified": "2026-09-26",
+      "sources": [
+        "https://artemis.igpp.ucla.edu/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=THEMIS-C&group=sct"
+      ]
+    },
+    {
+      "id": "capstone",
+      "name": { "en": "CAPSTONE", "fr": "CAPSTONE" },
+      "agency": "Advanced Space (NASA mission complete)",
+      "country": "us",
+      "launchDate": "2022-06-28",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "Near-rectilinear halo orbit (NRHO), about 6.5-day period",
+        "fr": "Orbite de halo quasi rectiligne (NRHO), période d’environ 6,5 jours"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-1176",
+      "norad": 52914,
+      "sampling": { "stepMin": 30, "pastDays": 4, "futureDays": 4 },
+      "lowOrbit": false,
+      "color": "#4dd0e1",
+      "notes": {
+        "en": "NASA’s mission ended in June 2026; Advanced Space still operates the spacecraft. The public Horizons ephemeris stops on 2026-08-14.",
+        "fr": "La mission de la NASA s’est terminée en juin 2026 ; Advanced Space exploite toujours l’engin. L’éphéméride publique Horizons s’arrête le 2026-08-14."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct"
+      ]
+    },
+    {
+      "id": "queqiao-2",
+      "name": { "en": "Queqiao-2 relay satellite", "fr": "Queqiao-2 (satellite relais)" },
+      "agency": "CNSA",
+      "country": "cn",
+      "launchDate": "2024-03-20",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "Highly elliptical lunar orbit, about 24 h period",
+        "fr": "Orbite lunaire très elliptique, période d’environ 24 h"
+      },
+      "ephemeris": "none",
+      "norad": 59276,
+      "lowOrbit": false,
+      "notes": {
+        "en": "No public ephemeris (not in JPL Horizons); orbit figures come from independent tracking only.",
+        "fr": "Aucune éphéméride publique (absent de JPL Horizons) ; les paramètres d’orbite proviennent seulement de suivis indépendants."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://www.cnsa.gov.cn/english/n6465652/n6465653/c10489434/content.html",
+        "https://en.wikipedia.org/wiki/Queqiao-2"
+      ]
+    },
+    {
+      "id": "tiandu-2",
+      "name": { "en": "Tiandu-2", "fr": "Tiandu-2" },
+      "agency": "Deep Space Exploration Laboratory",
+      "country": "cn",
+      "launchDate": "2024-03-20",
+      "centralBody": "moon",
+      "status": "unknown",
+      "orbit": {
+        "en": "Large elliptical lunar orbit (2024)",
+        "fr": "Grande orbite lunaire elliptique (2024)"
+      },
+      "ephemeris": "none",
+      "norad": 59279,
+      "lowOrbit": false,
+      "verified": "2026-09-26",
+      "sources": [
+        "https://space.skyrocket.de/doc_sdat/tiandu-1.htm",
+        "https://en.wikipedia.org/wiki/Queqiao-2"
+      ]
+    },
+    {
+      "id": "tiandu-1",
+      "name": { "en": "Tiandu-1", "fr": "Tiandu-1" },
+      "agency": "Deep Space Exploration Laboratory",
+      "country": "cn",
+      "launchDate": "2024-03-20",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "3:1 Earth–Moon resonant orbit since 2025-05-22 (no longer a lunar orbiter)",
+        "fr": "Orbite résonante Terre–Lune 3:1 depuis le 2025-05-22 (n’est plus en orbite lunaire)"
+      },
+      "ephemeris": "none",
+      "norad": 59278,
+      "lowOrbit": false,
+      "verified": "2026-09-26",
+      "sources": [
+        "https://news.cgtn.com/news/2025-05-28/China-s-Tiandu-1-satellite-enters-historic-Earth-moon-resonant-orbit-1DKj9SqRaSc/p.html"
+      ]
+    },
+    {
+      "id": "queqiao-1",
+      "name": { "en": "Queqiao relay satellite", "fr": "Queqiao (satellite relais)" },
+      "agency": "CNSA",
+      "country": "cn",
+      "launchDate": "2018-05-20",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "Earth–Moon L2 halo orbit", "fr": "Orbite de halo autour du point L2 Terre–Lune" },
+      "ephemeris": "none",
+      "norad": 43470,
+      "lowOrbit": false,
+      "verified": "2026-09-26",
+      "sources": ["https://en.wikipedia.org/wiki/Queqiao_relay_satellite"]
+    },
+    {
+      "id": "dro-a",
+      "name": { "en": "DRO-A", "fr": "DRO-A" },
+      "agency": "CAS (CSU)",
+      "country": "cn",
+      "launchDate": "2024-03-13",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": { "en": "Distant retrograde orbit (DRO)", "fr": "Orbite rétrograde distante (DRO)" },
+      "ephemeris": "none",
+      "norad": 59228,
+      "lowOrbit": false,
+      "verified": "2026-09-26",
+      "sources": [
+        "https://space.skyrocket.de/doc_sdat/dro-a.htm",
+        "https://www.chinadaily.com.cn/a/202504/16/WS67ff8351a3104d9fd381fbbb.html"
+      ]
+    },
+    {
+      "id": "dro-b",
+      "name": { "en": "DRO-B", "fr": "DRO-B" },
+      "agency": "CAS (CSU)",
+      "country": "cn",
+      "launchDate": "2024-03-13",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "3:2 Earth–Moon resonant orbit (moved from DRO in 2025)",
+        "fr": "Orbite résonante Terre–Lune 3:2 (quitte la DRO en 2025)"
+      },
+      "ephemeris": "none",
+      "norad": 60058,
+      "lowOrbit": false,
+      "verified": "2026-09-26",
+      "sources": ["https://space.skyrocket.de/doc_sdat/dro-a.htm"]
+    },
+    {
+      "id": "icube-q",
+      "name": { "en": "ICUBE-Q", "fr": "ICUBE-Q" },
+      "agency": "IST / SUPARCO",
+      "country": "pk",
+      "launchDate": "2024-05-03",
+      "centralBody": "moon",
+      "status": "inactive",
+      "orbit": { "en": "Elliptical lunar orbit", "fr": "Orbite lunaire elliptique" },
+      "ephemeris": "none",
+      "norad": 59629,
+      "lowOrbit": false,
+      "notes": {
+        "en": "Contact lost around July 2024; a published study predicted lunar impact by about April 2025.",
+        "fr": "Contact perdu vers juillet 2024 ; une étude publiée prévoyait un impact lunaire vers avril 2025."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://en.wikipedia.org/wiki/ICUBE-Q",
+        "https://journal.hep.com.cn/jdse/EN/10.15982/j.issn.2096-9287.2025.20240054"
+      ]
+    },
+    {
+      "id": "change-7",
+      "name": { "en": "Chang'e-7", "fr": "Chang'e-7" },
+      "agency": "CNSA",
+      "country": "cn",
+      "centralBody": "moon",
+      "status": "planned",
+      "ephemeris": "none",
+      "lowOrbit": true,
+      "notes": {
+        "en": "Not launched: the August 2026 window was lost to Typhoon Narra; launch postponed to 2027.",
+        "fr": "Pas lancée : la fenêtre d’août 2026 a été perdue à cause du typhon Narra ; lancement reporté à 2027."
+      },
+      "verified": "2026-09-26",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Chang'e_7",
+        "https://www.scientificamerican.com/article/china-delays-ambitious-change-7-moon-mission-until-2027/"
+      ]
+    }
+  ]
+}

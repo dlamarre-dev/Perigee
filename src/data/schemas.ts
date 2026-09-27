@@ -76,16 +76,101 @@ export const DatasetEntrySchema = z.object({
 });
 export type DatasetEntry = z.infer<typeof DatasetEntrySchema>;
 
+export const CentralBodySchema = z.enum(['moon', 'mars', 'sun']);
+export type CentralBody = z.infer<typeof CentralBodySchema>;
+
+/** One mission's Horizons state vectors: data/ephem/<id>.bin, rows of 7 Float64 LE (t_TDB JD, x, y, z, vx, vy, vz). */
+export const EphemerisEntrySchema = DatasetEntrySchema.extend({
+  horizonsId: z.string(),
+  /** Horizons CENTER code, e.g. "500@301" (Moon). */
+  center: z.string(),
+  centralBody: CentralBodySchema,
+  startTdbJd: z.number(),
+  endTdbJd: z.number(),
+  stepMin: z.number().positive(),
+});
+export type EphemerisEntry = z.infer<typeof EphemerisEntrySchema>;
+
 export const ManifestSchema = z.object({
   version: z.literal(1),
   generatedAt: z.string(),
   datasets: z.partialRecord(DatasetKeySchema, DatasetEntrySchema),
+  ephemerides: z.record(z.string(), EphemerisEntrySchema).default({}),
 });
 export type Manifest = z.infer<typeof ManifestSchema>;
 
+const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i);
 const localized = z.object({ en: z.string(), fr: z.string() });
 const iso2 = z.string().regex(/^[a-z]{2}$/);
-const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i);
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+export const MissionStatusSchema = z.enum(['active', 'inactive', 'ended', 'cruise', 'planned', 'unknown']);
+export type MissionStatus = z.infer<typeof MissionStatusSchema>;
+
+/** catalog/missions.json — missions beyond Earth orbit (CLAUDE.md §4.4). */
+export const MissionSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  name: localized,
+  agency: z.string(),
+  country: iso2.optional(),
+  launchDate: isoDate.optional(),
+  centralBody: CentralBodySchema,
+  status: MissionStatusSchema,
+  /** Orbit description, e.g. "low polar", "NRHO". */
+  orbit: localized.optional(),
+  ephemeris: z.enum(['horizons', 'kepler', 'none']),
+  /** Resolved with horizons_lookup.api, never guessed. */
+  horizonsId: z.string().optional(),
+  norad: z.number().int().positive().optional(),
+  /** Horizons sampling: step and window around the fetch time. */
+  sampling: z
+    .object({
+      stepMin: z.number().positive(),
+      pastDays: z.number().nonnegative(),
+      futureDays: z.number().nonnegative(),
+    })
+    .optional(),
+  /** Low orbiters are hidden when extrapolated more than 7 days beyond their window (CLAUDE.md §5.2). */
+  lowOrbit: z.boolean().default(true),
+  color: hexColor.optional(),
+  notes: localized.optional(),
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type Mission = z.infer<typeof MissionSchema>;
+
+export const MissionsCatalogSchema = z
+  .object({ verified: isoDate, missions: z.array(MissionSchema) })
+  .refine((c) => c.missions.every((m) => m.ephemeris !== 'horizons' || (m.horizonsId && m.sampling)), {
+    message: 'Missions with ephemeris "horizons" need horizonsId and sampling',
+  });
+export type MissionsCatalog = z.infer<typeof MissionsCatalogSchema>;
+
+export const LandingSiteTypeSchema = z.enum(['soft', 'hard', 'impact', 'crewed', 'rover-last-known']);
+export type LandingSiteType = z.infer<typeof LandingSiteTypeSchema>;
+
+/** catalog/landing-sites/<body>.json — planetocentric coordinates, east-positive longitudes. */
+export const LandingSitesSchema = z.object({
+  verified: isoDate,
+  sites: z.array(
+    z.object({
+      id: z.string().regex(/^[a-z0-9-]+$/),
+      name: localized,
+      mission: z.string().optional(),
+      agency: z.string(),
+      country: iso2.optional(),
+      date: isoDate,
+      type: LandingSiteTypeSchema,
+      latDeg: z.number().min(-90).max(90),
+      lonDeg: z.number().min(-180).max(180),
+      /** Precision caveats or source discrepancies (English, shown in the info panel). */
+      note: z.string().optional(),
+      sources: z.array(z.url()).min(1),
+    }),
+  ),
+});
+export type LandingSites = z.infer<typeof LandingSitesSchema>;
+export type LandingSite = LandingSites['sites'][number];
 
 /** catalog/operators.json — curated, reviewed by PR. */
 export const OperatorsCatalogSchema = z.object({

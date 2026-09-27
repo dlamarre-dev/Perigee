@@ -1,0 +1,835 @@
+{
+  "verified": "2026-09-26",
+  "sites": [
+    {
+      "id": "apollo-11",
+      "name": {
+        "en": "Apollo 11",
+        "fr": "Apollo 11"
+      },
+      "mission": "apollo-11",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1969-07-20",
+      "type": "crewed",
+      "latDeg": 0.67416,
+      "lonDeg": 23.47314,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "apollo-12",
+      "name": {
+        "en": "Apollo 12",
+        "fr": "Apollo 12"
+      },
+      "mission": "apollo-12",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1969-11-19",
+      "type": "crewed",
+      "latDeg": -3.0128,
+      "lonDeg": -23.4219,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "apollo-14",
+      "name": {
+        "en": "Apollo 14",
+        "fr": "Apollo 14"
+      },
+      "mission": "apollo-14",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1971-02-05",
+      "type": "crewed",
+      "latDeg": -3.64589,
+      "lonDeg": -17.47194,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "apollo-15",
+      "name": {
+        "en": "Apollo 15",
+        "fr": "Apollo 15"
+      },
+      "mission": "apollo-15",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1971-07-30",
+      "type": "crewed",
+      "latDeg": 26.13239,
+      "lonDeg": 3.6333,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "apollo-16",
+      "name": {
+        "en": "Apollo 16",
+        "fr": "Apollo 16"
+      },
+      "mission": "apollo-16",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1972-04-21",
+      "type": "crewed",
+      "latDeg": -8.9734,
+      "lonDeg": 15.5011,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "apollo-17",
+      "name": {
+        "en": "Apollo 17",
+        "fr": "Apollo 17"
+      },
+      "mission": "apollo-17",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1972-12-11",
+      "type": "crewed",
+      "latDeg": 20.1911,
+      "lonDeg": 30.7723,
+      "note": "Lunar Module descent stage",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "https://lroc.im-ldi.com/images/938"
+      ]
+    },
+    {
+      "id": "luna-9",
+      "name": {
+        "en": "Luna 9",
+        "fr": "Luna 9"
+      },
+      "mission": "luna-9",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1966-02-03",
+      "type": "soft",
+      "latDeg": 7.08,
+      "lonDeg": -64.37,
+      "note": "Historical tracking estimate (Oceanus Procellarum); lander never positively identified in LROC images, uncertainty up to tens of km",
+      "sources": ["https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"]
+    },
+    {
+      "id": "luna-13",
+      "name": {
+        "en": "Luna 13",
+        "fr": "Luna 13"
+      },
+      "mission": "luna-13",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1966-12-24",
+      "type": "soft",
+      "latDeg": 18.87,
+      "lonDeg": -62.05,
+      "note": "Historical tracking estimate; lander never positively identified in LROC images",
+      "sources": ["https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"]
+    },
+    {
+      "id": "luna-16",
+      "name": {
+        "en": "Luna 16",
+        "fr": "Luna 16"
+      },
+      "mission": "luna-16",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1970-09-20",
+      "type": "soft",
+      "latDeg": -0.5137,
+      "lonDeg": 56.3638,
+      "sources": [
+        "https://lroc.im-ldi.com/images/938",
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"
+      ]
+    },
+    {
+      "id": "luna-17",
+      "name": {
+        "en": "Luna 17",
+        "fr": "Luna 17"
+      },
+      "mission": "luna-17",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1970-11-17",
+      "type": "soft",
+      "latDeg": 38.23764,
+      "lonDeg": -35.00163,
+      "sources": [
+        "https://lroc.im-ldi.com/images/938",
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"
+      ]
+    },
+    {
+      "id": "lunokhod-1",
+      "name": {
+        "en": "Lunokhod 1",
+        "fr": "Lunokhod 1"
+      },
+      "mission": "luna-17",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1971-09-14",
+      "type": "rover-last-known",
+      "latDeg": 38.315,
+      "lonDeg": -35.0081,
+      "note": "Final rover position; date is last contact",
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "luna-20",
+      "name": {
+        "en": "Luna 20",
+        "fr": "Luna 20"
+      },
+      "mission": "luna-20",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1972-02-21",
+      "type": "soft",
+      "latDeg": 3.7863,
+      "lonDeg": 56.6242,
+      "sources": [
+        "https://lroc.im-ldi.com/images/938",
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"
+      ]
+    },
+    {
+      "id": "luna-21",
+      "name": {
+        "en": "Luna 21",
+        "fr": "Luna 21"
+      },
+      "mission": "luna-21",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1973-01-15",
+      "type": "soft",
+      "latDeg": 25.9994,
+      "lonDeg": 30.4076,
+      "sources": [
+        "https://lroc.im-ldi.com/images/938",
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"
+      ]
+    },
+    {
+      "id": "lunokhod-2",
+      "name": {
+        "en": "Lunokhod 2",
+        "fr": "Lunokhod 2"
+      },
+      "mission": "luna-21",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1973-05-11",
+      "type": "rover-last-known",
+      "latDeg": 25.8323,
+      "lonDeg": 30.9222,
+      "note": "Final rover position; date is end of operations",
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "luna-23",
+      "name": {
+        "en": "Luna 23",
+        "fr": "Luna 23"
+      },
+      "mission": "luna-23",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1974-11-06",
+      "type": "soft",
+      "latDeg": 12.6667,
+      "lonDeg": 62.1511,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "luna-24",
+      "name": {
+        "en": "Luna 24",
+        "fr": "Luna 24"
+      },
+      "mission": "luna-24",
+      "agency": "USSR",
+      "country": "su",
+      "date": "1976-08-18",
+      "type": "soft",
+      "latDeg": 12.7142,
+      "lonDeg": 62.2129,
+      "sources": [
+        "https://lroc.im-ldi.com/images/938",
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"
+      ]
+    },
+    {
+      "id": "surveyor-1",
+      "name": {
+        "en": "Surveyor 1",
+        "fr": "Surveyor 1"
+      },
+      "mission": "surveyor-1",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1966-06-02",
+      "type": "soft",
+      "latDeg": -2.4745,
+      "lonDeg": -43.3398,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "surveyor-3",
+      "name": {
+        "en": "Surveyor 3",
+        "fr": "Surveyor 3"
+      },
+      "mission": "surveyor-3",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1967-04-20",
+      "type": "soft",
+      "latDeg": -3.0162,
+      "lonDeg": -23.418,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "surveyor-5",
+      "name": {
+        "en": "Surveyor 5",
+        "fr": "Surveyor 5"
+      },
+      "mission": "surveyor-5",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1967-09-11",
+      "type": "soft",
+      "latDeg": 1.4551,
+      "lonDeg": 23.1943,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "surveyor-6",
+      "name": {
+        "en": "Surveyor 6",
+        "fr": "Surveyor 6"
+      },
+      "mission": "surveyor-6",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1967-11-10",
+      "type": "soft",
+      "latDeg": 0.4742,
+      "lonDeg": -1.4275,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "surveyor-7",
+      "name": {
+        "en": "Surveyor 7",
+        "fr": "Surveyor 7"
+      },
+      "mission": "surveyor-7",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1968-01-10",
+      "type": "soft",
+      "latDeg": -40.9812,
+      "lonDeg": -11.5127,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "change-3",
+      "name": {
+        "en": "Chang'e 3",
+        "fr": "Chang'e 3"
+      },
+      "mission": "change-3",
+      "agency": "CNSA",
+      "country": "cn",
+      "date": "2013-12-14",
+      "type": "soft",
+      "latDeg": 44.1214,
+      "lonDeg": -19.5117,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "yutu",
+      "name": {
+        "en": "Yutu",
+        "fr": "Yutu"
+      },
+      "mission": "change-3",
+      "agency": "CNSA",
+      "country": "cn",
+      "date": "2016-08-03",
+      "type": "rover-last-known",
+      "latDeg": 44.1208,
+      "lonDeg": -19.5122,
+      "note": "Rover immobile since early 2014; date is end of mission",
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "change-4",
+      "name": {
+        "en": "Chang'e 4 (Statio Tianhe)",
+        "fr": "Chang'e 4 (Statio Tianhe)"
+      },
+      "mission": "change-4",
+      "agency": "CNSA",
+      "country": "cn",
+      "date": "2019-01-03",
+      "type": "soft",
+      "latDeg": -45.4562,
+      "lonDeg": 177.5885,
+      "note": "LROC refined value (Dec 2020, +/-13 m); LROC Jan 2019 gave 45.457S 177.589E",
+      "sources": ["https://lroc.im-ldi.com/images/1168", "https://lroc.im-ldi.com/images/1087"]
+    },
+    {
+      "id": "change-5",
+      "name": {
+        "en": "Chang'e 5",
+        "fr": "Chang'e 5"
+      },
+      "mission": "change-5",
+      "agency": "CNSA",
+      "country": "cn",
+      "date": "2020-12-01",
+      "type": "soft",
+      "latDeg": 43.0576,
+      "lonDeg": -51.9161,
+      "sources": ["https://lroc.im-ldi.com/images/1172"]
+    },
+    {
+      "id": "change-6",
+      "name": {
+        "en": "Chang'e 6",
+        "fr": "Chang'e 6"
+      },
+      "mission": "change-6",
+      "agency": "CNSA",
+      "country": "cn",
+      "date": "2024-06-01",
+      "type": "soft",
+      "latDeg": -41.6385,
+      "lonDeg": -153.9852,
+      "sources": ["https://lroc.im-ldi.com/images/1374"]
+    },
+    {
+      "id": "chandrayaan-3-vikram",
+      "name": {
+        "en": "Chandrayaan-3 Vikram (Shiv Shakti Point)",
+        "fr": "Chandrayaan-3 Vikram (point Shiv Shakti)"
+      },
+      "mission": "chandrayaan-3",
+      "agency": "ISRO",
+      "country": "in",
+      "date": "2023-08-23",
+      "type": "soft",
+      "latDeg": -69.3741,
+      "lonDeg": 32.32,
+      "sources": ["https://lroc.im-ldi.com/images/1314"]
+    },
+    {
+      "id": "chandrayaan-2-vikram",
+      "name": {
+        "en": "Chandrayaan-2 Vikram",
+        "fr": "Chandrayaan-2 Vikram"
+      },
+      "mission": "chandrayaan-2",
+      "agency": "ISRO",
+      "country": "in",
+      "date": "2019-09-06",
+      "type": "hard",
+      "latDeg": -70.881,
+      "lonDeg": 22.784,
+      "sources": ["https://lroc.im-ldi.com/images/1131"]
+    },
+    {
+      "id": "chandrayaan-1-mip",
+      "name": {
+        "en": "Chandrayaan-1 Moon Impact Probe (Jawahar Point)",
+        "fr": "Sonde d'impact lunaire de Chandrayaan-1 (point Jawahar)"
+      },
+      "mission": "chandrayaan-1",
+      "agency": "ISRO",
+      "country": "in",
+      "date": "2008-11-14",
+      "type": "impact",
+      "latDeg": -89.55,
+      "lonDeg": -122.93,
+      "note": "Refined estimate (Stooke et al., LPSC 2021); crater not identified; earlier published estimates 89.76S 39.40W and 89.54S 44.71W",
+      "sources": ["https://www.hou.usra.edu/meetings/lpsc2021/pdf/1013.pdf"]
+    },
+    {
+      "id": "slim",
+      "name": {
+        "en": "SLIM",
+        "fr": "SLIM"
+      },
+      "mission": "slim",
+      "agency": "JAXA",
+      "country": "jp",
+      "date": "2024-01-19",
+      "type": "soft",
+      "latDeg": -13.316,
+      "lonDeg": 25.251,
+      "sources": ["https://lroc.im-ldi.com/images/1358"]
+    },
+    {
+      "id": "im-1-odysseus",
+      "name": {
+        "en": "IM-1 Odysseus",
+        "fr": "IM-1 Odysseus"
+      },
+      "mission": "im-1",
+      "agency": "Intuitive Machines",
+      "country": "us",
+      "date": "2024-02-22",
+      "type": "soft",
+      "latDeg": -80.13,
+      "lonDeg": 1.44,
+      "note": "Came to rest tipped over",
+      "sources": ["https://lroc.im-ldi.com/images/1360"]
+    },
+    {
+      "id": "im-2-athena",
+      "name": {
+        "en": "IM-2 Athena",
+        "fr": "IM-2 Athena"
+      },
+      "mission": "im-2",
+      "agency": "Intuitive Machines",
+      "country": "us",
+      "date": "2025-03-06",
+      "type": "soft",
+      "latDeg": -84.7906,
+      "lonDeg": 29.1957,
+      "note": "Came to rest on its side in a crater near Mons Mouton",
+      "sources": ["https://lroc.im-ldi.com/images/1408"]
+    },
+    {
+      "id": "blue-ghost-m1",
+      "name": {
+        "en": "Blue Ghost Mission 1",
+        "fr": "Blue Ghost mission 1"
+      },
+      "mission": "blue-ghost-m1",
+      "agency": "Firefly Aerospace",
+      "country": "us",
+      "date": "2025-03-02",
+      "type": "soft",
+      "latDeg": 18.5623,
+      "lonDeg": 61.8103,
+      "sources": ["https://lroc.im-ldi.com/images/1407"]
+    },
+    {
+      "id": "beresheet",
+      "name": {
+        "en": "Beresheet",
+        "fr": "Beresheet"
+      },
+      "mission": "beresheet",
+      "agency": "SpaceIL / IAI",
+      "country": "il",
+      "date": "2019-04-11",
+      "type": "hard",
+      "latDeg": 32.5956,
+      "lonDeg": 19.3496,
+      "sources": ["https://lroc.im-ldi.com/images/1101"]
+    },
+    {
+      "id": "hakuto-r-m1",
+      "name": {
+        "en": "HAKUTO-R Mission 1",
+        "fr": "HAKUTO-R mission 1"
+      },
+      "mission": "hakuto-r-m1",
+      "agency": "ispace",
+      "country": "jp",
+      "date": "2023-04-25",
+      "type": "hard",
+      "latDeg": 47.581,
+      "lonDeg": 44.094,
+      "sources": ["https://lroc.im-ldi.com/images/1302"]
+    },
+    {
+      "id": "luna-25",
+      "name": {
+        "en": "Luna 25",
+        "fr": "Luna 25"
+      },
+      "mission": "luna-25",
+      "agency": "Roscosmos",
+      "country": "ru",
+      "date": "2023-08-19",
+      "type": "hard",
+      "latDeg": -57.865,
+      "lonDeg": 61.36,
+      "sources": ["https://lroc.im-ldi.com/images/1311"]
+    },
+    {
+      "id": "ispace-m2-resilience",
+      "name": {
+        "en": "ispace Mission 2 Resilience",
+        "fr": "ispace mission 2 Resilience"
+      },
+      "mission": "ispace-m2",
+      "agency": "ispace",
+      "country": "jp",
+      "date": "2025-06-05",
+      "type": "hard",
+      "latDeg": 60.4445,
+      "lonDeg": -4.588,
+      "note": "Impact 2025-06-05 18:13 UTC (2025-06-06 JST)",
+      "sources": ["https://lroc.im-ldi.com/images/1456"]
+    },
+    {
+      "id": "lcross-centaur",
+      "name": {
+        "en": "LCROSS Centaur upper stage",
+        "fr": "Étage Centaur de LCROSS"
+      },
+      "mission": "lcross",
+      "agency": "NASA",
+      "country": "us",
+      "date": "2009-10-09",
+      "type": "impact",
+      "latDeg": -84.678,
+      "lonDeg": -48.725,
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2009-031B"]
+    },
+    {
+      "id": "lcross-ssc",
+      "name": {
+        "en": "LCROSS Shepherding Spacecraft",
+        "fr": "Vaisseau berger de LCROSS"
+      },
+      "mission": "lcross",
+      "agency": "NASA",
+      "country": "us",
+      "date": "2009-10-09",
+      "type": "impact",
+      "latDeg": -84.72,
+      "lonDeg": -49.62,
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2009-031B"]
+    },
+    {
+      "id": "grail-a-ebb",
+      "name": {
+        "en": "GRAIL-A (Ebb)",
+        "fr": "GRAIL-A (Ebb)"
+      },
+      "mission": "grail",
+      "agency": "NASA",
+      "country": "us",
+      "date": "2012-12-17",
+      "type": "impact",
+      "latDeg": 75.6088,
+      "lonDeg": -26.594,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "grail-b-flow",
+      "name": {
+        "en": "GRAIL-B (Flow)",
+        "fr": "GRAIL-B (Flow)"
+      },
+      "mission": "grail",
+      "agency": "NASA",
+      "country": "us",
+      "date": "2012-12-17",
+      "type": "impact",
+      "latDeg": 75.6508,
+      "lonDeg": -26.8341,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "ladee",
+      "name": {
+        "en": "LADEE",
+        "fr": "LADEE"
+      },
+      "mission": "ladee",
+      "agency": "NASA",
+      "country": "us",
+      "date": "2014-04-18",
+      "type": "impact",
+      "latDeg": 11.8494,
+      "lonDeg": -93.2494,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "smart-1",
+      "name": {
+        "en": "SMART-1",
+        "fr": "SMART-1"
+      },
+      "mission": "smart-1",
+      "agency": "ESA",
+      "country": "eu",
+      "date": "2006-09-03",
+      "type": "impact",
+      "latDeg": -34.4,
+      "lonDeg": -46.2,
+      "note": "Approximate impact point published by ESA",
+      "sources": ["https://sci.esa.int/web/smart-1-lunar-impact/"]
+    },
+    {
+      "id": "ranger-6",
+      "name": {
+        "en": "Ranger 6",
+        "fr": "Ranger 6"
+      },
+      "mission": "ranger-6",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1964-02-02",
+      "type": "impact",
+      "latDeg": 9.3864,
+      "lonDeg": 21.4806,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "ranger-7",
+      "name": {
+        "en": "Ranger 7",
+        "fr": "Ranger 7"
+      },
+      "mission": "ranger-7",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1964-07-31",
+      "type": "impact",
+      "latDeg": -10.634,
+      "lonDeg": -20.677,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "ranger-8",
+      "name": {
+        "en": "Ranger 8",
+        "fr": "Ranger 8"
+      },
+      "mission": "ranger-8",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1965-02-20",
+      "type": "impact",
+      "latDeg": 2.6376,
+      "lonDeg": 24.7881,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "ranger-9",
+      "name": {
+        "en": "Ranger 9",
+        "fr": "Ranger 9"
+      },
+      "mission": "ranger-9",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1965-03-24",
+      "type": "impact",
+      "latDeg": -12.8281,
+      "lonDeg": -2.3884,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "apollo-13-sivb",
+      "name": {
+        "en": "Apollo 13 S-IVB",
+        "fr": "Étage S-IVB d'Apollo 13"
+      },
+      "mission": "apollo-13",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1970-04-15",
+      "type": "impact",
+      "latDeg": -2.555,
+      "lonDeg": -27.8875,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "apollo-14-sivb",
+      "name": {
+        "en": "Apollo 14 S-IVB",
+        "fr": "Étage S-IVB d'Apollo 14"
+      },
+      "mission": "apollo-14",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1971-02-04",
+      "type": "impact",
+      "latDeg": -8.181,
+      "lonDeg": -26.0305,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "apollo-15-sivb",
+      "name": {
+        "en": "Apollo 15 S-IVB",
+        "fr": "Étage S-IVB d'Apollo 15"
+      },
+      "mission": "apollo-15",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1971-07-29",
+      "type": "impact",
+      "latDeg": -1.2897,
+      "lonDeg": -11.8245,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "apollo-16-sivb",
+      "name": {
+        "en": "Apollo 16 S-IVB",
+        "fr": "Étage S-IVB d'Apollo 16"
+      },
+      "mission": "apollo-16",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1972-04-19",
+      "type": "impact",
+      "latDeg": 1.921,
+      "lonDeg": -24.623,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    },
+    {
+      "id": "apollo-17-sivb",
+      "name": {
+        "en": "Apollo 17 S-IVB",
+        "fr": "Étage S-IVB d'Apollo 17"
+      },
+      "mission": "apollo-17",
+      "agency": "NASA",
+      "country": "us",
+      "date": "1972-12-10",
+      "type": "impact",
+      "latDeg": -4.1681,
+      "lonDeg": -12.3307,
+      "sources": ["https://lroc.im-ldi.com/images/938"]
+    }
+  ]
+}
