@@ -242,16 +242,19 @@ input[type='checkbox'] {
 /* ---------------------------------------------------------------- time bar */
 
 .time-control {
+  /* Centred in the space left of the soundtrack button (closed width ≈ --music-reserve), never under it. */
+  --music-reserve: 158px;
   bottom: var(--gutter);
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--gutter);
+  right: calc(var(--gutter) + var(--music-reserve));
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--gap) 12px;
   width: max-content;
-  max-width: calc(100% - 2 * var(--gutter));
+  max-width: calc(100% - 2 * var(--gutter) - var(--music-reserve));
 }
 
 .time-readout {
@@ -261,6 +264,9 @@ input[type='checkbox'] {
 }
 
 .time-value {
+  /* Fixed box: Rajdhani's digits are proportional, so the ticking clock would resize the whole bar. */
+  display: inline-block;
+  min-width: 24ch;
   font-size: 16px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
@@ -276,6 +282,18 @@ input[type='checkbox'] {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* Status next to the clock (live / paused / ×rate): fixed width so switching states does not move the bar. */
+.time-readout .badge {
+  display: inline-block;
+  min-width: 14ch;
+  text-align: center;
+}
+
+/* Play ↔ pause labels differ in width (and by language). */
+.pause-toggle {
+  min-width: 8.5em;
 }
 
 .badge[data-state='live'] {

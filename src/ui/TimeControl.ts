@@ -18,7 +18,11 @@ export class TimeControl {
   readonly element: HTMLElement;
   private readonly timeText = h('output', { class: 'time-value', 'aria-live': 'off' });
   private readonly statusBadge = h('span', { class: 'badge' });
-  private readonly pauseButton = h('button', { type: 'button', class: 'btn', 'data-testid': 'pause' });
+  private readonly pauseButton = h('button', {
+    type: 'button',
+    class: 'btn pause-toggle',
+    'data-testid': 'pause',
+  });
   private readonly nowButton = h('button', { type: 'button', class: 'btn' });
   private readonly rateGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly rateButtons: HTMLButtonElement[];
