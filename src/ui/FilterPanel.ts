@@ -18,6 +18,7 @@ const FACET_TITLES: Record<FacetKey, MessageKey> = {
   groups: 'filters.groups',
   regimes: 'filters.regimes',
   types: 'filters.types',
+  launchSites: 'filters.launchSites',
 };
 const MAX_LISTED = 100;
 const SEARCH_DEBOUNCE_MS = 150;
@@ -92,6 +93,18 @@ export class FilterPanel {
 
   get state(): FilterState {
     return this.filters;
+  }
+
+  /** Applies filters from outside (e.g. "show satellites launched here") and re-renders the facets. */
+  setFilters(filters: FilterState): void {
+    this.search.value = filters.query;
+    this.update(filters);
+    this.renderFacets();
+  }
+
+  /** Adds a view-specific control (e.g. a layer toggle) under the statistics. */
+  addControl(element: HTMLElement): void {
+    this.fetched.after(element);
   }
 
   set visible(v: boolean) {
@@ -172,7 +185,9 @@ export class FilterPanel {
         box.addEventListener('change', () => this.toggle(facet, value, box.checked));
         return h('li', {}, [
           box,
-          h('label', { for: id }, [facetLabel(this.i18n, this.catalog.operators, facet, value)]),
+          h('label', { for: id }, [
+            facetLabel(this.i18n, this.catalog.operators, facet, value, this.catalog.launchSiteByCode),
+          ]),
           h('span', { class: 'count' }, [this.i18n.number(count)]),
         ]);
       });

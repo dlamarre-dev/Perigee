@@ -1,0 +1,488 @@
+{
+  "verified": "2026-09-26",
+  "sites": [
+    {
+      "id": "cape-canaveral",
+      "name": {
+        "en": "Cape Canaveral / Kennedy Space Center",
+        "fr": "Cap Canaveral / Centre spatial Kennedy"
+      },
+      "operator": "U.S. Space Force / NASA",
+      "country": "us",
+      "satcatCodes": ["AFETR"],
+      "latDeg": 28.4889,
+      "lonDeg": -80.5778,
+      "firstOrbitalLaunch": "1958-02-01",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Cape_Canaveral_Space_Force_Station",
+        "https://en.wikipedia.org/wiki/Kennedy_Space_Center"
+      ]
+    },
+    {
+      "id": "vandenberg",
+      "name": {
+        "en": "Vandenberg Space Force Base",
+        "fr": "Base de la Space Force de Vandenberg"
+      },
+      "operator": "U.S. Space Force",
+      "country": "us",
+      "satcatCodes": ["AFWTR"],
+      "latDeg": 34.7513,
+      "lonDeg": -120.5202,
+      "firstOrbitalLaunch": "1959-02-28",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Vandenberg_Space_Force_Base"]
+    },
+    {
+      "id": "wallops",
+      "name": {
+        "en": "Wallops Island / Mid-Atlantic Regional Spaceport",
+        "fr": "Île de Wallops / Mid-Atlantic Regional Spaceport"
+      },
+      "operator": "NASA / Virginia Spaceport Authority",
+      "country": "us",
+      "satcatCodes": ["WLPIS"],
+      "latDeg": 37.8433,
+      "lonDeg": -75.4781,
+      "firstOrbitalLaunch": "1961-02-16",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Mid-Atlantic_Regional_Spaceport",
+        "https://en.wikipedia.org/wiki/Wallops_Flight_Facility",
+        "https://en.wikipedia.org/wiki/Explorer_9"
+      ]
+    },
+    {
+      "id": "starbase",
+      "name": {
+        "en": "Starbase (Boca Chica)",
+        "fr": "Starbase (Boca Chica)"
+      },
+      "operator": "SpaceX",
+      "country": "us",
+      "satcatCodes": [],
+      "latDeg": 25.997,
+      "lonDeg": -97.157,
+      "active": false,
+      "sources": [
+        "https://en.wikipedia.org/wiki/SpaceX_Starbase",
+        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+      ],
+      "note": "Starship test flights (2023–2026) were suborbital/transatmospheric, so no orbital launch is counted."
+    },
+    {
+      "id": "kodiak",
+      "name": {
+        "en": "Pacific Spaceport Complex – Alaska (Kodiak)",
+        "fr": "Pacific Spaceport Complex – Alaska (Kodiak)"
+      },
+      "operator": "Alaska Aerospace Corporation",
+      "country": "us",
+      "satcatCodes": ["KODAK"],
+      "latDeg": 57.4353,
+      "lonDeg": -152.34,
+      "firstOrbitalLaunch": "2001-09-30",
+      "active": false,
+      "sources": ["https://en.wikipedia.org/wiki/Pacific_Spaceport_Complex_%E2%80%93_Alaska"]
+    },
+    {
+      "id": "kourou",
+      "name": {
+        "en": "Guiana Space Centre (Kourou)",
+        "fr": "Centre spatial guyanais (Kourou)"
+      },
+      "operator": "CNES / ESA / Arianespace",
+      "country": "gf",
+      "satcatCodes": ["FRGUI"],
+      "latDeg": 5.169,
+      "lonDeg": -52.6903,
+      "firstOrbitalLaunch": "1970-03-10",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Guiana_Space_Centre"]
+    },
+    {
+      "id": "baikonur",
+      "name": {
+        "en": "Baikonur Cosmodrome",
+        "fr": "Cosmodrome de Baïkonour"
+      },
+      "operator": "Roscosmos",
+      "country": "kz",
+      "satcatCodes": ["TYMSC"],
+      "latDeg": 45.965,
+      "lonDeg": 63.305,
+      "firstOrbitalLaunch": "1957-10-04",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Baikonur_Cosmodrome"]
+    },
+    {
+      "id": "plesetsk",
+      "name": {
+        "en": "Plesetsk Cosmodrome",
+        "fr": "Cosmodrome de Plessetsk"
+      },
+      "operator": "Russian Aerospace Forces",
+      "country": "ru",
+      "satcatCodes": ["PLMSC"],
+      "latDeg": 62.9256,
+      "lonDeg": 40.5778,
+      "firstOrbitalLaunch": "1966-03-17",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Plesetsk_Cosmodrome"]
+    },
+    {
+      "id": "vostochny",
+      "name": {
+        "en": "Vostochny Cosmodrome",
+        "fr": "Cosmodrome Vostotchny"
+      },
+      "operator": "Roscosmos",
+      "country": "ru",
+      "satcatCodes": ["VOSTO"],
+      "latDeg": 51.8846,
+      "lonDeg": 128.3348,
+      "firstOrbitalLaunch": "2016-04-28",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Vostochny_Cosmodrome",
+        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+      ]
+    },
+    {
+      "id": "kapustin-yar",
+      "name": {
+        "en": "Kapustin Yar",
+        "fr": "Kapoustine Iar"
+      },
+      "operator": "Russian Aerospace Forces",
+      "country": "ru",
+      "satcatCodes": ["KYMSC"],
+      "latDeg": 48.59,
+      "lonDeg": 45.72,
+      "firstOrbitalLaunch": "1962-03-16",
+      "active": false,
+      "sources": ["https://en.wikipedia.org/wiki/Kapustin_Yar"]
+    },
+    {
+      "id": "jiuquan",
+      "name": {
+        "en": "Jiuquan Satellite Launch Center",
+        "fr": "Centre de lancement de satellites de Jiuquan"
+      },
+      "operator": "CASC / PLA",
+      "country": "cn",
+      "satcatCodes": ["JSC"],
+      "latDeg": 40.9581,
+      "lonDeg": 100.2911,
+      "firstOrbitalLaunch": "1970-04-24",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Jiuquan_Satellite_Launch_Center",
+        "https://en.wikipedia.org/wiki/Dong_Fang_Hong_1"
+      ]
+    },
+    {
+      "id": "taiyuan",
+      "name": {
+        "en": "Taiyuan Satellite Launch Center",
+        "fr": "Centre de lancement de satellites de Taiyuan"
+      },
+      "operator": "CASC / PLA",
+      "country": "cn",
+      "satcatCodes": ["TAISC"],
+      "latDeg": 38.8491,
+      "lonDeg": 111.608,
+      "firstOrbitalLaunch": "1988-09-06",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Taiyuan_Satellite_Launch_Center"]
+    },
+    {
+      "id": "xichang",
+      "name": {
+        "en": "Xichang Satellite Launch Center",
+        "fr": "Centre de lancement de satellites de Xichang"
+      },
+      "operator": "CASC / PLA",
+      "country": "cn",
+      "satcatCodes": ["XICLF"],
+      "latDeg": 28.2456,
+      "lonDeg": 102.0267,
+      "firstOrbitalLaunch": "1984-01-29",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Xichang_Satellite_Launch_Center"]
+    },
+    {
+      "id": "wenchang",
+      "name": {
+        "en": "Wenchang Space Launch Site",
+        "fr": "Centre de lancement de Wenchang"
+      },
+      "operator": "CASC / PLA",
+      "country": "cn",
+      "satcatCodes": ["WSC"],
+      "latDeg": 19.6145,
+      "lonDeg": 110.9511,
+      "firstOrbitalLaunch": "2016-06-25",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Wenchang_Space_Launch_Site"]
+    },
+    {
+      "id": "sriharikota",
+      "name": {
+        "en": "Satish Dhawan Space Centre (Sriharikota)",
+        "fr": "Centre spatial Satish-Dhawan (Sriharikota)"
+      },
+      "operator": "ISRO",
+      "country": "in",
+      "satcatCodes": ["SRILR"],
+      "latDeg": 13.72,
+      "lonDeg": 80.23,
+      "firstOrbitalLaunch": "1980-07-18",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Satish_Dhawan_Space_Centre"]
+    },
+    {
+      "id": "tanegashima",
+      "name": {
+        "en": "Tanegashima Space Center",
+        "fr": "Centre spatial de Tanegashima"
+      },
+      "operator": "JAXA",
+      "country": "jp",
+      "satcatCodes": ["TANSC"],
+      "latDeg": 30.4,
+      "lonDeg": 130.97,
+      "firstOrbitalLaunch": "1975-09-09",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Tanegashima_Space_Center",
+        "https://en.wikipedia.org/wiki/Osaki_Launch_Complex"
+      ]
+    },
+    {
+      "id": "uchinoura",
+      "name": {
+        "en": "Uchinoura Space Center",
+        "fr": "Centre spatial d'Uchinoura"
+      },
+      "operator": "JAXA",
+      "country": "jp",
+      "satcatCodes": ["KSCUT"],
+      "latDeg": 31.2519,
+      "lonDeg": 131.0819,
+      "firstOrbitalLaunch": "1970-02-11",
+      "active": false,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Uchinoura_Space_Center",
+        "https://en.wikipedia.org/wiki/Ohsumi_(satellite)"
+      ]
+    },
+    {
+      "id": "naro",
+      "name": {
+        "en": "Naro Space Center",
+        "fr": "Centre spatial de Naro"
+      },
+      "operator": "KARI / KASA",
+      "country": "kr",
+      "satcatCodes": ["NSC"],
+      "latDeg": 34.4319,
+      "lonDeg": 127.535,
+      "firstOrbitalLaunch": "2013-01-30",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Naro_Space_Center",
+        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+      ]
+    },
+    {
+      "id": "palmachim",
+      "name": {
+        "en": "Palmachim Airbase",
+        "fr": "Base aérienne de Palmachim"
+      },
+      "operator": "Israeli Air Force / Israel Space Agency",
+      "country": "il",
+      "satcatCodes": ["YAVNE"],
+      "latDeg": 31.8978,
+      "lonDeg": 34.6906,
+      "firstOrbitalLaunch": "1988-09-19",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Palmachim_Airbase"]
+    },
+    {
+      "id": "semnan",
+      "name": {
+        "en": "Semnan Space Center (Imam Khomeini Spaceport)",
+        "fr": "Centre spatial de Semnan (spatioport Imam-Khomeini)"
+      },
+      "operator": "Iranian Space Agency",
+      "country": "ir",
+      "satcatCodes": ["SEMLS"],
+      "latDeg": 35.2346,
+      "lonDeg": 53.9221,
+      "firstOrbitalLaunch": "2009-02-02",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Semnan_Space_Center",
+        "https://en.wikipedia.org/wiki/Imam_Khomeini_Space_Launch_Terminal"
+      ]
+    },
+    {
+      "id": "shahroud",
+      "name": {
+        "en": "Shahroud Space Center",
+        "fr": "Centre spatial de Shahroud"
+      },
+      "operator": "IRGC Aerospace Force",
+      "country": "ir",
+      "satcatCodes": ["SMTS"],
+      "latDeg": 36.2009,
+      "lonDeg": 55.3339,
+      "firstOrbitalLaunch": "2020-04-22",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Shahroud_Space_Center"]
+    },
+    {
+      "id": "sohae",
+      "name": {
+        "en": "Sohae Satellite Launching Station",
+        "fr": "Base de lancement de satellites de Sohae"
+      },
+      "operator": "NATA (DPRK)",
+      "country": "kp",
+      "satcatCodes": ["YUN"],
+      "latDeg": 39.66,
+      "lonDeg": 124.705,
+      "firstOrbitalLaunch": "2012-12-12",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Sohae_Satellite_Launching_Station"]
+    },
+    {
+      "id": "mahia",
+      "name": {
+        "en": "Rocket Lab Launch Complex 1 (Mahia)",
+        "fr": "Complexe de lancement 1 de Rocket Lab (Mahia)"
+      },
+      "operator": "Rocket Lab",
+      "country": "nz",
+      "satcatCodes": ["RLLB"],
+      "latDeg": -39.26085,
+      "lonDeg": 177.86586,
+      "firstOrbitalLaunch": "2018-01-21",
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Rocket_Lab_Launch_Complex_1"]
+    },
+    {
+      "id": "andoya",
+      "name": {
+        "en": "Andøya Spaceport",
+        "fr": "Spatioport d'Andøya"
+      },
+      "operator": "Andøya Space",
+      "country": "no",
+      "satcatCodes": ["ANDSP"],
+      "latDeg": 69.1087,
+      "lonDeg": 15.5887,
+      "firstOrbitalLaunch": "2026-09-05",
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/And%C3%B8ya_Space",
+        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+      ]
+    },
+    {
+      "id": "saxavord",
+      "name": {
+        "en": "SaxaVord Spaceport",
+        "fr": "Spatioport de SaxaVord"
+      },
+      "operator": "SaxaVord UK Spaceport",
+      "country": "gb",
+      "satcatCodes": [],
+      "latDeg": 60.8184,
+      "lonDeg": -0.7692,
+      "active": false,
+      "sources": ["https://en.wikipedia.org/wiki/SaxaVord_Spaceport"]
+    },
+    {
+      "id": "esrange",
+      "name": {
+        "en": "Esrange Space Center",
+        "fr": "Centre spatial d'Esrange"
+      },
+      "operator": "SSC (Swedish Space Corporation)",
+      "country": "se",
+      "satcatCodes": [],
+      "latDeg": 67.8781,
+      "lonDeg": 21.1623,
+      "active": false,
+      "sources": ["https://en.wikipedia.org/wiki/Esrange"]
+    },
+    {
+      "id": "alcantara",
+      "name": {
+        "en": "Alcântara Space Center",
+        "fr": "Centre de lancement d'Alcântara"
+      },
+      "operator": "Brazilian Air Force / AEB",
+      "country": "br",
+      "satcatCodes": ["ALCLC"],
+      "latDeg": -2.3394,
+      "lonDeg": -44.4175,
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Alc%C3%A2ntara_Space_Center"]
+    },
+    {
+      "id": "bowen",
+      "name": {
+        "en": "Bowen Orbital Spaceport",
+        "fr": "Spatioport orbital de Bowen"
+      },
+      "operator": "Gilmour Space Technologies",
+      "country": "au",
+      "satcatCodes": ["BOS"],
+      "latDeg": -19.95807,
+      "lonDeg": 148.11292,
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Gilmour_Space_Technologies",
+        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+      ]
+    },
+    {
+      "id": "kii",
+      "name": {
+        "en": "Spaceport Kii",
+        "fr": "Spatioport de Kii"
+      },
+      "operator": "Space One",
+      "country": "jp",
+      "satcatCodes": ["SPKII"],
+      "latDeg": 33.5443,
+      "lonDeg": 135.8895,
+      "active": true,
+      "sources": ["https://en.wikipedia.org/wiki/Spaceport_Kii"]
+    },
+    {
+      "id": "kwajalein",
+      "name": {
+        "en": "Kwajalein Atoll (Reagan Test Site)",
+        "fr": "Atoll de Kwajalein (Reagan Test Site)"
+      },
+      "operator": "U.S. Army",
+      "country": "mh",
+      "satcatCodes": ["KWAJ"],
+      "latDeg": 8.7167,
+      "lonDeg": 167.7333,
+      "active": true,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Ronald_Reagan_Space_and_Missile_Test_Range",
+        "https://science.nasa.gov/blogs/swift/2026/07/03/mission-to-boost-nasas-swift-launches-from-marshall-islands/",
+        "https://en.wikipedia.org/wiki/2026_in_spaceflight",
+        "https://en.wikipedia.org/wiki/Omelek_Island"
+      ]
+    }
+  ]
+}

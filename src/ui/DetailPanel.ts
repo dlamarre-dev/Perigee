@@ -12,6 +12,8 @@ export interface DetailContent {
   readonly footnote?: string;
   /** Show the Follow button. */
   readonly followable: boolean;
+  /** Optional secondary action (e.g. apply a filter). */
+  readonly action?: { readonly label: string; readonly run: () => void };
 }
 
 export interface DetailPanelCallbacks {
@@ -30,6 +32,8 @@ export class DetailPanel {
   private readonly sources = h('ul', { class: 'sources small' });
   private readonly footnote = h('p', { class: 'muted small' });
   private readonly follow = h('button', { type: 'button', class: 'btn' });
+  private readonly action = h('button', { type: 'button', class: 'btn' });
+  private actionRun: (() => void) | undefined;
   private readonly close = h('button', { type: 'button', class: 'btn' });
   private followingValue = false;
   private lastSourcesKey = '';
@@ -40,6 +44,7 @@ export class DetailPanel {
   ) {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
+    this.action.addEventListener('click', () => this.actionRun?.());
     this.element = h(
       'aside',
       { class: 'panel side-panel info', 'aria-labelledby': 'detail-title', hidden: true },
@@ -51,7 +56,7 @@ export class DetailPanel {
         this.sourcesTitle,
         this.sources,
         this.footnote,
-        h('div', { class: 'dialog-actions' }, [this.follow]),
+        h('div', { class: 'dialog-actions' }, [this.action, this.follow]),
       ],
     );
     this.element.addEventListener('keydown', (e) => {
@@ -96,6 +101,9 @@ export class DetailPanel {
     this.sourcesTitle.hidden = !content.sources?.length;
     this.footnote.textContent = content.footnote ?? '';
     this.follow.hidden = !content.followable;
+    this.action.hidden = !content.action;
+    this.action.textContent = content.action?.label ?? '';
+    this.actionRun = content.action?.run;
     if (focus && wasHidden) this.title.focus();
   }
 

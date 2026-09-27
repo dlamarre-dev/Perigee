@@ -1,4 +1,5 @@
 /** View A — Earth: every active catalogued satellite, propagated with SGP4 (CLAUDE.md §5.1). */
+import launchSitesJson from '../../catalog/launch-sites.json';
 import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
@@ -10,19 +11,39 @@ import { length, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
-import { GroupsSchema, OmmListSchema, OperatorsCatalogSchema, SatcatListSchema } from '../data/schemas';
+import {
+  GroupsSchema,
+  LaunchSitesSchema,
+  OmmListSchema,
+  OperatorsCatalogSchema,
+  SatcatListSchema,
+  type LaunchSite,
+} from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
+import { countryName } from '../ui/countries';
+import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
+import { h } from '../ui/dom';
 import { FilterPanel } from '../ui/FilterPanel';
 import { InfoPanel } from '../ui/InfoPanel';
 import { buildCatalog, type SatCatalog, type SatObject } from './catalog';
 import { EarthSatellites } from './EarthSatellites';
 import { parseEarthUrl, writeEarthUrl } from './earthUrl';
-import type { FilterState } from './filters';
+import { EMPTY_FILTERS, type FilterState } from './filters';
+import { LaunchSiteLayer } from './LaunchSiteLayer';
 import { makeSatrec, propagateTeme } from './sgp4';
 
 const R = EARTH_EQUATORIAL_RADIUS_KM;
 const FOLLOW_DISTANCE_KM = 1500;
+const SITE_FOLLOW_DISTANCE_KM = 2500;
+/** A launch site this close to the pointer wins over satellites (they are dense near the Earth). */
+const SITE_PRIORITY_PX = 8;
+
+function formatLatLon(latDeg: number, lonDeg: number): string {
+  const lat = `${Math.abs(latDeg).toFixed(3)}° ${latDeg >= 0 ? 'N' : 'S'}`;
+  const lon = `${Math.abs(lonDeg).toFixed(3)}° ${lonDeg >= 0 ? 'E' : 'W'}`;
+  return `${lat}, ${lon}`;
+}
 
 class EarthView implements View {
   readonly id = 'earth' as const;
@@ -37,6 +58,12 @@ class EarthView implements View {
   private readonly earth: BodyMesh;
   private readonly operators = OperatorsCatalogSchema.parse(operatorsJson);
   private readonly infoPanel: InfoPanel;
+  private readonly siteDetail: DetailPanel;
+  private readonly launchSites: readonly LaunchSite[];
+  private readonly launchVerified: string;
+  private readonly launch: LaunchSiteLayer;
+  private selectedSite: LaunchSite | undefined;
+  private catalog: SatCatalog | undefined;
   private sats: EarthSatellites | undefined;
   private filterPanel: FilterPanel | undefined;
   private filters: FilterState;
@@ -55,6 +82,30 @@ class EarthView implements View {
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
     });
     host.mount(this.infoPanel.element);
+
+    const sites = LaunchSitesSchema.parse(launchSitesJson);
+    this.launchSites = sites.sites;
+    this.launchVerified = sites.verified;
+    this.launch = new LaunchSiteLayer(this.launchSites, host.renderer.renderer.getPixelRatio());
+    this.earth.mesh.add(this.launch.group);
+    this.launch.setLanguage(host.i18n.lang);
+    host.i18n.onChange((lang) => {
+      if (this.disposed) return;
+      this.launch.setLanguage(lang);
+      if (this.selectedSite) this.showSite(this.selectedSite, false);
+    });
+    host.mount(this.launch.labels.element);
+    this.launch.visible = host.initialParams.get('ls') !== '0';
+    this.siteDetail = new DetailPanel(host.i18n, {
+      onClose: () => this.selectSite(undefined),
+      onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.followSite()),
+    });
+    host.mount(this.siteDetail.element);
+    const sel = host.initialParams.get('sel');
+    if (sel?.startsWith('site:')) {
+      const site = this.launchSites.find((x) => x.id === sel.slice(5));
+      if (site) this.selectSite(site);
+    }
     void this.loadSatellites();
   }
 
@@ -69,11 +120,14 @@ class EarthView implements View {
     this.earth.setSunDirection(quatRotate(f.sceneFromInertial, sunDirectionEci(date)));
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
+    this.launch.update(quatMultiply(f.sceneFromInertial, f.bodyQ));
   }
 
   placeOrigin(originKm: Vec3): void {
     this.earth.mesh.position.set(-originKm[0], -originKm[1], -originKm[2]);
     this.sats?.placeOrigin(originKm);
+    const canvas = this.host.renderer.canvas;
+    this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
   }
 
   uiTick(nowMs: number): void {
@@ -83,18 +137,30 @@ class EarthView implements View {
   }
 
   click(xCss: number, yCss: number, double: boolean): void {
-    const obj = this.sats?.pick(this.host.renderer.scene, this.host.renderer.camera, xCss, yCss);
+    const { renderer } = this.host;
+    const w = renderer.canvas.clientWidth;
+    const hgt = renderer.canvas.clientHeight;
+    const site = this.launch.pick(xCss, yCss, renderer.camera, w, hgt);
+    if (site && site.distancePx <= SITE_PRIORITY_PX) {
+      this.selectSite(site.site, { follow: double });
+      return;
+    }
+    const obj = this.sats?.pick(renderer.scene, renderer.camera, xCss, yCss);
     if (obj) this.select(obj, { follow: double });
+    else if (site) this.selectSite(site.site, { follow: double });
   }
 
   writeUrl(p: URLSearchParams): void {
     writeEarthUrl({ filters: this.filters, selected: this.selectedNorad }, p);
+    if (this.selectedSite) p.set('sel', `site:${this.selectedSite.id}`);
+    if (!this.launch.visible) p.set('ls', '0');
   }
 
   dispose(): void {
     this.disposed = true;
     this.host.renderer.scene.remove(this.earth.mesh);
     this.earth.dispose();
+    this.launch.dispose();
     if (this.sats) {
       this.host.renderer.scene.remove(this.sats.group);
       this.sats.dispose();
@@ -116,6 +182,7 @@ class EarthView implements View {
   private select(obj: SatObject | undefined, options: { follow?: boolean; focus?: boolean } = {}): void {
     if (!this.sats) return;
     if (!obj || obj.noradId !== this.selectedNorad) this.host.follow.stop();
+    if (obj && this.selectedSite) this.clearSite();
     this.sats.select(obj);
     this.selectedNorad = obj?.noradId;
     this.infoPanel.show(obj, options.focus ?? false);
@@ -132,6 +199,79 @@ class EarthView implements View {
     this.host.syncUrl();
   }
 
+  private clearSite(): void {
+    this.selectedSite = undefined;
+    this.launch.select(undefined);
+    this.siteDetail.hide();
+  }
+
+  private selectSite(site: LaunchSite | undefined, options: { follow?: boolean } = {}): void {
+    if (site?.id !== this.selectedSite?.id) this.host.follow.stop();
+    if (site && this.selectedNorad !== undefined) {
+      this.sats?.select(undefined);
+      this.selectedNorad = undefined;
+      this.infoPanel.show(undefined);
+    }
+    if (!site) {
+      this.clearSite();
+    } else {
+      this.selectedSite = site;
+      this.launch.select(site.id);
+      this.showSite(site, true);
+      if (options.follow) this.followSite();
+    }
+    this.host.syncUrl();
+  }
+
+  private followSite(): void {
+    const site = this.selectedSite;
+    if (!site) return;
+    this.siteDetail.following = this.host.follow.start(
+      () => (this.selectedSite === site ? this.launch.scenePosition(site.id) : undefined),
+      SITE_FOLLOW_DISTANCE_KM,
+      () => (this.siteDetail.following = false),
+    );
+  }
+
+  private showSite(site: LaunchSite, focus: boolean): void {
+    this.siteDetail.show(this.siteContent(site), focus);
+  }
+
+  private siteContent(site: LaunchSite): DetailContent {
+    const { i18n } = this.host;
+    const t = i18n.t.bind(i18n);
+    const codes = new Set(site.satcatCodes);
+    const launched = this.catalog?.objects.filter(
+      (o) => o.launchSite !== undefined && codes.has(o.launchSite),
+    );
+    const rows: [string, string][] = [[t('launch.operator'), site.operator]];
+    if (site.country) rows.push([t('info.country'), countryName(i18n, site.country)]);
+    rows.push([t('info.coordinates'), formatLatLon(site.latDeg, site.lonDeg)]);
+    if (site.firstOrbitalLaunch) rows.push([t('launch.first'), site.firstOrbitalLaunch]);
+    if (site.satcatCodes.length) rows.push([t('launch.codes'), site.satcatCodes.join(', ')]);
+    if (launched) rows.push([t('launch.satellites'), i18n.number(launched.length)]);
+    const content: DetailContent = {
+      title: site.name[i18n.lang],
+      badge: {
+        text: t(site.active ? 'launch.active' : 'launch.inactive'),
+        state: site.active ? 'fresh' : 'stale',
+      },
+      rows,
+      ...(site.note ? { notes: site.note } : {}),
+      sources: site.sources,
+      footnote: i18n.format('info.verified', { date: this.launchVerified }),
+      followable: true,
+    };
+    if (!launched?.length || !site.satcatCodes.length) return content;
+    return {
+      ...content,
+      action: {
+        label: t('launch.showSatellites'),
+        run: () => this.filterPanel?.setFilters({ ...EMPTY_FILTERS, launchSites: [...site.satcatCodes] }),
+      },
+    };
+  }
+
   private async loadSatellites(): Promise<void> {
     const { host } = this;
     host.showNotice(host.i18n.t('sat.loading'));
@@ -143,7 +283,9 @@ class EarthView implements View {
         loadOptionalDataset(host.baseUrl, manifest, 'earth.groups', GroupsSchema),
       ]);
       if (this.disposed) return;
-      const catalog = buildCatalog(gp.data, satcat?.data, groups?.data, this.operators);
+      const catalog = buildCatalog(gp.data, satcat?.data, groups?.data, this.operators, this.launchSites);
+      this.catalog = catalog;
+      this.infoPanel.setLaunchSiteNames((code) => catalog.launchSiteByCode.get(code)?.name[host.i18n.lang]);
       const layer = new EarthSatellites(catalog, host.renderer.renderer);
       await layer.ready;
       if (this.disposed) {
@@ -164,6 +306,21 @@ class EarthView implements View {
         onSelect: (obj) => this.select(obj, { focus: true }),
       });
       this.filterPanel = panel;
+      const toggle = h('input', {
+        type: 'checkbox',
+        id: 'toggle-launch-sites',
+        checked: this.launch.visible,
+      });
+      const toggleLabel = h('label', { for: 'toggle-launch-sites' }, [
+        host.i18n.t('filters.showLaunchSites'),
+      ]);
+      host.i18n.onChange(() => (toggleLabel.textContent = host.i18n.t('filters.showLaunchSites')));
+      toggle.addEventListener('change', () => {
+        this.launch.visible = toggle.checked;
+        host.syncUrl();
+      });
+      panel.addControl(h('p', { class: 'search-row' }, [toggle, toggleLabel]));
+      if (this.selectedSite) this.showSite(this.selectedSite, false);
       panel.element.id = 'side-panel';
       panel.visible = window.matchMedia('(min-width: 900px)').matches;
       host.mount(panel.element);

@@ -1,5 +1,6 @@
 export const en = {
-  'app.title': 'Périgée — objects in orbit, in real time',
+  'app.brand': 'Perigee',
+  'app.title': 'Perigee — objects in orbit, in real time',
   'app.loading': 'Loading…',
   'app.webglUnavailable': 'WebGL 2 is not available in this browser.',
 
@@ -28,9 +29,9 @@ export const en = {
   'time.live': 'Live',
   'time.paused': 'Paused',
 
-  'about.title': 'About Périgée',
+  'about.title': 'About Perigee',
   'about.intro':
-    'Périgée is an open-source viewer of artificial objects in orbit. All positions are computed in your browser from public data.',
+    'Perigee is an open-source viewer of artificial objects in orbit. All positions are computed in your browser from public data.',
   'about.disclaimer': 'Educational use only. Not intended for navigation or conjunction assessment.',
   'about.sources': 'Data and imagery',
   'about.software': 'Software',
@@ -50,6 +51,15 @@ export const en = {
   'filters.groups': 'Group',
   'filters.regimes': 'Orbit',
   'filters.types': 'Object type',
+  'filters.launchSites': 'Launch site',
+  'filters.showLaunchSites': 'Show launch sites on the Earth',
+  'launch.active': 'Orbital launches in 2024–2026',
+  'launch.inactive': 'No recent orbital launch',
+  'launch.operator': 'Operator',
+  'launch.first': 'First orbital launch',
+  'launch.codes': 'SATCAT codes',
+  'launch.satellites': 'Tracked satellites launched here',
+  'launch.showSatellites': 'Show these satellites',
   'filters.none': 'None / other',
   'filters.results': 'Matching objects',
   'filters.more': '{n} more — refine the search',

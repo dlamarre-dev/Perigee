@@ -5,7 +5,7 @@
  */
 import { apsides, orbitRegime, periodMin, type OrbitRegime } from '../astro/orbit';
 import { DEG_TO_RAD, MS_PER_DAY } from '../astro/constants';
-import type { Groups, Omm, OperatorsCatalog, SatcatRecord } from '../data/schemas';
+import type { Groups, LaunchSite, Omm, OperatorsCatalog, SatcatRecord } from '../data/schemas';
 
 /** Elements older than this are flagged "stale" (CLAUDE.md §5.1). */
 export const STALE_AFTER_DAYS = 14;
@@ -21,6 +21,8 @@ export interface SatObject {
   readonly operatorId: string | undefined;
   readonly ownerCode: string | undefined;
   readonly objectType: string;
+  /** SATCAT LAUNCH_SITE code. */
+  readonly launchSite: string | undefined;
   readonly regime: OrbitRegime;
   readonly epochMs: number;
   readonly periodMin: number;
@@ -35,6 +37,8 @@ export interface SatCatalog {
   readonly objects: readonly SatObject[];
   readonly byNorad: ReadonlyMap<number, SatObject>;
   readonly operators: OperatorsCatalog;
+  /** SATCAT LAUNCH_SITE code → curated launch site. */
+  readonly launchSiteByCode: ReadonlyMap<string, LaunchSite>;
 }
 
 /** OMM EPOCH is UTC without a zone designator and may carry microseconds. */
@@ -58,6 +62,7 @@ export function buildCatalog(
   satcat: readonly SatcatRecord[] | undefined,
   groups: Groups | undefined,
   operators: OperatorsCatalog,
+  launchSites: readonly LaunchSite[] = [],
 ): SatCatalog {
   const satcatByNorad = new Map((satcat ?? []).map((r) => [r.NORAD_CAT_ID, r]));
   const groupsByNorad = new Map<number, string[]>();
@@ -93,6 +98,7 @@ export function buildCatalog(
       operatorId,
       ownerCode: sc?.OWNER,
       objectType: sc?.OBJECT_TYPE ?? 'UNK',
+      launchSite: sc?.LAUNCH_SITE ?? undefined,
       regime: orbitRegime(omm.MEAN_MOTION, omm.ECCENTRICITY),
       epochMs: parseOmmEpochMs(omm.EPOCH),
       periodMin: periodMin(omm.MEAN_MOTION),
@@ -102,5 +108,6 @@ export function buildCatalog(
       searchText: `${omm.OBJECT_NAME} ${omm.OBJECT_ID}`.toLowerCase(),
     });
   }
-  return { objects, byNorad: new Map(objects.map((o) => [o.noradId, o])), operators };
+  const launchSiteByCode = new Map(launchSites.flatMap((s) => s.satcatCodes.map((c) => [c, s] as const)));
+  return { objects, byNorad: new Map(objects.map((o) => [o.noradId, o])), operators, launchSiteByCode };
 }

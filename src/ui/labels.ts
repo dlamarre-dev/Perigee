@@ -1,9 +1,15 @@
-import type { OperatorsCatalog } from '../data/schemas';
+import type { LaunchSite, OperatorsCatalog } from '../data/schemas';
 import { NONE, type FacetKey } from '../earth/filters';
 import type { I18n } from '../i18n';
 
 /** Human-readable label for a facet value, in the current language. */
-export function facetLabel(i18n: I18n, operators: OperatorsCatalog, facet: FacetKey, value: string): string {
+export function facetLabel(
+  i18n: I18n,
+  operators: OperatorsCatalog,
+  facet: FacetKey,
+  value: string,
+  launchSiteByCode?: ReadonlyMap<string, LaunchSite>,
+): string {
   if (value === NONE) return i18n.t('filters.none');
   switch (facet) {
     case 'operators':
@@ -18,6 +24,10 @@ export function facetLabel(i18n: I18n, operators: OperatorsCatalog, facet: Facet
       return i18n.maybe(`regime.${value}`) ?? value;
     case 'types':
       return i18n.maybe(`type.${value}`) ?? value;
+    case 'launchSites': {
+      const site = launchSiteByCode?.get(value);
+      return site ? `${site.name[i18n.lang]} (${value})` : value;
+    }
   }
 }
 

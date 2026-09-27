@@ -14,6 +14,8 @@ export interface FilterState {
   readonly groups: readonly string[];
   readonly regimes: readonly OrbitRegime[];
   readonly types: readonly string[];
+  /** SATCAT LAUNCH_SITE codes. */
+  readonly launchSites: readonly string[];
   readonly query: string;
 }
 
@@ -23,11 +25,19 @@ export const EMPTY_FILTERS: FilterState = {
   groups: [],
   regimes: [],
   types: [],
+  launchSites: [],
   query: '',
 };
 
 export type FacetKey = Exclude<keyof FilterState, 'query'>;
-export const FACET_KEYS: readonly FacetKey[] = ['operators', 'owners', 'groups', 'regimes', 'types'];
+export const FACET_KEYS: readonly FacetKey[] = [
+  'operators',
+  'owners',
+  'groups',
+  'regimes',
+  'types',
+  'launchSites',
+];
 
 /** Values of an object for a facet (several for groups). */
 export function facetValues(obj: SatObject, facet: FacetKey): readonly string[] {
@@ -42,6 +52,8 @@ export function facetValues(obj: SatObject, facet: FacetKey): readonly string[] 
       return [obj.regime];
     case 'types':
       return [obj.objectType];
+    case 'launchSites':
+      return [obj.launchSite ?? NONE];
   }
 }
 
@@ -84,6 +96,7 @@ const URL_KEYS: Record<FacetKey, string> = {
   groups: 'grp',
   regimes: 'reg',
   types: 'type',
+  launchSites: 'site',
 };
 
 export function filtersToParams(f: FilterState, p: URLSearchParams): void {
@@ -107,6 +120,7 @@ export function filtersFromParams(p: URLSearchParams): FilterState {
       (ORBIT_REGIMES as readonly string[]).includes(r),
     ),
     types: list(URL_KEYS.types),
+    launchSites: list(URL_KEYS.launchSites),
     query: p.get('q') ?? '',
   };
 }

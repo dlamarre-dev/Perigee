@@ -172,6 +172,28 @@ export const LandingSitesSchema = z.object({
 export type LandingSites = z.infer<typeof LandingSitesSchema>;
 export type LandingSite = LandingSites['sites'][number];
 
+/** catalog/launch-sites.json — orbital spaceports, geodetic coordinates, SATCAT LAUNCH_SITE codes. */
+export const LaunchSitesSchema = z.object({
+  verified: isoDate,
+  sites: z.array(
+    z.object({
+      id: z.string().regex(/^[a-z0-9-]+$/),
+      name: localized,
+      operator: z.string(),
+      country: iso2.optional(),
+      satcatCodes: z.array(z.string()),
+      latDeg: z.number().min(-90).max(90),
+      lonDeg: z.number().min(-180).max(180),
+      firstOrbitalLaunch: isoDate.optional(),
+      active: z.boolean(),
+      note: z.string().optional(),
+      sources: z.array(z.url()).min(1),
+    }),
+  ),
+});
+export type LaunchSites = z.infer<typeof LaunchSitesSchema>;
+export type LaunchSite = LaunchSites['sites'][number];
+
 /** catalog/operators.json — curated, reviewed by PR. */
 export const OperatorsCatalogSchema = z.object({
   verified: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

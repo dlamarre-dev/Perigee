@@ -27,6 +27,7 @@ export class InfoPanel {
   private state: TemeState | undefined;
   private simNowMs = Date.now();
   private followingValue = false;
+  private launchSiteName: (code: string) => string | undefined = () => undefined;
 
   constructor(
     private readonly i18n: I18n,
@@ -56,6 +57,11 @@ export class InfoPanel {
     this.element.hidden = !object;
     this.render();
     if (object && focus) this.title.focus();
+  }
+
+  /** Resolves SATCAT LAUNCH_SITE codes to curated site names. */
+  setLaunchSiteNames(lookup: (code: string) => string | undefined): void {
+    this.launchSiteName = lookup;
   }
 
   set following(v: boolean) {
@@ -94,8 +100,10 @@ export class InfoPanel {
     if (obj.ownerCode)
       rows.push(['info.owner', facetLabel(this.i18n, this.operators, 'owners', obj.ownerCode)]);
     const sc = obj.satcat;
-    if (sc?.LAUNCH_DATE)
-      rows.push(['info.launch', sc.LAUNCH_SITE ? `${sc.LAUNCH_DATE} (${sc.LAUNCH_SITE})` : sc.LAUNCH_DATE]);
+    if (sc?.LAUNCH_DATE) {
+      const site = sc.LAUNCH_SITE ? (this.launchSiteName(sc.LAUNCH_SITE) ?? sc.LAUNCH_SITE) : undefined;
+      rows.push(['info.launch', site ? `${sc.LAUNCH_DATE} · ${site}` : sc.LAUNCH_DATE]);
+    }
     if (sc?.OPS_STATUS_CODE) {
       rows.push(['info.status', this.i18n.maybe(`status.${sc.OPS_STATUS_CODE}`) ?? sc.OPS_STATUS_CODE]);
     }

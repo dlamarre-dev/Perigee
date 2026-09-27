@@ -1,6 +1,7 @@
 import type { Messages } from './en';
 
 export const fr: Messages = {
+  'app.brand': 'Périgée',
   'app.title': 'Périgée — les objets en orbite, en temps réel',
   'app.loading': 'Chargement…',
   'app.webglUnavailable': 'WebGL 2 n’est pas disponible dans ce navigateur.',
@@ -54,6 +55,15 @@ export const fr: Messages = {
   'filters.groups': 'Groupe',
   'filters.regimes': 'Orbite',
   'filters.types': 'Type d’objet',
+  'filters.launchSites': 'Site de lancement',
+  'filters.showLaunchSites': 'Afficher les sites de lancement sur la Terre',
+  'launch.active': 'Lancements orbitaux en 2024–2026',
+  'launch.inactive': 'Aucun lancement orbital récent',
+  'launch.operator': 'Exploitant',
+  'launch.first': 'Premier lancement orbital',
+  'launch.codes': 'Codes SATCAT',
+  'launch.satellites': 'Satellites suivis lancés d’ici',
+  'launch.showSatellites': 'Afficher ces satellites',
   'filters.none': 'Aucun / autre',
   'filters.results': 'Objets correspondants',
   'filters.more': '{n} de plus — précisez la recherche',
