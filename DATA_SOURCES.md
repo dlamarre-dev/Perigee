@@ -26,10 +26,21 @@ GitHub Actions (from milestone M1) and served from the same origin as the site.
 The pipeline (`pipeline/`) only fetches, validates (zod), reformats and compresses; it stops on any non-200
 response and never overwrites published data with a file under 50 % of the previous one.
 
+## In use (M2 — Moon view)
+
+| Dataset                                            | Source                                                                                                                                                                                                 | Refresh                      | Published as               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- | -------------------------- |
+| Spacecraft state vectors (ICRF, Moon-centred, TDB) | [NASA/JPL-Caltech Horizons](https://ssd.jpl.nasa.gov/horizons/) — IDs resolved with `horizons_lookup.api`                                                                                              | daily, 1 request per mission | `data/ephem/<mission>.bin` |
+| Missions, statuses, IDs                            | Curated in `catalog/missions.json`; every entry cites its sources (NASA, ISRO, KASA, CNSA, ESA…)                                                                                                       | reviewed by PR               | —                          |
+| Landing and impact sites                           | Curated in `catalog/landing-sites/moon.json`, mostly from [LROC](https://lroc.im-ldi.com) and [NASA NSSDCA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html); each entry cites its source | reviewed by PR               | —                          |
+| Moon colour map                                    | [NASA SVS CGI Moon Kit](https://svs.gsfc.nasa.gov/4720) (LROC WAC mosaic), public domain                                                                                                               | offline                      | `public/textures/moon/`    |
+| Lunar orientation                                  | IAU WGCCRE model via astronomy-engine `RotationAxis`                                                                                                                                                   | —                            | —                          |
+
+Missions with no public ephemeris (e.g. Queqiao-2) are listed but not drawn in 3D. Some site dates and the
+coordinates of Luna 9/13 are of lower confidence; see the `note` field of each entry.
+
 ## Planned
 
-- NASA/JPL-Caltech Horizons — spacecraft ephemerides (M2–M4)
-- NASA SVS CGI Moon Kit — lunar textures (M2)
 - USGS Astrogeology — Viking MDIM 2.1 and MOLA Mars textures (M3)
 
 ## Software

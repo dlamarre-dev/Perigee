@@ -141,7 +141,11 @@ No single API provides "active probes + landing sites". We maintain:
 ### 5.2 Moon / Mars / solar-system views (ephemerides)
 - **Cubic Hermite** interpolation of position+velocity between Horizons samples (no high-order Lagrange).
 - Outside the window: **two-body Keplerian** extrapolation from the last state (central body GM), shown as
-  "extrapolated". Beyond 7 days outside the window for a low orbiter: hide the position, keep the greyed trajectory.
+  "extrapolated" (dimmed marker, dashed trajectory). Beyond 7 days outside the window for a low orbiter — and
+  14 days for any other orbit, since two-body extrapolation of high or three-body orbits (NRHO, DRO) degrades
+  quickly too — hide the position and keep the last known trajectory in grey (`src/astro/track.ts`).
+- Horizons coverage can end before "now" (e.g. CAPSTONE): the pipeline moves the window to the covered side once
+  and the client shows the object as hidden/extrapolated accordingly.
 - Body rotation: `Astronomy.RotationAxis(body, time)` (IAU WGCCRE model) to orient the Moon and Mars; landing
   sites are placed in planetocentric coordinates then rotated with the body.
 - Phobos/Deimos: Horizons (IDs 401/402) like the probes.
@@ -155,7 +159,12 @@ No single API provides "active probes + landing sites". We maintain:
 - Internal time: UTC `Date` + conversion helpers (JD UTC, JD TDB via astronomy-engine).
 - Common working frame: ICRF equatorial J2000, in km, **Float64 on the CPU**.
 - GPU precision: **camera-relative** rendering (subtract the origin in Float64 before sending Float32) +
-  `logarithmicDepthBuffer` in view D. Never send raw heliocentric coordinates to the GPU.
+  `logarithmicDepthBuffer` in **all** views (the Moon view spans 1 km to 400 000 km). Every custom
+  `ShaderMaterial` that depth-tests must include the `logdepthbuf_*` chunks. Never send raw heliocentric
+  coordinates to the GPU.
+- Views implement `src/app/View.ts` (inertial ← body-fixed orientation, per-frame update, floating origin,
+  picking, URL parameters); the shell (`src/app/main.ts`) owns camera, clock, frame switching and follow mode.
+  Views are code-split and loaded on demand.
 
 ## 6. Quaternion camera
 
@@ -270,9 +279,13 @@ npm run textures       # offline texture pre-processing (downloads NASA sources,
 ## 13. Things to re-check regularly (verification dates in `catalog/`)
 
 Known statuses at end of September 2026 — **re-check before each release**:
-- Lunar orbit: LRO, Chandrayaan-2 (orbiter), Danuri (KPLO), Queqiao-2 (+ Tiandu-1/2), ARTEMIS P1/P2,
-  CAPSTONE (status to confirm). **Chang'e-7**: launch announced for late August 2026, conflicting sources about
-  a delay — verify.
+- Lunar orbit (verified 2026-09-26, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
+  orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
+  ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA mission ended June 2026, Advanced Space still operates it;
+  **public Horizons ephemeris stops 2026-08-14**). No Horizons ephemeris: Queqiao-2, Tiandu-2, Queqiao-1 (L2),
+  DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025). ICUBE-Q: presumed lost.
+  **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to 2027. Artemis II flew
+  1–10 April 2026 (ended).
 - Mars orbit (operational): Mars Odyssey, Mars Express, MRO, ExoMars TGO, Hope (EMM), Tianwen-1.
   MAVEN: out of service (keep as "inactive", optionally displayable). ESCAPADE: cruising.
   MMX (JAXA): launch planned October 2026.

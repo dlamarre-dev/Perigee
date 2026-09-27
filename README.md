@@ -13,6 +13,9 @@ GitHub Pages. The interface is available in English and French.
 - **M1** — Earth view: every active catalogued satellite (~16.6k) propagated with SGP4 in Web Workers from
   CelesTrak OMM data, GPU picking, info panel, faceted filters (operator, country, group, orbit, type), text
   search, orbit trace, follow mode, shareable URL state. Data mirrored by GitHub Actions to the `data` branch.
+- **M2** — Moon view: lunar orbiters from JPL Horizons ephemerides (Hermite interpolation, two-body
+  extrapolation shown as such), 52 sourced landing and impact sites, the Earth at its true position, curated
+  mission catalogue with statuses (`catalog/missions.json`).
 
 See `CLAUDE.md` §15 for the roadmap.
 
@@ -34,8 +37,9 @@ policy, and a local guard refuses to fetch the same resource twice within 2 h. P
 Controls: left-drag rotates (arcball), right-drag or two-finger twist rolls, wheel/pinch zooms, click selects
 an object, double-click selects and follows it. Keyboard: arrows rotate, Q/E roll, +/− zoom, R resets the view.
 
-URL parameters: `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
-`q=<search>`, and filters `op`, `own`, `grp`, `reg`, `type` (comma-separated values).
+URL parameters: `view=earth|moon`, `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
+`q=<search>`, and filters `op`, `own`, `grp`, `reg`, `type` (comma-separated values). Moon view: `sel=<mission>` or
+`sel=site:<id>`, `sites=0`.
 
 ## Credits
 
