@@ -26,6 +26,17 @@ GitHub Actions (from milestone M1) and served from the same origin as the site.
 The pipeline (`pipeline/`) only fetches, validates (zod), reformats and compresses; it stops on any non-200
 response and never overwrites published data with a file under 50 % of the previous one.
 
+## In use (M4 — solar system view)
+
+| Dataset                                            | Source                                                                                 | Refresh                    | Published as           |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------- | ---------------------- |
+| Planet positions                                   | [astronomy-engine](https://github.com/cosinekitty/astronomy) (computed in the browser) | —                          | —                      |
+| Planet radii and periods                           | [NASA planetary fact sheets](https://nssdc.gsfc.nasa.gov/planetary/factsheet/)         | curated                    | `src/astro/planets.ts` |
+| Spacecraft state vectors (ICRF, heliocentric, TDB) | [NASA/JPL-Caltech Horizons](https://ssd.jpl.nasa.gov/horizons/), CENTER=500@10         | daily, 1 request per probe | `data/ephem/<id>.bin`  |
+| Missions and statuses                              | Curated in `catalog/missions.json` (NASA, ESA, JAXA, CNSA, ISRO sources)               | reviewed by PR             | —                      |
+
+The optional logarithmic distance scale is a visual aid only and is flagged as "not to scale" in the interface.
+
 ## In use (M3 — Mars view)
 
 | Dataset                                                                      | Source                                                                                                                                                          | Refresh                     | Published as            |

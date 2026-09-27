@@ -91,13 +91,14 @@ Cross-cutting features:
 ### 4.3 JPL Horizons — ephemerides (views B, C, D)
 - API: `https://ssd.jpl.nasa.gov/api/horizons.api`; ID lookup: `horizons_lookup.api?sstr=...`.
 - **No CORS headers** → unusable from the browser. Fetched by the pipeline only.
-- Typical request: `EPHEM_TYPE=VECTORS`, `CENTER=500@301` (Moon) / `500@499` (Mars) / `500@0` (barycentre),
+- Typical request: `EPHEM_TYPE=VECTORS`, `CENTER=500@301` (Moon) / `500@499` (Mars) / `500@10` (Sun centre, heliocentric — chosen over the barycentre `500@0` so probes share the frame of astronomy-engine `HelioVector` planets and two-body extrapolation around the Sun is physical),
   `REF_SYSTEM=ICRF`, `REF_PLANE=FRAME` (J2000 equator), `OUT_UNITS=KM-S`, `CSV_FORMAT=YES`, `VEC_TABLE=2`.
 - Output times in **TDB** (JD). TDB↔UTC conversion on the client (astronomy-engine handles ΔT).
 - Sampling step according to dynamics:
   - Low lunar/Martian orbiters (period ~2 h): 2 min step, window −1 d / +3 d.
   - Highly elliptical orbiters (Queqiao-2, TGO high orbit, Hope): 10 min step.
-  - Heliocentric probes: 1 d step, window −60 d / +365 d.
+  - Heliocentric probes: 1 d step (6 h for Parker Solar Probe near perihelion), window −60 d / +365 d. When the
+    public ephemeris ends inside the window, the window is truncated (not shifted) so "now" stays covered.
 - **Always resolve IDs through `horizons_lookup.api`**, never guess them. Record them in `catalog/missions.json`
   with the verification date.
 - Some missions have no public ephemerides (e.g. Tianwen-1, sometimes Queqiao-2) → see §5.3.
@@ -297,9 +298,15 @@ Known statuses at end of September 2026 — **re-check before each release**:
   2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE Blue/Gold: launched
   2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept 2027. MMX (JAXA):
   launch 2026-10-19 19:41 UTC (H3 F10). Phobos (401) and Deimos (402) come from Horizons like the probes.
-- Interplanetary (view D, indicative list to confirm via Horizons): Voyager 1 and 2, New Horizons, Juno,
-  Parker Solar Probe, Solar Orbiter, BepiColombo, JUICE, Europa Clipper, Psyche, Lucy, OSIRIS-APEX,
-  Hera, Tianwen-2, Hayabusa2#, Aditya-L1, SOHO, JWST, Gaia (if still tracked), Euclid, ESCAPADE.
+- Interplanetary (verified 2026-09-27, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
+  (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
+  step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
+  2026-09-28), Europa Clipper (−159), Psyche (−255), Lucy (−49), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
+  Hayabusa2 (−37), Aditya-L1 (−156), SOHO (−21), JWST (−170), Gaia (−139479, retired 2025), Euclid (−680), IMAP
+  (−43), Carruthers (−171), STEREO-A (−234). No public ephemeris: Tianwen-2 (at Kamoʻoalewa since June 2026),
+  SOLAR-1. Planned: NEO Surveyor, MBR Explorer, DESTINY+, Comet Interceptor. Several public ephemerides end within
+  weeks (Hera, SOHO, IMAP, Aditya-L1, Hayabusa2, STEREO-A): windows are truncated, re-check coverage regularly.
+- Mars rover positions come from NASA MMGIS waypoint feeds (`catalog/landing-sites/mars.json` `feed`, daily).
 
 ## 14. Code conventions
 

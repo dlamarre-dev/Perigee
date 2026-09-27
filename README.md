@@ -18,6 +18,8 @@ GitHub Pages. The interface is available in English and French.
   mission catalogue with statuses (`catalog/missions.json`).
 - **M3** — Mars view: orbiters, Phobos and Deimos from JPL Horizons, 19 sourced landing sites and rover
   positions, Viking colour mosaic, day-side default viewpoint.
+- **M4** — Solar system view: Sun, planets (astronomy-engine), 22 interplanetary spacecraft from JPL Horizons,
+  distances and light time, optional logarithmic scale (flagged as not to scale).
 - Earth view also shows 30 orbital launch sites; the launch-site facet filters satellites by where they were
   launched.
 
@@ -41,9 +43,9 @@ policy, and a local guard refuses to fetch the same resource twice within 2 h. P
 Controls: left-drag rotates (arcball), right-drag or two-finger twist rolls, wheel/pinch zooms, click selects
 an object, double-click selects and follows it. Keyboard: arrows rotate, Q/E roll, +/− zoom, R resets the view.
 
-URL parameters: `view=earth|moon|mars`, `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
+URL parameters: `view=earth|moon|mars|solar`, `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
 `q=<search>`, and filters `op`, `own`, `grp`, `reg`, `type`, `site` (comma-separated values); `sel=site:<id>`, `ls=0`. Moon/Mars views: `sel=<mission>` or
-`sel=site:<id>`, `sites=0`.
+`sel=site:<id>`, `sites=0`. Solar system: `sel=<planet or mission>`, `log=1`.
 
 ## Credits
 
