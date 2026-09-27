@@ -47,7 +47,7 @@ test('renders in French and switches language live', async ({ page }) => {
 
 test('time controls update the URL', async ({ page }) => {
   await page.goto('./?lang=en');
-  await page.getByRole('button', { name: '×100' }).click();
+  await page.getByRole('button', { name: '×100', exact: true }).click();
   await expect(page).toHaveURL(/rate=100/);
   await page.getByRole('button', { name: 'Now' }).click();
   await expect(page).not.toHaveURL(/rate=/);

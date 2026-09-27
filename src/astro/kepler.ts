@@ -105,3 +105,56 @@ export function osculatingElements(state: StateVector, muKm3S2: number): Osculat
     apoapsisRadiusKm: bound ? a * (1 + e) : undefined,
   };
 }
+
+/**
+ * One full osculating ellipse through `state`, as offsets from the body's own position (km, same frame), so the
+ * line passes exactly through the body and keeps full precision near it when drawn relative to the body.
+ * Points are spaced geometrically in eccentric anomaly away from the body (first step `minStepRad`, growing by
+ * `growth`, at most `maxStepRad`), dense where the camera may be close; the far side stays smooth when seen from
+ * elsewhere (0.02 rad steps: chord sagitta ≈ 5·10⁻⁵ a). Undefined for unbound orbits.
+ */
+export function ellipseOffsetsAround(
+  state: StateVector,
+  muKm3S2: number,
+  minStepRad: number,
+  growth = 1.04,
+  maxStepRad = 0.02,
+): Float64Array | undefined {
+  const r = state.posKm;
+  const v = state.velKmS;
+  const rn = length(r);
+  const vn = length(v);
+  const energy = (vn * vn) / 2 - muKm3S2 / rn;
+  if (energy >= 0) return undefined;
+  const a = -muKm3S2 / (2 * energy);
+  const h = cross(r, v);
+  const eVec = sub(scale(r, (vn * vn) / muKm3S2 - 1 / rn), scale(v, dot(r, v) / muKm3S2));
+  const e = length(eVec);
+  // Perifocal axes: P̂ towards periapsis, Q̂ = ĥ × P̂ (for a near-circular orbit, P̂ is the current radius).
+  const p = e > 1e-9 ? scale(eVec, 1 / e) : scale(r, 1 / rn);
+  const q = scale(cross(h, p), 1 / length(h));
+  const b = a * Math.sqrt(1 - e * e);
+  // Current eccentric anomaly from r = a(cos E − e) P̂ + b sin E Q̂.
+  const e0 = Math.atan2(dot(r, q) / b, dot(r, p) / a + e);
+  const offsets: number[] = [];
+  for (
+    let s = minStepRad, step = minStepRad;
+    s < Math.PI;
+    step = Math.min(step * growth, maxStepRad), s += step
+  ) {
+    offsets.push(s);
+  }
+  const steps = [...offsets.map((s) => -s).reverse(), 0, ...offsets, Math.PI];
+  // Also close the loop through −π (same point as +π).
+  steps.unshift(-Math.PI);
+  const out = new Float64Array(steps.length * 3);
+  steps.forEach((s, i) => {
+    // cos(E₀+s) − cos E₀ and sin(E₀+s) − sin E₀ without cancellation for small s.
+    const half = Math.sin(s / 2);
+    const mid = e0 + s / 2;
+    const dc = -2 * Math.sin(mid) * half;
+    const ds = 2 * Math.cos(mid) * half;
+    for (let k = 0; k < 3; k++) out[i * 3 + k] = a * dc * (p[k] ?? 0) + b * ds * (q[k] ?? 0);
+  });
+  return out;
+}

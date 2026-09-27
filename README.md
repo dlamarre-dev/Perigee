@@ -1,56 +1,65 @@
-# Périgée
+# Perigee
 
-Open-source, real-time web viewer of artificial objects orbiting the Earth, the Moon, Mars and the solar
-system. Every position is computed in the browser from public data; the site is static and hosted on
-GitHub Pages. The interface is available in English and French.
+**Perigee** shows, in real time, the artificial objects orbiting the Earth, the Moon and Mars, and the
+spacecraft travelling through the solar system. Every position is computed in your browser from public data
+(CelesTrak, NASA/JPL Horizons, astronomy-engine). The site works in English and French (_Périgée_) and keeps
+working offline once visited.
+
+**→ [Open Perigee](https://dlamarre-dev.github.io/Perigee/)**
 
 > Educational use only — not intended for navigation or conjunction assessment.
 
-## Status
+## What you can see
 
-- **M0** — Vite/Three.js skeleton, quaternion orbit camera, textured Earth with a real day/night terminator,
-  simulation clock (pause, ×1 to ×10,000, jump to date), EN/FR interface.
-- **M1** — Earth view: every active catalogued satellite (~16.6k) propagated with SGP4 in Web Workers from
-  CelesTrak OMM data, GPU picking, info panel, faceted filters (operator, country, group, orbit, type), text
-  search, orbit trace, follow mode, shareable URL state. Data mirrored by GitHub Actions to the `data` branch.
-- **M2** — Moon view: lunar orbiters from JPL Horizons ephemerides (Hermite interpolation, two-body
-  extrapolation shown as such), 52 sourced landing and impact sites, the Earth at its true position, curated
-  mission catalogue with statuses (`catalog/missions.json`).
-- **M3** — Mars view: orbiters, Phobos and Deimos from JPL Horizons, 19 sourced landing sites and rover
-  positions, Viking colour mosaic, day-side default viewpoint.
-- **M4** — Solar system view: Sun, planets (astronomy-engine), 22 interplanetary spacecraft from JPL Horizons,
-  distances and light time, optional logarithmic scale (flagged as not to scale).
-- **M5** — installable PWA that works offline after a first visit (service worker), GPU-compressed KTX2
-  textures with WebP fallback, textures and rings for every planet plus Ceres, Pluto, Eris, Haumea and Makemake,
-  i18n review, accessibility (contrast test, reduced motion, labelled 3D view), [contributor guide](CONTRIBUTING.md).
-- Earth view also shows 30 orbital launch sites; the launch-site facet filters satellites by where they were
-  launched.
+| View             | Contents                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Earth**        | Every active catalogued satellite (~16,000), propagated with SGP4 from CelesTrak elements refreshed every 4 hours, and 30 orbital launch sites.              |
+| **Moon**         | Active lunar orbiters from JPL Horizons ephemerides, the Earth at its true position, and 50+ landing and impact sites.                                       |
+| **Mars**         | Mars orbiters, Phobos and Deimos, landing sites and the latest positions of the Curiosity and Perseverance rovers.                                           |
+| **Solar system** | The Sun, the planets, five dwarf planets and 20+ interplanetary spacecraft, with distances and light travel time. An optional logarithmic scale fits it all. |
 
-See `CLAUDE.md` §15 for the roadmap.
+Click any object to open its panel: identifiers (NORAD, COSPAR, Horizons), operator, country, launch date,
+status, orbit, and where its position comes from. Positions that are **extrapolated** beyond their data, or
+based on **stale** elements, are drawn dimmed or dashed and flagged in the panel.
 
-## Development
+## Using it
 
-```bash
-npm install
-npm run data:pull  # download the latest published data (from the `data` branch on GitHub)
-npm run dev        # http://localhost:5173/Perigee/
-npm run test       # unit tests (Vitest), incl. Vallado SGP4 verification
-npm run build && npm run test:e2e   # end-to-end tests (Playwright, fixture data)
-npm run lint
-npm run textures   # regenerate body textures from NASA/USGS sources (offline, rarely needed)
-npm run icons      # regenerate the app icons in public/icons/
-```
+- **Rotate**: left-drag, or the arrow keys. **Roll**: right-drag, two-finger twist, or Q/E.
+- **Zoom**: mouse wheel, pinch, or +/−. **Reset**: R or the _Recenter_ button.
+- **Select**: click an object, or pick it in the side panel list. **Follow**: double-click it.
+- **Time**: pause, run at ×1 to ×100,000 (×10,000 in the Earth view), go back to _Now_, or jump to any date.
+- **Frame**: body-fixed (the body stays still) or inertial (the body turns, orbits stay fixed).
+- **Filters** (Earth view): operator, country, constellation group, orbit (LEO, MEO, GEO, HEO), object type,
+  launch site, plus text search by name, NORAD number or COSPAR ID.
+- **Install**: your browser can install Perigee as an app; after a first visit it opens offline with the data
+  it last downloaded (a badge tells you when you are offline).
 
-`npm run data:fetch` runs the pipeline against CelesTrak directly. Avoid it: CelesTrak enforces a strict usage
-policy, and a local guard refuses to fetch the same resource twice within 2 h. Prefer `data:pull`.
+### Sharing a view
 
-Controls: left-drag rotates (arcball), right-drag or two-finger twist rolls, wheel/pinch zooms, click selects
-an object, double-click selects and follows it. Keyboard: arrows rotate, Q/E roll, +/− zoom, R resets the view.
+The address bar always describes what you see, so a link reproduces it:
 
-URL parameters: `view=earth|moon|mars|solar`, `lang=en|fr`, `frame=fixed|inertial`, `t=<ISO 8601 UTC>`, `rate=<speed>`, `sel=<NORAD>`,
-`q=<search>`, and filters `op`, `own`, `grp`, `reg`, `type`, `site` (comma-separated values); `sel=site:<id>`, `ls=0`. Moon/Mars views: `sel=<mission>` or
-`sel=site:<id>`, `sites=0`. Solar system: `sel=<planet or mission>`, `log=1`.
+| Parameter                                      | Meaning                                                                                |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `view=earth\|moon\|mars\|solar`                | View                                                                                   |
+| `lang=en\|fr`                                  | Language                                                                               |
+| `frame=fixed\|inertial`                        | Reference frame                                                                        |
+| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                |
+| `sel=<id>`                                     | Selected object: NORAD number (Earth), mission or planet id, or `site:<id>` for a site |
+| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                 |
+| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                |
+| `log=1`                                        | Logarithmic distances in the solar-system view                                         |
 
-## Credits
+## Data and credits
 
-See [DATA_SOURCES.md](DATA_SOURCES.md). Code under the [MIT license](LICENSE).
+Satellite elements come from [CelesTrak](https://celestrak.org) (T.S. Kelso); spacecraft ephemerides from
+[NASA/JPL Horizons](https://ssd.jpl.nasa.gov/horizons/); planet positions from
+[astronomy-engine](https://github.com/cosinekitty/astronomy); imagery from NASA and USGS. A GitHub Actions
+pipeline mirrors the data (your browser never contacts these providers), and every mission, site and status is
+curated with its sources in [`catalog/`](catalog/). Full list: [DATA_SOURCES.md](DATA_SOURCES.md).
+
+Created by David Fugère-Lamarre. Code under the [MIT license](LICENSE).
+
+## Contributing
+
+Corrections to missions, statuses and sites are especially welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
+the development setup (`npm install`, `npm run data:pull`, `npm run dev`) and the project rules.

@@ -31,7 +31,7 @@ import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
 import { h } from '../ui/dom';
-import { parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
+import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
 import type { FollowApi, View, ViewFactory, ViewHost } from './View';
 
 const UI_REFRESH_S = 0.25;
@@ -53,20 +53,37 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
 function registerServiceWorker(baseUrl: string, onUpdate: () => void): void {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
   const hadController = navigator.serviceWorker.controller !== null;
+  // First visit: resources fetched before the worker controls the page bypass it, and Chromium keeps routing
+  // requests past it for a moment even after `controllerchange`. Hand everything loaded so far over for caching
+  // once control starts, then again a little later; URLs already cached are skipped by the worker.
+  const post = (): void => {
+    const urls = performance
+      .getEntriesByType('resource')
+      .map((e) => e.name)
+      .filter((u) => u.startsWith(window.location.origin));
+    navigator.serviceWorker.controller?.postMessage({
+      type: 'cache-urls',
+      urls: [...urls, window.location.href],
+    });
+  };
+  let handedOver = false;
+  const handOver = (): void => {
+    if (handedOver) return;
+    handedOver = true;
+    post();
+    for (const delayMs of [3_000, 12_000]) window.setTimeout(post, delayMs);
+  };
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (hadController) onUpdate();
+    else handOver();
   });
   const register = (): void => {
     navigator.serviceWorker
       .register(`${baseUrl}sw.js`, { scope: baseUrl })
       .then(() => navigator.serviceWorker.ready)
-      .then((reg) => {
-        // Resources fetched before the worker took control (first visit): hand them over for caching.
-        const urls = performance
-          .getEntriesByType('resource')
-          .map((e) => e.name)
-          .filter((u) => u.startsWith(window.location.origin));
-        reg.active?.postMessage({ type: 'cache-urls', urls: [...urls, window.location.href] });
+      .then(() => {
+        // Already controlled without a change event (claimed before this listener ran).
+        if (!hadController && navigator.serviceWorker.controller) handOver();
       })
       .catch((err: unknown) => {
         console.warn('Service worker registration failed', err);
@@ -318,6 +335,7 @@ function main(): void {
       const factory = await VIEW_LOADERS[id]();
       view = factory({ ...host, initialParams: params });
       controls.setLimits(view.limits);
+      timeControl.setMaxRate(view.maxRate ?? MAX_ABS_RATE, view.maxRateHint ? i18n.t(view.maxRateHint) : '');
       const home = homeState(clock.nowUtc());
       controls.setHome(home);
       controls.setState(home);

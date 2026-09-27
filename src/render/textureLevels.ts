@@ -7,8 +7,8 @@
  * - KTX2 (Basis ETC1S, sRGB, with mipmaps): transcoded to a GPU-compressed format (BC1/ETC2/ASTC…), ~8× less
  *   GPU memory. Levels above 4k are loaded only on demand, when the camera is close (`requestDetail`).
  * Procedural maps (flat colours, bands) gain nothing from KTX2 and ship as WebP only.
- * No level above 4k ships yet: the WASM Basis encoder (ktx2-encoder) is limited to ~12 Mpixel per image, so an 8k
- * level needs tiling or the native basisu CLI.
+ * 8k exists only where the source is at least that large (Earth, Moon, Mars), and only as KTX2, in UASTC (BC7/ASTC
+ * after transcoding, ~20 MB): seen magnified, ETC1S would show blocks.
  */
 export interface TextureLevels {
   readonly webp: readonly number[];
@@ -22,15 +22,15 @@ const photo = (webp: readonly number[], ktx2: readonly number[] = webp): Texture
 const procedural = (k: number): TextureLevels => ({ webp: [k], ktx2: [] });
 
 export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, TextureLevels>>>> = {
-  earth: { day: photo([2, 4]), night: photo([2, 4]) },
-  moon: { color: photo([2, 4]) },
-  mars: { color: photo([2, 4]) },
+  earth: { day: photo([2, 4], [2, 4, 8]), night: photo([2, 4], [2, 4, 8]) },
+  moon: { color: photo([2, 4], [2, 4, 8]) },
+  mars: { color: photo([2, 4], [2, 4, 8]) },
   mercury: { color: photo([2]) },
-  venus: { color: procedural(1) },
+  venus: { color: photo([2, 4]) },
   jupiter: { color: photo([2, 4]) },
-  saturn: { color: procedural(2) },
-  uranus: { color: procedural(1) },
-  neptune: { color: procedural(1) },
+  saturn: { color: photo([2, 4]) },
+  uranus: { color: photo([2]) },
+  neptune: { color: photo([2]) },
   pluto: { color: photo([2]) },
   ceres: { color: photo([2]) },
   eris: { color: procedural(0.5) },

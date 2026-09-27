@@ -48,6 +48,9 @@ function formatLatLon(latDeg: number, lonDeg: number): string {
 class EarthView implements View {
   readonly id = 'earth' as const;
   readonly limits = { minDistanceKm: R * 1.02, maxDistanceKm: R * 60 };
+  /** Beyond ×10,000, bulk SGP4 samples would be more than an orbit apart for low satellites. */
+  readonly maxRate = 10_000;
+  readonly maxRateHint = 'time.maxRate.earth' as const;
   readonly bodyRadiusKm = R;
   /** Over the Americas, north up. */
   readonly homeDirectionBody = latLonToUnit(20 * DEG_TO_RAD, -73 * DEG_TO_RAD);
@@ -132,6 +135,8 @@ class EarthView implements View {
 
   placeOrigin(originKm: Vec3): void {
     this.earth.mesh.position.set(-originKm[0], -originKm[1], -originKm[2]);
+    // 8k maps once the camera is within one radius of the surface.
+    if (length(originKm) < 2 * this.earth.radiusKm) this.earth.requestDetail();
     this.sats?.placeOrigin(originKm);
     const canvas = this.host.renderer.canvas;
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);

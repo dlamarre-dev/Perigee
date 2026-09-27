@@ -25,7 +25,7 @@ export const DEFAULT_URL_STATE: UrlState = {
   rate: 1,
 };
 
-export const MAX_ABS_RATE = 10_000;
+export const MAX_ABS_RATE = 100_000;
 
 function isViewId(v: string | null): v is ViewId {
   return (VIEW_IDS as readonly (string | null)[]).includes(v);

@@ -14,7 +14,8 @@
  * - Pluto: New Horizons LORRI global map (NASA Photojournal PIA20658)
  * - Ceres: Dawn FC global mosaic, 20 px/deg (USGS Astrogeology / DLR)
  * - Saturn rings: Voyager 2 ISS I/F profile and PPS occultation optical depth (PDS Rings Node)
- * - Venus cloud tops, Saturn, Uranus, Neptune, Eris, Haumea, Makemake: procedural (see procedural.ts)
+ * - Venus cloud tops, Saturn, Uranus, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
+ * - Eris, Haumea, Makemake: procedural (see procedural.ts)
  *
  * All outputs follow one convention: equirectangular, north up, planetocentric east longitude increasing to the
  * right, prime meridian at the horizontal centre.
@@ -23,9 +24,9 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { encodeToKTX2 } from 'ktx2-encoder';
 import sharp, { type Sharp } from 'sharp';
-import { textureLevels, type TextureLevels } from '../../src/render/textureLevels';
+import { BASE_MAX_LEVEL_K, textureLevels, type TextureLevels } from '../../src/render/textureLevels';
+import { encodeKtx2 } from './basisu';
 import { bandedMap, PROCEDURAL } from './procedural';
 import { saturnRings, uranusRings, type RingProfile } from './rings';
 
@@ -54,13 +55,14 @@ interface RingSource {
 type Source = TextureSource | ProceduralSource | RingSource;
 
 const PDS_RINGS = 'https://pds-rings.seti.org/holdings/volumes/VG_28xx';
+const SSS_COMMONS = 'https://upload.wikimedia.org/wikipedia/commons';
 const PHOTOJOURNAL = 'https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia';
 
 const BODIES: Record<string, readonly Source[]> = {
   earth: [
     {
       name: 'day',
-      url: 'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73776/world.topo.bathy.200408.3x5400x2700.jpg',
+      url: 'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73776/world.topo.bathy.200408.3x21600x10800.jpg',
       quality: 85,
     },
     {
@@ -86,12 +88,20 @@ const BODIES: Record<string, readonly Source[]> = {
     },
   ],
   mercury: [{ name: 'color', url: `${PHOTOJOURNAL}/pia16/pia16298/PIA16298.jpg`, quality: 85 }],
-  venus: [{ name: 'color', procedural: 'venus' }],
+  // Solar System Scope (INOVE), CC BY 4.0, via the Wikimedia Commons mirror (same licence): artist's impressions
+  // based on NASA imagery, used where no public-domain global map exists.
+  venus: [
+    {
+      name: 'color',
+      url: `${SSS_COMMONS}/5/57/Solarsystemscope_texture_4k_venus_atmosphere.jpg`,
+      quality: 85,
+    },
+  ],
   jupiter: [
     { name: 'color', url: `${PHOTOJOURNAL}/pia07/pia07782/PIA07782.jpg`, quality: 85, dropEdge: true },
   ],
   saturn: [
-    { name: 'color', procedural: 'saturn' },
+    { name: 'color', url: `${SSS_COMMONS}/1/1e/Solarsystemscope_texture_8k_saturn.jpg`, quality: 85 },
     {
       name: 'rings',
       rings: async () =>
@@ -102,10 +112,12 @@ const BODIES: Record<string, readonly Source[]> = {
     },
   ],
   uranus: [
-    { name: 'color', procedural: 'uranus' },
+    { name: 'color', url: `${SSS_COMMONS}/9/95/Solarsystemscope_texture_2k_uranus.jpg`, quality: 88 },
     { name: 'rings', rings: () => Promise.resolve(uranusRings()) },
   ],
-  neptune: [{ name: 'color', procedural: 'neptune' }],
+  neptune: [
+    { name: 'color', url: `${SSS_COMMONS}/1/1e/Solarsystemscope_texture_2k_neptune.jpg`, quality: 88 },
+  ],
   pluto: [
     {
       name: 'color',
@@ -156,29 +168,20 @@ function levels(body: string, name: string): TextureLevels {
   return found;
 }
 
-/** Basis ETC1S, sRGB, with mipmaps (see textureLevels.ts). */
+/** Basis ETC1S KTX2 (see basisu.ts and textureLevels.ts). */
 async function writeKtx2(image: Sharp, width: number, out: string): Promise<void> {
   const png = await image
     .clone()
     .resize(width, width / 2, { fit: 'fill', kernel: 'lanczos3' })
     .png()
     .toBuffer();
-  const ktx2 = await encodeToKTX2(new Uint8Array(png), {
-    isUASTC: false,
-    // Compressed textures cannot be flipped at upload (flipY is ignored): store rows bottom-up instead.
-    isYFlip: true,
-    qualityLevel: 230,
-    compressionLevel: 2,
-    generateMipmap: true,
-    isPerceptual: true,
-    isSetKTX2SRGBTransferFunc: true,
-    isKTX2File: true,
-    imageDecoder: async (buffer) => {
-      const { data, info } = await sharp(buffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-      return { width: info.width, height: info.height, data: new Uint8Array(data) };
-    },
+  await encodeKtx2(png, out, {
+    workDir: join(here, 'src', 'tmp'),
+    cacheDir: join(here, 'src', 'bin'),
+    userAgent: USER_AGENT,
+    // Close-up levels are seen magnified: UASTC avoids the ETC1S block artefacts (larger files, on demand only).
+    codec: width > BASE_MAX_LEVEL_K * 1024 ? 'uastc' : 'etc1s',
   });
-  await writeFile(out, ktx2);
   console.log(`write   ${out}`);
 }
 

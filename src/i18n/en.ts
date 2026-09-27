@@ -37,6 +37,15 @@ export const en = {
   'about.intro':
     'Perigee is an open-source viewer of artificial objects in orbit. All positions are computed in your browser from public data.',
   'about.disclaimer': 'Educational use only. Not intended for navigation or conjunction assessment.',
+  'time.maxRate.earth':
+    'Not available in the Earth view: low satellites would complete several orbits between two computations.',
+  'info.texture': 'Surface map',
+  'texture.artist': "Artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
+  'texture.artistVenus':
+    "Cloud tops, artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
+  'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
+  'about.author': 'Created by',
+  'about.sourceCode': 'Source code on GitHub',
   'about.sources': 'Data and imagery',
   'about.software': 'Software',
   'about.license': 'Code released under the MIT license.',

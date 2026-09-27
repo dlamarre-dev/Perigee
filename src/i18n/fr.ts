@@ -41,6 +41,16 @@ export const fr: Messages = {
     'Périgée est un visualiseur libre des objets artificiels en orbite. Toutes les positions sont calculées dans votre navigateur à partir de données publiques.',
   'about.disclaimer':
     'Usage éducatif seulement. Non destiné à la navigation ni à l’évaluation de conjonctions.',
+  'time.maxRate.earth':
+    'Indisponible dans la vue Terre : les satellites bas feraient plusieurs orbites entre deux calculs.',
+  'info.texture': 'Carte de surface',
+  'texture.artist': 'Vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
+  'texture.artistVenus':
+    'Sommet des nuages, vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
+  'texture.uniform':
+    'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
+  'about.author': 'Créé par',
+  'about.sourceCode': 'Code source sur GitHub',
   'about.sources': 'Données et imagerie',
   'about.software': 'Logiciels',
   'about.license': 'Code publié sous licence MIT.',

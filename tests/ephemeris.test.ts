@@ -3,7 +3,7 @@ import { Astronomy } from '../src/astro/astronomy';
 import { bodyOrientationEqj, MOON_RADIUS_KM, moonToEarthKm } from '../src/astro/bodies';
 import { RAD_TO_DEG, SECONDS_PER_DAY } from '../src/astro/constants';
 import { EPHEM_ROW, EphemerisTable } from '../src/astro/hermite';
-import { GM_KM3_S2, osculatingElements, propagateKepler } from '../src/astro/kepler';
+import { ellipseOffsetsAround, GM_KM3_S2, osculatingElements, propagateKepler } from '../src/astro/kepler';
 import { quatConjugate, quatNorm, quatRotate } from '../src/astro/quat';
 import { length, sub, type Vec3 } from '../src/astro/vec3';
 
@@ -127,5 +127,48 @@ describe('Mars orientation (IAU model)', () => {
     const pole = quatRotate(q, [0, 0, 1]);
     const axis = Astronomy.RotationAxis(Astronomy.Body.Mars, new Date('2026-09-27T00:00:00Z'));
     expect(length(sub(pole, [axis.north.x, axis.north.y, axis.north.z]))).toBeLessThan(1e-9);
+  });
+});
+
+describe('body-anchored osculating ellipse', () => {
+  // Eris-like heliocentric orbit: a ≈ 67.7 AU, e ≈ 0.44, inclined.
+  const mu = GM_KM3_S2.sun;
+  const state = {
+    posKm: [5.8e9, 1.9e9, 4.4e9] as Vec3,
+    velKmS: [-0.9, 3.1, 0.6] as Vec3,
+  };
+  const off = ellipseOffsetsAround(state, mu, 1e-7);
+  it('passes through the body and matches two-body propagation', () => {
+    expect(off).toBeDefined();
+    if (!off) return;
+    const n = off.length / 3;
+    // The point with a zero offset is the body itself.
+    let zero = false;
+    for (let i = 0; i < n; i++)
+      if (off[i * 3] === 0 && off[i * 3 + 1] === 0 && off[i * 3 + 2] === 0) zero = true;
+    expect(zero).toBe(true);
+    // Every point lies on the orbit: compare with Kepler propagation at the matching time.
+    const el = osculatingElements(state, mu);
+    const period = el.periodS ?? 0;
+    const points: Vec3[] = [];
+    for (let i = 0; i < n; i++) points.push([off[i * 3] ?? 0, off[i * 3 + 1] ?? 0, off[i * 3 + 2] ?? 0]);
+    for (let k = 1; k < 64; k++) {
+      const p = propagateKepler(state, (k / 64) * period, mu).posKm;
+      const rel = sub(p, state.posKm);
+      const nearest = Math.min(...points.map((q) => length(sub(q, rel))));
+      // Far-side spacing is coarse: the propagated point is within one segment of the polyline vertices.
+      expect(nearest / length(rel)).toBeLessThan(0.1);
+    }
+  });
+  it('is dense and precise next to the body', () => {
+    if (!off) return;
+    const n = off.length / 3;
+    const mid = (n - 1) / 2;
+    const p1: Vec3 = [off[(mid + 1) * 3] ?? 0, off[(mid + 1) * 3 + 1] ?? 0, off[(mid + 1) * 3 + 2] ?? 0];
+    // First step: 1e-7 rad of eccentric anomaly, a few hundred km along a 67 AU orbit.
+    expect(length(p1)).toBeGreaterThan(100);
+    expect(length(p1)).toBeLessThan(2000);
+    const exact = propagateKepler(state, length(p1) / length(state.velKmS), mu).posKm;
+    expect(length(sub(sub(exact, state.posKm), p1))).toBeLessThan(1);
   });
 });

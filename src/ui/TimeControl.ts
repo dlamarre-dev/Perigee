@@ -2,7 +2,7 @@ import type { SimClock } from '../astro/time';
 import type { I18n } from '../i18n';
 import { h } from './dom';
 
-export const RATES = [1, 10, 100, 1_000, 10_000] as const;
+export const RATES = [1, 10, 100, 1_000, 10_000, 100_000] as const;
 
 /** Formats a date as "YYYY-MM-DD HH:MM:SS UTC". */
 export function formatUtc(date: Date): string {
@@ -31,6 +31,8 @@ export class TimeControl {
   });
   private readonly jumpButton = h('button', { type: 'button', class: 'btn' });
   private resumeRate = 1;
+  private maxRate: number = Math.max(...RATES);
+  private maxRateHint = '';
 
   constructor(
     private readonly clock: SimClock,
@@ -82,6 +84,18 @@ export class TimeControl {
     this.update();
   }
 
+  /**
+   * Highest speed the current view supports (faster buttons are disabled, with `hint` as tooltip); a faster
+   * running clock is slowed down to it.
+   */
+  setMaxRate(maxRate: number, hint: string): void {
+    this.maxRate = maxRate;
+    this.maxRateHint = hint;
+    if (Math.abs(this.clock.rate) > maxRate) this.clock.setRate(Math.sign(this.clock.rate) * maxRate);
+    if (this.resumeRate > maxRate) this.resumeRate = maxRate;
+    this.changed();
+  }
+
   /** Refreshes the clock readout; call a few times per second. */
   update(): void {
     this.timeText.value = formatUtc(this.clock.nowUtc());
@@ -113,7 +127,12 @@ export class TimeControl {
     this.pauseButton.textContent = paused ? `▶ ${t('time.play')}` : `❚❚ ${t('time.pause')}`;
     this.pauseButton.setAttribute('aria-pressed', String(paused));
     const rate = this.clock.rate;
-    this.rateButtons.forEach((b, i) => b.setAttribute('aria-pressed', String(!paused && RATES[i] === rate)));
+    this.rateButtons.forEach((b, i) => {
+      const r = RATES[i] ?? 1;
+      b.setAttribute('aria-pressed', String(!paused && r === rate));
+      b.disabled = r > this.maxRate;
+      b.title = b.disabled ? this.maxRateHint : '';
+    });
     const live = this.clock.isLive();
     this.statusBadge.textContent = paused
       ? t('time.paused')

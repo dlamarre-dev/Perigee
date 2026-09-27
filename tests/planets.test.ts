@@ -5,11 +5,13 @@ import {
   heliocentricKm,
   logScalePosition,
   logScaleRadiusKm,
-  orbitPolyline,
+  heliocentricState,
+  hillRadiusKm,
 } from '../src/astro/planets';
+import { ellipseOffsetsAround, GM_KM3_S2 } from '../src/astro/kepler';
 import { ceresOrientationEqj } from '../src/astro/bodies';
 import { quatRotate } from '../src/astro/quat';
-import { length, sub } from '../src/astro/vec3';
+import { add, dot, length, scale, sub, type Vec3 } from '../src/astro/vec3';
 
 describe('planets', () => {
   it('places the Earth at ~1 AU and Jupiter at ~5.2 AU', () => {
@@ -25,15 +27,40 @@ describe('planets', () => {
     expect(rj).toBeLessThan(5.46);
   });
 
-  it('closes the orbit polyline after one sidereal period', () => {
-    const mars = PLANETS.find((p) => p.id === 'mars');
-    if (!mars) throw new Error('missing Mars');
-    const pts = orbitPolyline(mars, new Date('2026-01-01T00:00:00Z'), 180);
-    const first = [pts[0] ?? 0, pts[1] ?? 0, pts[2] ?? 0] as const;
-    const n = pts.length;
-    const last = [pts[n - 3] ?? 0, pts[n - 2] ?? 0, pts[n - 1] ?? 0] as const;
-    // Perturbations keep it from closing exactly; within 1 % of the orbit radius.
-    expect(length(sub(first, last)) / AU_KM).toBeLessThan(0.015);
+  it('osculating orbits stay on the true planet orbits', () => {
+    const date = new Date('2026-01-01T00:00:00Z');
+    for (const id of ['mercury', 'earth', 'mars', 'jupiter', 'neptune']) {
+      const planet = PLANETS.find((p) => p.id === id);
+      if (!planet) throw new Error(`missing ${id}`);
+      const state = heliocentricState(planet.body, date);
+      const offsets = ellipseOffsetsAround(state, GM_KM3_S2.sun + planet.gmKm3S2, 1e-6);
+      if (!offsets) throw new Error('unbound');
+      // True positions over one period lie within 0.5 % of the orbit radius from the drawn ellipse.
+      const periodMs = planet.periodDays * 86_400_000;
+      for (let k = 1; k < 12; k++) {
+        const truth = heliocentricKm(planet.body, new Date(date.getTime() + (k / 12) * periodMs));
+        const vertex = (i: number): Vec3 => [
+          state.posKm[0] + (offsets[i * 3] ?? 0),
+          state.posKm[1] + (offsets[i * 3 + 1] ?? 0),
+          state.posKm[2] + (offsets[i * 3 + 2] ?? 0),
+        ];
+        let best = Infinity;
+        for (let i = 0; i + 1 < offsets.length / 3; i++) {
+          // Distance from the true position to the drawn segment.
+          const p0 = vertex(i);
+          const d = sub(vertex(i + 1), p0);
+          const u = Math.max(0, Math.min(1, dot(sub(truth, p0), d) / Math.max(dot(d, d), 1e-9)));
+          best = Math.min(best, length(sub(truth, add(p0, scale(d, u)))));
+        }
+        expect(best / length(truth)).toBeLessThan(0.005);
+      }
+    }
+  });
+
+  it('Earth Hill radius is about 1.5 million km', () => {
+    const earth = PLANETS.find((p) => p.id === 'earth');
+    if (!earth) throw new Error('missing Earth');
+    expect(hillRadiusKm(earth, AU_KM) / 1e6).toBeCloseTo(1.5, 1);
   });
 
   it('log scale maps 1 AU to 1 AU, is monotonic, and preserves direction', () => {

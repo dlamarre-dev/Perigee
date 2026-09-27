@@ -17,11 +17,21 @@ test('works offline after a first visit (service worker)', async ({ page, contex
       timeout: 20_000,
     })
     .toBe(true);
+  // …including what the view fetched itself (manifest, datasets), written asynchronously by the worker.
   await expect
-    .poll(() =>
-      page.evaluate(async () => (await caches.keys()).filter((k) => k.startsWith('perigee-')).length),
+    .poll(
+      () =>
+        page.evaluate(async () => {
+          const urls: string[] = [];
+          for (const k of await caches.keys())
+            for (const r of await (await caches.open(k)).keys()) urls.push(r.url);
+          return ['data/manifest.json', 'data/earth/gp-active.json.gz', 'data/earth/satcat.json.gz'].every(
+            (p) => urls.some((u) => u.includes(p)),
+          );
+        }),
+      { timeout: 30_000 },
     )
-    .toBeGreaterThanOrEqual(2);
+    .toBe(true);
 
   await context.setOffline(true);
   await page.reload();

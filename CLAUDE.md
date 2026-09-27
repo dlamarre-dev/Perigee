@@ -123,10 +123,17 @@ No single API provides "active probes + landing sites". We maintain:
   fact sheet (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
 - **Offline** pre-processing (`tools/textures/` script): resample to 2k/4k/8k, KTX2 (Basis) compression,
   progressive loading by zoom level. Source textures are not committed; only compressed derivatives are
-  (Git LFS if > 20 MB). Levels per body are declared once in `src/render/textureLevels.ts` (read by the tool and
+  (committed directly, no Git LFS: LFS bandwidth would be spent on every Pages deploy; keep each file well under GitHub's 100 MB limit — the UASTC 8k maps are 7–29 MB, approved 2026-09-27; re-encode only when a source changes, since every version stays in history). Levels per body are declared once in `src/render/textureLevels.ts` (read by the tool and
   the client). KTX2 (Basis ETC1S, sRGB, mipmaps, Y-flipped since compressed textures ignore `flipY`) is preferred,
-  WebP is the fallback; the Basis transcoder is copied from three.js by a Vite plugin. No 8k level yet: the WASM
-  encoder is limited to ~12 Mpixel (needs tiling or the native `basisu` CLI); `requestDetail()` is the hook.
+  WebP is the fallback; the Basis transcoder is copied from three.js by a Vite plugin. Encoding uses the official
+  `basisu` CLI in its WASI build, run by Node (`tools/textures/basisu.ts`, pinned commit); the browser WASM
+  wrappers cap images at ~12 Mpixel. 8k levels (Earth day/night, Moon, Mars) are KTX2-only and load on demand
+  when the camera is within one radius of the surface (`BodyMesh.requestDetail()` / `ProgressiveTexture`).
+- Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); no sunspot map.
+- Orbits of planets and small bodies: osculating ellipses whose vertices are offsets from the body, dense near it
+  (`ellipseOffsetsAround`), rebuilt as the body moves. Spacecraft trajectories: Horizons samples densified with
+  the same Hermite interpolation as the markers; stretches where a probe stays within 1.5 Hill radii of a planet
+  for ≥ 10 days (orbiting, L1/L2) are left out, since they only retrace the planet's orbit.
   Solar-view textures load lazily when the camera comes near the body.
 
 ## 5. Computation models (client side)
@@ -327,7 +334,9 @@ Known statuses at end of September 2026 — **re-check before each release**:
 - Conventional commits (`feat:`, `fix:`, `data:`, `catalog:`). Any change to `catalog/` must include the source
   in the PR.
 - Before adding a dependency: check the license (MIT/BSD/Apache/public domain only; **fonts may also be
-  OFL-1.1**, approved by the maintainer on 2026-09-27) and weight. Fonts are bundled locally (`@fontsource`),
+  OFL-1.1**, approved by the maintainer on 2026-09-27) and weight. Imagery: public domain / NASA media first;
+  CC BY 4.0 (attribution only) allowed where none exists (approved 2026-09-27), credited and labelled if artistic;
+  never NC/ND. Fonts are bundled locally (`@fontsource`),
   never loaded from a third-party CDN.
 
 ## 15. Roadmap

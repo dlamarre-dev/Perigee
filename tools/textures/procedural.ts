@@ -1,7 +1,7 @@
 /**
- * Procedural equirectangular maps for bodies without a public-domain global map (Venus cloud tops, Saturn,
- * Uranus, Neptune, unresolved dwarf planets). These are artistic renderings: latitude bands whose colours are
- * estimated from public-domain true-colour images (sources in DATA_SOURCES.md), plus low-amplitude noise.
+ * Procedural equirectangular maps for bodies never imaged at useful resolution (Eris, Haumea, Makemake): a nearly
+ * uniform surface in the colour estimated from published albedo and spectra (sources in DATA_SOURCES.md), plus
+ * low-amplitude noise. Honest by construction: no invented features.
  * Deterministic (seeded) so reruns produce identical files.
  */
 
@@ -103,67 +103,6 @@ const uniform = (c: Rgb): BandedStyle['stops'] => [
 
 /** Styles; colours are estimates (see DATA_SOURCES.md). */
 export const PROCEDURAL: Record<string, BandedStyle> = {
-  // Cloud tops in visible light are nearly featureless pale yellow-cream.
-  venus: {
-    stops: [
-      [-90, [214, 200, 164]],
-      [-40, [232, 219, 182]],
-      [0, [236, 224, 188]],
-      [40, [232, 219, 182]],
-      [90, [214, 200, 164]],
-    ],
-    noise: 0.05,
-    stretch: 3,
-    seed: 2,
-  },
-  // Pale-gold zones and belts, greyer-blue north polar region (after Cassini PIA06193).
-  saturn: {
-    stops: [
-      [-90, [150, 140, 112]],
-      [-70, [186, 170, 132]],
-      [-50, [206, 186, 142]],
-      [-35, [222, 204, 160]],
-      [-22, [200, 176, 128]],
-      [-12, [226, 208, 164]],
-      [0, [234, 218, 176]],
-      [12, [226, 208, 164]],
-      [22, [198, 172, 124]],
-      [35, [220, 200, 156]],
-      [50, [204, 184, 140]],
-      [70, [172, 168, 150]],
-      [90, [140, 150, 150]],
-    ],
-    noise: 0.06,
-    stretch: 6,
-    seed: 6,
-  },
-  // Pale greenish-cyan with faint polar brightening (Irwin et al. 2024 true-colour reprocessing).
-  uranus: {
-    stops: [
-      [-90, [206, 236, 236]],
-      [-60, [193, 229, 231]],
-      [0, [186, 223, 228]],
-      [60, [193, 229, 231]],
-      [90, [206, 236, 236]],
-    ],
-    noise: 0.02,
-    stretch: 6,
-    seed: 7,
-  },
-  // Pale blue, slightly bluer than Uranus (same source).
-  neptune: {
-    stops: [
-      [-90, [178, 206, 228]],
-      [-45, [164, 198, 226]],
-      [-20, [172, 204, 230]],
-      [0, [168, 202, 228]],
-      [30, [164, 198, 226]],
-      [90, [178, 206, 228]],
-    ],
-    noise: 0.04,
-    stretch: 5,
-    seed: 8,
-  },
   eris: { stops: uniform([230, 228, 223]), noise: 0.05, stretch: 1, seed: 11 },
   haumea: { stops: uniform([232, 230, 226]), noise: 0.05, stretch: 1, seed: 12 },
   makemake: { stops: uniform([216, 184, 154]), noise: 0.07, stretch: 1, seed: 13 },

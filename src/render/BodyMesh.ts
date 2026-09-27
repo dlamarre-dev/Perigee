@@ -80,6 +80,7 @@ export class BodyMesh {
   readonly mesh: Mesh<SphereGeometry, ShaderMaterial>;
   readonly radiusKm: number;
   private readonly sunDirection = new Vector3(1, 0, 0);
+  private readonly detailRequests: (() => void)[] = [];
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
@@ -105,6 +106,16 @@ export class BodyMesh {
     const occluder = new Mesh(geometry, new MeshBasicMaterial({ color: 0x000000 }));
     occluder.layers.set(PICK_LAYER);
     this.mesh.add(occluder);
+  }
+
+  /** Registers what to load when high detail is wanted (see `requestDetail`). */
+  onDetailRequest(handler: () => void): void {
+    this.detailRequests.push(handler);
+  }
+
+  /** The camera is close: load the high-detail texture levels, if any (idempotent). */
+  requestDetail(): void {
+    for (const handler of this.detailRequests.splice(0)) handler();
   }
 
   setDayMap(texture: Texture): void {

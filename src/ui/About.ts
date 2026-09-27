@@ -19,12 +19,26 @@ const DATA_CREDITS: readonly Credit[] = [
   { name: 'LROC (Lunar Reconnaissance Orbiter Camera, ASU)', url: 'https://lroc.im-ldi.com' },
   { name: 'NASA NSSDCA', url: 'https://nssdc.gsfc.nasa.gov' },
   { name: 'USGS Astrogeology', url: 'https://astrogeology.usgs.gov' },
+  {
+    name: 'NASA Photojournal (MESSENGER, Cassini, New Horizons)',
+    url: 'https://science.nasa.gov/photojournal/',
+  },
+  { name: 'NASA PDS Ring-Moon Systems Node (Voyager ring profiles)', url: 'https://pds-rings.seti.org' },
+  { name: 'NASA MMGIS (Mars rover traverses)', url: 'https://mars.nasa.gov/maps/' },
+  {
+    name: 'Solar System Scope (INOVE) — Venus, Saturn, Uranus, Neptune maps, CC BY 4.0, resampled',
+    url: 'https://www.solarsystemscope.com/textures/',
+  },
 ];
+
+const AUTHOR = 'David Fugère-Lamarre';
+const REPOSITORY = 'https://github.com/dlamarre-dev/Perigee';
 
 const SOFTWARE_CREDITS: readonly Credit[] = [
   { name: 'astronomy-engine (MIT)', url: 'https://github.com/cosinekitty/astronomy' },
   { name: 'satellite.js (MIT)', url: 'https://github.com/shashwatak/satellite-js' },
   { name: 'three.js (MIT)', url: 'https://threejs.org' },
+  { name: 'Basis Universal transcoder (Apache-2.0)', url: 'https://github.com/BinomialLLC/basis_universal' },
   { name: 'Rajdhani — Indian Type Foundry (OFL-1.1)', url: 'https://github.com/itfoundry/rajdhani' },
   { name: 'Saira — Omnibus-Type (OFL-1.1)', url: 'https://github.com/Omnibus-Type/Saira' },
 ];
@@ -42,6 +56,8 @@ export class About {
   readonly element: HTMLDialogElement;
   private readonly title = h('h2', { id: 'about-title' });
   private readonly intro = h('p');
+  private readonly authorLabel = h('span');
+  private readonly sourceLink = h('a', { href: REPOSITORY, target: '_blank', rel: 'noopener' });
   private readonly disclaimer = h('p', { class: 'disclaimer' });
   private readonly sourcesTitle = h('h3');
   private readonly softwareTitle = h('h3');
@@ -53,6 +69,13 @@ export class About {
     this.element = h('dialog', { class: 'panel about', 'aria-labelledby': 'about-title' }, [
       this.title,
       this.intro,
+      h('p', { class: 'about-author' }, [
+        this.authorLabel,
+        ' ',
+        h('strong', {}, [AUTHOR]),
+        ' · ',
+        this.sourceLink,
+      ]),
       this.disclaimer,
       this.sourcesTitle,
       creditList(DATA_CREDITS),
@@ -77,6 +100,8 @@ export class About {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t('about.title');
     this.intro.textContent = t('about.intro');
+    this.authorLabel.textContent = t('about.author');
+    this.sourceLink.textContent = t('about.sourceCode');
     this.disclaimer.textContent = t('about.disclaimer');
     this.sourcesTitle.textContent = t('about.sources');
     this.softwareTitle.textContent = t('about.software');

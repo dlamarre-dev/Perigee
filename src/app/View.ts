@@ -78,6 +78,10 @@ export interface ViewHost {
 export interface View {
   readonly id: ViewId;
   readonly limits: OrbitLimits;
+  /** Highest time rate the view can render faithfully (default: the time bar's maximum). */
+  readonly maxRate?: number;
+  /** Explanation shown on the disabled faster speeds. */
+  readonly maxRateHint?: MessageKey;
   readonly bodyRadiusKm: number;
   /** Default viewpoint, as a direction in the body-fixed frame, and its distance. */
   readonly homeDirectionBody: Vec3;

@@ -3,8 +3,9 @@
  * heliocentric), with an optional logarithmic distance scale (CLAUDE.md §1, §5.2, §5.4).
  *
  * Frames: the body-fixed frame of this view is the J2000 ecliptic (planets in the plane); the inertial frame is
- * EQJ. Precision: markers and meshes are written relative to the camera on the CPU (Float64); only orbit and
- * trajectory lines carry absolute heliocentric Float32 vertices, which is fine at the scales they are seen.
+ * EQJ. Precision: markers and meshes are written relative to the camera on the CPU (Float64). Orbits of planets
+ * and small bodies are osculating ellipses whose vertices are relative to the body (dense near it, exact through
+ * it); spacecraft trajectories carry absolute heliocentric Float32 vertices, fine at the scales they are seen.
  */
 import {
   AdditiveBlending,
@@ -15,9 +16,7 @@ import {
   Line,
   LineBasicMaterial,
   LineDashedMaterial,
-  Mesh,
-  MeshBasicMaterial,
-  SphereGeometry,
+  LineSegments,
   Sprite,
   SpriteMaterial,
   type Material,
@@ -27,15 +26,16 @@ import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { bodyOrientationEqj, ceresOrientationEqj, earthOrientation } from '../astro/bodies';
 import { AU_KM, DEG_TO_RAD, J2000_JD, MS_PER_DAY, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
-import { GM_KM3_S2, osculatingElements, propagateKepler } from '../astro/kepler';
+import { ellipseOffsetsAround, GM_KM3_S2, osculatingElements } from '../astro/kepler';
 import {
   OBLIQUITY_J2000_RAD,
   PLANETS,
   RING_TAU_SCALE,
   SUN_RADIUS_KM,
   heliocentricKm,
+  heliocentricState,
+  hillRadiusKm,
   logScalePosition,
-  orbitPolyline,
   type PlanetInfo,
 } from '../astro/planets';
 import { quatFromAxisAngle, quatMultiply, quatRotate, type Quat } from '../astro/quat';
@@ -51,6 +51,7 @@ import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
+import { SunMesh } from '../render/SunMesh';
 import { RingMesh } from '../render/RingMesh';
 import { textureLevels } from '../render/textureLevels';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
@@ -62,7 +63,27 @@ import { SolarPanel } from '../ui/SolarPanel';
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
 const PICK_RADIUS_PX = 14;
 const PLANET_PRIORITY = 70;
-const ORBIT_POINTS = 360;
+/** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
+const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
+  venus: 'texture.artistVenus',
+  saturn: 'texture.artist',
+  uranus: 'texture.artist',
+  neptune: 'texture.artist',
+  eris: 'texture.uniform',
+  haumea: 'texture.uniform',
+  makemake: 'texture.uniform',
+};
+/** Hermite sub-samples per ephemeris interval for trajectory lines (1 d steps → 3 h vertices). */
+const TRAJECTORY_SUBSTEPS = 8;
+/**
+ * A spacecraft staying longer than this within CAPTURE_HILL_FRACTION of a planet's Hill radius is orbiting that
+ * planet (Juno, BepiColombo after insertion) or station-keeping near it (Sun–Earth L1/L2): its heliocentric
+ * path there only retraces the planet's orbit, so that part of the line is left out. Flybys stay.
+ */
+const CAPTURE_MIN_DAYS = 10;
+const CAPTURE_HILL_FRACTION = 1.5;
+/** Rebuild an orbit once the body has moved by this fraction of its period (the dense part follows it). */
+const ORBIT_REBUILD_FRACTION = 1e-3;
 const DEFAULT_PROBE_COLOR = '#e0e0e0';
 const LIGHT_SPEED_KM_S = 299_792.458;
 /** Textures (and rings) load once the body is closer than this many radii (apparent size ≳ 0.04°). */
@@ -78,12 +99,27 @@ interface LazyLoad {
   load: (() => void) | undefined;
 }
 
+/** Orbit polyline whose vertices are offsets from a body position (see `ellipseOffsetsAround`). */
+interface AnchoredOrbit {
+  readonly line: Line<BufferGeometry, Material>;
+  /** Body position the vertices are relative to (EQJ km, true scale); undefined until built. */
+  anchorEqj: Vec3 | undefined;
+  builtMs: number;
+  periodMs: number;
+  key: string;
+}
+
+function anchoredOrbit(line: Line<BufferGeometry, Material>): AnchoredOrbit {
+  line.frustumCulled = false;
+  return { line, anchorEqj: undefined, builtMs: 0, periodMs: 0, key: '' };
+}
+
 interface PlanetObject extends LazyLoad {
   readonly info: PlanetInfo;
   readonly index: number;
   readonly mesh: BodyMesh;
   rings: RingMesh | undefined;
-  readonly orbit: Line<BufferGeometry, LineBasicMaterial>;
+  readonly orbit: AnchoredOrbit;
   /** Heliocentric EQJ km (true scale). */
   eqj: Vec3;
   /** Scene-frame position (possibly log-scaled). */
@@ -96,7 +132,12 @@ interface ProbeObject extends LazyLoad {
   /** Dwarf planet / small body: drawn like a planet, with its full osculating orbit. */
   readonly natural: boolean;
   readonly mesh: BodyMesh | undefined;
+  /** Spacecraft: trajectory over the ephemeris window. */
   readonly line: Line<BufferGeometry, Material>;
+  /** Small bodies: osculating orbit. */
+  readonly orbit: AnchoredOrbit | undefined;
+  /** Ephemeris rows spent captured by a planet (cached per table). */
+  captured: Uint8Array | undefined;
   track: EphemerisTrack;
   entry: EphemerisEntry | undefined;
   sample: TrackSample;
@@ -134,7 +175,7 @@ class SolarView implements View {
 
   private readonly missions: Mission[];
   private readonly lineGroup = new Group();
-  private readonly sun: Mesh<SphereGeometry, MeshBasicMaterial>;
+  private readonly sun = new SunMesh(SUN_RADIUS_KM);
   private readonly glow: Sprite;
   private readonly planets: PlanetObject[] = [];
   private readonly probes: ProbeObject[] = [];
@@ -149,7 +190,6 @@ class SolarView implements View {
   private originKm: Vec3 = [0, 0, 0];
   private logScale: boolean;
   private selection: Selection;
-  private orbitsKey = '';
   private trajectoriesKey = '';
   private disposed = false;
   private readonly ring: SelectionMarker;
@@ -162,10 +202,6 @@ class SolarView implements View {
     const renderer = host.renderer;
     const pixelRatio = renderer.renderer.getPixelRatio();
 
-    this.sun = new Mesh(
-      new SphereGeometry(SUN_RADIUS_KM, 64, 32),
-      new MeshBasicMaterial({ color: 0xffd27a }),
-    );
     this.glow = new Sprite(
       new SpriteMaterial({
         map: glowTexture(),
@@ -175,7 +211,7 @@ class SolarView implements View {
       }),
     );
     this.glow.scale.set(0.05, 0.05, 1);
-    renderer.scene.add(this.sun, this.glow, this.lineGroup);
+    renderer.scene.add(this.sun.mesh, this.glow, this.lineGroup);
 
     this.planetMarkers = new MarkerPoints(PLANETS.length, 10 * pixelRatio, { depthTest: false });
     this.probeMarkers = new MarkerPoints(Math.max(1, this.missions.length), 9 * pixelRatio, {
@@ -201,9 +237,11 @@ class SolarView implements View {
         mesh,
         rings: undefined,
         load: undefined,
-        orbit: new Line(
-          new BufferGeometry(),
-          new LineBasicMaterial({ color: info.color, transparent: true, opacity: 0.35 }),
+        orbit: anchoredOrbit(
+          new Line(
+            new BufferGeometry(),
+            new LineBasicMaterial({ color: info.color, transparent: true, opacity: 0.35 }),
+          ),
         ),
         eqj: [0, 0, 0],
         scene: [0, 0, 0],
@@ -221,9 +259,7 @@ class SolarView implements View {
           mesh.mesh.add(planet.rings.mesh);
         }
       };
-      const orbit = planet.orbit;
-      orbit.frustumCulled = false;
-      this.lineGroup.add(orbit);
+      renderer.scene.add(planet.orbit.line);
       this.planetMarkers.setColor(index, info.color);
       this.planets.push(planet);
     });
@@ -233,12 +269,22 @@ class SolarView implements View {
       const color = mission.color ?? palette[index % palette.length] ?? DEFAULT_PROBE_COLOR;
       this.colors.set(mission.id, color);
       this.probeMarkers.setColor(index, color);
-      const line = new Line(
+      const line = new LineSegments(
         new BufferGeometry(),
-        new LineBasicMaterial({ color, transparent: true, opacity: natural ? 0.35 : 0.6 }),
+        new LineBasicMaterial({ color, transparent: true, opacity: 0.6 }),
       );
       line.frustumCulled = false;
+      line.visible = false;
       this.lineGroup.add(line);
+      const orbit = natural
+        ? anchoredOrbit(
+            new Line(
+              new BufferGeometry(),
+              new LineBasicMaterial({ color, transparent: true, opacity: 0.35 }),
+            ),
+          )
+        : undefined;
+      if (orbit) renderer.scene.add(orbit.line);
       const mesh =
         natural && mission.radiusKm
           ? new BodyMesh({
@@ -257,6 +303,8 @@ class SolarView implements View {
         mesh,
         load: mesh ? () => this.loadTexture(mission.id, color, mesh) : undefined,
         line,
+        orbit,
+        captured: undefined,
         track: this.makeTrack(undefined),
         entry: undefined,
         sample: { kind: 'none', state: undefined, beyondS: 0 },
@@ -277,7 +325,6 @@ class SolarView implements View {
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
-          this.orbitsKey = '';
           this.trajectoriesKey = '';
           this.renderDetail(false);
           this.host.syncUrl();
@@ -350,14 +397,27 @@ class SolarView implements View {
       );
     }
 
-    // Planet orbits drift slowly: rebuild on scale change, clock jump, or every ~10 simulated days.
-    const orbitsKey = `${this.logScale}|${f.clockEpoch}|${Math.floor(f.nowMs / (10 * MS_PER_DAY))}`;
-    if (orbitsKey !== this.orbitsKey) {
-      this.orbitsKey = orbitsKey;
-      for (const p of this.planets) {
-        const pts = orbitPolyline(p.info, date, ORBIT_POINTS);
-        p.orbit.geometry.setAttribute('position', new Float32BufferAttribute(mapPacked(pts, map), 3));
-      }
+    // Osculating orbits: rebuilt on scale change, clock jump, or once the body has moved a little along them.
+    const orbitsKey = `${this.logScale}|${f.clockEpoch}`;
+    for (const p of this.planets) {
+      if (!needsRebuild(p.orbit, orbitsKey, f.nowMs)) continue;
+      const state = heliocentricState(p.info.body, date);
+      this.buildOrbit(
+        p.orbit,
+        state,
+        GM_KM3_S2.sun + p.info.gmKm3S2,
+        p.info.radiusKm,
+        orbitsKey,
+        f.nowMs,
+        map,
+      );
+    }
+    for (const t of this.probes) {
+      if (!t.orbit) continue;
+      const state = t.sample.state;
+      t.orbit.line.visible = state !== undefined;
+      if (!state || !needsRebuild(t.orbit, orbitsKey, f.nowMs)) continue;
+      this.buildOrbit(t.orbit, state, GM_KM3_S2.sun, t.mission.radiusKm ?? 100, orbitsKey, f.nowMs, map);
     }
     if (this.pendingFrame) {
       const pos = this.scenePositionOf(this.selection);
@@ -383,9 +443,16 @@ class SolarView implements View {
     const o = originKm;
     const rel = (p: Vec3): Vec3 => sub(p, o);
     const sun = rel([0, 0, 0]);
-    this.sun.position.set(sun[0], sun[1], sun[2]);
-    this.glow.position.copy(this.sun.position);
+    this.sun.mesh.position.set(sun[0], sun[1], sun[2]);
+    this.glow.position.copy(this.sun.mesh.position);
     this.lineGroup.position.set(-o[0], -o[1], -o[2]);
+    const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
+    for (const orbit of [...this.planets.map((p) => p.orbit), ...this.probes.map((t) => t.orbit)]) {
+      if (!orbit?.anchorEqj) continue;
+      const r = rel(quatRotate(this.sceneQ, map(orbit.anchorEqj)));
+      orbit.line.position.set(r[0], r[1], r[2]);
+      orbit.line.quaternion.set(this.sceneQ.x, this.sceneQ.y, this.sceneQ.z, this.sceneQ.w);
+    }
     for (const p of this.planets) {
       const r = rel(p.scene);
       p.mesh.mesh.position.set(r[0], r[1], r[2]);
@@ -441,19 +508,30 @@ class SolarView implements View {
   dispose(): void {
     this.disposed = true;
     const scene = this.host.renderer.scene;
-    scene.remove(this.sun, this.glow, this.lineGroup, this.planetMarkers.points, this.probeMarkers.points);
-    this.sun.geometry.dispose();
-    this.sun.material.dispose();
+    scene.remove(
+      this.sun.mesh,
+      this.glow,
+      this.lineGroup,
+      this.planetMarkers.points,
+      this.probeMarkers.points,
+    );
+    this.sun.dispose();
     for (const p of this.planets) {
       scene.remove(p.mesh.mesh);
       p.mesh.dispose();
       p.rings?.dispose();
-      p.orbit.geometry.dispose();
-      p.orbit.material.dispose();
+      scene.remove(p.orbit.line);
+      p.orbit.line.geometry.dispose();
+      p.orbit.line.material.dispose();
     }
     for (const t of this.probes) {
       t.line.geometry.dispose();
       t.line.material.dispose();
+      if (t.orbit) {
+        scene.remove(t.orbit.line);
+        t.orbit.line.geometry.dispose();
+        t.orbit.line.material.dispose();
+      }
     }
     this.planetMarkers.dispose();
     this.probeMarkers.dispose();
@@ -533,22 +611,28 @@ class SolarView implements View {
   private refreshTrajectory(t: ProbeObject, map: (p: Vec3) => Vec3): void {
     const table = t.track.table;
     const kind = t.sample.kind;
-    t.line.visible = table !== undefined;
-    if (!table) return;
-    let pts: Float64Array;
-    const state = t.sample.state ?? t.track.lastState();
-    const periodS = state ? osculatingElements(state, GM_KM3_S2.sun).periodS : undefined;
-    if (t.natural && state && periodS) {
-      // Small bodies: one full osculating orbit (their ephemeris window covers only a small arc).
-      pts = new Float64Array((ORBIT_POINTS + 1) * 3);
-      for (let i = 0; i <= ORBIT_POINTS; i++) {
-        pts.set(propagateKepler(state, (i / ORBIT_POINTS) * periodS, GM_KM3_S2.sun).posKm, i * 3);
+    // Small bodies show their osculating orbit instead (their ephemeris window covers only a small arc).
+    t.line.visible = table !== undefined && !t.natural;
+    if (!table || t.natural) return;
+    t.captured ??= this.capturedRows(table);
+    // Segment pairs (LineSegments), densified with the same Hermite interpolation as the marker, so the line
+    // is smooth and passes through the spacecraft; captured stretches are skipped.
+    const segments: number[] = [];
+    for (let i = 0; i + 1 < table.rows; i++) {
+      if (t.captured[i] && t.captured[i + 1]) continue;
+      const t0 = table.time(i);
+      const t1 = table.time(i + 1);
+      let prev = table.state(i).posKm;
+      for (let k = 1; k <= TRAJECTORY_SUBSTEPS; k++) {
+        const next =
+          k === TRAJECTORY_SUBSTEPS
+            ? table.state(i + 1).posKm
+            : (table.interpolate(t0 + ((t1 - t0) * k) / TRAJECTORY_SUBSTEPS)?.posKm ?? prev);
+        segments.push(...map(prev), ...map(next));
+        prev = next;
       }
-    } else {
-      pts = new Float64Array(table.rows * 3);
-      for (let i = 0; i < table.rows; i++) pts.set(table.state(i).posKm, i * 3);
     }
-    t.line.geometry.setAttribute('position', new Float32BufferAttribute(mapPacked(pts, map), 3));
+    t.line.geometry.setAttribute('position', new Float32BufferAttribute(segments, 3));
     const color = this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR;
     const dashed = kind === 'extrapolated';
     if (dashed !== t.line.material instanceof LineDashedMaterial) {
@@ -561,6 +645,78 @@ class SolarView implements View {
     const m = t.line.material as LineBasicMaterial | LineDashedMaterial;
     m.color.set(kind === 'hidden' ? '#8a8f98' : color);
     m.opacity = kind === 'hidden' ? 0.35 : 0.6;
+  }
+
+  /**
+   * Marks ephemeris rows where the spacecraft is captured by a planet: within CAPTURE_HILL_FRACTION of its Hill
+   * radius for at least CAPTURE_MIN_DAYS in a row. Cheap radial pre-filter before computing planet positions.
+   */
+  private capturedRows(table: NonNullable<EphemerisTrack['table']>): Uint8Array {
+    const rows = table.rows;
+    const inside = new Uint8Array(rows);
+    for (const planet of PLANETS) {
+      if (planet.dwarf) continue;
+      const aKm = Math.cbrt(GM_KM3_S2.sun * ((planet.periodDays * SECONDS_PER_DAY) / (2 * Math.PI)) ** 2);
+      for (let i = 0; i < rows; i++) {
+        const pos = table.state(i).posKm;
+        const r = length(pos);
+        const reach = CAPTURE_HILL_FRACTION * hillRadiusKm(planet, r);
+        // Planet eccentricities are ≤ 0.21 (Mercury).
+        if (r < aKm * 0.78 - reach || r > aKm * 1.22 + reach) continue;
+        const planetKm = heliocentricKm(planet.body, tdbJdToDate(table.time(i)));
+        if (length(sub(pos, planetKm)) < reach) inside[i] = 1;
+      }
+    }
+    // Keep only long stays (orbiting, station-keeping), not flybys.
+    for (let i = 0; i < rows;) {
+      if (!inside[i]) {
+        i++;
+        continue;
+      }
+      let j = i;
+      while (j + 1 < rows && inside[j + 1]) j++;
+      if (table.time(j) - table.time(i) < CAPTURE_MIN_DAYS) inside.fill(0, i, j + 1);
+      i = j + 1;
+    }
+    return inside;
+  }
+
+  /** Rebuilds an osculating orbit around `state` (vertices relative to the body; see placeOrigin). */
+  private buildOrbit(
+    orbit: AnchoredOrbit,
+    state: { posKm: Vec3; velKmS: Vec3 },
+    muKm3S2: number,
+    radiusKm: number,
+    key: string,
+    nowMs: number,
+    map: (p: Vec3) => Vec3,
+  ): void {
+    const r = length(state.posKm);
+    // First step ≈ 2 % of the body radius, so the line stays on the body even at the closest zoom.
+    const minStepRad = Math.min(1e-5, Math.max(1e-10, (0.02 * radiusKm) / r));
+    const offsets = ellipseOffsetsAround(state, muKm3S2, minStepRad);
+    const periodS = osculatingElements(state, muKm3S2).periodS;
+    if (!offsets || !periodS) {
+      orbit.line.visible = false;
+      return;
+    }
+    const anchor = map(state.posKm);
+    const out = new Float32Array(offsets.length);
+    for (let i = 0; i + 2 < offsets.length; i += 3) {
+      const p = map([
+        state.posKm[0] + (offsets[i] ?? 0),
+        state.posKm[1] + (offsets[i + 1] ?? 0),
+        state.posKm[2] + (offsets[i + 2] ?? 0),
+      ]);
+      out[i] = p[0] - anchor[0];
+      out[i + 1] = p[1] - anchor[1];
+      out[i + 2] = p[2] - anchor[2];
+    }
+    orbit.line.geometry.setAttribute('position', new Float32BufferAttribute(out, 3));
+    orbit.anchorEqj = state.posKm;
+    orbit.builtMs = nowMs;
+    orbit.periodMs = periodS * 1000;
+    orbit.key = key;
   }
 
   private project(sceneKm: Vec3): { x: number; y: number } | undefined {
@@ -733,6 +889,8 @@ class SolarView implements View {
         ? `${i18n.number(info.periodDays, 1)} ${t('unit.days')}`
         : `${i18n.number(years, 2)} ${t('unit.years')}`,
     ]);
+    const texture = TEXTURE_NOTES[info.id];
+    if (texture) rows.push([t('info.texture'), t(texture)]);
     const badge = this.scaleBadge();
     return {
       title: info.name[i18n.lang],
@@ -758,6 +916,8 @@ class SolarView implements View {
     if (m.objectType === 'natural') {
       if (m.radiusKm) rows.push([t('info.radius'), `${num(m.radiusKm)} km`]);
       if (m.orbit) rows.push([t('info.orbit'), m.orbit[i18n.lang]]);
+      const texture = TEXTURE_NOTES[m.id];
+      if (texture) rows.push([t('info.texture'), t(texture)]);
     } else {
       rows.push([t('info.status'), i18n.maybe(`mission.status.${m.status}`) ?? m.status]);
     }
@@ -818,9 +978,11 @@ class SolarView implements View {
     Object.assign(window, {
       __perigeeTest: {
         lookAt: (id: string, distanceKm = 0.5 * AU_KM, fromDir: Vec3 = [0, 0, 1]): boolean => {
-          const pos =
-            this.planets.find((p) => p.info.id === id)?.scene ??
-            this.probes.find((x) => x.mission.id === id)?.scene;
+          const pos: Vec3 | undefined =
+            id === 'sun'
+              ? [0, 0, 0]
+              : (this.planets.find((p) => p.info.id === id)?.scene ??
+                this.probes.find((x) => x.mission.id === id)?.scene);
           if (!pos) return false;
           controls.setState(orbitStateLookingFrom(pos, normalize(fromDir), [0, 1, 0], distanceKm));
           return true;
@@ -840,15 +1002,12 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function mapPacked(pts: Float64Array, map: (p: Vec3) => Vec3): Float32Array {
-  const out = new Float32Array(pts.length);
-  for (let i = 0; i + 2 < pts.length; i += 3) {
-    const m = map([pts[i] ?? 0, pts[i + 1] ?? 0, pts[i + 2] ?? 0]);
-    out[i] = m[0];
-    out[i + 1] = m[1];
-    out[i + 2] = m[2];
-  }
-  return out;
+function needsRebuild(orbit: AnchoredOrbit, key: string, nowMs: number): boolean {
+  return (
+    orbit.key !== key ||
+    orbit.anchorEqj === undefined ||
+    Math.abs(nowMs - orbit.builtMs) > ORBIT_REBUILD_FRACTION * orbit.periodMs
+  );
 }
 
 export const createSolarView: ViewFactory = (host) => new SolarView(host);

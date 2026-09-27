@@ -1,6 +1,6 @@
-# Contributing to Périgée
+# Contributing to Perigee
 
-Thanks for helping! Périgée is a static site: every position is computed in the browser, and GitHub Actions only
+Thanks for helping! Perigee is a static site: every position is computed in the browser, and GitHub Actions only
 mirrors public data. `CLAUDE.md` is the full design reference; this page is the short version.
 
 ## Ground rules
@@ -14,7 +14,9 @@ mirrors public data. `CLAUDE.md` is the full design reference; this page is the 
 - **No mission list in code.** Missions, landing sites, launch sites and operators live in `catalog/*.json`.
 - **Visual honesty.** Extrapolated, modelled or stale positions must look different and say so in the panel.
 - **Dependencies**: MIT, BSD, Apache-2.0 or public domain only (fonts: OFL-1.1). Check the size too.
-- **Textures and data** must be public domain or NASA media (no CC-BY, no "free for non-commercial use").
+- **Textures and data**: public domain or NASA media first; attribution-only CC BY 4.0 where nothing public
+  exists (credit it in `DATA_SOURCES.md` and the About panel, and label artistic maps in the interface). Never
+  non-commercial (NC), no-derivatives (ND) or "ask permission" terms.
 
 ## Setup
 

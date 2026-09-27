@@ -12,6 +12,8 @@ export interface PlanetInfo {
   readonly name: { readonly en: string; readonly fr: string };
   readonly radiusKm: number;
   readonly periodDays: number;
+  /** GM of the planet system (km³/s², JPL DE440; the Earth value includes the Moon). */
+  readonly gmKm3S2: number;
   readonly color: string;
   readonly dwarf?: boolean;
   /** Ring texture extent (km from the centre), texture in public/textures/<id>/rings.png. */
@@ -30,6 +32,7 @@ export const URANUS_RINGS: RingExtent = { innerKm: 41_500, outerKm: 51_500 };
 export const RING_TAU_SCALE = 4;
 
 export const SUN_RADIUS_KM = 695_700;
+export const SUN_GM_KM3_S2 = 132_712_440_041.279_42;
 /** Mean obliquity of the ecliptic at J2000 (IAU 2006). */
 export const OBLIQUITY_J2000_RAD = 23.439_279_444 * DEG_TO_RAD;
 
@@ -40,6 +43,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Mercury', fr: 'Mercure' },
     radiusKm: 2439.7,
     periodDays: 87.969,
+    gmKm3S2: 22_031.868_551,
     color: '#b5a99a',
   },
   {
@@ -48,6 +52,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Venus', fr: 'Vénus' },
     radiusKm: 6051.8,
     periodDays: 224.701,
+    gmKm3S2: 324_858.592,
     color: '#e8cf9a',
   },
   {
@@ -56,6 +61,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Earth', fr: 'Terre' },
     radiusKm: 6371.0,
     periodDays: 365.256,
+    gmKm3S2: 403_503.235_502,
     color: '#6fa8ff',
   },
   {
@@ -64,6 +70,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Mars', fr: 'Mars' },
     radiusKm: 3389.5,
     periodDays: 686.98,
+    gmKm3S2: 42_828.375_214,
     color: '#d9774b',
   },
   {
@@ -72,6 +79,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Jupiter', fr: 'Jupiter' },
     radiusKm: 69_911,
     periodDays: 4332.59,
+    gmKm3S2: 126_712_764.1,
     color: '#d8b98f',
   },
   {
@@ -80,6 +88,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Saturn', fr: 'Saturne' },
     radiusKm: 58_232,
     periodDays: 10_759.22,
+    gmKm3S2: 37_940_584.841_8,
     color: '#e3d19c',
     rings: SATURN_RINGS,
   },
@@ -89,6 +98,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Uranus', fr: 'Uranus' },
     radiusKm: 25_362,
     periodDays: 30_688.5,
+    gmKm3S2: 5_794_556.4,
     color: '#9fd8e0',
     rings: URANUS_RINGS,
   },
@@ -98,6 +108,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Neptune', fr: 'Neptune' },
     radiusKm: 24_622,
     periodDays: 60_182,
+    gmKm3S2: 6_836_527.100_58,
     color: '#6f8fe8',
   },
   {
@@ -106,26 +117,34 @@ export const PLANETS: readonly PlanetInfo[] = [
     name: { en: 'Pluto', fr: 'Pluton' },
     radiusKm: 1188.3,
     periodDays: 90_560,
+    gmKm3S2: 975.5,
     color: '#c7b39c',
     dwarf: true,
   },
 ];
 
+/** Heliocentric state (km, km/s, EQJ, geometric). */
+export function heliocentricState(body: Astronomy.Body, date: Date): { posKm: Vec3; velKmS: Vec3 } {
+  const st = Astronomy.HelioState(body, date);
+  const kmS = AU_KM / SECONDS_PER_DAY;
+  return {
+    posKm: [st.x * AU_KM, st.y * AU_KM, st.z * AU_KM],
+    velKmS: [st.vx * kmS, st.vy * kmS, st.vz * kmS],
+  };
+}
+
+/**
+ * Hill-sphere radius (km) of a planet at heliocentric distance `distanceKm`: well inside it, a spacecraft is
+ * bound to the planet rather than following a heliocentric path of its own.
+ */
+export function hillRadiusKm(planet: PlanetInfo, distanceKm: number): number {
+  return distanceKm * Math.cbrt(planet.gmKm3S2 / (3 * SUN_GM_KM3_S2));
+}
+
 /** Heliocentric position (km, EQJ, geometric). */
 export function heliocentricKm(body: Astronomy.Body, date: Date): Vec3 {
   const v = Astronomy.HelioVector(body, date);
   return [v.x * AU_KM, v.y * AU_KM, v.z * AU_KM];
-}
-
-/** One orbit centred on `date` (packed xyz, km, EQJ). */
-export function orbitPolyline(planet: PlanetInfo, date: Date, points = 360): Float64Array {
-  const out = new Float64Array((points + 1) * 3);
-  const periodMs = planet.periodDays * SECONDS_PER_DAY * 1000;
-  for (let i = 0; i <= points; i++) {
-    const t = new Date(date.getTime() + (i / points - 0.5) * periodMs);
-    out.set(heliocentricKm(planet.body, t), i * 3);
-  }
-  return out;
 }
 
 /**
