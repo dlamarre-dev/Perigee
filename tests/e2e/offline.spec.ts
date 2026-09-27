@@ -1,0 +1,34 @@
+import { expect, test } from '@playwright/test';
+
+test('works offline after a first visit (service worker)', async ({ page, context }) => {
+  // Listen before any page script runs: the "cached" reply can arrive early.
+  await page.addInitScript(() => {
+    const w = window as unknown as { swCached: boolean };
+    w.swCached = false;
+    navigator.serviceWorker.addEventListener('message', (e: MessageEvent<{ type?: string }>) => {
+      if (e.data.type === 'cached') w.swCached = true;
+    });
+  });
+  await page.goto('./?lang=en');
+  await expect(page.locator('canvas')).toBeVisible();
+  // Wait for the worker to take control and cache what the first visit loaded.
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { swCached: boolean }).swCached), {
+      timeout: 20_000,
+    })
+    .toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(async () => (await caches.keys()).filter((k) => k.startsWith('perigee-')).length),
+    )
+    .toBeGreaterThanOrEqual(2);
+
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Recenter' })).toBeVisible();
+  await expect(page.getByText('Offline — showing cached data')).toBeVisible();
+  // Satellites come from the cached data files.
+  await expect(page.locator('.notice')).toBeHidden();
+  await context.setOffline(false);
+});

@@ -1,0 +1,17 @@
+{
+  "name": "Périgée — objects in orbit, in real time",
+  "short_name": "Périgée",
+  "description": "Real-time viewer of artificial objects orbiting the Earth, the Moon, Mars and the solar system. / Visualiseur en temps réel des objets artificiels en orbite.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#02050a",
+  "theme_color": "#02050a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

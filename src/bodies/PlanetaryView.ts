@@ -46,7 +46,7 @@ import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
-import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
+import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
 import { BodyPanel } from '../ui/BodyPanel';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
@@ -138,6 +138,7 @@ export class PlanetaryView implements View {
   private readonly missions: readonly Mission[];
   private readonly sites: readonly LandingSite[];
   private readonly body: BodyMesh;
+  private readonly surface: ProgressiveTexture;
   private readonly earth: BodyMesh | undefined;
   private readonly missionGroup = new Group();
   private readonly siteGroup = new Group();
@@ -188,18 +189,19 @@ export class PlanetaryView implements View {
     const renderer = host.renderer;
     const anisotropy = renderer.renderer.capabilities.getMaxAnisotropy();
     const black = placeholderTexture([0, 0, 0]);
+    this.surface = progressiveTexture({
+      baseUrl: host.baseUrl,
+      body: config.id,
+      name: config.texture.name,
+      maxTextureSize: renderer.maxTextureSize,
+      anisotropy,
+      placeholderRgb: config.texture.placeholderRgb,
+      onUpdate: (tex) => this.body.setDayMap(tex),
+    });
     this.body = new BodyMesh({
       name: config.id,
       radiusKm: R,
-      dayMap: loadProgressiveTexture({
-        baseUrl: host.baseUrl,
-        body: config.id,
-        name: config.texture.name,
-        maxTextureSize: renderer.maxTextureSize,
-        anisotropy,
-        placeholderRgb: config.texture.placeholderRgb,
-        onUpdate: (tex) => this.body.setDayMap(tex),
-      }),
+      dayMap: this.surface.initial,
       nightMap: black,
       ambient: config.ambient,
       ...(config.atmosphere
@@ -376,6 +378,8 @@ export class PlanetaryView implements View {
     const R = this.R;
     this.originKm = originKm;
     this.body.mesh.position.set(-originKm[0], -originKm[1], -originKm[2]);
+    // High-detail surface (8k) once the camera is within one radius of the surface.
+    if (length(originKm) < 2 * this.config.radiusKm) this.surface.requestDetail();
     if (this.earth) {
       const e = sub(this.earthScene, originKm);
       this.earth.mesh.position.set(e[0], e[1], e[2]);

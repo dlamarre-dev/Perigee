@@ -19,13 +19,25 @@ export const MARS_RADIUS_KM = 3389.5;
  */
 export function bodyOrientationEqj(body: Astronomy.Body, date: Date): Quat {
   const axis = Astronomy.RotationAxis(body, date);
-  const raRad = axis.ra * 15 * DEG_TO_RAD;
-  const decRad = axis.dec * DEG_TO_RAD;
-  const wRad = axis.spin * DEG_TO_RAD;
+  return iauOrientationEqj(axis.ra * 15 * DEG_TO_RAD, axis.dec * DEG_TO_RAD, axis.spin * DEG_TO_RAD);
+}
+
+/** EQJ ← body-fixed from pole right ascension/declination and prime-meridian angle W. */
+export function iauOrientationEqj(raRad: number, decRad: number, wRad: number): Quat {
   const qa = quatFromAxisAngle([0, 0, 1], raRad + Math.PI / 2);
   const qb = quatFromAxisAngle([1, 0, 0], Math.PI / 2 - decRad);
   const qc = quatFromAxisAngle([0, 0, 1], wRad);
   return quatMultiply(quatMultiply(qa, qb), qc);
+}
+
+/**
+ * Ceres, IAU WGCCRE 2015 (Archinal et al. 2018): α₀ = 291.418°, δ₀ = 66.764°, W = 170.650° + 952.1532° d, with
+ * d = days from J2000 TDB. Prime meridian defined by crater Kait (Dawn team longitudes, as the Dawn mosaic).
+ */
+export function ceresOrientationEqj(tdbJd: number): Quat {
+  const d = tdbJd - 2_451_545.0;
+  const wDeg = (170.65 + 952.1532 * d) % 360;
+  return iauOrientationEqj(291.418 * DEG_TO_RAD, 66.764 * DEG_TO_RAD, wDeg * DEG_TO_RAD);
 }
 
 /** Moon centre relative to the Earth centre, EQJ, km. */

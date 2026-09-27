@@ -193,6 +193,10 @@ export const en = {
   'music.title': 'Soundtrack',
   'music.frameTitle': 'SoundCloud player: NASA Explorers: Apollo Soundtrack',
   'music.note': 'Player by SoundCloud, loaded only once opened.',
+  'app.canvasLabel':
+    '3D view. Drag or use the arrow keys to rotate, Q/E to roll, +/− to zoom, R to reset. Objects are listed in the side panel.',
+  'app.offline': 'Offline — showing cached data',
+  'app.updateReady': 'A new version is available: reload to update.',
   'unit.days': 'd',
 } as const;
 

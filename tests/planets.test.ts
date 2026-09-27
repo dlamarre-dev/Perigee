@@ -7,6 +7,8 @@ import {
   logScaleRadiusKm,
   orbitPolyline,
 } from '../src/astro/planets';
+import { ceresOrientationEqj } from '../src/astro/bodies';
+import { quatRotate } from '../src/astro/quat';
 import { length, sub } from '../src/astro/vec3';
 
 describe('planets', () => {
@@ -46,5 +48,26 @@ describe('planets', () => {
     expect(logScaleRadiusKm(170 * AU_KM) / AU_KM).toBeLessThan(5);
     const p = logScalePosition([3 * AU_KM, 4 * AU_KM, 0]);
     expect(p[0] / p[1]).toBeCloseTo(0.75, 12);
+  });
+});
+
+describe('Ceres orientation (IAU 2015)', () => {
+  const DEG = Math.PI / 180;
+  it('puts the pole at α₀ = 291.418°, δ₀ = 66.764° and W at 170.65° + 952.1532°·d', () => {
+    const q = ceresOrientationEqj(2_451_545.0);
+    const pole = quatRotate(q, [0, 0, 1]);
+    const [a, d] = [291.418 * DEG, 66.764 * DEG];
+    expect(pole[0]).toBeCloseTo(Math.cos(d) * Math.cos(a), 12);
+    expect(pole[1]).toBeCloseTo(Math.cos(d) * Math.sin(a), 12);
+    expect(pole[2]).toBeCloseTo(Math.sin(d), 12);
+    // Prime meridian: W measured from the ascending node of the equator on the ICRF equator (Q = ẑ × pole).
+    const node = [Math.cos(a + Math.PI / 2), Math.sin(a + Math.PI / 2), 0];
+    const pm = quatRotate(q, [1, 0, 0]);
+    const cosW = pm[0] * (node[0] ?? 0) + pm[1] * (node[1] ?? 0);
+    expect(Math.acos(cosW) / DEG).toBeCloseTo(170.65, 6);
+    // One day later W advanced by 952.1532° (mod 360).
+    const pm1 = quatRotate(ceresOrientationEqj(2_451_546.0), [1, 0, 0]);
+    const cosW1 = pm1[0] * (node[0] ?? 0) + pm1[1] * (node[1] ?? 0);
+    expect(Math.acos(cosW1) / DEG).toBeCloseTo(Math.abs(((170.65 + 952.1532 + 180) % 360) - 180), 6);
   });
 });

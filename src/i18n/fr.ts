@@ -13,7 +13,7 @@ export const fr: Messages = {
   'toolbar.frame.inertial': 'Inertiel',
   'toolbar.frame.fixed.moon': 'Lunaire fixe',
   'toolbar.frame.hint':
-    'Repère fixe : l’astre central reste immobile. Inertiel : il tourne sur lui-même, les orbites restent fixes.',
+    'Repère fixe : l’astre central reste immobile. Inertiel : il tourne sur lui-même, les orbites restent fixes.',
   'toolbar.view': 'Vue',
   'toolbar.missions': 'Missions',
   'view.earth': 'Terre',
@@ -52,7 +52,7 @@ export const fr: Messages = {
   'sat.unavailable': 'Les données satellites sont indisponibles pour le moment.',
 
   'filters.title': 'Filtres',
-  'filters.search': 'Recherche : nom, NORAD ou COSPAR',
+  'filters.search': 'Recherche : nom, NORAD ou COSPAR',
   'filters.clear': 'Effacer',
   'filters.operators': 'Opérateur',
   'filters.owners': 'Pays / propriétaire',
@@ -116,8 +116,8 @@ export const fr: Messages = {
   'info.epoch': 'Époque des éléments',
   'info.groups': 'Groupes',
   'info.fresh': 'Propagé par SGP4 à partir d’éléments récents',
-  'info.stale': 'Éléments périmés (plus de 14 jours) : position peu fiable',
-  'info.invalid': 'Erreur SGP4 (objet désintégré ou éléments invalides) : position indisponible',
+  'info.stale': 'Éléments périmés (plus de 14 jours) : position peu fiable',
+  'info.invalid': 'Erreur SGP4 (objet désintégré ou éléments invalides) : position indisponible',
   'info.ageDays': 'il y a {n} j',
   'info.noMetadata': 'Aucune métadonnée de catalogue disponible.',
 
@@ -140,9 +140,9 @@ export const fr: Messages = {
 
   'ephem.interpolated': 'Position interpolée à partir des éphémérides JPL Horizons',
   'ephem.extrapolated':
-    'Extrapolée (Kepler à deux corps) {h} h au-delà de la fenêtre d’éphémérides : approximative',
-  'ephem.hidden': 'Éphéméride vieille de {d} jours : position masquée, dernière trajectoire connue en gris',
-  'ephem.none': 'Aucune éphéméride publique : listée seulement, non affichée en 3D',
+    'Extrapolée (Kepler à deux corps) {h} h au-delà de la fenêtre d’éphémérides : approximative',
+  'ephem.hidden': 'Éphéméride vieille de {d} jours : position masquée, dernière trajectoire connue en gris',
+  'ephem.none': 'Aucune éphéméride publique : listée seulement, non affichée en 3D',
   'ephem.planned': 'Pas encore lancée',
 
   'site.soft': 'Atterrissage en douceur',
@@ -184,7 +184,7 @@ export const fr: Messages = {
   'solar.probes': 'Sondes',
   'solar.dwarf': 'planète naine',
   'solar.logScale': 'Distances logarithmiques (pas à l’échelle)',
-  'solar.logWarning': 'Échelle logarithmique des distances : positions pas à l’échelle.',
+  'solar.logWarning': 'Échelle logarithmique des distances : positions pas à l’échelle.',
   'info.distSun': 'Distance au Soleil',
   'info.distEarth': 'Distance à la Terre',
   'info.lightTime': 'temps-lumière',
@@ -196,7 +196,11 @@ export const fr: Messages = {
   'music.show': 'Bande sonore',
   'music.hide': 'Masquer le lecteur',
   'music.title': 'Bande sonore',
-  'music.frameTitle': 'Lecteur SoundCloud : NASA Explorers: Apollo Soundtrack',
+  'music.frameTitle': 'Lecteur SoundCloud : NASA Explorers: Apollo Soundtrack',
   'music.note': 'Lecteur fourni par SoundCloud, chargé seulement à l’ouverture.',
+  'app.canvasLabel':
+    'Vue 3D. Glissez ou utilisez les flèches pour tourner, Q/E pour le roulis, +/− pour zoomer, R pour réinitialiser. Les objets sont listés dans le panneau latéral.',
+  'app.offline': 'Hors ligne — données en cache',
+  'app.updateReady': 'Une nouvelle version est disponible : rechargez pour la mettre à jour.',
   'unit.days': 'j',
 };

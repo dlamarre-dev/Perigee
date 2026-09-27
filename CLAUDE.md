@@ -117,10 +117,17 @@ No single API provides "active probes + landing sites". We maintain:
 - Earth: NASA Blue Marble (public domain) + optional night mask (Black Marble).
 - Moon: NASA SVS **CGI Moon Kit** (svs.gsfc.nasa.gov/4720) — LROC colour + LOLA displacement.
 - Mars: USGS Astrogeology **colourised Viking MDIM 2.1** + MOLA for relief.
-- Planets (view D): NASA/JPL public-domain textures.
+- Planets (view D): NASA Photojournal / USGS public-domain maps (Mercury, Jupiter, Pluto, Ceres); procedural
+  band textures where no public-domain global map exists (Venus cloud tops, Saturn, Uranus, Neptune, unresolved
+  dwarf planets). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' from the NASA
+  fact sheet (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
 - **Offline** pre-processing (`tools/textures/` script): resample to 2k/4k/8k, KTX2 (Basis) compression,
   progressive loading by zoom level. Source textures are not committed; only compressed derivatives are
-  (Git LFS if > 20 MB). M0 ships WebP derivatives; KTX2 arrives in M5.
+  (Git LFS if > 20 MB). Levels per body are declared once in `src/render/textureLevels.ts` (read by the tool and
+  the client). KTX2 (Basis ETC1S, sRGB, mipmaps, Y-flipped since compressed textures ignore `flipY`) is preferred,
+  WebP is the fallback; the Basis transcoder is copied from three.js by a Vite plugin. No 8k level yet: the WASM
+  encoder is limited to ~12 Mpixel (needs tiling or the native `basisu` CLI); `requestDetail()` is the hook.
+  Solar-view textures load lazily when the camera comes near the body.
 
 ## 5. Computation models (client side)
 
@@ -224,7 +231,10 @@ Rules:
   The client reads `manifest.json` first.
 - Published on an **orphan `data` branch** force-pushed (no history) to avoid bloating the repo, then copied into
   the Pages artifact at deploy time. Same origin → no CORS issue.
-- The client caches via Pages `Cache-Control` + a Service Worker (stale-while-revalidate).
+- The client caches via Pages `Cache-Control` + a hand-written Service Worker (`public/sw.js`, Cache API,
+  production builds only): network-first for pages and `manifest.json`, cache-first for hashed assets and
+  versioned data (`?v=<sha>`), stale-while-revalidate for textures; same-origin only. After the first visit the
+  page posts the URLs it already loaded so they are cached too. Offline, a badge says data come from the cache.
 
 ## 9. License and attribution
 
@@ -313,7 +323,7 @@ Known statuses at end of September 2026 — **re-check before each release**:
 - TypeScript `strict`, no unjustified `any`. Explicit units in names (`distanceKm`, `tTdbJd`, `angleRad`).
   Never degrees in internal computations.
 - Astrodynamics functions are **pure** and tested; no Three.js dependency in `src/astro/`.
-- No `localStorage` for large data; IndexedDB via the Service Worker.
+- No `localStorage` for large data; the Service Worker's Cache API holds datasets and textures.
 - Conventional commits (`feat:`, `fix:`, `data:`, `catalog:`). Any change to `catalog/` must include the source
   in the PR.
 - Before adding a dependency: check the license (MIT/BSD/Apache/public domain only; **fonts may also be

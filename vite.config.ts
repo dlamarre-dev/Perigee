@@ -1,10 +1,39 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 // GitHub Pages serves the site under /<repo>/. Override with PERIGEE_BASE=/ for a custom domain.
 const base = process.env['PERIGEE_BASE'] ?? '/Perigee/';
 
+/**
+ * Basis Universal transcoder (Apache-2.0) used by three's KTX2Loader, served at <base>basis/ in dev and emitted
+ * into the build, straight from the installed three.js so the transcoder always matches the loader version.
+ */
+function basisTranscoder(): Plugin {
+  const dir = join('node_modules', 'three', 'examples', 'jsm', 'libs', 'basis');
+  const files = ['basis_transcoder.js', 'basis_transcoder.wasm'];
+  return {
+    name: 'perigee-basis-transcoder',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const name = files.find((f) => req.url?.split('?')[0] === `${base}basis/${f}`);
+        if (!name) return next();
+        res.setHeader('Content-Type', name.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
+        res.end(readFileSync(join(dir, name)));
+      });
+    },
+    generateBundle() {
+      for (const name of files) {
+        this.emitFile({ type: 'asset', fileName: `basis/${name}`, source: readFileSync(join(dir, name)) });
+      }
+    },
+  };
+}
+
 export default defineConfig({
   base,
+  plugins: [basisTranscoder()],
   build: {
     target: 'es2022',
     sourcemap: true,

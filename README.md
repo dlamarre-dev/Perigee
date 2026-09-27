@@ -20,6 +20,9 @@ GitHub Pages. The interface is available in English and French.
   positions, Viking colour mosaic, day-side default viewpoint.
 - **M4** — Solar system view: Sun, planets (astronomy-engine), 22 interplanetary spacecraft from JPL Horizons,
   distances and light time, optional logarithmic scale (flagged as not to scale).
+- **M5** — installable PWA that works offline after a first visit (service worker), GPU-compressed KTX2
+  textures with WebP fallback, textures and rings for every planet plus Ceres, Pluto, Eris, Haumea and Makemake,
+  i18n review, accessibility (contrast test, reduced motion, labelled 3D view), [contributor guide](CONTRIBUTING.md).
 - Earth view also shows 30 orbital launch sites; the launch-site facet filters satellites by where they were
   launched.
 
@@ -34,7 +37,8 @@ npm run dev        # http://localhost:5173/Perigee/
 npm run test       # unit tests (Vitest), incl. Vallado SGP4 verification
 npm run build && npm run test:e2e   # end-to-end tests (Playwright, fixture data)
 npm run lint
-npm run textures   # regenerate Earth textures from NASA sources (offline, rarely needed)
+npm run textures   # regenerate body textures from NASA/USGS sources (offline, rarely needed)
+npm run icons      # regenerate the app icons in public/icons/
 ```
 
 `npm run data:fetch` runs the pipeline against CelesTrak directly. Avoid it: CelesTrak enforces a strict usage

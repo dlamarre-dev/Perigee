@@ -76,6 +76,7 @@ const markerFragment = /* glsl */ `
 
 /** Shared by every selection ring (one clock for all). */
 const PULSE_TIME = { value: 0 };
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 /**
  * Ring around the selected object; its position is computed exactly on the CPU each frame.
@@ -109,7 +110,8 @@ export class SelectionMarker {
       p.frustumCulled = false;
       p.renderOrder = renderOrder;
       p.onBeforeRender = () => {
-        PULSE_TIME.value = performance.now() / 1000;
+        // Reduced motion: a steady ring (sin(0) = 0 keeps the base size).
+        PULSE_TIME.value = REDUCED_MOTION.matches ? 0 : performance.now() / 1000;
       };
       return p;
     };

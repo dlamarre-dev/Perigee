@@ -12,4 +12,17 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
+  {
+    // Hand-written service worker (plain JS, served as is).
+    files: ['public/sw.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: Object.fromEntries(
+        ['self', 'caches', 'fetch', 'URL', 'Request', 'Response', 'Promise', 'Set'].map((g) => [
+          g,
+          'readonly',
+        ]),
+      ),
+    },
+  },
 );

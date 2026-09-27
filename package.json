@@ -20,7 +20,8 @@
     "format": "prettier --write .",
     "textures": "tsx tools/textures/fetch-textures.ts",
     "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat && tsx pipeline/run.ts horizons && tsx pipeline/run.ts rovers",
-    "data:pull": "tsx pipeline/pull.ts"
+    "data:pull": "tsx pipeline/pull.ts",
+    "icons": "tsx tools/icons/make-icons.ts"
   },
   "dependencies": {
     "@fontsource/rajdhani": "^5.3.0",
@@ -37,6 +38,7 @@
     "@types/three": "^0.186.0",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
+    "ktx2-encoder": "^0.6.0",
     "prettier": "^3.9.9",
     "sharp": "^0.35.4",
     "tsx": "^4.23.15",

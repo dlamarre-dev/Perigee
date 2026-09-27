@@ -34,6 +34,8 @@ export class Renderer {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.camera.matrixAutoUpdate = true;
     canvas.tabIndex = 0;
+    // The 3D scene is an image for assistive technologies; the side panels carry the same content as text.
+    canvas.setAttribute('role', 'img');
     container.appendChild(canvas);
 
     this.resizeObserver = new ResizeObserver(() => this.resize());

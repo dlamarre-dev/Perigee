@@ -1,8 +1,18 @@
 /**
- * Texture loading, abstracted so the switch to KTX2/Basis (M5) stays local to this file.
- * Strategy: return a placeholder immediately, load the 2k derivative, then upgrade to 4k when supported.
+ * Body texture loading: a placeholder immediately, then successive levels from src/render/textureLevels.ts.
+ * KTX2 (Basis, GPU-compressed) is preferred once `configureKtx2` has run; WebP is the fallback (no transcoder
+ * support, or a failed KTX2 load). Levels above BASE_MAX_LEVEL_K wait for `requestDetail()` (camera close).
  */
-import { DataTexture, LinearMipmapLinearFilter, SRGBColorSpace, TextureLoader, type Texture } from 'three';
+import {
+  DataTexture,
+  LinearMipmapLinearFilter,
+  SRGBColorSpace,
+  TextureLoader,
+  type Texture,
+  type WebGLRenderer,
+} from 'three';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { BASE_MAX_LEVEL_K, textureLevels } from './textureLevels';
 
 /** Texture file stem, e.g. "day", "night", "color". */
 export type TextureName = string;
@@ -18,7 +28,19 @@ export interface ProgressiveTextureOptions {
   readonly onUpdate: (texture: Texture) => void;
 }
 
-const LEVELS_K = [2, 4] as const;
+export interface ProgressiveTexture {
+  /** Placeholder, replaced through `onUpdate` as levels arrive. */
+  readonly initial: Texture;
+  /** Allows the high-detail levels (above 4k) to load; idempotent. */
+  requestDetail(): void;
+}
+
+let ktx2Loader: KTX2Loader | undefined;
+
+/** Enables KTX2 textures (called once by the shell, with the page renderer). */
+export function configureKtx2(renderer: WebGLRenderer, baseUrl: string): void {
+  ktx2Loader = new KTX2Loader().setTranscoderPath(`${baseUrl}basis/`).detectSupport(renderer);
+}
 
 export function placeholderTexture(rgb: readonly [number, number, number]): Texture {
   const tex = new DataTexture(new Uint8Array([rgb[0], rgb[1], rgb[2], 255]), 1, 1);
@@ -27,33 +49,69 @@ export function placeholderTexture(rgb: readonly [number, number, number]): Text
   return tex;
 }
 
-/** Loads successive resolutions; each finished level replaces the previous one through `onUpdate`. */
-export function loadProgressiveTexture(options: ProgressiveTextureOptions): Texture {
+export function progressiveTexture(options: ProgressiveTextureOptions): ProgressiveTexture {
   const placeholder = placeholderTexture(options.placeholderRgb);
-  const loader = new TextureLoader();
-  const levels = LEVELS_K.filter((k) => k * 1024 <= options.maxTextureSize);
+  const levels = textureLevels(options.body, options.name);
+  const fits = (k: number): boolean => k * 1024 <= options.maxTextureSize;
+  let useKtx2 = ktx2Loader !== undefined && (levels?.ktx2.length ?? 0) > 0;
   let current: Texture = placeholder;
+  let loadedK = 0;
+  let detailAllowed = false;
+  let busy = false;
 
-  const loadLevel = (index: number): void => {
-    const k = levels[index];
-    if (k === undefined) return;
-    const url = `${options.baseUrl}textures/${options.body}/${options.name}-${k}k.webp`;
-    loader.load(
-      url,
-      (tex) => {
-        tex.colorSpace = SRGBColorSpace;
-        tex.anisotropy = options.anisotropy;
-        tex.minFilter = LinearMipmapLinearFilter;
-        const previous = current;
-        current = tex;
-        options.onUpdate(tex);
-        previous.dispose();
-        loadLevel(index + 1);
-      },
-      undefined,
-      () => console.warn(`Texture unavailable: ${url}`),
-    );
+  const pending = (): number | undefined => {
+    const list = (useKtx2 ? levels?.ktx2 : levels?.webp) ?? [];
+    return list.find((k) => k > loadedK && fits(k) && (detailAllowed || k <= BASE_MAX_LEVEL_K));
   };
-  loadLevel(0);
-  return placeholder;
+
+  const accept = (tex: Texture, k: number): void => {
+    tex.colorSpace = SRGBColorSpace;
+    tex.anisotropy = options.anisotropy;
+    tex.minFilter = LinearMipmapLinearFilter;
+    const previous = current;
+    current = tex;
+    loadedK = k;
+    options.onUpdate(tex);
+    previous.dispose();
+  };
+
+  const next = (): void => {
+    const k = pending();
+    if (k === undefined || busy) return;
+    busy = true;
+    const stem = `${options.baseUrl}textures/${options.body}/${options.name}-${k}k`;
+    const done = (tex: Texture): void => {
+      busy = false;
+      accept(tex, k);
+      next();
+    };
+    if (useKtx2 && ktx2Loader) {
+      ktx2Loader.load(`${stem}.ktx2`, done, undefined, () => {
+        console.warn(`KTX2 texture unavailable, falling back to WebP: ${stem}.ktx2`);
+        busy = false;
+        useKtx2 = false;
+        next();
+      });
+    } else {
+      new TextureLoader().load(`${stem}.webp`, done, undefined, () => {
+        busy = false;
+        console.warn(`Texture unavailable: ${stem}.webp`);
+      });
+    }
+  };
+  next();
+
+  return {
+    initial: placeholder,
+    requestDetail: () => {
+      if (detailAllowed) return;
+      detailAllowed = true;
+      next();
+    },
+  };
+}
+
+/** Base levels only (no detail request); returns the placeholder. */
+export function loadProgressiveTexture(options: ProgressiveTextureOptions): Texture {
+  return progressiveTexture(options).initial;
 }

@@ -14,7 +14,20 @@ export interface PlanetInfo {
   readonly periodDays: number;
   readonly color: string;
   readonly dwarf?: boolean;
+  /** Ring texture extent (km from the centre), texture in public/textures/<id>/rings.png. */
+  readonly rings?: RingExtent;
 }
+
+export interface RingExtent {
+  readonly innerKm: number;
+  readonly outerKm: number;
+}
+
+/** Saturn: D-ring edge to past the F ring; Uranus: ring 6 to past ε (NASA ring fact sheets). */
+export const SATURN_RINGS: RingExtent = { innerKm: 74_000, outerKm: 140_500 };
+export const URANUS_RINGS: RingExtent = { innerKm: 41_500, outerKm: 51_500 };
+/** Ring alpha channel encodes sqrt(τ / RING_TAU_SCALE), τ = normal optical depth. */
+export const RING_TAU_SCALE = 4;
 
 export const SUN_RADIUS_KM = 695_700;
 /** Mean obliquity of the ecliptic at J2000 (IAU 2006). */
@@ -68,6 +81,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     radiusKm: 58_232,
     periodDays: 10_759.22,
     color: '#e3d19c',
+    rings: SATURN_RINGS,
   },
   {
     id: 'uranus',
@@ -76,6 +90,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     radiusKm: 25_362,
     periodDays: 30_688.5,
     color: '#9fd8e0',
+    rings: URANUS_RINGS,
   },
   {
     id: 'neptune',

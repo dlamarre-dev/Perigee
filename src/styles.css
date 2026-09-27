@@ -570,6 +570,26 @@ input[type='checkbox'] {
   display: none;
 }
 
+.offline-badge {
+  position: absolute;
+  z-index: 2;
+  top: 84px;
+  right: 16px;
+  margin: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--paused);
+  background: rgba(20, 14, 4, 0.85);
+  color: var(--paused);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.offline-badge[hidden] {
+  display: none;
+}
+
 .sources {
   margin: 0;
   padding-left: 18px;

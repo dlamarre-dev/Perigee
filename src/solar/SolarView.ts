@@ -24,13 +24,14 @@ import {
 } from 'three';
 import missionsJson from '../../catalog/missions.json';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
-import { bodyOrientationEqj, earthOrientation } from '../astro/bodies';
+import { bodyOrientationEqj, ceresOrientationEqj, earthOrientation } from '../astro/bodies';
 import { AU_KM, DEG_TO_RAD, J2000_JD, MS_PER_DAY, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
 import { GM_KM3_S2, osculatingElements, propagateKepler } from '../astro/kepler';
 import {
   OBLIQUITY_J2000_RAD,
   PLANETS,
+  RING_TAU_SCALE,
   SUN_RADIUS_KM,
   heliocentricKm,
   logScalePosition,
@@ -50,7 +51,9 @@ import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority } from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
-import { placeholderTexture } from '../render/textures';
+import { RingMesh } from '../render/RingMesh';
+import { textureLevels } from '../render/textureLevels';
+import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
 import { formatUtcDate } from '../ui/labels';
@@ -62,16 +65,24 @@ const PLANET_PRIORITY = 70;
 const ORBIT_POINTS = 360;
 const DEFAULT_PROBE_COLOR = '#e0e0e0';
 const LIGHT_SPEED_KM_S = 299_792.458;
+/** Textures (and rings) load once the body is closer than this many radii (apparent size ≳ 0.04°). */
+const TEXTURE_LOAD_RADII = 3000;
 
 type Selection =
   | { readonly kind: 'planet'; readonly planet: PlanetInfo }
   | { readonly kind: 'mission'; readonly mission: Mission }
   | undefined;
 
-interface PlanetObject {
+/** Deferred texture (and ring) loading, run once the camera comes near the body. */
+interface LazyLoad {
+  load: (() => void) | undefined;
+}
+
+interface PlanetObject extends LazyLoad {
   readonly info: PlanetInfo;
   readonly index: number;
   readonly mesh: BodyMesh;
+  rings: RingMesh | undefined;
   readonly orbit: Line<BufferGeometry, LineBasicMaterial>;
   /** Heliocentric EQJ km (true scale). */
   eqj: Vec3;
@@ -79,7 +90,7 @@ interface PlanetObject {
   scene: Vec3;
 }
 
-interface ProbeObject {
+interface ProbeObject extends LazyLoad {
   readonly mission: Mission;
   readonly index: number;
   /** Dwarf planet / small body: drawn like a planet, with its full osculating orbit. */
@@ -184,14 +195,37 @@ class SolarView implements View {
               ambient: 0.03,
             });
       renderer.scene.add(mesh.mesh);
-      const orbit = new Line(
-        new BufferGeometry(),
-        new LineBasicMaterial({ color: info.color, transparent: true, opacity: 0.35 }),
-      );
+      const planet: PlanetObject = {
+        info,
+        index,
+        mesh,
+        rings: undefined,
+        load: undefined,
+        orbit: new Line(
+          new BufferGeometry(),
+          new LineBasicMaterial({ color: info.color, transparent: true, opacity: 0.35 }),
+        ),
+        eqj: [0, 0, 0],
+        scene: [0, 0, 0],
+      };
+      planet.load = () => {
+        this.loadTexture(info.id, info.color, mesh);
+        if (info.rings) {
+          planet.rings = new RingMesh({
+            url: `${host.baseUrl}textures/${info.id}/rings.png`,
+            innerKm: info.rings.innerKm,
+            outerKm: info.rings.outerKm,
+            tauScale: RING_TAU_SCALE,
+            planetRadiusKm: info.radiusKm,
+          });
+          mesh.mesh.add(planet.rings.mesh);
+        }
+      };
+      const orbit = planet.orbit;
       orbit.frustumCulled = false;
       this.lineGroup.add(orbit);
       this.planetMarkers.setColor(index, info.color);
-      this.planets.push({ info, index, mesh, orbit, eqj: [0, 0, 0], scene: [0, 0, 0] });
+      this.planets.push(planet);
     });
     const palette = ['#7cc4ff', '#ffb74d', '#81c784', '#ce93d8', '#f48fb1', '#4dd0e1', '#fff176', '#a1887f'];
     this.missions.forEach((mission, index) => {
@@ -221,6 +255,7 @@ class SolarView implements View {
         index,
         natural,
         mesh,
+        load: mesh ? () => this.loadTexture(mission.id, color, mesh) : undefined,
         line,
         track: this.makeTrack(undefined),
         entry: undefined,
@@ -304,6 +339,9 @@ class SolarView implements View {
       if (t.mesh) {
         t.mesh.mesh.visible = !this.logScale && t.scene !== undefined;
         if (t.scene) t.mesh.setSunDirection(normalize(scale(t.scene, -1)));
+        // Only Ceres has a published rotation model among the small bodies shown here.
+        if (t.mission.id === 'ceres')
+          t.mesh.setOrientation(quatMultiply(this.sceneQ, ceresOrientationEqj(this.tdbJd)));
       }
       this.probeMarkers.setColor(
         t.index,
@@ -352,12 +390,15 @@ class SolarView implements View {
       const r = rel(p.scene);
       p.mesh.mesh.position.set(r[0], r[1], r[2]);
       this.planetMarkers.setPosition(p.index, r[0], r[1], r[2]);
+      this.maybeLoad(p, r, p.info.radiusKm);
+      p.rings?.setLighting(normalize(scale(p.scene, -1)), r);
     }
     for (const t of this.probes) {
       if (t.scene) {
         const r = rel(t.scene);
         this.probeMarkers.setPosition(t.index, r[0], r[1], r[2]);
         t.mesh?.mesh.position.set(r[0], r[1], r[2]);
+        this.maybeLoad(t, r, t.mission.radiusKm ?? 0);
       } else {
         this.probeMarkers.hide(t.index);
       }
@@ -406,6 +447,7 @@ class SolarView implements View {
     for (const p of this.planets) {
       scene.remove(p.mesh.mesh);
       p.mesh.dispose();
+      p.rings?.dispose();
       p.orbit.geometry.dispose();
       p.orbit.material.dispose();
     }
@@ -427,6 +469,30 @@ class SolarView implements View {
   }
 
   // --- internals -----------------------------------------------------------------------------------------
+
+  /** Starts the deferred load once the body (at camera-relative `relKm`) is near enough to show detail. */
+  private maybeLoad(o: LazyLoad, relKm: Vec3, radiusKm: number): void {
+    if (!o.load || this.logScale || length(relKm) > radiusKm * TEXTURE_LOAD_RADII) return;
+    const load = o.load;
+    o.load = undefined;
+    load();
+  }
+
+  private loadTexture(id: string, color: string, mesh: BodyMesh): void {
+    if (!textureLevels(id, 'color')) return;
+    const renderer = this.host.renderer;
+    loadProgressiveTexture({
+      baseUrl: this.host.baseUrl,
+      body: id,
+      name: 'color',
+      maxTextureSize: renderer.maxTextureSize,
+      anisotropy: renderer.renderer.capabilities.getMaxAnisotropy(),
+      placeholderRgb: hexToRgb(color),
+      onUpdate: (tex) => {
+        if (!this.disposed) mesh.setDayMap(tex);
+      },
+    });
+  }
 
   private makeTrack(table: ConstructorParameters<typeof EphemerisTrack>[0]): EphemerisTrack {
     return new EphemerisTrack(table, {
@@ -751,12 +817,12 @@ class SolarView implements View {
     const { controls } = this.host;
     Object.assign(window, {
       __perigeeTest: {
-        lookAt: (id: string): boolean => {
+        lookAt: (id: string, distanceKm = 0.5 * AU_KM, fromDir: Vec3 = [0, 0, 1]): boolean => {
           const pos =
             this.planets.find((p) => p.info.id === id)?.scene ??
             this.probes.find((x) => x.mission.id === id)?.scene;
           if (!pos) return false;
-          controls.setState(orbitStateLookingFrom(pos, [0, 0, 1], [0, 1, 0], 0.5 * AU_KM));
+          controls.setState(orbitStateLookingFrom(pos, normalize(fromDir), [0, 1, 0], distanceKm));
           return true;
         },
         camera: () => ({

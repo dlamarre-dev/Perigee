@@ -43,6 +43,10 @@ const KEY_ROLL_RAD = (3 * Math.PI) / 180;
 const ROLL_RAD_PER_PX = 0.005;
 const MIN_INERTIA_RAD_PER_S = 1e-3;
 
+function prefersReducedMotion(): boolean {
+  return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export class QuaternionOrbitControls {
   private stateValue: OrbitState;
   private limitsValue: OrbitLimits;
@@ -116,6 +120,8 @@ export class QuaternionOrbitControls {
   /** Smoothly moves to a new state (target lerp, distance log-lerp, orientation slerp). */
   flyTo(to: OrbitState, durationS = 0.8): void {
     this.angularVelocity = [0, 0, 0];
+    // Reduced motion: a near-cut instead of a long glide (keeps the same code path).
+    if (prefersReducedMotion()) durationS = Math.min(durationS, 0.12);
     const clamped = { ...to, distanceKm: clampDistance(to.distanceKm, this.limitsValue) };
     this.fly = { from: this.stateValue, to: clamped, durationS, elapsedS: 0 };
   }

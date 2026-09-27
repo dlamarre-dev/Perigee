@@ -5,12 +5,12 @@ GitHub Actions (from milestone M1) and served from the same origin as the site.
 
 ## In use (M0)
 
-| Asset                     | Source                                                                                                                                                  | License       | Notes                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------- |
-| Earth day texture         | NASA Earth Observatory — Blue Marble Next Generation, August 2004, topography + bathymetry ([record 73776](https://visibleearth.nasa.gov/images/73776)) | Public domain | Resampled to 2k/4k WebP by `tools/textures/fetch-earth.ts` |
-| Earth night texture       | NASA Earth Observatory — Black Marble 2016, 3 km ([record 144898](https://earthobservatory.nasa.gov/images/144898))                                     | Public domain | Same pipeline                                              |
-| Sun position, time scales | [astronomy-engine](https://github.com/cosinekitty/astronomy) (Don Cross)                                                                                | MIT           | ΔT replaced by the IERS leap-second table since 1972       |
-| Leap seconds              | [IERS Bulletin C](https://www.iers.org/IERS/EN/Publications/Bulletins/bulletins.html)                                                                   | Public        | Table in `src/astro/leapSeconds.ts`, checked 2026-09-26    |
+| Asset                     | Source                                                                                                                                                  | License       | Notes                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| Earth day texture         | NASA Earth Observatory — Blue Marble Next Generation, August 2004, topography + bathymetry ([record 73776](https://visibleearth.nasa.gov/images/73776)) | Public domain | Resampled to 2k/4k WebP + KTX2 by `tools/textures/fetch-textures.ts` |
+| Earth night texture       | NASA Earth Observatory — Black Marble 2016, 3 km ([record 144898](https://earthobservatory.nasa.gov/images/144898))                                     | Public domain | Same pipeline                                                        |
+| Sun position, time scales | [astronomy-engine](https://github.com/cosinekitty/astronomy) (Don Cross)                                                                                | MIT           | ΔT replaced by the IERS leap-second table since 1972                 |
+| Leap seconds              | [IERS Bulletin C](https://www.iers.org/IERS/EN/Publications/Bulletins/bulletins.html)                                                                   | Public        | Table in `src/astro/leapSeconds.ts`, checked 2026-09-26              |
 
 ## In use (M1 — Earth view)
 
@@ -36,6 +36,21 @@ response and never overwrites published data with a file under 50 % of the previ
 | Missions and statuses                              | Curated in `catalog/missions.json` (NASA, ESA, JAXA, CNSA, ISRO sources)               | reviewed by PR             | —                      |
 
 The optional logarithmic distance scale is a visual aid only and is flagged as "not to scale" in the interface.
+
+### Planet, dwarf-planet and ring textures
+
+All maps are equirectangular, east longitude increasing to the right, prime meridian centred (the tool rolls
+maps centred on 180°). Only public-domain / NASA media are used; CC-BY products (e.g. Hubble OPAL) are excluded.
+
+| Body                                                   | Source                                                                                                                                                                                                                                                                           | License / terms             | Notes                                                                                                      |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Mercury                                                | [NASA Photojournal PIA16298](https://science.nasa.gov/photojournal/a-world-view/) — MESSENGER MDIS global mosaic (NASA/JHUAPL/Carnegie Institution of Washington)                                                                                                                | NASA media, not copyrighted | Greyscale                                                                                                  |
+| Jupiter                                                | [NASA Photojournal PIA07782](https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/) — Cassini ISS map, Dec 2000 (NASA/JPL/Space Science Institute)                                                                                                | NASA media, not copyrighted | System III, snapshot (clouds drift)                                                                        |
+| Pluto                                                  | [NASA Photojournal PIA20658](https://science.nasa.gov/photojournal/pluto-a-global-perspective/) — New Horizons LORRI (NASA/JHUAPL/SwRI)                                                                                                                                          | NASA media, not copyrighted | South of ~30°S unseen (black)                                                                              |
+| Ceres                                                  | [USGS Astrogeology — Dawn FC global mosaic, 20 px/deg](https://astrogeology.usgs.gov/search/map/ceres_dawn_fc_global_mosaic_140m) (NASA/JPL-Caltech/UCLA/MPS/DLR/IDA)                                                                                                            | Public domain               | Kait = 0° longitudes; IAU 2015 rotation model                                                              |
+| Saturn rings                                           | Voyager 2 ISS radial I/F profile ([PDS Rings Node VG_2810](https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2810/), Showalter & Gordon) and PPS δ Sco occultation optical depth ([VG_2801](https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2801/), Esposito et al.) | NASA PDS archive data       | Radii: [NASA Saturnian Rings Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/satringfact.html) |
+| Uranus rings                                           | Radii, widths, optical depths from the [NASA Uranian Rings Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranringfact.html)                                                                                                                                        | Public domain               | Drawn slightly stronger than physical to stay visible                                                      |
+| Venus, Saturn, Uranus, Neptune, Eris, Haumea, Makemake | **Procedural** (`tools/textures/procedural.ts`): no public-domain global map exists. Colours estimated from Cassini PIA06193 (Saturn), Irwin et al. 2024, MNRAS 527, 11521 (Uranus, Neptune true colour) and NASA dwarf-planet pages                                             | —                           | Artistic renderings; Venus shows cloud tops, not the radar surface                                         |
 
 ## In use (M3 — Mars view)
 
@@ -69,9 +84,10 @@ Sea and air launch areas (YSLA, SCSLA, SEAL, ERAS, WRAS) and Dombarovsky (unveri
 Missions with no public ephemeris (e.g. Queqiao-2) are listed but not drawn in 3D. Some site dates and the
 coordinates of Luna 9/13 are of lower confidence; see the `note` field of each entry.
 
-## Planned
+## Offline cache (M5)
 
-- USGS Astrogeology — Viking MDIM 2.1 and MOLA Mars textures (M3)
+The service worker (`public/sw.js`) caches same-origin files only (build assets, data files, textures) with the
+Cache API; nothing from third parties (e.g. the optional SoundCloud player) is cached or intercepted.
 
 ## Software
 
@@ -79,5 +95,7 @@ coordinates of Luna 9/13 are of lower confidence; see the `note` field of each e
 - [astronomy-engine](https://github.com/cosinekitty/astronomy) — MIT
 - [satellite.js](https://github.com/shashwatak/satellite-js) — MIT
 - [zod](https://zod.dev) — MIT
+- [Basis Universal transcoder](https://github.com/BinomialLLC/basis_universal) (shipped with three.js, served at `basis/`) — Apache-2.0
+- [ktx2-encoder](https://github.com/gz65555/ktx2-encoder) (offline texture tool only) — MIT
 - [Rajdhani](https://github.com/itfoundry/rajdhani) (Indian Type Foundry) — SIL Open Font License 1.1, bundled via @fontsource
 - [Saira Semi Condensed](https://github.com/Omnibus-Type/Saira) (Omnibus-Type) — SIL Open Font License 1.1, bundled via @fontsource

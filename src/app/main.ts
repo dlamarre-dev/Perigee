@@ -25,6 +25,7 @@ import { orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { createStarfield } from '../render/starfield';
+import { configureKtx2 } from '../render/textures';
 import { About } from '../ui/About';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
@@ -45,6 +46,37 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
   solar: () => import('../solar/SolarView').then((m) => m.createSolarView),
 };
 
+/**
+ * Offline support (production builds only: the dev server's modules are not cacheable assets).
+ * `onUpdate` runs when a new worker takes over a page that was already controlled, i.e. a new deployment.
+ */
+function registerServiceWorker(baseUrl: string, onUpdate: () => void): void {
+  if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
+  const hadController = navigator.serviceWorker.controller !== null;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController) onUpdate();
+  });
+  const register = (): void => {
+    navigator.serviceWorker
+      .register(`${baseUrl}sw.js`, { scope: baseUrl })
+      .then(() => navigator.serviceWorker.ready)
+      .then((reg) => {
+        // Resources fetched before the worker took control (first visit): hand them over for caching.
+        const urls = performance
+          .getEntriesByType('resource')
+          .map((e) => e.name)
+          .filter((u) => u.startsWith(window.location.origin));
+        reg.active?.postMessage({ type: 'cache-urls', urls: [...urls, window.location.href] });
+      })
+      .catch((err: unknown) => {
+        console.warn('Service worker registration failed', err);
+      });
+  };
+  // Register after the page's own loads, so caching never competes with the first render.
+  if (document.readyState === 'complete') register();
+  else window.addEventListener('load', register, { once: true });
+}
+
 function main(): void {
   const root = document.getElementById('app');
   if (!root) throw new Error('#app not found');
@@ -60,6 +92,7 @@ function main(): void {
   const applyDocumentLang = (): void => {
     document.documentElement.lang = i18n.lang;
     document.title = i18n.t('app.title');
+    document.querySelector('canvas')?.setAttribute('aria-label', i18n.t('app.canvasLabel'));
   };
   applyDocumentLang();
   i18n.onChange(applyDocumentLang);
@@ -70,6 +103,8 @@ function main(): void {
   let renderer: Renderer;
   try {
     renderer = new Renderer(viewport, { logarithmicDepthBuffer: true });
+    configureKtx2(renderer.renderer, import.meta.env.BASE_URL);
+    renderer.canvas.setAttribute('aria-label', i18n.t('app.canvasLabel'));
   } catch (err) {
     if (err instanceof WebGLUnavailableError) {
       viewport.textContent = i18n.t('app.webglUnavailable');
@@ -123,6 +158,16 @@ function main(): void {
   };
 
   const notice = h('p', { class: 'notice', role: 'status', hidden: true });
+  const offline = h('p', { class: 'offline-badge', role: 'status', hidden: true });
+  const renderOffline = (): void => {
+    offline.hidden = navigator.onLine;
+    offline.textContent = i18n.t('app.offline');
+  };
+  window.addEventListener('online', renderOffline);
+  window.addEventListener('offline', renderOffline);
+  i18n.onChange(renderOffline);
+  renderOffline();
+  registerServiceWorker(import.meta.env.BASE_URL, () => showNotice(i18n.t('app.updateReady')));
   const showNotice = (text: string | undefined): void => {
     notice.hidden = !text;
     notice.textContent = text ?? '';
@@ -202,7 +247,7 @@ function main(): void {
     },
   });
   const music = new MusicPanel(i18n);
-  app.append(toolbar.element, timeControl.element, music.element, notice, about.element);
+  app.append(toolbar.element, timeControl.element, music.element, notice, offline, about.element);
   app.querySelector('.loading')?.remove();
 
   const host: ViewHost = {
