@@ -20,7 +20,7 @@ const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
 /** Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, about. */
 export class Toolbar {
   readonly element: HTMLElement;
-  private readonly title = h('h1', { class: 'brand' }, ['Périgée']);
+  private readonly title = h('h1', { class: 'brand' });
   private readonly viewGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly viewButtons: Record<ViewId, HTMLButtonElement>;
   private readonly panel = h('button', {
@@ -117,6 +117,7 @@ export class Toolbar {
 
   private renderLabels(): void {
     const t = this.i18n.t.bind(this.i18n);
+    this.title.textContent = t('app.brand');
     this.viewGroup.setAttribute('aria-label', t('toolbar.view'));
     for (const id of VIEW_IDS) this.viewButtons[id].textContent = t(VIEW_LABELS[id]);
     if (this.panelLabel) this.panel.textContent = t(this.panelLabel);

@@ -195,7 +195,12 @@ the "up" vector and causes gimbal lock at the poles).
   view, selected object and time are reflected in the URL (link sharing).
 - Lighting: Sun positioned with astronomy-engine; real day/night terminator.
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
-- Bilingual **EN/FR** interface (see §0), strings in `src/i18n/`.
+- Bilingual **EN/FR** interface (see §0), strings in `src/i18n/`. Brand: "Perigee" in English, "Périgée" in French.
+- Visual style: sci-fi HUD inspired by recent Halo games (chamfered translucent panels, corner brackets, cyan
+  accents, condensed uppercase labels) in `src/styles.css`. System fonts only (Bahnschrift/DIN/Roboto Condensed):
+  web fonts under the OFL are not in the allowed licence list (§14) unless the maintainer approves them.
+- Screen-sized markers on a body surface (sites) do not depth-test: occlusion is computed on the CPU
+  (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar.
 
 ## 8. Data pipeline (GitHub Actions)
 

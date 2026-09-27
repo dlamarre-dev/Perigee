@@ -26,6 +26,12 @@ GitHub Actions (from milestone M1) and served from the same origin as the site.
 The pipeline (`pipeline/`) only fetches, validates (zod), reformats and compresses; it stops on any non-200
 response and never overwrites published data with a file under 50 % of the previous one.
 
+## Launch sites (Earth view)
+
+`catalog/launch-sites.json`: 30 orbital spaceports with geodetic coordinates (mostly from Wikipedia articles, each entry
+lists its sources) and their CelesTrak SATCAT `LAUNCH_SITE` codes (from https://celestrak.org/satcat/launchsites.php).
+Sea and air launch areas (YSLA, SCSLA, SEAL, ERAS, WRAS) and Dombarovsky (unverified pad coordinates) are not placed.
+
 ## In use (M2 — Moon view)
 
 | Dataset                                            | Source                                                                                                                                                                                                 | Refresh                      | Published as               |
