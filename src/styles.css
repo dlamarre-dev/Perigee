@@ -708,3 +708,8 @@ input[type='checkbox'] {
 .label-launch {
   font-size: 11px;
 }
+
+.label-natural {
+  border-left-color: #c9b8a6;
+  color: #e8dccd;
+}

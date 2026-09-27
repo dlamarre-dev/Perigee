@@ -15,6 +15,8 @@ export const en = {
   'toolbar.missions': 'Missions',
   'view.earth': 'Earth',
   'view.moon': 'Moon',
+  'view.mars': 'Mars',
+  'toolbar.frame.fixed.mars': 'Mars-fixed',
   'toolbar.language': 'Language',
   'toolbar.about': 'About',
 
@@ -128,6 +130,7 @@ export const en = {
   'mission.status.cruise': 'Cruise',
   'mission.status.planned': 'Not launched',
   'mission.status.unknown': 'Status unknown',
+  'mission.natural': 'Natural satellite',
 
   'ephem.interpolated': 'Position interpolated from JPL Horizons ephemerides',
   'ephem.extrapolated': 'Extrapolated (two-body Kepler) {h} h beyond the ephemeris window: approximate',
@@ -156,6 +159,13 @@ export const en = {
   'info.verified': 'Checked {date}',
 
   'country.su': 'Soviet Union',
+  'info.radius': 'Mean radius',
+
+  'mars.loading': 'Loading Mars ephemerides…',
+  'mars.unavailable': 'Mars ephemerides are unavailable right now.',
+  'mars.panel': 'Around Mars',
+  'mars.sites': 'Landing sites',
+  'mars.showSites': 'Show sites on Mars',
 } as const;
 
 export type MessageKey = keyof typeof en;

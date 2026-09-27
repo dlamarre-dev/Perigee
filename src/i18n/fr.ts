@@ -18,6 +18,8 @@ export const fr: Messages = {
   'toolbar.missions': 'Missions',
   'view.earth': 'Terre',
   'view.moon': 'Lune',
+  'view.mars': 'Mars',
+  'toolbar.frame.fixed.mars': 'Martien fixe',
   'toolbar.language': 'Langue',
   'toolbar.about': 'À propos',
 
@@ -132,6 +134,7 @@ export const fr: Messages = {
   'mission.status.cruise': 'En croisière',
   'mission.status.planned': 'Pas encore lancée',
   'mission.status.unknown': 'Statut inconnu',
+  'mission.natural': 'Satellite naturel',
 
   'ephem.interpolated': 'Position interpolée à partir des éphémérides JPL Horizons',
   'ephem.extrapolated':
@@ -161,4 +164,11 @@ export const fr: Messages = {
   'info.verified': 'Vérifié le {date}',
 
   'country.su': 'Union soviétique',
+  'info.radius': 'Rayon moyen',
+
+  'mars.loading': 'Chargement des éphémérides martiennes…',
+  'mars.unavailable': 'Les éphémérides martiennes sont indisponibles pour le moment.',
+  'mars.panel': 'Autour de Mars',
+  'mars.sites': 'Sites d’atterrissage',
+  'mars.showSites': 'Afficher les sites sur Mars',
 };

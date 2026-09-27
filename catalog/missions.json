@@ -3,17 +3,27 @@
   "missions": [
     {
       "id": "lro",
-      "name": { "en": "Lunar Reconnaissance Orbiter (LRO)", "fr": "Lunar Reconnaissance Orbiter (LRO)" },
+      "name": {
+        "en": "Lunar Reconnaissance Orbiter (LRO)",
+        "fr": "Lunar Reconnaissance Orbiter (LRO)"
+      },
       "agency": "NASA",
       "country": "us",
       "launchDate": "2009-06-18",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "Low polar lunar orbit", "fr": "Orbite lunaire polaire basse" },
+      "orbit": {
+        "en": "Low polar lunar orbit",
+        "fr": "Orbite lunaire polaire basse"
+      },
       "ephemeris": "horizons",
       "horizonsId": "-85",
       "norad": 35315,
-      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
       "lowOrbit": true,
       "color": "#7cc4ff",
       "verified": "2026-09-26",
@@ -24,17 +34,27 @@
     },
     {
       "id": "chandrayaan-2",
-      "name": { "en": "Chandrayaan-2 Orbiter", "fr": "Chandrayaan-2 (orbiteur)" },
+      "name": {
+        "en": "Chandrayaan-2 Orbiter",
+        "fr": "Chandrayaan-2 (orbiteur)"
+      },
       "agency": "ISRO",
       "country": "in",
       "launchDate": "2019-07-22",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "100 km circular polar orbit", "fr": "Orbite polaire circulaire de 100 km" },
+      "orbit": {
+        "en": "100 km circular polar orbit",
+        "fr": "Orbite polaire circulaire de 100 km"
+      },
       "ephemeris": "horizons",
       "horizonsId": "-152",
       "norad": 44441,
-      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
       "lowOrbit": true,
       "color": "#ffb74d",
       "notes": {
@@ -50,7 +70,10 @@
     },
     {
       "id": "danuri",
-      "name": { "en": "Danuri (KPLO)", "fr": "Danuri (KPLO)" },
+      "name": {
+        "en": "Danuri (KPLO)",
+        "fr": "Danuri (KPLO)"
+      },
       "agency": "KASA / KARI",
       "country": "kr",
       "launchDate": "2022-08-04",
@@ -63,7 +86,11 @@
       "ephemeris": "horizons",
       "horizonsId": "-155",
       "norad": 53365,
-      "sampling": { "stepMin": 2, "pastDays": 1, "futureDays": 3 },
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
       "lowOrbit": true,
       "color": "#81c784",
       "notes": {
@@ -79,17 +106,27 @@
     },
     {
       "id": "artemis-p1",
-      "name": { "en": "ARTEMIS P1 (THEMIS-B)", "fr": "ARTEMIS P1 (THEMIS-B)" },
+      "name": {
+        "en": "ARTEMIS P1 (THEMIS-B)",
+        "fr": "ARTEMIS P1 (THEMIS-B)"
+      },
       "agency": "NASA",
       "country": "us",
       "launchDate": "2007-02-17",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "High-eccentricity lunar orbit", "fr": "Orbite lunaire très excentrique" },
+      "orbit": {
+        "en": "High-eccentricity lunar orbit",
+        "fr": "Orbite lunaire très excentrique"
+      },
       "ephemeris": "horizons",
       "horizonsId": "-192",
       "norad": 30581,
-      "sampling": { "stepMin": 10, "pastDays": 1, "futureDays": 3 },
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 1,
+        "futureDays": 3
+      },
       "lowOrbit": false,
       "color": "#ce93d8",
       "verified": "2026-09-26",
@@ -100,17 +137,27 @@
     },
     {
       "id": "artemis-p2",
-      "name": { "en": "ARTEMIS P2 (THEMIS-C)", "fr": "ARTEMIS P2 (THEMIS-C)" },
+      "name": {
+        "en": "ARTEMIS P2 (THEMIS-C)",
+        "fr": "ARTEMIS P2 (THEMIS-C)"
+      },
       "agency": "NASA",
       "country": "us",
       "launchDate": "2007-02-17",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "High-eccentricity lunar orbit", "fr": "Orbite lunaire très excentrique" },
+      "orbit": {
+        "en": "High-eccentricity lunar orbit",
+        "fr": "Orbite lunaire très excentrique"
+      },
       "ephemeris": "horizons",
       "horizonsId": "-193",
       "norad": 30582,
-      "sampling": { "stepMin": 10, "pastDays": 1, "futureDays": 3 },
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 1,
+        "futureDays": 3
+      },
       "lowOrbit": false,
       "color": "#f48fb1",
       "verified": "2026-09-26",
@@ -121,7 +168,10 @@
     },
     {
       "id": "capstone",
-      "name": { "en": "CAPSTONE", "fr": "CAPSTONE" },
+      "name": {
+        "en": "CAPSTONE",
+        "fr": "CAPSTONE"
+      },
       "agency": "Advanced Space (NASA mission complete)",
       "country": "us",
       "launchDate": "2022-06-28",
@@ -134,7 +184,11 @@
       "ephemeris": "horizons",
       "horizonsId": "-1176",
       "norad": 52914,
-      "sampling": { "stepMin": 30, "pastDays": 4, "futureDays": 4 },
+      "sampling": {
+        "stepMin": 30,
+        "pastDays": 4,
+        "futureDays": 4
+      },
       "lowOrbit": false,
       "color": "#4dd0e1",
       "notes": {
@@ -149,7 +203,10 @@
     },
     {
       "id": "queqiao-2",
-      "name": { "en": "Queqiao-2 relay satellite", "fr": "Queqiao-2 (satellite relais)" },
+      "name": {
+        "en": "Queqiao-2 relay satellite",
+        "fr": "Queqiao-2 (satellite relais)"
+      },
       "agency": "CNSA",
       "country": "cn",
       "launchDate": "2024-03-20",
@@ -174,7 +231,10 @@
     },
     {
       "id": "tiandu-2",
-      "name": { "en": "Tiandu-2", "fr": "Tiandu-2" },
+      "name": {
+        "en": "Tiandu-2",
+        "fr": "Tiandu-2"
+      },
       "agency": "Deep Space Exploration Laboratory",
       "country": "cn",
       "launchDate": "2024-03-20",
@@ -195,7 +255,10 @@
     },
     {
       "id": "tiandu-1",
-      "name": { "en": "Tiandu-1", "fr": "Tiandu-1" },
+      "name": {
+        "en": "Tiandu-1",
+        "fr": "Tiandu-1"
+      },
       "agency": "Deep Space Exploration Laboratory",
       "country": "cn",
       "launchDate": "2024-03-20",
@@ -215,13 +278,19 @@
     },
     {
       "id": "queqiao-1",
-      "name": { "en": "Queqiao relay satellite", "fr": "Queqiao (satellite relais)" },
+      "name": {
+        "en": "Queqiao relay satellite",
+        "fr": "Queqiao (satellite relais)"
+      },
       "agency": "CNSA",
       "country": "cn",
       "launchDate": "2018-05-20",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "Earth–Moon L2 halo orbit", "fr": "Orbite de halo autour du point L2 Terre–Lune" },
+      "orbit": {
+        "en": "Earth–Moon L2 halo orbit",
+        "fr": "Orbite de halo autour du point L2 Terre–Lune"
+      },
       "ephemeris": "none",
       "norad": 43470,
       "lowOrbit": false,
@@ -230,13 +299,19 @@
     },
     {
       "id": "dro-a",
-      "name": { "en": "DRO-A", "fr": "DRO-A" },
+      "name": {
+        "en": "DRO-A",
+        "fr": "DRO-A"
+      },
       "agency": "CAS (CSU)",
       "country": "cn",
       "launchDate": "2024-03-13",
       "centralBody": "moon",
       "status": "active",
-      "orbit": { "en": "Distant retrograde orbit (DRO)", "fr": "Orbite rétrograde distante (DRO)" },
+      "orbit": {
+        "en": "Distant retrograde orbit (DRO)",
+        "fr": "Orbite rétrograde distante (DRO)"
+      },
       "ephemeris": "none",
       "norad": 59228,
       "lowOrbit": false,
@@ -248,7 +323,10 @@
     },
     {
       "id": "dro-b",
-      "name": { "en": "DRO-B", "fr": "DRO-B" },
+      "name": {
+        "en": "DRO-B",
+        "fr": "DRO-B"
+      },
       "agency": "CAS (CSU)",
       "country": "cn",
       "launchDate": "2024-03-13",
@@ -266,13 +344,19 @@
     },
     {
       "id": "icube-q",
-      "name": { "en": "ICUBE-Q", "fr": "ICUBE-Q" },
+      "name": {
+        "en": "ICUBE-Q",
+        "fr": "ICUBE-Q"
+      },
       "agency": "IST / SUPARCO",
       "country": "pk",
       "launchDate": "2024-05-03",
       "centralBody": "moon",
       "status": "inactive",
-      "orbit": { "en": "Elliptical lunar orbit", "fr": "Orbite lunaire elliptique" },
+      "orbit": {
+        "en": "Elliptical lunar orbit",
+        "fr": "Orbite lunaire elliptique"
+      },
       "ephemeris": "none",
       "norad": 59629,
       "lowOrbit": false,
@@ -288,7 +372,10 @@
     },
     {
       "id": "change-7",
-      "name": { "en": "Chang'e-7", "fr": "Chang'e-7" },
+      "name": {
+        "en": "Chang'e-7",
+        "fr": "Chang'e-7"
+      },
       "agency": "CNSA",
       "country": "cn",
       "centralBody": "moon",
@@ -303,6 +390,418 @@
       "sources": [
         "https://en.wikipedia.org/wiki/Chang'e_7",
         "https://www.scientificamerican.com/article/china-delays-ambitious-change-7-moon-mission-until-2027/"
+      ]
+    },
+    {
+      "id": "mars-odyssey",
+      "name": {
+        "en": "2001 Mars Odyssey",
+        "fr": "2001 Mars Odyssey"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2001-04-07",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Near-circular sun-synchronous polar orbit, ~400 km, 93.06° inclination, ~2 h period",
+        "fr": "Orbite polaire héliosynchrone quasi circulaire, ~400 km, inclinaison 93,06°, période ~2 h"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-53",
+      "norad": 26734,
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
+      "lowOrbit": true,
+      "color": "#ffb74d",
+      "notes": {
+        "en": "Longest continually active spacecraft at another planet (Mars orbit since 2001-10-24). NASA lists the mission as ongoing; propellant is low (earlier estimates: enough to end of 2025), so an end-of-mission announcement is plausible soon. Re-verify before each release.",
+        "fr": "Plus longue mission active en continu autour d'une autre planète (en orbite martienne depuis le 2001-10-24). La NASA la considère toujours en cours ; ergols presque épuisés (estimations antérieures : jusqu'à fin 2025), une fin de mission pourrait être annoncée prochainement. À revérifier avant chaque version."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/odyssey/",
+        "https://en.wikipedia.org/wiki/2001_Mars_Odyssey",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Mars%20Odyssey"
+      ]
+    },
+    {
+      "id": "mars-express",
+      "name": {
+        "en": "Mars Express",
+        "fr": "Mars Express"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2003-06-02",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Elliptical near-polar orbit, ~298 × 10,107 km, 86.3° inclination, ~7.5 h period",
+        "fr": "Orbite elliptique quasi polaire, ~298 × 10 107 km, inclinaison 86,3°, période ~7,5 h"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-41",
+      "norad": 27816,
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 1,
+        "futureDays": 3
+      },
+      "lowOrbit": false,
+      "color": "#64b5f6",
+      "notes": {
+        "en": "In Mars orbit since 2003-12-25. ESA's Science Programme Committee endorsed a further extension in June 2026 (previously confirmed to 2026-12-31). ESA image releases continue in September 2026.",
+        "fr": "En orbite martienne depuis le 2003-12-25. Le comité du programme scientifique de l'ESA a approuvé une nouvelle prolongation en juin 2026 (auparavant confirmée jusqu'au 2026-12-31). Publications d'images par l'ESA en septembre 2026."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express",
+        "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://en.wikipedia.org/wiki/Mars_Express",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Mars%20Express"
+      ]
+    },
+    {
+      "id": "mro",
+      "name": {
+        "en": "Mars Reconnaissance Orbiter",
+        "fr": "Mars Reconnaissance Orbiter"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2005-08-12",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Near-circular sun-synchronous polar orbit, ~250–316 km, 93° inclination, ~112 min period",
+        "fr": "Orbite polaire héliosynchrone quasi circulaire, ~250–316 km, inclinaison 93°, période ~112 min"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-74",
+      "norad": 28788,
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
+      "lowOrbit": true,
+      "color": "#81c784",
+      "notes": {
+        "en": "In Mars orbit since 2006-03-10; key relay for Curiosity and Perseverance. CRISM retired 2023; HiRISE has partial CCD degradation. Fuel reported sufficient to ~2035 (Jan 2024 estimate).",
+        "fr": "En orbite martienne depuis le 2006-03-10 ; relais essentiel pour Curiosity et Perseverance. CRISM retiré en 2023 ; HiRISE partiellement dégradé. Ergols suffisants jusqu'à ~2035 (estimation de janvier 2024)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/",
+        "https://en.wikipedia.org/wiki/Mars_Reconnaissance_Orbiter",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=MRO"
+      ]
+    },
+    {
+      "id": "exomars-tgo",
+      "name": {
+        "en": "ExoMars Trace Gas Orbiter",
+        "fr": "ExoMars Trace Gas Orbiter"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2016-03-14",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Near-circular ~400 km, 74° inclination, ~2 h period",
+        "fr": "Orbite quasi circulaire ~400 km, inclinaison 74°, période ~2 h"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-143",
+      "norad": 41388,
+      "sampling": {
+        "stepMin": 2,
+        "pastDays": 1,
+        "futureDays": 3
+      },
+      "lowOrbit": true,
+      "color": "#ce93d8",
+      "notes": {
+        "en": "Mars orbit insertion 2016-10-19; science since April 2018; relay for NASA rovers and the future Rosalind Franklin rover. Recent 2025–2026 science activity reported; formal extension beyond 2026 not found (TGO is not in the June 2026 SPC list, as it belongs to ESA's exploration programme).",
+        "fr": "Insertion en orbite le 2016-10-19 ; science depuis avril 2018 ; relais pour les rovers de la NASA et le futur rover Rosalind Franklin. Activité scientifique signalée en 2025–2026 ; prolongation officielle au-delà de 2026 non trouvée (TGO relève du programme d'exploration, absent de la liste SPC de juin 2026)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.esa.int/Enabling_Support/Operations/ExoMars_TGO_operations",
+        "https://en.wikipedia.org/wiki/Trace_Gas_Orbiter",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=TGO"
+      ]
+    },
+    {
+      "id": "emm-hope",
+      "name": {
+        "en": "Emirates Mars Mission (Hope)",
+        "fr": "Mission émiratie vers Mars (Hope / Al-Amal)"
+      },
+      "agency": "UAE Space Agency / MBRSC",
+      "country": "ae",
+      "launchDate": "2020-07-19",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "High elliptical orbit ~20,000 × 43,000 km, 25° inclination, ~55 h period (adjusted in early 2023 from ~22,000 × 44,000 km to enable Deimos flybys)",
+        "fr": "Orbite elliptique haute ~20 000 × 43 000 km, inclinaison 25°, période ~55 h (ajustée début 2023 depuis ~22 000 × 44 000 km pour survoler Deimos)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-62",
+      "norad": 45918,
+      "sampling": {
+        "stepMin": 30,
+        "pastDays": 3,
+        "futureDays": 5
+      },
+      "lowOrbit": false,
+      "color": "#f48fb1",
+      "notes": {
+        "en": "Mars orbit since 2021-02-09. Mission extended to 2028 (announced February 2026).",
+        "fr": "En orbite martienne depuis le 2021-02-09. Mission prolongée jusqu'en 2028 (annonce de février 2026)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://www.thenationalnews.com/news/uae/2026/02/17/uae-extends-hope-probes-mars-mission-to-2028/",
+        "https://www.thenationalnews.com/uae/uae-in-space/2023/02/09/uaes-hope-probe-moves-to-new-orbit-to-study-mars-tiny-moon-deimos/",
+        "https://www.eoportal.org/satellite-missions/emm-hope",
+        "https://en.wikipedia.org/wiki/Emirates_Mars_Mission",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=EMM"
+      ]
+    },
+    {
+      "id": "tianwen-1",
+      "name": {
+        "en": "Tianwen-1 orbiter",
+        "fr": "Orbiteur Tianwen-1"
+      },
+      "agency": "CNSA",
+      "country": "cn",
+      "launchDate": "2020-07-23",
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Elliptical near-polar remote-sensing orbit, ~275 × 10,749 km, 86.3° inclination, ~7.08 h period",
+        "fr": "Orbite elliptique quasi polaire de télédétection, ~275 × 10 749 km, inclinaison 86,3°, période ~7,08 h"
+      },
+      "ephemeris": "none",
+      "norad": 45935,
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mars orbit since 2021-02-10. Latest official confirmation opened: Xinhua (2025-11-06), operating stably for over 4 years in good condition (observed interstellar comet 3I/ATLAS). No public ephemerides; orbit parameters from Wikipedia and may be outdated.",
+        "fr": "En orbite martienne depuis le 2021-02-10. Dernière confirmation officielle consultée : Xinhua (2025-11-06), fonctionnement stable depuis plus de 4 ans, bon état (observation de la comète interstellaire 3I/ATLAS). Pas d'éphémérides publiques ; paramètres orbitaux issus de Wikipédia, possiblement périmés."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "http://www.news.cn/politics/20251106/227d8d9752fc4079b2bb4990bd5e252f/c.html",
+        "https://en.wikipedia.org/wiki/Tianwen-1"
+      ]
+    },
+    {
+      "id": "maven",
+      "name": {
+        "en": "MAVEN",
+        "fr": "MAVEN"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2013-11-18",
+      "centralBody": "mars",
+      "status": "ended",
+      "orbit": {
+        "en": "Last known: elliptical ~180 × 4,500 km, 75° inclination, ~3.6 h period (spacecraft tumbling since loss of signal; actual current orbit unknown)",
+        "fr": "Dernière connue : elliptique ~180 × 4 500 km, inclinaison 75°, période ~3,6 h (engin en rotation incontrôlée depuis la perte de signal ; orbite actuelle inconnue)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-202",
+      "norad": 39378,
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 2,
+        "futureDays": 2
+      },
+      "lowOrbit": false,
+      "color": "#4dd0e1",
+      "notes": {
+        "en": "Loss of signal 2025-12-06 after passing behind Mars; spacecraft found tumbling, batteries drained. Review board (Feb 2026) judged it unrecoverable; NASA declared end of mission 2026-06-03.",
+        "fr": "Perte de signal le 2025-12-06 après un passage derrière Mars ; engin en rotation, batteries épuisées. Le comité d'examen (fév. 2026) l'a jugé irrécupérable ; fin de mission déclarée par la NASA le 2026-06-03."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/maven/",
+        "https://en.wikipedia.org/wiki/MAVEN",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=MAVEN"
+      ]
+    },
+    {
+      "id": "mom",
+      "name": {
+        "en": "Mars Orbiter Mission (Mangalyaan)",
+        "fr": "Mars Orbiter Mission (Mangalyaan)"
+      },
+      "agency": "ISRO",
+      "country": "in",
+      "launchDate": "2013-11-05",
+      "centralBody": "mars",
+      "status": "ended",
+      "orbit": {
+        "en": "Last known: highly elliptical ~421.7 × 76,993.6 km, 150° inclination, ~72.9 h period",
+        "fr": "Dernière connue : très elliptique ~421,7 × 76 993,6 km, inclinaison 150°, période ~72,9 h"
+      },
+      "ephemeris": "none",
+      "norad": 39370,
+      "lowOrbit": false,
+      "notes": {
+        "en": "Mars orbit 2014-09-24. Contact lost after a long eclipse in April 2022; ISRO declared the mission over in October 2022.",
+        "fr": "En orbite martienne le 2014-09-24. Contact perdu après une longue éclipse en avril 2022 ; l'ISRO a déclaré la fin de mission en octobre 2022."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://en.wikipedia.org/wiki/Mars_Orbiter_Mission"]
+    },
+    {
+      "id": "escapade-blue",
+      "name": {
+        "en": "ESCAPADE Blue",
+        "fr": "ESCAPADE Blue"
+      },
+      "agency": "NASA / UC Berkeley SSL / Rocket Lab",
+      "country": "us",
+      "launchDate": "2025-11-13",
+      "centralBody": "mars",
+      "status": "cruise",
+      "orbit": {
+        "en": "Currently on an Earth-proximity loiter trajectory near Sun–Earth L2; Earth flyby and trans-Mars injection planned November 2026, Mars arrival September 2027; science orbit ~170 × 8,400 km, 65° inclination (from mid-2028)",
+        "fr": "Actuellement en trajectoire d'attente près du point de Lagrange Soleil–Terre L2 ; survol de la Terre et injection vers Mars prévus en novembre 2026, arrivée à Mars en septembre 2027 ; orbite scientifique ~170 × 8 400 km, inclinaison 65° (à partir de mi-2028)"
+      },
+      "ephemeris": "none",
+      "norad": 66451,
+      "lowOrbit": false,
+      "notes": {
+        "en": "Twin smallsats launched on the second New Glenn flight (NG-2). Not yet en route to Mars: TMI burns near Earth planned 2026-11-07 and 2026-11-09. A low-thrust TCM on one spacecraft in Dec 2025 was completed in Jan 2026.",
+        "fr": "Deux petits satellites lancés par le 2e vol de New Glenn (NG-2). Pas encore en route vers Mars : injections prévues les 7 et 9 novembre 2026. Une manœuvre à poussée insuffisante sur l'un des engins en déc. 2025 a été complétée en janv. 2026."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://science.nasa.gov/mission/escapade/",
+        "https://science.nasa.gov/blogs/escapade/",
+        "https://en.wikipedia.org/wiki/ESCAPADE"
+      ]
+    },
+    {
+      "id": "escapade-gold",
+      "name": {
+        "en": "ESCAPADE Gold",
+        "fr": "ESCAPADE Gold"
+      },
+      "agency": "NASA / UC Berkeley SSL / Rocket Lab",
+      "country": "us",
+      "launchDate": "2025-11-13",
+      "centralBody": "mars",
+      "status": "cruise",
+      "orbit": {
+        "en": "Same as Blue: loiter near Sun–Earth L2, TMI November 2026, Mars arrival September 2027; science orbit ~170 × 8,400 km, 65° inclination",
+        "fr": "Identique à Blue : attente près de L2 Soleil–Terre, injection vers Mars en novembre 2026, arrivée en septembre 2027 ; orbite scientifique ~170 × 8 400 km, inclinaison 65°"
+      },
+      "ephemeris": "none",
+      "norad": 66452,
+      "lowOrbit": false,
+      "notes": {
+        "en": "Twin of Blue. In science campaign B their apoapses diverge (Blue ~7,000 km, Gold ~10,000 km).",
+        "fr": "Jumeau de Blue. En campagne scientifique B, apoapsides différentes (Blue ~7 000 km, Gold ~10 000 km)."
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://science.nasa.gov/mission/escapade/", "https://en.wikipedia.org/wiki/ESCAPADE"]
+    },
+    {
+      "id": "mmx",
+      "name": {
+        "en": "Martian Moons eXploration (MMX)",
+        "fr": "Martian Moons eXploration (MMX)"
+      },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2026-10-19",
+      "centralBody": "mars",
+      "status": "planned",
+      "orbit": {
+        "en": "Planned: arrival in the Mars system in 2027 (~1-year cruise), Phobos observation and sampling 2027–2030, departure 2030, Earth return FY2031",
+        "fr": "Prévu : arrivée dans le système martien en 2027 (~1 an de croisière), observation et prélèvement sur Phobos 2027–2030, départ en 2030, retour sur Terre en AF 2031"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Launch scheduled 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; reserve period 2026-10-21 to 2026-11-07. Carries the CNES/DLR IDEFIX rover and NASA MEGANE.",
+        "fr": "Lancement prévu le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; période de réserve du 2026-10-21 au 2026-11-07. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA)."
+      },
+      "verified": "2026-09-27",
+      "sources": [
+        "https://global.jaxa.jp/press/2026/08/20260820-1_e.html",
+        "https://mmx-news.isas.jaxa.jp/?p=2753",
+        "https://www.mmx.jaxa.jp/en/"
+      ]
+    },
+    {
+      "id": "phobos",
+      "name": {
+        "en": "Phobos",
+        "fr": "Phobos"
+      },
+      "objectType": "natural",
+      "radiusKm": 11.08,
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Near-circular, 9 376 km from the centre of Mars, 7.65 h",
+        "fr": "Quasi circulaire, à 9 376 km du centre de Mars, 7,65 h"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "401",
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 2,
+        "futureDays": 14
+      },
+      "lowOrbit": false,
+      "color": "#c9b8a6",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Phobos"
+      ]
+    },
+    {
+      "id": "deimos",
+      "name": {
+        "en": "Deimos",
+        "fr": "Déimos"
+      },
+      "objectType": "natural",
+      "radiusKm": 6.2,
+      "centralBody": "mars",
+      "status": "active",
+      "orbit": {
+        "en": "Near-circular, 23 459 km from the centre of Mars, 30.3 h",
+        "fr": "Quasi circulaire, à 23 459 km du centre de Mars, 30,3 h"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "402",
+      "sampling": {
+        "stepMin": 20,
+        "pastDays": 2,
+        "futureDays": 14
+      },
+      "lowOrbit": false,
+      "color": "#b8ab9c",
+      "verified": "2026-09-27",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Deimos"
       ]
     }
   ]

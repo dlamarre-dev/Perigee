@@ -29,7 +29,7 @@ export class BodyPanel {
 
   constructor(
     private readonly i18n: I18n,
-    private readonly titleKey: MessageKey,
+    private readonly keys: { panel: MessageKey; sites: MessageKey; showSites: MessageKey },
     private readonly missions: readonly Mission[],
     private readonly sites: readonly LandingSite[],
     private readonly colors: ReadonlyMap<string, string>,
@@ -70,17 +70,20 @@ export class BodyPanel {
   /** Re-render after ephemerides load (availability badges). */
   render(): void {
     const t = this.i18n.t.bind(this.i18n);
-    this.title.textContent = t(this.titleKey);
+    this.title.textContent = t(this.keys.panel);
     this.fetched.textContent = this.fetchedAt
       ? this.i18n.format('moon.fetched', { date: formatUtcDate(this.fetchedAt) })
       : '';
     this.missionsTitle.textContent = t('moon.missions');
-    this.sitesTitle.textContent = t('moon.sites');
-    this.sitesToggleLabel.textContent = t('moon.showSites');
+    this.sitesTitle.textContent = t(this.keys.sites);
+    this.sitesToggleLabel.textContent = t(this.keys.showSites);
 
     this.missionsList.replaceChildren(
       ...this.missions.map((m) => {
-        const status = this.i18n.maybe(`mission.status.${m.status}`) ?? m.status;
+        const status =
+          m.objectType === 'natural'
+            ? t('mission.natural')
+            : (this.i18n.maybe(`mission.status.${m.status}`) ?? m.status);
         const extra = this.hasEphemeris(m) ? '' : ` · ${t('moon.noEphemeris')}`;
         const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
           h('span', { class: 'result-name' }, [
@@ -98,7 +101,7 @@ export class BodyPanel {
       [...this.sitesBox.querySelectorAll('details[open]')].map((d) => (d as HTMLElement).dataset['type']),
     );
     this.sitesBox.replaceChildren(
-      ...SITE_TYPES.map((type) => {
+      ...SITE_TYPES.filter((type) => this.sites.some((s) => s.type === type)).map((type) => {
         const list = this.sites.filter((s) => s.type === type).sort((a, b) => a.date.localeCompare(b.date));
         const items = list.map((s) => {
           const b = h('button', { type: 'button', class: 'result', 'data-site': s.id }, [

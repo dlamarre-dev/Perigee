@@ -111,7 +111,11 @@ export type MissionStatus = z.infer<typeof MissionStatusSchema>;
 export const MissionSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
   name: localized,
-  agency: z.string(),
+  /** Spacecraft, or a natural satellite (Phobos, Deimos) tracked the same way. */
+  objectType: z.enum(['spacecraft', 'natural']).default('spacecraft'),
+  /** Mean radius of a natural satellite (km), drawn as a small sphere. */
+  radiusKm: z.number().positive().optional(),
+  agency: z.string().optional(),
   country: iso2.optional(),
   launchDate: isoDate.optional(),
   centralBody: CentralBodySchema,

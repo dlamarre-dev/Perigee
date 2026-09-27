@@ -108,3 +108,24 @@ describe('lunar rotation (IAU model)', () => {
     }
   });
 });
+
+describe('Mars orientation (IAU model)', () => {
+  it('matches the IAU WGCCRE pole and prime meridian at J2000 and the sidereal rate', () => {
+    const j2000 = new Date(Date.UTC(2000, 0, 1, 11, 58, 55, 816)); // J2000.0 TT
+    const axis = Astronomy.RotationAxis(Astronomy.Body.Mars, j2000);
+    expect(axis.ra * 15).toBeCloseTo(317.681, 1);
+    expect(axis.dec).toBeCloseTo(52.887, 1);
+    // IAU 2015: W = 176.049863 + 350.891982443297 d (plus sub-degree periodic terms).
+    expect(Math.abs(((axis.spin - 176.05 + 540) % 360) - 180)).toBeLessThan(1);
+    const oneDay = Astronomy.RotationAxis(Astronomy.Body.Mars, new Date(j2000.getTime() + 86_400_000));
+    const rate = (oneDay.spin - axis.spin + 360) % 360;
+    expect(rate).toBeCloseTo(350.892, 1);
+  });
+
+  it('places the pole of the body frame on the IAU pole direction', () => {
+    const q = bodyOrientationEqj(Astronomy.Body.Mars, new Date('2026-09-27T00:00:00Z'));
+    const pole = quatRotate(q, [0, 0, 1]);
+    const axis = Astronomy.RotationAxis(Astronomy.Body.Mars, new Date('2026-09-27T00:00:00Z'));
+    expect(length(sub(pole, [axis.north.x, axis.north.y, axis.north.z]))).toBeLessThan(1e-9);
+  });
+});

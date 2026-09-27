@@ -4,7 +4,7 @@
  */
 import { isLang, type Lang } from '../i18n';
 
-export const VIEW_IDS = ['earth', 'moon'] as const;
+export const VIEW_IDS = ['earth', 'moon', 'mars'] as const;
 export type ViewId = (typeof VIEW_IDS)[number];
 export type FrameMode = 'fixed' | 'inertial';
 

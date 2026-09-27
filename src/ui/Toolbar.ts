@@ -11,10 +11,11 @@ export interface ToolbarCallbacks {
   readonly onTogglePanel: () => void;
 }
 
-const VIEW_LABELS: Record<ViewId, MessageKey> = { earth: 'view.earth', moon: 'view.moon' };
+const VIEW_LABELS: Record<ViewId, MessageKey> = { earth: 'view.earth', moon: 'view.moon', mars: 'view.mars' };
 const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
   earth: 'toolbar.frame.fixed',
   moon: 'toolbar.frame.fixed.moon',
+  mars: 'toolbar.frame.fixed.mars',
 };
 
 /** Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, about. */

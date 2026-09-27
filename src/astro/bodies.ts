@@ -57,3 +57,9 @@ export function moonToSunKm(date: Date): Vec3 {
 export function earthOrientation(date: Date): Quat {
   return quatFromAxisAngle([0, 0, 1], gmstRad(date));
 }
+
+/** Sun centre as seen from the Mars centre, EQJ, km (geometric). */
+export function marsToSunKm(date: Date): Vec3 {
+  const v = Astronomy.HelioVector(Astronomy.Body.Mars, date);
+  return [-v.x * AU_KM, -v.y * AU_KM, -v.z * AU_KM];
+}

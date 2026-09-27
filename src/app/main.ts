@@ -40,6 +40,7 @@ const FOLLOW_MIN_DISTANCE_KM = 10;
 const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
   earth: () => import('../earth/EarthView').then((m) => m.createEarthView),
   moon: () => import('../moon/MoonView').then((m) => m.createMoonView),
+  mars: () => import('../mars/MarsView').then((m) => m.createMarsView),
 };
 
 function main(): void {

@@ -8,6 +8,7 @@
  * - Earth day: Blue Marble Next Generation, August 2004, topography + bathymetry (NASA Earth Observatory 73776)
  * - Earth night: Black Marble 2016, 3 km (NASA Earth Observatory 144898)
  * - Moon: CGI Moon Kit, LROC WAC colour mosaic with polar fill (NASA SVS 4720)
+ * - Mars: Viking MDIM2.1 colourised global mosaic, 1 km/px (USGS Astrogeology)
  */
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -40,6 +41,15 @@ const BODIES: Record<string, readonly TextureSource[]> = {
     {
       name: 'color',
       url: 'https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_poles_8k.tif',
+      quality: 85,
+    },
+  ],
+  mars: [
+    {
+      // USGS Astrogeology, Viking MDIM2.1 colourised global mosaic, 1 km/px JPEG (21339×10670, public domain):
+      // https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m
+      name: 'color',
+      url: 'https://astrogeology.usgs.gov/ckan/dataset/7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/5ea881c6-01b3-41fa-a7af-42d2131b54f1/download/Mars_Viking_MDIM21_ClrMosaic_1km.jpg',
       quality: 85,
     },
   ],
