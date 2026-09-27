@@ -4,11 +4,12 @@
  */
 import { DataTexture, LinearMipmapLinearFilter, SRGBColorSpace, TextureLoader, type Texture } from 'three';
 
-export type TextureName = 'day' | 'night';
+/** Texture file stem, e.g. "day", "night", "color". */
+export type TextureName = string;
 
 export interface ProgressiveTextureOptions {
   readonly baseUrl: string;
-  readonly body: 'earth';
+  readonly body: string;
   readonly name: TextureName;
   readonly maxTextureSize: number;
   readonly anisotropy: number;

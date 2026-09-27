@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import operatorsJson from '../catalog/operators.json';
-import { parseUrlState, serializeUrlState, DEFAULT_URL_STATE } from '../src/app/urlState';
+import { DEFAULT_URL_STATE, parseUrlState, serializeUrlState } from '../src/app/urlState';
+import { DEFAULT_EARTH_URL, parseEarthUrl, writeEarthUrl } from '../src/earth/earthUrl';
 import { apsides, orbitRegime, periodMin } from '../src/astro/orbit';
 import { OmmListSchema, OperatorsCatalogSchema, type SatcatRecord } from '../src/data/schemas';
 import { buildCatalog, isStale, parseOmmEpochMs } from '../src/earth/catalog';
@@ -83,9 +84,11 @@ describe('catalogue with 6-digit NORAD numbers', () => {
   });
 
   it('round-trips a 6-digit selection through the URL', () => {
-    const search = serializeUrlState({ ...DEFAULT_URL_STATE, selected: 100830 });
+    const search = serializeUrlState(DEFAULT_URL_STATE, (p) =>
+      writeEarthUrl({ ...DEFAULT_EARTH_URL, selected: 100830 }, p),
+    );
     expect(search).toBe('?sel=100830');
-    expect(parseUrlState(search).selected).toBe(100830);
+    expect(parseEarthUrl(new URLSearchParams(search)).selected).toBe(100830);
   });
 
   it('merges SATCAT and group metadata', () => {
@@ -128,7 +131,11 @@ describe('filters', () => {
       regimes: ['LEO' as const],
       query: 'star',
     };
-    const state = parseUrlState(serializeUrlState({ ...DEFAULT_URL_STATE, filters }));
+    const search = serializeUrlState(DEFAULT_URL_STATE, (p) =>
+      writeEarthUrl({ ...DEFAULT_EARTH_URL, filters }, p),
+    );
+    const state = parseEarthUrl(new URLSearchParams(search));
+    expect(parseUrlState(search)).toEqual(DEFAULT_URL_STATE);
     expect(state.filters).toEqual(filters);
   });
 });

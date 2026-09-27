@@ -49,17 +49,22 @@ export class OrbitLine {
 }
 
 const markerVertex = /* glsl */ `
+  #include <common>
+  #include <logdepthbuf_pars_vertex>
   uniform float uSize;
   void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    #include <logdepthbuf_vertex>
     gl_PointSize = uSize;
   }
 `;
 
 const markerFragment = /* glsl */ `
+  #include <logdepthbuf_pars_fragment>
   uniform vec3 uColor;
   uniform float uOpacity;
   void main() {
+    #include <logdepthbuf_fragment>
     float r = length(gl_PointCoord - 0.5);
     if (r > 0.5 || r < 0.34) discard;
     gl_FragColor = vec4(uColor, uOpacity);

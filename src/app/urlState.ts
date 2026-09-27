@@ -1,10 +1,11 @@
 /**
- * Application state mirrored in the URL query string (shareable links). Pure parse/serialize functions.
+ * Shell state mirrored in the URL query string (shareable links). Pure parse/serialize functions.
+ * Views add their own parameters (filters, selection) through `extra`.
  */
-import { EMPTY_FILTERS, filtersFromParams, filtersToParams, type FilterState } from '../earth/filters';
 import { isLang, type Lang } from '../i18n';
 
-export type ViewId = 'earth';
+export const VIEW_IDS = ['earth', 'moon'] as const;
+export type ViewId = (typeof VIEW_IDS)[number];
 export type FrameMode = 'fixed' | 'inertial';
 
 export interface UrlState {
@@ -14,9 +15,6 @@ export interface UrlState {
   /** Simulation time; undefined means "live" (follow real time). */
   readonly time: Date | undefined;
   readonly rate: number;
-  readonly filters: FilterState;
-  /** NORAD catalogue number of the selected object (integer, may exceed 99999). */
-  readonly selected: number | undefined;
 }
 
 export const DEFAULT_URL_STATE: UrlState = {
@@ -25,41 +23,39 @@ export const DEFAULT_URL_STATE: UrlState = {
   frame: 'fixed',
   time: undefined,
   rate: 1,
-  filters: EMPTY_FILTERS,
-  selected: undefined,
 };
 
 export const MAX_ABS_RATE = 10_000;
 
+function isViewId(v: string | null): v is ViewId {
+  return (VIEW_IDS as readonly (string | null)[]).includes(v);
+}
+
 export function parseUrlState(search: string): UrlState {
   const p = new URLSearchParams(search);
   const lang = p.get('lang');
+  const view = p.get('view');
   const t = p.get('t');
   const time = t ? new Date(t) : undefined;
   const rate = Number(p.get('rate') ?? '1');
-  const sel = p.get('sel');
-  const selected = sel !== null && /^\d+$/.test(sel) ? Number(sel) : undefined;
   return {
-    view: 'earth',
+    view: isViewId(view) ? view : 'earth',
     lang: isLang(lang) ? lang : undefined,
     frame: p.get('frame') === 'inertial' ? 'inertial' : 'fixed',
     time: time && !Number.isNaN(time.getTime()) ? time : undefined,
     rate: Number.isFinite(rate) && Math.abs(rate) <= MAX_ABS_RATE ? rate : 1,
-    filters: filtersFromParams(p),
-    selected: selected !== undefined && selected > 0 ? selected : undefined,
   };
 }
 
-/** Serializes only non-default values to keep links short. */
-export function serializeUrlState(state: UrlState): string {
+/** Serializes only non-default values to keep links short; `extra` appends view parameters. */
+export function serializeUrlState(state: UrlState, extra?: (p: URLSearchParams) => void): string {
   const p = new URLSearchParams();
   if (state.view !== DEFAULT_URL_STATE.view) p.set('view', state.view);
   if (state.lang) p.set('lang', state.lang);
   if (state.frame !== DEFAULT_URL_STATE.frame) p.set('frame', state.frame);
   if (state.time) p.set('t', state.time.toISOString().replace(/\.\d{3}Z$/, 'Z'));
   if (state.rate !== 1) p.set('rate', String(state.rate));
-  filtersToParams(state.filters, p);
-  if (state.selected !== undefined) p.set('sel', String(state.selected));
+  extra?.(p);
   const s = p.toString();
   return s ? `?${s}` : '';
 }

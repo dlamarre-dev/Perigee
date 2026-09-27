@@ -472,3 +472,52 @@ body,
     max-height: 45%;
   }
 }
+
+/* Object labels projected over the canvas */
+.label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 8px 0 0 8px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 55%);
+  color: var(--text);
+  font-size: 12px;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.label[hidden] {
+  display: none;
+}
+
+.label-site {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: baseline;
+}
+
+.sources {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.sources a {
+  color: var(--accent-strong);
+}

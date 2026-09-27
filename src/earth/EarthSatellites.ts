@@ -131,14 +131,14 @@ export class EarthSatellites {
     return index === undefined ? undefined : this.catalog.objects[index];
   }
 
-  /**
-   * Per-frame update. `frameAngleRad` rotates TEME into the scene frame; `originKm` is the camera position
-   * (floating origin) in the scene frame.
-   */
-  update(simNowMs: number, rate: number, clockEpoch: number, frameAngleRad: number, originKm: Vec3): void {
-    // Group matrix = T(−origin) · Rz(angle): rotate TEME into the scene frame, then apply the floating origin.
-    this.group.rotation.set(0, 0, frameAngleRad);
+  /** Group matrix = T(−origin) · Rz(angle): the floating origin is applied after the TEME rotation. */
+  placeOrigin(originKm: Vec3): void {
     this.group.position.set(-originKm[0], -originKm[1], -originKm[2]);
+  }
+
+  /** Per-frame update. `frameAngleRad` rotates TEME into the scene frame. */
+  update(simNowMs: number, rate: number, clockEpoch: number, frameAngleRad: number): void {
+    this.group.rotation.set(0, 0, frameAngleRad);
 
     this.schedule(simNowMs, rate, clockEpoch);
     const interp = this.timeline.interpolation(simNowMs);

@@ -3,7 +3,14 @@
  * origin (published from the `data` branch). Never contacts upstream providers.
  */
 import type { z } from 'zod';
-import { ManifestSchema, type DatasetEntry, type DatasetKey, type Manifest } from './schemas';
+import { EphemerisTable } from '../astro/hermite';
+import {
+  ManifestSchema,
+  type DatasetEntry,
+  type DatasetKey,
+  type EphemerisEntry,
+  type Manifest,
+} from './schemas';
 
 export class DataUnavailableError extends Error {
   constructor(message: string) {
@@ -45,6 +52,19 @@ export async function loadDataset<S extends z.ZodType>(
   const res = await fetch(url);
   if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
   return { entry, data: schema.parse(await gunzipJson(res)) };
+}
+
+/** Loads a mission's state-vector table (rows of 7 little-endian Float64). */
+export async function loadEphemeris(baseUrl: string, entry: EphemerisEntry): Promise<EphemerisTable> {
+  const url = `${dataRoot(baseUrl)}${entry.path}?v=${entry.sha256.slice(0, 12)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
+  const buf = await res.arrayBuffer();
+  if (buf.byteLength !== entry.bytes) throw new DataUnavailableError(`Size mismatch for ${entry.path}`);
+  const view = new DataView(buf);
+  const data = new Float64Array(buf.byteLength / 8);
+  for (let i = 0; i < data.length; i++) data[i] = view.getFloat64(i * 8, true);
+  return new EphemerisTable(data);
 }
 
 /** Like loadDataset but resolves to undefined when the dataset is missing or broken (optional metadata). */

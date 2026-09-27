@@ -16,6 +16,8 @@ const DATA_CREDITS: readonly Credit[] = [
   { name: 'CelesTrak (T.S. Kelso) / 18th & 19th SDS via Space-Track', url: 'https://celestrak.org' },
   { name: 'NASA/JPL-Caltech Horizons', url: 'https://ssd.jpl.nasa.gov/horizons/' },
   { name: 'NASA SVS CGI Moon Kit', url: 'https://svs.gsfc.nasa.gov/4720' },
+  { name: 'LROC (Lunar Reconnaissance Orbiter Camera, ASU)', url: 'https://lroc.im-ldi.com' },
+  { name: 'NASA NSSDCA', url: 'https://nssdc.gsfc.nasa.gov' },
   { name: 'USGS Astrogeology', url: 'https://astrogeology.usgs.gov' },
 ];
 
