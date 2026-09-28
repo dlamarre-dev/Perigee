@@ -240,5 +240,35 @@
     "weather": { "en": "Weather", "fr": "Météo" },
     "science": { "en": "Space & Earth science", "fr": "Sciences spatiales et de la Terre" },
     "amateur": { "en": "Amateur radio", "fr": "Radioamateur" }
-  }
+  },
+  "ignoredGroups": [
+    { "group": "active", "reason": "Every active satellite: fetched separately as the base dataset" },
+    { "group": "last-30-days", "reason": "Recent launches, a moving window rather than an operator" },
+    { "group": "analyst", "reason": "Analyst objects (no public identification)" },
+    { "group": "cosmos-2251-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "iridium-33-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "fengyun-1c-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "visual", "reason": "Brightest objects: a visibility list, not an operator" },
+    { "group": "geo", "reason": "Orbit regime (the orbit facet covers it)" },
+    {
+      "group": "gnss",
+      "reason": "Union of the GNSS groups already fetched (gps-ops, glo-ops, galileo, beidou)"
+    },
+    { "group": "cubesat", "reason": "Form factor, many unrelated operators" },
+    { "group": "education", "reason": "Thematic list, many unrelated operators" },
+    { "group": "engineering", "reason": "Thematic list, many unrelated operators" },
+    { "group": "geodetic", "reason": "Thematic list, many unrelated operators" },
+    { "group": "military", "reason": "Thematic list, many unrelated operators" },
+    { "group": "other-comm", "reason": "Thematic list, many unrelated operators" },
+    { "group": "x-comm", "reason": "Thematic list, many unrelated operators" },
+    { "group": "radar", "reason": "Radar calibration targets, thematic" },
+    { "group": "resource", "reason": "Earth resources, thematic" },
+    { "group": "sar", "reason": "Synthetic aperture radar, thematic" },
+    { "group": "sarsat", "reason": "Search and rescue payloads hosted on many operators' satellites" },
+    { "group": "sbas", "reason": "Augmentation payloads of several operators" },
+    { "group": "argos", "reason": "Data-collection payloads hosted on several operators' satellites" },
+    { "group": "dmc", "reason": "Disaster Monitoring Constellation: small, owner codes suffice" },
+    { "group": "tdrss", "reason": "NASA relay satellites: owner code US suffices" },
+    { "group": "satnogs", "reason": "SatNOGS-tracked amateur objects, overlaps amateur" }
+  ]
 }

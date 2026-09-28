@@ -1,0 +1,68 @@
+# Weekly maintenance agent — procedure
+
+This file is the instruction set of the scheduled Claude Code routine that keeps Perigee's curated catalog up
+to date (Saturday 02:00 America/Toronto). It is owned by the maintainer: the agent follows it and **never
+edits it**. Read `CLAUDE.md` first; its rules apply, especially §2 (principles), §4 (sources and providers) and
+§13 (statuses to re-check).
+
+## Goal
+
+Resolve what the Friday audit found (`data/audit.json`), refresh statuses that are due for re-verification, and
+publish the changes through a pull request that merges itself once CI passes. The maintainer should not have
+to do anything unless you explicitly ask for help.
+
+## Steps
+
+1. Set up: `npm ci`, then `npm run data:pull`. Read `public/data/audit.json` and `public/data/audit.md`
+   (published by the `Data — maintenance audit` workflow on Friday 21:00 UTC). If they are older than 3 days
+   or missing, say so in the report and continue with step 3 only.
+2. For each audit item, research and edit the catalog:
+   - `deep-space-candidate`: decide whether the payload belongs in `catalog/missions.json` (an active
+     probe or orbiter around the Moon, Mars, a Lagrange point or the Sun). If yes, add a complete entry: the
+     Horizons ID must be confirmed with
+     `https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=<COSPAR or name>&group=sct` (one request per
+     object), plus `sampling` following CLAUDE.md §4.3, `norad`, the EN and FR names, the agency, the country,
+     the launch date, `status`, `sources` and `verified`. If it does not belong (a relay test, a failed
+     launch…), note why in the report.
+   - `launch-site-code`: either add a site to `catalog/launch-sites.json` (verified coordinates with
+     sources) or add the code to `unplacedSatcatCodes` with a reason. The official list of codes is
+     `https://celestrak.org/satcat/launchsites.php` (one request).
+   - `owner-code`: add the label (EN/FR, ISO country) to `catalog/operators.json` `owners`, using
+     `https://celestrak.org/satcat/sources.php` (one request).
+   - `celestrak-group`: add the group to `operators.json` `groups` (a constellation run by one operator, with
+     its `operator` link) or to `ignoredGroups` with a reason.
+   - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
+     status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
+     `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:
+"ended"`: never delete entries.
+   - `leap-second`: update `src/astro/leapSeconds.ts` from the IERS file, including its "Last checked" line.
+3. Refresh the "Known statuses" summary in `CLAUDE.md` §13 for the missions you changed (same format and
+   dates).
+4. Sources: official agency pages first (NASA, ESA, JAXA, CNSA, ISRO, KASA, UAE Space Agency…), NASA NSSDCA,
+   LROC. Wikipedia only as a last resort. Every added or changed entry cites at least one https URL. If the
+   sources disagree, or you cannot confirm something, **do not guess**: leave the entry unchanged and list it
+   under "Needs a human" in the report.
+5. Check: `npm run lint && npm run test`. Fix your own mistakes; never weaken tests or schemas.
+6. Publish, if anything changed:
+   - branch `maintenance/<YYYY-MM-DD>`, one commit `catalog: weekly maintenance <date>` (conventional
+     commits, English);
+   - a pull request whose body is the change report: one line per entry (what changed, why, sources), then
+     "Needs a human" (or "Nothing");
+   - `gh pr merge --auto --squash <number>`. CI (`catalog-guard`, lint, tests, e2e) must pass before it
+     merges.
+7. Report, every week, even when nothing changed: a comment on the open issue labelled
+   `maintenance-report` (create it and pin it if it does not exist). The comment gives the date, the number of
+   audit items, what was changed with the PR link, and what needs a human. Start the comment with
+   `@dlamarre-dev` **only** when something needs a human, so e-mail alerts stay meaningful.
+
+## Rules
+
+- Allowed files: `catalog/**/*.json`, `CLAUDE.md` (§13 only) and `src/astro/leapSeconds.ts`. The
+  `catalog-guard` CI job rejects anything else, deleted entries, missing or non-https sources, changes without a
+  new `verified` date, and more than 40 changed entries.
+- Never call CelesTrak GP endpoints (`gp.php`) or Horizons vector requests (`horizons.api`): the Actions
+  pipeline owns them. The only provider requests allowed are the lookups listed above, one per resource.
+- Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
+- Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
+  typography: a non-breaking space before `:`).
+- Budget: stop after about 25 researched items; carry the rest over to next week in the report.

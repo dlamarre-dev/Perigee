@@ -44,6 +44,14 @@ description too. Commit prefix: `catalog:`.
 Landing sites use planetocentric latitude / east longitude in degrees; add a `note` when the position is
 uncertain (predicted, never imaged…).
 
+## Weekly maintenance
+
+A Friday audit (`Data — maintenance audit` workflow) lists what the catalog is missing; on Saturday a scheduled
+agent follows [docs/maintenance-agent.md](docs/maintenance-agent.md), opens a `maintenance/<date>` pull request
+and reports on the pinned `maintenance-report` issue. Its pull requests merge automatically once CI passes,
+including the `catalog-guard` job (curated files only, sources, no deletions). Human contributions follow the
+same rules. To change how the agent works, edit `docs/maintenance-agent.md` (the agent itself may not).
+
 ## Code conventions
 
 - Strict TypeScript, no unjustified `any`. Units in names (`distanceKm`, `tTdbJd`, `angleRad`); radians

@@ -484,5 +484,14 @@
         "https://en.wikipedia.org/wiki/Omelek_Island"
       ]
     }
+  ],
+  "unplacedSatcatCodes": [
+    { "code": "SEAL", "reason": "Sea Launch platform, moved between launches (equatorial Pacific)" },
+    { "code": "YSLA", "reason": "Yellow Sea launch area (Chinese sea launches), no fixed pad" },
+    { "code": "SCSLA", "reason": "South China Sea launch area, no fixed pad" },
+    { "code": "JJSLA", "reason": "Sea launch area off Jeju, South Korea, no fixed pad" },
+    { "code": "ERAS", "reason": "Eastern Range air launch area (Pegasus), no fixed pad" },
+    { "code": "WRAS", "reason": "Western Range air launch area (Pegasus), no fixed pad" },
+    { "code": "DLS", "reason": "Dombarovsky: pad coordinates not verified from a reliable source" }
   ]
 }

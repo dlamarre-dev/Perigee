@@ -40,6 +40,13 @@ const LEAP_SECONDS: ReadonlyArray<readonly [number, number]> = (
   ] as const
 ).map(([iso, s]) => [Date.parse(`${iso}T00:00:00Z`), s] as const);
 
+/** Most recent entry of the table (checked weekly against IERS by the maintenance audit). */
+export const LATEST_LEAP_SECOND = (() => {
+  const last = LEAP_SECONDS[LEAP_SECONDS.length - 1];
+  if (!last) throw new Error('empty leap-second table');
+  return { effectiveUnixMs: last[0], taiMinusUtcS: last[1] };
+})();
+
 export const FIRST_LEAP_SECOND_UNIX_MS = Date.UTC(1972, 0, 1);
 
 /** TAI − UTC in seconds at a Unix instant, or undefined before 1972 (no integer-second UTC). */

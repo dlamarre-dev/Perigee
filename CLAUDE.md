@@ -38,7 +38,8 @@ Cross-cutting features:
 2. **Public data only**, with visible attribution (see §9).
 3. **Respect the providers.** The user's browser **never** contacts CelesTrak or Horizons directly. See §4 for why.
 4. **No mission list hardcoded in the code.** Missions, their IDs and statuses live in `catalog/*.json`,
-   versioned and reviewed through PRs.
+   versioned and changed through PRs — by the maintainer or by the weekly maintenance agent, whose PRs
+   auto-merge only when CI (including `catalog-guard`) passes (§8).
 5. **Visual honesty.** An object whose position is extrapolated beyond its validity window is drawn differently
    (opacity, dashed outline) and the panel says so.
 
@@ -231,8 +232,25 @@ the "up" vector and causes gimbal lock at the poles).
   data-celestrak.yml   # cron every 4 h: GP active (+ filter groups) — 1 request per group
   data-satcat.yml      # daily cron: active SATCAT
   data-horizons.yml    # daily cron: vectors for each mission in catalog/missions.json
+  data-audit.yml       # Friday 21:00 UTC: maintenance audit → audit.json / audit.md on the data branch
+  maintenance-watchdog.yml  # Saturday 14:00 UTC: alert issue if the agent did not report or its PR is stuck
   deploy.yml           # Vite build + Pages deployment (triggered on main and after data updates)
 ```
+
+Weekly maintenance (hands-off):
+- `pipeline/audit.ts` (`npm run data:audit`) compares published data and a few upstream lists (CelesTrak index
+  page, this year's SATCAT launches, IERS leap seconds, Horizons lookups for new deep-space payloads) with the
+  catalog: unknown launch-site/owner codes, new CelesTrak groups, deep-space payloads missing from
+  `missions.json`, public ephemerides ending (`coverageEnd` in the manifest), stale `verified` dates, leap
+  seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`
+  `ignoredGroups`.
+- A scheduled Claude Code routine (maintainer's account, Saturday 02:00 America/Toronto) follows
+  `docs/maintenance-agent.md`: researches each item on official sources, edits `catalog/`, opens a
+  `maintenance/<date>` PR with the change report and enables auto-merge, then comments on the pinned
+  `maintenance-report` issue (mentioning the maintainer only when something needs a human).
+- `pipeline/catalog-guard.ts` (CI job on `maintenance/*` PRs): curated files only, schema-valid, no deleted
+  entries, https sources and a new `verified` date on every changed entry, ≤ 40 changes. Branch protection on
+  `master` requires CI; pipeline failure and watchdog issues are assigned to the maintainer (e-mail).
 
 Rules:
 - Scripts in `pipeline/` (Node 20+ + TS, run with `tsx`). No server dependency.
@@ -308,7 +326,8 @@ npm run textures       # offline texture pre-processing (downloads NASA sources,
 
 ## 13. Things to re-check regularly (verification dates in `catalog/`)
 
-Known statuses at end of September 2026 — **re-check before each release**:
+Known statuses at end of September 2026. Kept current by the weekly maintenance agent (§8), which re-verifies
+entries older than 90 days and anything the audit flags:
 - Lunar orbit (verified 2026-09-26, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
   orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA mission ended June 2026, Advanced Space still operates it;

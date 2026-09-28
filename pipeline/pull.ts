@@ -17,7 +17,8 @@ async function get(url: string): Promise<Buffer> {
 }
 
 async function main(): Promise<void> {
-  const outDir = resolve('public/data');
+  const dirFlag = process.argv.indexOf('--data-dir');
+  const outDir = resolve(dirFlag >= 0 ? (process.argv[dirFlag + 1] ?? 'public/data') : 'public/data');
   const manifestBytes = await get(`${RAW}/manifest.json`);
   const manifest = ManifestSchema.parse(JSON.parse(manifestBytes.toString('utf8')));
   for (const entry of [...Object.values(manifest.datasets), ...Object.values(manifest.ephemerides)]) {
@@ -30,6 +31,15 @@ async function main(): Promise<void> {
     console.log(`pulled ${entry.path} (${entry.count} records, fetched ${entry.fetchedAt})`);
   }
   await writeFile(join(outDir, 'manifest.json'), manifestBytes);
+  // Latest maintenance audit (weekly; absent until the first run).
+  for (const name of ['audit.json', 'audit.md']) {
+    try {
+      await writeFile(join(outDir, name), await get(`${RAW}/${name}`));
+      console.log(`pulled ${name}`);
+    } catch {
+      console.log(`no ${name} published yet`);
+    }
+  }
 }
 
 main().catch((err: unknown) => {

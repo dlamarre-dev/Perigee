@@ -88,6 +88,8 @@ export const EphemerisEntrySchema = DatasetEntrySchema.extend({
   startTdbJd: z.number(),
   endTdbJd: z.number(),
   stepMin: z.number().positive(),
+  /** End of the public Horizons ephemeris when it falls inside the requested window (ISO UTC). */
+  coverageEnd: z.string().optional(),
 });
 export type EphemerisEntry = z.infer<typeof EphemerisEntrySchema>;
 
@@ -215,6 +217,8 @@ export const LaunchSitesSchema = z.object({
       sources: z.array(z.url()).min(1),
     }),
   ),
+  /** SATCAT LAUNCH_SITE codes deliberately not placed on the globe (sea/air launch areas…), with the reason. */
+  unplacedSatcatCodes: z.array(z.object({ code: z.string(), reason: z.string() })).default([]),
 });
 export type LaunchSites = z.infer<typeof LaunchSitesSchema>;
 export type LaunchSite = LaunchSites['sites'][number];
@@ -231,5 +235,7 @@ export const OperatorsCatalogSchema = z.object({
   ),
   /** CelesTrak groups fetched by the pipeline; `operator` links members to an operator id. */
   groups: z.record(z.string(), localized.extend({ operator: z.string().optional() })),
+  /** CelesTrak index groups deliberately not fetched (overlapping or thematic lists), with the reason. */
+  ignoredGroups: z.array(z.object({ group: z.string(), reason: z.string() })).default([]),
 });
 export type OperatorsCatalog = z.infer<typeof OperatorsCatalogSchema>;

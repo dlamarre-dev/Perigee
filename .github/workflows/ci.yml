@@ -13,6 +13,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Pull requests from the weekly maintenance agent: curated files only, sourced entries, no deletions.
+  catalog-guard:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'maintenance/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx tsx pipeline/catalog-guard.ts "origin/${{ github.base_ref }}"
+
   check:
     runs-on: ubuntu-latest
     steps:

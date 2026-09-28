@@ -1,0 +1,20 @@
+# Weekly maintenance audit (Friday evening): compares published data and a few upstream lists with the curated
+# catalog, and publishes audit.json / audit.md on the data branch for the Saturday maintenance agent
+# (docs/maintenance-agent.md). Never edits catalog/.
+name: Data — maintenance audit
+
+on:
+  schedule:
+    - cron: '0 21 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  audit:
+    uses: ./.github/workflows/data-pipeline.yml
+    with:
+      command: audit

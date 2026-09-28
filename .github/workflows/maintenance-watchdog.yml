@@ -1,0 +1,53 @@
+# Saturday afternoon: checks that the weekly maintenance agent reported and that its pull request, if any,
+# was merged. Otherwise opens (or updates) an alert issue assigned to the maintainer.
+name: Maintenance watchdog
+
+on:
+  schedule:
+    - cron: '0 14 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the weekly report and the maintenance pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          since=$(date -u -d '-30 hours' +%Y-%m-%dT%H:%M:%SZ)
+          problems=""
+          report=$(gh issue list --state open --label maintenance-report --json number --jq '.[0].number')
+          if [ -z "$report" ]; then
+            problems="${problems}- No open issue labelled \`maintenance-report\`.\n"
+          else
+            last=$(gh api "repos/$GH_REPO/issues/$report/comments?since=$since" --jq 'length')
+            if [ "$last" = "0" ]; then
+              problems="${problems}- No weekly report on #$report since $since: the agent did not run or did not finish.\n"
+            fi
+          fi
+          # The agent runs around 06:00 UTC and CI takes minutes: any maintenance PR still open now is stuck.
+          stuck=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("maintenance/")) | "#\(.number)"] | join(", ")')
+          if [ -n "$stuck" ]; then
+            problems="${problems}- Maintenance pull request(s) still open (CI failed or auto-merge blocked): $stuck\n"
+          fi
+          if [ -z "$problems" ]; then
+            echo "All good."
+            exit 0
+          fi
+          title="Weekly maintenance needs attention"
+          body=$(printf "Run: %s/%s/actions/runs/%s\n\n%b" "$GITHUB_SERVER_URL" "$GH_REPO" "$GITHUB_RUN_ID" "$problems")
+          gh label create maintenance-alert --color D93F0B --force >/dev/null
+          existing=$(gh issue list --state open --label maintenance-alert --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --label maintenance-alert --assignee "$OWNER" --body "$body"
+          fi

@@ -81,6 +81,8 @@ export interface EphemerisToWrite {
   readonly rows: Float64Array;
   /** Little-endian bytes of `rows`. */
   readonly bytes: Buffer;
+  /** End of the public ephemeris, when Horizons reported it inside the window. */
+  readonly coverageEnd?: Date;
 }
 
 /**
@@ -120,6 +122,7 @@ export async function publishEphemerides(
       startTdbJd: e.rows[0] ?? 0,
       endTdbJd: e.rows[e.rows.length - 7] ?? 0,
       stepMin: e.stepMin,
+      ...(e.coverageEnd ? { coverageEnd: e.coverageEnd.toISOString() } : {}),
     };
     console.log(`wrote ${path}: ${count} states, ${(e.bytes.byteLength / 1024).toFixed(0)} KiB`);
   }
