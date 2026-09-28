@@ -66,9 +66,13 @@ export async function fetchGp(group: string): Promise<ParsedList<Omm>> {
   return result;
 }
 
+const SATCAT_TIMEOUT_MS = 300_000;
+
 export async function fetchSatcatActive(): Promise<ParsedList<SatcatRecord>> {
   const url = SATCAT_URL;
-  const body = await politeGet(url, { accept: 'application/json' });
+  // The server builds ~16k records on the fly (~20 s normally); on 2026-09-28 it did not answer within 120 s.
+  // Still a single attempt, no retry (CelesTrak policy), just a longer wait.
+  const body = await politeGet(url, { accept: 'application/json', timeoutMs: SATCAT_TIMEOUT_MS });
   const result = parseRows(parseJsonBody(body, url), url, SatcatRecordSchema);
   SatcatListSchema.parse(result.records);
   return result;
