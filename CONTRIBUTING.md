@@ -50,7 +50,8 @@ A Friday audit (`Data — maintenance audit` workflow) lists what the catalog is
 agent follows [docs/maintenance-agent.md](docs/maintenance-agent.md), opens a `maintenance/<date>` pull request
 and reports on the pinned `maintenance-report` issue. Its pull requests merge automatically once CI passes,
 including the `catalog-guard` job (curated files only, sources, no deletions). Human contributions follow the
-same rules. To change how the agent works, edit `docs/maintenance-agent.md` (the agent itself may not).
+same rules but are always reviewed and merged by the maintainer: nothing from a fork is merged automatically, and
+CI on pull requests from outside contributors starts after the maintainer approves it. To change how the agent works, edit `docs/maintenance-agent.md` (the agent itself may not).
 
 ## Code conventions
 

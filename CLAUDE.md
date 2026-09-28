@@ -18,7 +18,7 @@ Four views, each centred on a body, with free navigation (quaternions) around th
 | View | Central body | Displayed objects | Main source |
 |------|--------------|-------------------|-------------|
 | A — Earth | Earth (rotating Earth frame) | All active catalogued satellites (~15k+) | CelesTrak GP (OMM) + SATCAT |
-| B — Moon | Moon (rotating lunar frame) | Active lunar orbiters + landing/impact sites | JPL Horizons + curated catalog |
+| B — Mocon | Moon (rotating lunar frame) | Active lunar orbiters + landing/impact sites | JPL Horizons + curated catalog |
 | C — Mars | Mars (rotating Martian frame) | Active Mars orbiters + Phobos/Deimos + landing sites | JPL Horizons + curated catalog |
 | D — Solar system | Sun (barycentre) | Planets + active interplanetary probes | astronomy-engine + JPL Horizons |
 
@@ -251,6 +251,11 @@ Weekly maintenance (hands-off):
 - `pipeline/catalog-guard.ts` (CI job on `maintenance/*` PRs): curated files only, schema-valid, no deleted
   entries, https sources and a new `verified` date on every changed entry, ≤ 40 changes. Branch protection on
   `master` requires CI; pipeline failure and watchdog issues are assigned to the maintainer (e-mail).
+- Only the maintainer's own PRs are ever merged without review: `maintenance-merge.yml` (backup for auto-merge)
+  merges a `maintenance/*` PR only if it comes from this repository (not a fork), is authored by the repository
+  owner's account (the agent acts through it) and CI passed on its current head. GitHub auto-merge can only be
+  enabled by users with write access. Workflows of every external contributor's PR need manual approval
+  (repository setting), and the default `GITHUB_TOKEN` is read-only. Outside PRs always wait for a human merge.
 
 Rules:
 - Scripts in `pipeline/` (Node 20+ + TS, run with `tsx`). No server dependency.

@@ -15,9 +15,11 @@ permissions:
 
 jobs:
   merge:
+    # Only branches of this repository (never forks: anyone can name a fork branch "maintenance/…").
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
       startsWith(github.event.workflow_run.head_branch, 'maintenance/')
     runs-on: ubuntu-latest
     steps:
@@ -27,10 +29,13 @@ jobs:
           GH_REPO: ${{ github.repository }}
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          OWNER: ${{ github.repository_owner }}
         run: |
-          pr=$(gh pr list --state open --head "$BRANCH" --json number,headRefOid --jq ".[] | select(.headRefOid == \"$HEAD_SHA\") | .number")
+          # The PR must come from this repository (not a fork), be authored by the maintainer's account (the
+          # agent acts through it), and still point at the commit CI just validated.
+          pr=$(gh pr list --state open --head "$BRANCH" --json number,headRefOid,isCrossRepository,author --jq ".[] | select(.headRefOid == \"$HEAD_SHA\" and (.isCrossRepository | not) and .author.login == \"$OWNER\") | .number")
           if [ -z "$pr" ]; then
-            echo "No open PR for $BRANCH at $HEAD_SHA (already merged, or new commits pushed)."
+            echo "No eligible PR for $BRANCH at $HEAD_SHA (fork, other author, already merged or new commits)."
             exit 0
           fi
           # Branch protection still applies: the merge is refused unless every required check passed.
