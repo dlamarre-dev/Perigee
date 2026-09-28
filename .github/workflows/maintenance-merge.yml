@@ -1,0 +1,38 @@
+# Merges the weekly maintenance agent's pull request once CI succeeded on it. Backup for GitHub auto-merge,
+# which did not fire for the agent's first PR (2026-09-28) although every required check had passed.
+# Merges made with GITHUB_TOKEN do not trigger push workflows, so the site is redeployed explicitly.
+name: Maintenance merge
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  merge:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      startsWith(github.event.workflow_run.head_branch, 'maintenance/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge the maintenance pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          pr=$(gh pr list --state open --head "$BRANCH" --json number,headRefOid --jq ".[] | select(.headRefOid == \"$HEAD_SHA\") | .number")
+          if [ -z "$pr" ]; then
+            echo "No open PR for $BRANCH at $HEAD_SHA (already merged, or new commits pushed)."
+            exit 0
+          fi
+          # Branch protection still applies: the merge is refused unless every required check passed.
+          gh pr merge "$pr" --squash --delete-branch
+          gh workflow run deploy.yml --ref "${{ github.event.repository.default_branch }}"
