@@ -17,9 +17,19 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /mobile.spec.ts/,
       use: {
         ...devices['Desktop Chrome'],
         // Software WebGL for headless runs without a GPU.
+        launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
+      },
+    },
+    {
+      // Phone layout (portrait, touch).
+      name: 'mobile',
+      testMatch: /mobile.spec.ts/,
+      use: {
+        ...devices['Pixel 7'],
         launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
       },
     },

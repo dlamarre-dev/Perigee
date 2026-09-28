@@ -41,14 +41,15 @@ import {
 import { quatFromAxisAngle, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
-import { length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import { loadEphemeris, loadManifest } from '../data/loader';
 import { MissionsCatalogSchema, type EphemerisEntry, type Mission } from '../data/schemas';
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
-import { LabelLayer, LabelPriority } from '../render/Labels';
+import { LabelLayer, LabelPriority, occludedBySphereAt } from '../render/Labels';
+import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { SunMesh } from '../render/SunMesh';
@@ -193,6 +194,8 @@ class SolarView implements View {
   private trajectoriesKey = '';
   private disposed = false;
   private readonly ring: SelectionMarker;
+  /** Spheres that hide what is behind them this frame (scene km); rebuilt in placeOrigin. */
+  private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
 
@@ -453,17 +456,29 @@ class SolarView implements View {
       orbit.line.position.set(r[0], r[1], r[2]);
       orbit.line.quaternion.set(this.sceneQ.x, this.sceneQ.y, this.sceneQ.z, this.sceneQ.w);
     }
+    // The Sun always; planet and small-body meshes only at true scale (hidden in log scale).
+    this.occluders = [{ id: 'sun', sceneKm: [0, 0, 0], radiusKm: SUN_RADIUS_KM }];
+    if (!this.logScale) {
+      for (const p of this.planets)
+        this.occluders.push({ id: p.info.id, sceneKm: p.scene, radiusKm: p.info.radiusKm });
+      for (const t of this.probes) {
+        if (t.mesh && t.scene && t.mission.radiusKm)
+          this.occluders.push({ id: t.mission.id, sceneKm: t.scene, radiusKm: t.mission.radiusKm });
+      }
+    }
     for (const p of this.planets) {
       const r = rel(p.scene);
       p.mesh.mesh.position.set(r[0], r[1], r[2]);
-      this.planetMarkers.setPosition(p.index, r[0], r[1], r[2]);
+      if (this.behindBody(p.scene, p.info.id)) this.planetMarkers.hide(p.index);
+      else this.planetMarkers.setPosition(p.index, r[0], r[1], r[2]);
       this.maybeLoad(p, r, p.info.radiusKm);
       p.rings?.setLighting(normalize(scale(p.scene, -1)), r);
     }
     for (const t of this.probes) {
       if (t.scene) {
         const r = rel(t.scene);
-        this.probeMarkers.setPosition(t.index, r[0], r[1], r[2]);
+        if (this.behindBody(t.scene, t.mission.id)) this.probeMarkers.hide(t.index);
+        else this.probeMarkers.setPosition(t.index, r[0], r[1], r[2]);
         t.mesh?.mesh.position.set(r[0], r[1], r[2]);
         this.maybeLoad(t, r, t.mission.radiusKm ?? 0);
       } else {
@@ -484,11 +499,11 @@ class SolarView implements View {
   click(xCss: number, yCss: number, double: boolean): void {
     let best: { sel: Selection; d: number; depth: number } | undefined;
     const consider = (sel: Selection, scene: Vec3 | undefined): void => {
-      if (!scene) return;
-      const p = this.project(scene);
+      if (!scene || !sel) return;
+      const p = this.project(scene, sel.kind === 'planet' ? sel.planet.id : sel.mission.id);
       if (!p) return;
       const d = Math.hypot(p.x - xCss, p.y - yCss);
-      if (d > PICK_RADIUS_PX) return;
+      if (d > pickRadiusPx(PICK_RADIUS_PX)) return;
       const depth = length(sub(scene, this.originKm));
       const better = !best || (Math.abs(d - best.d) < 3 ? depth < best.depth : d < best.d);
       if (better) best = { sel, d, depth };
@@ -719,7 +734,15 @@ class SolarView implements View {
     orbit.key = key;
   }
 
-  private project(sceneKm: Vec3): { x: number; y: number } | undefined {
+  /** True when the Sun, a planet or a small body (other than `selfId`) hides `sceneKm` from the camera. */
+  private behindBody(sceneKm: Vec3, selfId: string): boolean {
+    return this.occluders.some(
+      (o) => o.id !== selfId && occludedBySphereAt(this.originKm, sceneKm, o.sceneKm, o.radiusKm),
+    );
+  }
+
+  private project(sceneKm: Vec3, selfId?: string): { x: number; y: number } | undefined {
+    if (selfId !== undefined && this.behindBody(sceneKm, selfId)) return undefined;
     const canvas = this.host.renderer.canvas;
     const r = sub(sceneKm, this.originKm);
     return this.labels.project(
@@ -759,10 +782,11 @@ class SolarView implements View {
     this.labels.begin();
     for (const p of this.planets) {
       const selected = sel?.kind === 'planet' && sel.planet.id === p.info.id;
+      const hiddenP = this.behindBody(p.scene, p.info.id);
       this.labels.place(
         `p:${p.info.id}`,
-        sub(p.scene, o),
-        p.scene,
+        hiddenP ? undefined : sub(p.scene, o),
+        hiddenP ? undefined : p.scene,
         camera,
         o,
         0,
@@ -776,10 +800,11 @@ class SolarView implements View {
     for (const t of this.probes) {
       if (!t.scene) continue;
       const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
+      const hiddenM = this.behindBody(t.scene, t.mission.id);
       this.labels.place(
         `m:${t.mission.id}`,
-        sub(t.scene, o),
-        t.scene,
+        hiddenM ? undefined : sub(t.scene, o),
+        hiddenM ? undefined : t.scene,
         camera,
         o,
         0,
@@ -985,6 +1010,20 @@ class SolarView implements View {
                 this.probes.find((x) => x.mission.id === id)?.scene);
           if (!pos) return false;
           controls.setState(orbitStateLookingFrom(pos, normalize(fromDir), [0, 1, 0], distanceKm));
+          return true;
+        },
+        /**
+         * Camera `distanceKm` in front of body `front`, on the far side from `back`, shifted sideways by
+         * `offsetRadii` radii of `front` so that `back` projects that far from the disc centre.
+         */
+        lookThrough: (front: string, back: string, distanceKm: number, offsetRadii: number): boolean => {
+          const f = this.planets.find((p) => p.info.id === front);
+          const b = this.planets.find((p) => p.info.id === back);
+          if (!f || !b) return false;
+          const u = normalize(sub(f.scene, b.scene));
+          const w = normalize(cross(u, [0, 0, 1]));
+          const target = add(f.scene, scale(w, offsetRadii * f.info.radiusKm));
+          controls.setState(orbitStateLookingFrom(target, u, [0, 0, 1], distanceKm));
           return true;
         },
         camera: () => ({

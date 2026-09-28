@@ -45,3 +45,25 @@ test('spacecraft show heliocentric distance and interpolated provenance', async 
   await expect(info).toContainText('Distance to the Sun');
   await expect(info).toContainText('AU');
 });
+
+test('a body hides the labels of objects behind it', async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}&e2e`);
+  const pluto = page.locator('.label', { hasText: /^Pluto$/ });
+  type Hook = { lookThrough: (f: string, b: string, d: number, o: number) => boolean };
+  const look = (offsetRadii: number) =>
+    page.evaluate(
+      (o) =>
+        (window as unknown as { __perigeeTest: Hook }).__perigeeTest.lookThrough('saturn', 'pluto', 1.2e6, o),
+      offsetRadii,
+    );
+  // Pluto just outside Saturn's disc: labelled.
+  await expect(async () => {
+    expect(await look(1.6)).toBe(true);
+    await expect(pluto).toHaveAttribute('data-shown', 'true', { timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
+  // Pluto behind Saturn's disc: hidden.
+  await expect(async () => {
+    expect(await look(0.6)).toBe(true);
+    await expect(pluto).toHaveAttribute('data-shown', 'false', { timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
+});

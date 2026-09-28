@@ -9,6 +9,8 @@ export interface ToolbarCallbacks {
   readonly onLangChange: (lang: Lang) => void;
   readonly onAbout: () => void;
   readonly onTogglePanel: () => void;
+  /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
+  readonly onSoundtrack: () => void;
 }
 
 const VIEW_LABELS: Record<ViewId, MessageKey> = {
@@ -17,6 +19,12 @@ const VIEW_LABELS: Record<ViewId, MessageKey> = {
   mars: 'view.mars',
   solar: 'view.solar',
 };
+const SHORT_VIEW_LABELS: Record<ViewId, MessageKey> = {
+  earth: 'view.earth',
+  moon: 'view.moon',
+  mars: 'view.mars',
+  solar: 'view.solar.short',
+};
 const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
   earth: 'toolbar.frame.fixed',
   moon: 'toolbar.frame.fixed.moon',
@@ -24,11 +32,14 @@ const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
   solar: 'toolbar.frame.fixed.solar',
 };
 
-/** Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, about. */
+/**
+ * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, about.
+ * On phones (CSS, ≤ 640 px) everything but the title and the view tabs folds into a "☰" menu.
+ */
 export class Toolbar {
   readonly element: HTMLElement;
   private readonly title = h('h1', { class: 'brand' });
-  private readonly viewGroup = h('div', { class: 'segmented', role: 'group' });
+  private readonly viewGroup = h('div', { class: 'segmented view-tabs', role: 'group' });
   private readonly viewButtons: Record<ViewId, HTMLButtonElement>;
   private readonly panel = h('button', {
     type: 'button',
@@ -46,6 +57,14 @@ export class Toolbar {
   private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons: HTMLButtonElement[];
   private readonly about = h('button', { type: 'button', class: 'btn' });
+  private readonly soundtrack = h('button', { type: 'button', class: 'btn mobile-only' });
+  private readonly menuButton = h('button', {
+    type: 'button',
+    class: 'btn menu-toggle',
+    'aria-expanded': 'false',
+    'aria-controls': 'toolbar-menu',
+  });
+  private readonly menu = h('div', { class: 'toolbar-menu', id: 'toolbar-menu' });
   private frame: FrameMode;
   private view: ViewId;
   private panelLabel: MessageKey | undefined;
@@ -90,18 +109,46 @@ export class Toolbar {
     });
     this.langGroup.append(...this.langButtons);
 
-    this.element = h('header', { class: 'panel toolbar' }, [
-      this.title,
-      this.viewGroup,
+    this.soundtrack.addEventListener('click', callbacks.onSoundtrack);
+    this.menu.append(
       this.panel,
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
+      this.soundtrack,
       this.about,
+    );
+    this.element = h('header', { class: 'panel toolbar' }, [
+      this.title,
+      this.menuButton,
+      this.viewGroup,
+      this.menu,
     ]);
+    this.menuButton.addEventListener('click', () => this.setMenuOpen(!this.menuOpen));
+    // Any action in the menu closes it (phones); Escape and outside clicks too.
+    this.menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('button')) this.setMenuOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.menuOpen) {
+        this.setMenuOpen(false);
+        this.menuButton.focus();
+      }
+    });
+    document.addEventListener('pointerdown', (e) => {
+      if (this.menuOpen && !this.element.contains(e.target as Node)) this.setMenuOpen(false);
+    });
 
     i18n.onChange(() => this.renderLabels());
     this.renderLabels();
+  }
+
+  private menuOpen = false;
+
+  private setMenuOpen(open: boolean): void {
+    this.menuOpen = open;
+    this.element.classList.toggle('menu-open', open);
+    this.menuButton.setAttribute('aria-expanded', String(open));
   }
 
   setView(view: ViewId): void {
@@ -126,7 +173,18 @@ export class Toolbar {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t('app.brand');
     this.viewGroup.setAttribute('aria-label', t('toolbar.view'));
-    for (const id of VIEW_IDS) this.viewButtons[id].textContent = t(VIEW_LABELS[id]);
+    for (const id of VIEW_IDS) {
+      // Short label on phones (CSS picks one), full one elsewhere and for assistive technologies.
+      const b = this.viewButtons[id];
+      b.setAttribute('aria-label', t(VIEW_LABELS[id]));
+      b.replaceChildren(
+        h('span', { class: 'label-long' }, [t(VIEW_LABELS[id])]),
+        h('span', { class: 'label-short', 'aria-hidden': 'true' }, [t(SHORT_VIEW_LABELS[id])]),
+      );
+    }
+    this.menuButton.textContent = '☰';
+    this.menuButton.setAttribute('aria-label', t('toolbar.menu'));
+    this.soundtrack.textContent = `♪ ${t('music.show')}`;
     if (this.panelLabel) this.panel.textContent = t(this.panelLabel);
     this.recenter.textContent = t('toolbar.recenter');
     this.recenter.title = t('toolbar.recenter.hint');

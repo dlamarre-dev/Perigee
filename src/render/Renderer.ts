@@ -1,4 +1,5 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { applyViewInset, bottomInsetPx, setBottomInset } from './viewInset';
 
 export interface RendererOptions {
   /** Needed for view D (solar system) where depth spans many orders of magnitude. */
@@ -56,7 +57,7 @@ export class Renderer {
     if (this.camera.near === nearKm && this.camera.far === farKm) return;
     this.camera.near = nearKm;
     this.camera.far = farKm;
-    this.camera.updateProjectionMatrix();
+    applyViewInset(this.camera, this.container.clientWidth, this.container.clientHeight);
   }
 
   start(onFrame: (dtS: number) => void): void {
@@ -79,7 +80,13 @@ export class Renderer {
     const { clientWidth: w, clientHeight: h } = this.container;
     if (w === 0 || h === 0) return;
     this.renderer.setSize(w, h, false);
-    this.camera.aspect = w / h;
-    this.camera.updateProjectionMatrix();
+    applyViewInset(this.camera, w, h);
+  }
+
+  /** Height (CSS px) covered by a bottom sheet: the projection centre moves to the visible part. */
+  setBottomInset(insetPx: number): void {
+    if (Math.round(insetPx) === bottomInsetPx(this.camera)) return;
+    setBottomInset(this.camera, insetPx);
+    this.resize();
   }
 }

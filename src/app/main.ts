@@ -30,7 +30,7 @@ import { About } from '../ui/About';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
-import { h } from '../ui/dom';
+import { h, setSheetGrabLabel } from '../ui/dom';
 import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
 import type { FollowApi, View, ViewFactory, ViewHost } from './View';
 
@@ -50,6 +50,12 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
  * Offline support (production builds only: the dev server's modules are not cacheable assets).
  * `onUpdate` runs when a new worker takes over a page that was already controlled, i.e. a new deployment.
  */
+/**
+ * Phone portrait layout (bottom sheets); must match the media query in styles.css. Landscape phones keep side
+ * panels, which do not cover the bottom of the view.
+ */
+const PHONE_QUERY = '(max-width: 640px)';
+
 function registerServiceWorker(baseUrl: string, onUpdate: () => void): void {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
   const hadController = navigator.serviceWorker.controller !== null;
@@ -110,6 +116,7 @@ function main(): void {
     document.documentElement.lang = i18n.lang;
     document.title = i18n.t('app.title');
     document.querySelector('canvas')?.setAttribute('aria-label', i18n.t('app.canvasLabel'));
+    setSheetGrabLabel(i18n.t('panel.collapse'));
   };
   applyDocumentLang();
   i18n.onChange(applyDocumentLang);
@@ -230,8 +237,35 @@ function main(): void {
 
   const about = new About(i18n);
   const timeControl = new TimeControl(clock, i18n, syncUrl);
+
+  // Phones: the time bar and bottom sheets cover the lower part of the canvas. Their height feeds the CSS
+  // (sheets sit above the time bar) and the camera, whose projection centre moves to the visible part.
+  const phone = window.matchMedia(PHONE_QUERY);
+  function updateBottomInset(): void {
+    const root = document.documentElement;
+    root.style.setProperty(
+      '--timebar-h',
+      `${Math.ceil(timeControl.element.getBoundingClientRect().height)}px`,
+    );
+    if (!phone.matches) {
+      renderer.setBottomInset(0);
+      return;
+    }
+    const canvasRect = renderer.canvas.getBoundingClientRect();
+    let top = canvasRect.bottom;
+    for (const el of app.querySelectorAll<HTMLElement>('.side-panel, .music.is-open')) {
+      if (el.hidden || el.offsetParent === null) continue;
+      top = Math.min(top, el.getBoundingClientRect().top);
+    }
+    // Only sheets count: the thin time bar alone does not justify moving the view.
+    renderer.setBottomInset(top < canvasRect.bottom ? canvasRect.bottom - top : 0);
+  }
+  phone.addEventListener('change', updateBottomInset);
+  window.addEventListener('resize', updateBottomInset);
   const toolbar = new Toolbar(i18n, viewId, frame, {
     onViewChange: (id) => void switchView(id),
+    // `music` is created below; the menu can only be used once the page is running.
+    onSoundtrack: () => music.toggleOpen(),
     onRecenter: () => {
       follow.stop();
       controls.reset();
@@ -403,6 +437,7 @@ function main(): void {
       uiTimerS = 0;
       timeControl.update();
       v?.uiTick(nowMs);
+      updateBottomInset();
     }
   });
 }

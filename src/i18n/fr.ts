@@ -49,6 +49,10 @@ export const fr: Messages = {
     'Sommet des nuages, vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
+  'view.solar.short': 'Solaire',
+  'toolbar.menu': 'Menu',
+  'time.jump.toggle': 'Aller à une date',
+  'panel.collapse': 'Replier ou déplier le panneau',
   'about.author': 'Créé par',
   'about.sourceCode': 'Code source sur GitHub',
   'about.sources': 'Données et imagerie',

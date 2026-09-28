@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { layoutLabels, rectsOverlap, type LayoutInput } from '../src/render/Labels';
+import {
+  layoutLabels,
+  occludedBySphere,
+  occludedBySphereAt,
+  rectsOverlap,
+  type LayoutInput,
+} from '../src/render/Labels';
 
 const W = 1000;
 const H = 800;
@@ -78,5 +84,22 @@ describe('label collision avoidance', () => {
     const sideB = states.get('b').offset;
     for (let i = 0; i < 20; i++) run([label('a', 500 + (i % 2), 400), label('b', 505, 402)], states);
     expect(states.get('b').offset).toBe(sideB);
+  });
+});
+
+describe('occludedBySphereAt', () => {
+  const centre: [number, number, number] = [1000, 0, 0];
+  const camera: [number, number, number] = [0, 0, 0];
+  it('hides a point behind the sphere and keeps one in front or beside it', () => {
+    expect(occludedBySphereAt(camera, [2000, 0, 0], centre, 100)).toBe(true);
+    expect(occludedBySphereAt(camera, [500, 0, 0], centre, 100)).toBe(false);
+    expect(occludedBySphereAt(camera, [2000, 300, 0], centre, 100)).toBe(false);
+  });
+  it('matches occludedBySphere once translated', () => {
+    const cam: [number, number, number] = [-5000, 20, 0];
+    const p: [number, number, number] = [3000, 10, 5];
+    expect(occludedBySphereAt(cam, p, centre, 200)).toBe(
+      occludedBySphere([cam[0] - 1000, cam[1], cam[2]], [p[0] - 1000, p[1], p[2]], 200),
+    );
   });
 });

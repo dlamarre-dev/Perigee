@@ -44,6 +44,10 @@ export const en = {
   'texture.artistVenus':
     "Cloud tops, artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
   'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
+  'view.solar.short': 'Solar',
+  'toolbar.menu': 'Menu',
+  'time.jump.toggle': 'Jump to a date',
+  'panel.collapse': 'Collapse or expand the panel',
   'about.author': 'Created by',
   'about.sourceCode': 'Source code on GitHub',
   'about.sources': 'Data and imagery',

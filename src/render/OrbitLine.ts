@@ -82,13 +82,18 @@ const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
  * Ring around the selected object; its position is computed exactly on the CPU each frame.
  * Two passes share the geometry: a full ring where the object is visible, and a faint one drawn through
  * the Earth so the selection is never lost when it passes behind the globe.
+ * Surface mode (sites on a body): a single pass without depth test — a flat sprite on a curved surface would
+ * otherwise sink into it at grazing angles — hidden by the caller when the body occludes it (`setOccluded`),
+ * exactly like the site markers.
  */
 export class SelectionMarker {
   readonly points: Group;
   private readonly position = new Float32Array(3);
   private readonly geometry = new BufferGeometry();
+  private placed = false;
+  private occluded = false;
 
-  constructor(pixelRatio: number) {
+  constructor(pixelRatio: number, options: { surface?: boolean } = {}) {
     this.geometry.setAttribute('position', new BufferAttribute(this.position, 3));
     const ring = (opacity: number, depthTest: boolean, renderOrder: number): Points => {
       const p = new Points(
@@ -117,18 +122,24 @@ export class SelectionMarker {
     };
     this.points = new Group();
     this.points.name = 'selection';
-    this.points.add(ring(0.3, false, 10), ring(1, true, 11));
+    if (options.surface) this.points.add(ring(1, false, 11));
+    else this.points.add(ring(0.3, false, 10), ring(1, true, 11));
     this.points.visible = false;
   }
 
   /** TEME position (km); undefined hides the marker. */
   set(posKm: Vec3 | undefined): void {
-    if (!posKm) {
-      this.points.visible = false;
-      return;
+    this.placed = posKm !== undefined;
+    if (posKm) {
+      this.position.set(posKm);
+      this.geometry.getAttribute('position').needsUpdate = true;
     }
-    this.position.set(posKm);
-    this.geometry.getAttribute('position').needsUpdate = true;
-    this.points.visible = true;
+    this.points.visible = this.placed && !this.occluded;
+  }
+
+  /** Hidden behind a body (CPU occlusion test by the caller), independently of `set`. */
+  setOccluded(occluded: boolean): void {
+    this.occluded = occluded;
+    this.points.visible = this.placed && !occluded;
   }
 }

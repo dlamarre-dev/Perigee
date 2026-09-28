@@ -215,7 +215,14 @@ the "up" vector and causes gimbal lock at the poles).
   accents, condensed uppercase labels) in `src/styles.css`. Fonts: Rajdhani (display) and Saira Semi Condensed
   (text), OFL-1.1, bundled via `@fontsource` (latin subset).
 - Screen-sized markers on a body surface (sites) do not depth-test: occlusion is computed on the CPU
-  (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar.
+  (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar. The same holds for
+  their selection ring (`SelectionMarker` surface mode). In the solar view the Sun, planets and small bodies hide
+  the markers and labels behind them (`occludedBySphereAt`); in the Moon view the Earth does too.
+- Phone layout (`styles.css`, ≤ 640 px wide; landscape ≤ 500 px tall): top bar with a "☰" menu and view tabs,
+  compact time bar docked at the bottom (speed `<select>`, date popover), panels as collapsible bottom sheets
+  above it, one at a time. The shell publishes `--timebar-h` and moves the camera's projection centre above an
+  open sheet (`src/render/viewInset.ts`, used by the main pass and GPU picking). Touch screens get larger pick
+  radii (`src/render/pointer.ts`). A Playwright "mobile" project runs `tests/e2e/mobile.spec.ts`.
 
 ## 8. Data pipeline (GitHub Actions)
 

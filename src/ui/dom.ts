@@ -21,7 +21,23 @@ export function h<K extends keyof HTMLElementTagNameMap>(
  * so the decorations do not move with the content and nothing scrolls horizontally.
  */
 export function sidePanel(attrs: Attrs, children: readonly Child[]): HTMLElement {
-  return h('aside', attrs, [h('div', { class: 'panel-body' }, children)]);
+  // Grab bar, shown on phones only (CSS): collapses the bottom sheet to its first lines and back.
+  const grab = h('button', { type: 'button', class: 'sheet-grab', 'aria-expanded': 'true' });
+  grab.setAttribute('aria-label', sheetGrabLabel);
+  const panel = h('aside', attrs, [grab, h('div', { class: 'panel-body' }, children)]);
+  grab.addEventListener('click', () => {
+    const collapsed = panel.classList.toggle('collapsed');
+    grab.setAttribute('aria-expanded', String(!collapsed));
+  });
+  return panel;
+}
+
+let sheetGrabLabel = '';
+
+/** Localised label of every panel's grab bar (set by the shell, updated on language change). */
+export function setSheetGrabLabel(label: string): void {
+  sheetGrabLabel = label;
+  for (const b of document.querySelectorAll('.sheet-grab')) b.setAttribute('aria-label', label);
 }
 
 /**

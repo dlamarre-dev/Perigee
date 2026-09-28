@@ -31,6 +31,11 @@ export function occludedBySphere(cameraKm: Vec3, pointKm: Vec3, radiusKm: number
   return dot(c, c) < radiusKm * radiusKm * 0.998 && t < 0.999;
 }
 
+/** Same as `occludedBySphere` for a sphere centred at `centreKm` (all positions in one frame). */
+export function occludedBySphereAt(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3, radiusKm: number): boolean {
+  return occludedBySphere(sub(cameraKm, centreKm), sub(pointKm, centreKm), radiusKm);
+}
+
 export interface Rect {
   readonly x: number;
   readonly y: number;

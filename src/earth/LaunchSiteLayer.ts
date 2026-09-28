@@ -11,6 +11,7 @@ import { length, scale, sub, type Vec3 } from '../astro/vec3';
 import type { LaunchSite } from '../data/schemas';
 import type { Lang } from '../i18n';
 import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
+import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 
@@ -40,7 +41,7 @@ export class LaunchSiteLayer {
     this.bodyKm = sites.map((s) => scale(latLonToUnit(s.latDeg * DEG_TO_RAD, s.lonDeg * DEG_TO_RAD), R + 2));
     this.markers = new MarkerPoints(Math.max(1, sites.length), 9 * pixelRatio, { depthTest: false });
     sites.forEach((s, i) => this.markers.setColor(i, s.active ? ACTIVE_COLOR : INACTIVE_COLOR));
-    this.ring = new SelectionMarker(pixelRatio);
+    this.ring = new SelectionMarker(pixelRatio, { surface: true });
     this.group.add(this.markers.points, this.ring.points);
     this.group.name = 'launch-sites';
   }
@@ -85,6 +86,7 @@ export class LaunchSiteLayer {
       const shown = this.visibleValue && scene && body && !occludedBySphere(originKm, scene, R);
       if (shown) this.markers.setPosition(i, body[0], body[1], body[2]);
       else this.markers.hide(i);
+      if (site.id === this.selectedId) this.ring.setOccluded(!shown);
       const near = scene && length(sub(scene, originKm)) < LABEL_DISTANCE_KM;
       const label = shown && (near || site.id === this.selectedId);
       this.labels.place(
@@ -122,7 +124,7 @@ export class LaunchSiteLayer {
       const x = ((this.v.x + 1) / 2) * widthCss;
       const y = ((1 - this.v.y) / 2) * heightCss;
       const d = Math.hypot(x - xCss, y - yCss);
-      if (d <= PICK_RADIUS_PX && (!best || d < best.distancePx)) best = { site, distancePx: d };
+      if (d <= pickRadiusPx(PICK_RADIUS_PX) && (!best || d < best.distancePx)) best = { site, distancePx: d };
     });
     return best;
   }

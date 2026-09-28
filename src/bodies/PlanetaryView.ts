@@ -43,7 +43,8 @@ import {
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
-import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
+import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
+import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
@@ -258,7 +259,7 @@ export class PlanetaryView implements View {
 
     this.siteMarkers = new MarkerPoints(Math.max(1, this.sites.length), 8 * pixelRatio, { depthTest: false });
     this.sites.forEach((s, i) => this.siteMarkers.setColor(i, SITE_COLORS[s.type]));
-    this.siteRing = new SelectionMarker(pixelRatio);
+    this.siteRing = new SelectionMarker(pixelRatio, { surface: true });
     this.siteGroup.add(this.siteMarkers.points, this.siteRing.points);
     this.body.mesh.add(this.siteGroup);
 
@@ -375,7 +376,6 @@ export class PlanetaryView implements View {
   }
 
   placeOrigin(originKm: Vec3): void {
-    const R = this.R;
     this.originKm = originKm;
     this.body.mesh.position.set(-originKm[0], -originKm[1], -originKm[2]);
     // High-detail surface (8k) once the camera is within one radius of the surface.
@@ -387,7 +387,7 @@ export class PlanetaryView implements View {
     this.missionGroup.position.set(-originKm[0], -originKm[1], -originKm[2]);
     for (const t of this.tracked) {
       const p = t.sample.state?.posKm;
-      if (p && t.scene && !occludedBySphere(originKm, t.scene, R)) {
+      if (p && t.scene && !this.hidden(t.scene)) {
         this.missionMarkers.setPosition(t.index, p[0], p[1], p[2]);
       } else {
         this.missionMarkers.hide(t.index);
@@ -401,9 +401,11 @@ export class PlanetaryView implements View {
     this.sites.forEach((_, i) => {
       const scene = this.siteScene[i];
       const p = this.siteBodyKm[i];
-      if (p && scene && !occludedBySphere(originKm, scene, R))
-        this.siteMarkers.setPosition(i, p[0], p[1], p[2]);
+      const shown = p && scene && !this.hidden(scene);
+      if (shown) this.siteMarkers.setPosition(i, p[0], p[1], p[2]);
       else this.siteMarkers.hide(i);
+      if (this.selection?.kind === 'site' && this.selection.site === this.sites[i])
+        this.siteRing.setOccluded(!shown);
     });
     this.siteMarkers.commit();
     this.placeLabels();
@@ -419,7 +421,7 @@ export class PlanetaryView implements View {
       const p = scene && this.project(scene);
       if (!scene || !p) return;
       const d = Math.hypot(p.x - xCss, p.y - yCss);
-      if (d > PICK_RADIUS_PX) return;
+      if (d > pickRadiusPx(PICK_RADIUS_PX)) return;
       const depth = length(sub(scene, this.originKm));
       // Objects overlapping on screen (within a few pixels): the one in front wins.
       const better = !best || (Math.abs(d - best.d) < 3 ? depth < best.depth : d < best.d);
@@ -555,8 +557,17 @@ export class PlanetaryView implements View {
     t.line.visible = kind !== 'none';
   }
 
+  /** Behind the central body, or behind the Earth (Moon view), as seen from the camera. */
+  private hidden(sceneKm: Vec3): boolean {
+    return (
+      occludedBySphere(this.originKm, sceneKm, this.R) ||
+      (this.earth !== undefined &&
+        occludedBySphereAt(this.originKm, sceneKm, this.earthScene, this.earth.radiusKm))
+    );
+  }
+
   private project(sceneKm: Vec3): { x: number; y: number } | undefined {
-    if (occludedBySphere(this.originKm, sceneKm, this.R)) return undefined;
+    if (this.hidden(sceneKm)) return undefined;
     const r = sub(sceneKm, this.originKm);
     this.v.set(r[0], r[1], r[2]).project(this.host.renderer.camera);
     if (this.v.z > 1 || Math.abs(this.v.x) > 1 || Math.abs(this.v.y) > 1) return undefined;

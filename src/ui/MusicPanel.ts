@@ -68,6 +68,10 @@ export class MusicPanel {
     if (readOpen()) this.setOpen(true);
   }
 
+  toggleOpen(): void {
+    this.setOpen(!this.open);
+  }
+
   private setOpen(open: boolean): void {
     this.open = open;
     writeOpen(open);

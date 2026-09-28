@@ -674,22 +674,18 @@ input[type='checkbox'] {
 
 /* ---------------------------------------------------------------- small screens */
 
-@media (max-width: 640px) {
-  .time-control {
-    left: var(--gutter);
-    right: var(--gutter);
-    transform: none;
-    width: auto;
-  }
+/* Phone-only controls, hidden on larger screens (see the phone layout at the end of this file). */
+.menu-toggle,
+.mobile-only,
+.rate-select,
+.jump-toggle,
+.sheet-grab,
+.label-short {
+  display: none;
+}
 
-  .side-panel {
-    top: auto;
-    bottom: 150px;
-    left: var(--gutter);
-    right: var(--gutter);
-    width: auto;
-    max-height: 45%;
-  }
+.toolbar-menu {
+  display: contents;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -873,8 +869,290 @@ body.music-open .info {
   max-height: calc(100% - 200px - 380px);
 }
 
+/* ---------------------------------------------------------------- phone layout
+   Portrait (≤ 640 px wide): compact top bar with a menu, time bar docked at the bottom, panels as bottom sheets
+   above it (one at a time). Landscape phones (≤ 500 px tall) keep side panels but get the compact bars.
+   The shell publishes --timebar-h and moves the camera's projection centre above open sheets (src/app/main.ts). */
+
+@media (max-width: 640px), (max-height: 500px) {
+  :root {
+    --gutter: 8px;
+  }
+
+  .toolbar {
+    top: max(var(--gutter), env(safe-area-inset-top));
+    left: max(var(--gutter), env(safe-area-inset-left));
+    right: max(var(--gutter), env(safe-area-inset-right));
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+    width: auto;
+    max-width: none;
+    padding: 6px 8px;
+  }
+
+  .brand {
+    align-self: center;
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    justify-content: center;
+    min-width: 44px;
+    font-size: 18px;
+  }
+
+  .view-tabs {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .label-long {
+    display: none;
+  }
+
+  .label-short {
+    display: inline;
+  }
+
+  .toolbar-menu {
+    display: none;
+  }
+
+  .toolbar.menu-open .toolbar-menu {
+    display: flex;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .toolbar-menu .segmented {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+  }
+
+  .toolbar-menu .toolbar-group {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-menu .toolbar-group .segmented {
+    flex: 1;
+  }
+
+  .mobile-only {
+    display: inline-flex;
+    justify-content: center;
+  }
+
+  .btn {
+    min-height: 40px;
+  }
+
+  /* Time bar: one compact block docked at the bottom. */
+  .time-control {
+    right: max(var(--gutter), env(safe-area-inset-right));
+    bottom: max(var(--gutter), env(safe-area-inset-bottom));
+    left: max(var(--gutter), env(safe-area-inset-left));
+    gap: 6px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 6px 8px;
+  }
+
+  .time-readout {
+    width: 100%;
+  }
+
+  .time-value {
+    min-width: 0;
+    flex: 1;
+    font-size: 14px;
+  }
+
+  .time-buttons {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .time-buttons > * {
+    flex: 1;
+  }
+
+  .time-buttons .segmented {
+    display: none;
+  }
+
+  .rate-select {
+    display: block;
+    min-height: 40px;
+  }
+
+  .pause-toggle {
+    min-width: 0;
+  }
+
+  .jump-toggle {
+    display: inline-flex;
+    justify-content: center;
+    min-width: 44px;
+  }
+
+  .time-jump {
+    display: none;
+  }
+
+  .time-control.jump-open .time-jump {
+    display: flex;
+    width: 100%;
+  }
+
+  .time-control.jump-open .time-jump .input {
+    flex: 1;
+  }
+
+  /* The soundtrack opens from the menu; its floating button is hidden. */
+  .music:not(.is-open) {
+    display: none;
+  }
+
+  .music.is-open {
+    right: var(--gutter);
+    bottom: calc(var(--timebar-h, 96px) + 2 * var(--gutter));
+    left: var(--gutter);
+    width: auto;
+    /* Never over the top bar. */
+    max-height: calc(100dvh - var(--timebar-h, 96px) - 140px);
+    overflow-y: auto;
+  }
+
+  .notice,
+  .offline-badge {
+    top: 112px;
+  }
+
+  .about {
+    inset: var(--gutter);
+    max-width: none;
+    max-height: calc(100dvh - 2 * var(--gutter));
+    overflow-y: auto;
+  }
+}
+
+@media (max-height: 500px) and (min-width: 641px) {
+  /* Landscape phone: brand, view tabs and menu on one row; one-row time bar. */
+  .toolbar {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .brand {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .view-tabs {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .menu-toggle {
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  .toolbar.menu-open .toolbar-menu {
+    flex-flow: row wrap;
+  }
+
+  .btn,
+  .rate-select {
+    min-height: 32px;
+  }
+
+  .side-panel {
+    top: 60px;
+    bottom: calc(var(--timebar-h, 60px) + 2 * var(--gutter));
+    width: min(300px, 42%);
+  }
+
+  .time-control {
+    left: auto;
+    flex-wrap: nowrap;
+    width: auto;
+  }
+
+  .time-readout,
+  .time-buttons {
+    width: auto;
+  }
+
+  .music.is-open {
+    top: 60px;
+    left: auto;
+    width: min(340px, 45%);
+    max-height: none;
+  }
+}
+
 @media (max-width: 640px) {
-  .music {
-    bottom: 150px;
+  /* Panels become bottom sheets above the time bar. */
+  .side-panel,
+  .info {
+    top: auto;
+    right: var(--gutter);
+    bottom: calc(var(--timebar-h, 96px) + 2 * var(--gutter));
+    left: var(--gutter);
+    width: auto;
+    max-height: 45dvh;
+    padding: 0 12px 10px;
+  }
+
+  body.music-open .info {
+    max-height: 45dvh;
+  }
+
+  .sheet-grab {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .sheet-grab::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    width: 44px;
+    height: 4px;
+    margin-left: -22px;
+    border-radius: 2px;
+    background: var(--line-strong);
+  }
+
+  .side-panel.collapsed {
+    max-height: 76px;
+  }
+
+  .side-panel.collapsed .panel-body {
+    overflow: hidden;
+  }
+
+  /* One sheet at a time: a selection's details (or the open player) replace the list. */
+  body:has(.info:not([hidden])) .filters,
+  body.music-open .side-panel {
+    display: none;
   }
 }

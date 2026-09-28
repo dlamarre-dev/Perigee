@@ -78,6 +78,8 @@ export class DetailPanel {
   show(content: DetailContent, focus = false): void {
     const wasHidden = this.element.hidden;
     this.element.hidden = false;
+    // Opening (not the periodic refresh) shows the whole sheet on phones.
+    if (wasHidden) this.element.classList.remove('collapsed');
     this.title.textContent = content.title;
     this.badge.hidden = !content.badge;
     if (content.badge) {

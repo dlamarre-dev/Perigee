@@ -52,6 +52,8 @@ export class InfoPanel {
   }
 
   show(object: SatObject | undefined, focus = false): void {
+    // A newly selected object opens the sheet fully (phones).
+    if (object !== this.object) this.element.classList.remove('collapsed');
     this.object = object;
     this.element.hidden = !object;
     this.render();

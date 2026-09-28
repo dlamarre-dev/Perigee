@@ -13,7 +13,10 @@ function formatRate(rate: number, lang: string): string {
   return `×${rate.toLocaleString(lang === 'fr' ? 'fr-CA' : 'en-CA')}`;
 }
 
-/** Time bar: UTC clock, live/paused status, pause, speed, back to now, jump to a date. */
+/**
+ * Time bar: UTC clock, live/paused status, pause, speed, back to now, jump to a date.
+ * On phones (CSS) the speed buttons give way to a native select and the date form opens from a toggle.
+ */
 export class TimeControl {
   readonly element: HTMLElement;
   private readonly timeText = h('output', { class: 'time-value', 'aria-live': 'off' });
@@ -34,6 +37,14 @@ export class TimeControl {
     class: 'input',
   });
   private readonly jumpButton = h('button', { type: 'button', class: 'btn' });
+  private readonly rateSelect = h('select', { class: 'input rate-select' });
+  private readonly jumpToggle = h('button', {
+    type: 'button',
+    class: 'btn jump-toggle',
+    'aria-expanded': 'false',
+    'aria-controls': 'time-jump-form',
+  });
+  private readonly jumpForm = h('div', { class: 'time-jump', id: 'time-jump-form' });
   private resumeRate = 1;
   private maxRate: number = Math.max(...RATES);
   private maxRateHint = '';
@@ -52,6 +63,18 @@ export class TimeControl {
       return b;
     });
     this.rateGroup.append(...this.rateButtons);
+    this.rateSelect.append(...RATES.map((rate) => h('option', { value: String(rate) })));
+    this.rateSelect.addEventListener('change', () => {
+      this.clock.setRate(Number(this.rateSelect.value));
+      this.changed();
+    });
+    this.jumpToggle.textContent = '📅';
+    this.jumpToggle.addEventListener('click', () => {
+      const open = !this.element.classList.contains('jump-open');
+      this.element.classList.toggle('jump-open', open);
+      this.jumpToggle.setAttribute('aria-expanded', String(open));
+      if (open) this.jumpInput.focus();
+    });
 
     this.pauseButton.addEventListener('click', () => {
       if (this.clock.paused) {
@@ -70,6 +93,8 @@ export class TimeControl {
       const d = new Date(`${this.jumpInput.value}Z`);
       if (Number.isNaN(d.getTime())) return;
       this.clock.jumpTo(d);
+      this.element.classList.remove('jump-open');
+      this.jumpToggle.setAttribute('aria-expanded', 'false');
       this.changed();
     };
     this.jumpButton.addEventListener('click', jump);
@@ -77,10 +102,16 @@ export class TimeControl {
       if (e.key === 'Enter') jump();
     });
 
+    this.jumpForm.append(this.jumpLabel, this.jumpInput, this.jumpButton);
     this.element = h('section', { class: 'panel time-control' }, [
-      h('div', { class: 'time-readout' }, [this.timeText, this.statusBadge]),
-      h('div', { class: 'time-buttons' }, [this.pauseButton, this.rateGroup, this.nowButton]),
-      h('div', { class: 'time-jump' }, [this.jumpLabel, this.jumpInput, this.jumpButton]),
+      h('div', { class: 'time-readout' }, [this.timeText, this.statusBadge, this.jumpToggle]),
+      h('div', { class: 'time-buttons' }, [
+        this.pauseButton,
+        this.rateGroup,
+        this.rateSelect,
+        this.nowButton,
+      ]),
+      this.jumpForm,
     ]);
 
     i18n.onChange(() => this.renderLabels());
@@ -122,6 +153,12 @@ export class TimeControl {
     this.jumpInput.title = t('time.jump');
     this.jumpButton.textContent = t('time.jump.apply');
     this.rateButtons.forEach((b, i) => (b.textContent = formatRate(RATES[i] ?? 1, this.i18n.lang)));
+    this.rateSelect.setAttribute('aria-label', t('time.rate'));
+    [...this.rateSelect.options].forEach(
+      (o) => (o.textContent = formatRate(Number(o.value), this.i18n.lang)),
+    );
+    this.jumpToggle.setAttribute('aria-label', t('time.jump.toggle'));
+    this.jumpToggle.title = t('time.jump.toggle');
     this.renderState();
   }
 
@@ -137,6 +174,9 @@ export class TimeControl {
       b.disabled = r > this.maxRate;
       b.title = b.disabled ? this.maxRateHint : '';
     });
+    [...this.rateSelect.options].forEach((o) => (o.disabled = Number(o.value) > this.maxRate));
+    // Paused: the select shows the speed play will resume at.
+    this.rateSelect.value = String(paused ? this.resumeRate : rate);
     const live = this.clock.isLive();
     this.statusBadge.textContent = paused
       ? t('time.paused')

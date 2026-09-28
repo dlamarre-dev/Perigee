@@ -11,9 +11,12 @@ import {
   type Scene,
   type WebGLRenderer,
 } from 'three';
+import { pickRadiusPx } from './pointer';
+import { applyViewInset } from './viewInset';
 import { PICK_LAYER, decodePickId } from './SatellitePoints';
 
-const REGION_PX = 11;
+// Odd size, centred on the pointer; larger for touch.
+const REGION_PX = pickRadiusPx(11) | 1;
 
 export class GpuPicker {
   private readonly target = new WebGLRenderTarget(REGION_PX, REGION_PX, {
@@ -31,14 +34,12 @@ export class GpuPicker {
   pick(scene: Scene, camera: PerspectiveCamera, xCss: number, yCss: number): number | undefined {
     const canvas = this.renderer.domElement;
     const half = Math.floor(REGION_PX / 2);
-    camera.setViewOffset(
-      canvas.clientWidth,
-      canvas.clientHeight,
-      Math.round(xCss) - half,
-      Math.round(yCss) - half,
-      REGION_PX,
-      REGION_PX,
-    );
+    applyViewInset(camera, canvas.clientWidth, canvas.clientHeight, {
+      x: Math.round(xCss) - half,
+      y: Math.round(yCss) - half,
+      width: REGION_PX,
+      height: REGION_PX,
+    });
     const previousTarget = this.renderer.getRenderTarget();
     const previousAlpha = this.renderer.getClearAlpha();
     this.renderer.getClearColor(this.savedClear);
@@ -51,7 +52,7 @@ export class GpuPicker {
       this.renderer.readRenderTargetPixels(this.target, 0, 0, REGION_PX, REGION_PX, this.pixels);
     } finally {
       camera.layers.set(0);
-      camera.clearViewOffset();
+      applyViewInset(camera, canvas.clientWidth, canvas.clientHeight);
       this.renderer.setRenderTarget(previousTarget);
       this.renderer.setClearColor(this.savedClear, previousAlpha);
     }
