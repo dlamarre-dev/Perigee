@@ -11,654 +11,164 @@
       "en": "Arab Satellite Communications Organization (Arabsat)",
       "fr": "Organisation arabe de communications par satellite (Arabsat)"
     },
-    "ABS": {
-      "en": "Asia Broadcast Satellite",
-      "fr": "Asia Broadcast Satellite"
-    },
+    "ABS": { "en": "Asia Broadcast Satellite", "fr": "Asia Broadcast Satellite" },
     "AC": {
       "en": "Asia Satellite Telecommunications Company (AsiaSat)",
       "fr": "Asia Satellite Telecommunications Company (AsiaSat)"
     },
-    "ALG": {
-      "en": "Algeria",
-      "fr": "Algérie",
-      "country": "dz"
-    },
-    "ANG": {
-      "en": "Angola",
-      "fr": "Angola",
-      "country": "ao"
-    },
-    "ARGN": {
-      "en": "Argentina",
-      "fr": "Argentine",
-      "country": "ar"
-    },
-    "ARM": {
-      "en": "Armenia",
-      "fr": "Arménie",
-      "country": "am"
-    },
-    "ASRA": {
-      "en": "Austria",
-      "fr": "Autriche",
-      "country": "at"
-    },
-    "AUS": {
-      "en": "Australia",
-      "fr": "Australie",
-      "country": "au"
-    },
-    "AZER": {
-      "en": "Azerbaijan",
-      "fr": "Azerbaïdjan",
-      "country": "az"
-    },
-    "BEL": {
-      "en": "Belgium",
-      "fr": "Belgique",
-      "country": "be"
-    },
-    "BELA": {
-      "en": "Belarus",
-      "fr": "Biélorussie",
-      "country": "by"
-    },
-    "BERM": {
-      "en": "Bermuda",
-      "fr": "Bermudes",
-      "country": "bm"
-    },
-    "BGD": {
-      "en": "Bangladesh",
-      "fr": "Bangladesh",
-      "country": "bd"
-    },
-    "BHR": {
-      "en": "Bahrain",
-      "fr": "Bahreïn",
-      "country": "bh"
-    },
-    "BHUT": {
-      "en": "Bhutan",
-      "fr": "Bhoutan",
-      "country": "bt"
-    },
-    "BOL": {
-      "en": "Bolivia",
-      "fr": "Bolivie",
-      "country": "bo"
-    },
-    "BRAZ": {
-      "en": "Brazil",
-      "fr": "Brésil",
-      "country": "br"
-    },
-    "BUL": {
-      "en": "Bulgaria",
-      "fr": "Bulgarie",
-      "country": "bg"
-    },
-    "BWA": {
-      "en": "Botswana",
-      "fr": "Botswana",
-      "country": "bw"
-    },
-    "CA": {
-      "en": "Canada",
-      "fr": "Canada",
-      "country": "ca"
-    },
-    "CHBZ": {
-      "en": "China / Brazil",
-      "fr": "Chine / Brésil"
-    },
-    "CHTU": {
-      "en": "China / Türkiye",
-      "fr": "Chine / Turquie"
-    },
-    "CHLE": {
-      "en": "Chile",
-      "fr": "Chili",
-      "country": "cl"
-    },
+    "ALG": { "en": "Algeria", "fr": "Algérie", "country": "dz" },
+    "ANG": { "en": "Angola", "fr": "Angola", "country": "ao" },
+    "ARGN": { "en": "Argentina", "fr": "Argentine", "country": "ar" },
+    "ARM": { "en": "Armenia", "fr": "Arménie", "country": "am" },
+    "ASRA": { "en": "Austria", "fr": "Autriche", "country": "at" },
+    "AUS": { "en": "Australia", "fr": "Australie", "country": "au" },
+    "AZER": { "en": "Azerbaijan", "fr": "Azerbaïdjan", "country": "az" },
+    "BEL": { "en": "Belgium", "fr": "Belgique", "country": "be" },
+    "BELA": { "en": "Belarus", "fr": "Biélorussie", "country": "by" },
+    "BERM": { "en": "Bermuda", "fr": "Bermudes", "country": "bm" },
+    "BGD": { "en": "Bangladesh", "fr": "Bangladesh", "country": "bd" },
+    "BHR": { "en": "Bahrain", "fr": "Bahreïn", "country": "bh" },
+    "BHUT": { "en": "Bhutan", "fr": "Bhoutan", "country": "bt" },
+    "BOL": { "en": "Bolivia", "fr": "Bolivie", "country": "bo" },
+    "BRAZ": { "en": "Brazil", "fr": "Brésil", "country": "br" },
+    "BUL": { "en": "Bulgaria", "fr": "Bulgarie", "country": "bg" },
+    "BWA": { "en": "Botswana", "fr": "Botswana", "country": "bw" },
+    "CA": { "en": "Canada", "fr": "Canada", "country": "ca" },
+    "CHBZ": { "en": "China / Brazil", "fr": "Chine / Brésil" },
+    "CHTU": { "en": "China / Türkiye", "fr": "Chine / Turquie" },
+    "CHLE": { "en": "Chile", "fr": "Chili", "country": "cl" },
     "CIS": {
       "en": "Commonwealth of Independent States (former USSR)",
       "fr": "Communauté des États indépendants (ex-URSS)",
       "country": "ru"
     },
-    "COL": {
-      "en": "Colombia",
-      "fr": "Colombie",
-      "country": "co"
-    },
-    "CRI": {
-      "en": "Costa Rica",
-      "fr": "Costa Rica",
-      "country": "cr"
-    },
+    "COL": { "en": "Colombia", "fr": "Colombie", "country": "co" },
+    "CRI": { "en": "Costa Rica", "fr": "Costa Rica", "country": "cr" },
     "CZCH": {
       "en": "Czech Republic (former Czechoslovakia)",
       "fr": "Tchéquie (ex-Tchécoslovaquie)",
       "country": "cz"
     },
-    "DEN": {
-      "en": "Denmark",
-      "fr": "Danemark",
-      "country": "dk"
-    },
-    "DJI": {
-      "en": "Djibouti",
-      "fr": "Djibouti",
-      "country": "dj"
-    },
-    "ECU": {
-      "en": "Ecuador",
-      "fr": "Équateur",
-      "country": "ec"
-    },
-    "EGYP": {
-      "en": "Egypt",
-      "fr": "Égypte",
-      "country": "eg"
-    },
-    "ESA": {
-      "en": "European Space Agency",
-      "fr": "Agence spatiale européenne"
-    },
+    "DEN": { "en": "Denmark", "fr": "Danemark", "country": "dk" },
+    "DJI": { "en": "Djibouti", "fr": "Djibouti", "country": "dj" },
+    "ECU": { "en": "Ecuador", "fr": "Équateur", "country": "ec" },
+    "EGYP": { "en": "Egypt", "fr": "Égypte", "country": "eg" },
+    "ESA": { "en": "European Space Agency", "fr": "Agence spatiale européenne" },
     "ESRO": {
       "en": "European Space Research Organization",
       "fr": "Organisation européenne de recherche spatiale"
     },
-    "EST": {
-      "en": "Estonia",
-      "fr": "Estonie",
-      "country": "ee"
-    },
-    "ETH": {
-      "en": "Ethiopia",
-      "fr": "Éthiopie",
-      "country": "et"
-    },
-    "EUME": {
-      "en": "EUMETSAT",
-      "fr": "EUMETSAT"
-    },
-    "EUTE": {
-      "en": "Eutelsat",
-      "fr": "Eutelsat"
-    },
-    "FGER": {
-      "en": "France / Germany",
-      "fr": "France / Allemagne"
-    },
-    "FIN": {
-      "en": "Finland",
-      "fr": "Finlande",
-      "country": "fi"
-    },
-    "FR": {
-      "en": "France",
-      "fr": "France",
-      "country": "fr"
-    },
-    "FRIT": {
-      "en": "France / Italy",
-      "fr": "France / Italie"
-    },
-    "GER": {
-      "en": "Germany",
-      "fr": "Allemagne",
-      "country": "de"
-    },
-    "GHA": {
-      "en": "Ghana",
-      "fr": "Ghana",
-      "country": "gh"
-    },
-    "GLOB": {
-      "en": "Globalstar",
-      "fr": "Globalstar"
-    },
-    "GREC": {
-      "en": "Greece",
-      "fr": "Grèce",
-      "country": "gr"
-    },
-    "GRSA": {
-      "en": "Greece / Saudi Arabia",
-      "fr": "Grèce / Arabie saoudite"
-    },
-    "GUAT": {
-      "en": "Guatemala",
-      "fr": "Guatemala",
-      "country": "gt"
-    },
-    "HRV": {
-      "en": "Croatia",
-      "fr": "Croatie",
-      "country": "hr"
-    },
-    "HUN": {
-      "en": "Hungary",
-      "fr": "Hongrie",
-      "country": "hu"
-    },
-    "IM": {
-      "en": "Inmarsat",
-      "fr": "Inmarsat"
-    },
-    "IND": {
-      "en": "India",
-      "fr": "Inde",
-      "country": "in"
-    },
-    "INDO": {
-      "en": "Indonesia",
-      "fr": "Indonésie",
-      "country": "id"
-    },
-    "IRAN": {
-      "en": "Iran",
-      "fr": "Iran",
-      "country": "ir"
-    },
-    "IRAQ": {
-      "en": "Iraq",
-      "fr": "Irak",
-      "country": "iq"
-    },
-    "IRID": {
-      "en": "Iridium",
-      "fr": "Iridium"
-    },
-    "IRL": {
-      "en": "Ireland",
-      "fr": "Irlande",
-      "country": "ie"
-    },
-    "ISRA": {
-      "en": "Israel",
-      "fr": "Israël",
-      "country": "il"
-    },
+    "EST": { "en": "Estonia", "fr": "Estonie", "country": "ee" },
+    "ETH": { "en": "Ethiopia", "fr": "Éthiopie", "country": "et" },
+    "EUME": { "en": "EUMETSAT", "fr": "EUMETSAT" },
+    "EUTE": { "en": "Eutelsat", "fr": "Eutelsat" },
+    "FGER": { "en": "France / Germany", "fr": "France / Allemagne" },
+    "FIN": { "en": "Finland", "fr": "Finlande", "country": "fi" },
+    "FR": { "en": "France", "fr": "France", "country": "fr" },
+    "FRIT": { "en": "France / Italy", "fr": "France / Italie" },
+    "GER": { "en": "Germany", "fr": "Allemagne", "country": "de" },
+    "GHA": { "en": "Ghana", "fr": "Ghana", "country": "gh" },
+    "GLOB": { "en": "Globalstar", "fr": "Globalstar" },
+    "GREC": { "en": "Greece", "fr": "Grèce", "country": "gr" },
+    "GRSA": { "en": "Greece / Saudi Arabia", "fr": "Grèce / Arabie saoudite" },
+    "GUAT": { "en": "Guatemala", "fr": "Guatemala", "country": "gt" },
+    "HRV": { "en": "Croatia", "fr": "Croatie", "country": "hr" },
+    "HUN": { "en": "Hungary", "fr": "Hongrie", "country": "hu" },
+    "IM": { "en": "Inmarsat", "fr": "Inmarsat" },
+    "IND": { "en": "India", "fr": "Inde", "country": "in" },
+    "INDO": { "en": "Indonesia", "fr": "Indonésie", "country": "id" },
+    "IRAN": { "en": "Iran", "fr": "Iran", "country": "ir" },
+    "IRAQ": { "en": "Iraq", "fr": "Irak", "country": "iq" },
+    "IRID": { "en": "Iridium", "fr": "Iridium" },
+    "IRL": { "en": "Ireland", "fr": "Irlande", "country": "ie" },
+    "ISRA": { "en": "Israel", "fr": "Israël", "country": "il" },
     "ISRO": {
       "en": "Indian Space Research Organisation",
       "fr": "Organisation indienne de recherche spatiale (ISRO)",
       "country": "in"
     },
-    "ISS": {
-      "en": "International Space Station",
-      "fr": "Station spatiale internationale"
-    },
-    "IT": {
-      "en": "Italy",
-      "fr": "Italie",
-      "country": "it"
-    },
-    "ITSO": {
-      "en": "Intelsat",
-      "fr": "Intelsat"
-    },
-    "JPN": {
-      "en": "Japan",
-      "fr": "Japon",
-      "country": "jp"
-    },
-    "JOR": {
-      "en": "Jordan",
-      "fr": "Jordanie",
-      "country": "jo"
-    },
-    "KAZ": {
-      "en": "Kazakhstan",
-      "fr": "Kazakhstan",
-      "country": "kz"
-    },
-    "KWT": {
-      "en": "Kuwait",
-      "fr": "Koweït",
-      "country": "kw"
-    },
-    "KEN": {
-      "en": "Kenya",
-      "fr": "Kenya",
-      "country": "ke"
-    },
-    "LAOS": {
-      "en": "Laos",
-      "fr": "Laos",
-      "country": "la"
-    },
-    "LKA": {
-      "en": "Sri Lanka",
-      "fr": "Sri Lanka",
-      "country": "lk"
-    },
-    "LTU": {
-      "en": "Lithuania",
-      "fr": "Lituanie",
-      "country": "lt"
-    },
-    "LUXE": {
-      "en": "Luxembourg",
-      "fr": "Luxembourg",
-      "country": "lu"
-    },
-    "MA": {
-      "en": "Morocco",
-      "fr": "Maroc",
-      "country": "ma"
-    },
-    "MALA": {
-      "en": "Malaysia",
-      "fr": "Malaisie",
-      "country": "my"
-    },
-    "MCO": {
-      "en": "Monaco",
-      "fr": "Monaco",
-      "country": "mc"
-    },
-    "MDA": {
-      "en": "Moldova",
-      "fr": "Moldavie",
-      "country": "md"
-    },
-    "MEX": {
-      "en": "Mexico",
-      "fr": "Mexique",
-      "country": "mx"
-    },
-    "MMR": {
-      "en": "Myanmar",
-      "fr": "Myanmar",
-      "country": "mm"
-    },
-    "MNE": {
-      "en": "Montenegro",
-      "fr": "Monténégro",
-      "country": "me"
-    },
-    "MNG": {
-      "en": "Mongolia",
-      "fr": "Mongolie",
-      "country": "mn"
-    },
-    "MUS": {
-      "en": "Mauritius",
-      "fr": "Maurice",
-      "country": "mu"
-    },
+    "ISS": { "en": "International Space Station", "fr": "Station spatiale internationale" },
+    "IT": { "en": "Italy", "fr": "Italie", "country": "it" },
+    "ITSO": { "en": "Intelsat", "fr": "Intelsat" },
+    "JPN": { "en": "Japan", "fr": "Japon", "country": "jp" },
+    "JOR": { "en": "Jordan", "fr": "Jordanie", "country": "jo" },
+    "KAZ": { "en": "Kazakhstan", "fr": "Kazakhstan", "country": "kz" },
+    "KWT": { "en": "Kuwait", "fr": "Koweït", "country": "kw" },
+    "KEN": { "en": "Kenya", "fr": "Kenya", "country": "ke" },
+    "LAOS": { "en": "Laos", "fr": "Laos", "country": "la" },
+    "LKA": { "en": "Sri Lanka", "fr": "Sri Lanka", "country": "lk" },
+    "LTU": { "en": "Lithuania", "fr": "Lituanie", "country": "lt" },
+    "LUXE": { "en": "Luxembourg", "fr": "Luxembourg", "country": "lu" },
+    "MA": { "en": "Morocco", "fr": "Maroc", "country": "ma" },
+    "MALA": { "en": "Malaysia", "fr": "Malaisie", "country": "my" },
+    "MCO": { "en": "Monaco", "fr": "Monaco", "country": "mc" },
+    "MDA": { "en": "Moldova", "fr": "Moldavie", "country": "md" },
+    "MEX": { "en": "Mexico", "fr": "Mexique", "country": "mx" },
+    "MMR": { "en": "Myanmar", "fr": "Myanmar", "country": "mm" },
+    "MNE": { "en": "Montenegro", "fr": "Monténégro", "country": "me" },
+    "MNG": { "en": "Mongolia", "fr": "Mongolie", "country": "mn" },
+    "MUS": { "en": "Mauritius", "fr": "Maurice", "country": "mu" },
     "NATO": {
       "en": "North Atlantic Treaty Organization",
       "fr": "Organisation du traité de l’Atlantique Nord (OTAN)"
     },
-    "NETH": {
-      "en": "Netherlands",
-      "fr": "Pays-Bas",
-      "country": "nl"
-    },
-    "NICO": {
-      "en": "New ICO",
-      "fr": "New ICO"
-    },
-    "NIG": {
-      "en": "Nigeria",
-      "fr": "Nigeria",
-      "country": "ng"
-    },
-    "NKOR": {
-      "en": "North Korea",
-      "fr": "Corée du Nord",
-      "country": "kp"
-    },
-    "NOR": {
-      "en": "Norway",
-      "fr": "Norvège",
-      "country": "no"
-    },
-    "NPL": {
-      "en": "Nepal",
-      "fr": "Népal",
-      "country": "np"
-    },
-    "NZ": {
-      "en": "New Zealand",
-      "fr": "Nouvelle-Zélande",
-      "country": "nz"
-    },
-    "O3B": {
-      "en": "O3b Networks",
-      "fr": "O3b Networks"
-    },
-    "ORB": {
-      "en": "ORBCOMM",
-      "fr": "ORBCOMM"
-    },
-    "PAKI": {
-      "en": "Pakistan",
-      "fr": "Pakistan",
-      "country": "pk"
-    },
-    "PERU": {
-      "en": "Peru",
-      "fr": "Pérou",
-      "country": "pe"
-    },
-    "POL": {
-      "en": "Poland",
-      "fr": "Pologne",
-      "country": "pl"
-    },
-    "POR": {
-      "en": "Portugal",
-      "fr": "Portugal",
-      "country": "pt"
-    },
-    "PRC": {
-      "en": "China",
-      "fr": "Chine",
-      "country": "cn"
-    },
-    "PRY": {
-      "en": "Paraguay",
-      "fr": "Paraguay",
-      "country": "py"
-    },
-    "PRES": {
-      "en": "China / European Space Agency",
-      "fr": "Chine / Agence spatiale européenne"
-    },
-    "QAT": {
-      "en": "Qatar",
-      "fr": "Qatar",
-      "country": "qa"
-    },
-    "RASC": {
-      "en": "RascomStar-QAF",
-      "fr": "RascomStar-QAF"
-    },
-    "ROC": {
-      "en": "Taiwan",
-      "fr": "Taïwan",
-      "country": "tw"
-    },
-    "ROM": {
-      "en": "Romania",
-      "fr": "Roumanie",
-      "country": "ro"
-    },
-    "RP": {
-      "en": "Philippines",
-      "fr": "Philippines",
-      "country": "ph"
-    },
-    "RWA": {
-      "en": "Rwanda",
-      "fr": "Rwanda",
-      "country": "rw"
-    },
-    "SAFR": {
-      "en": "South Africa",
-      "fr": "Afrique du Sud",
-      "country": "za"
-    },
-    "SAUD": {
-      "en": "Saudi Arabia",
-      "fr": "Arabie saoudite",
-      "country": "sa"
-    },
-    "SDN": {
-      "en": "Sudan",
-      "fr": "Soudan",
-      "country": "sd"
-    },
-    "SEAL": {
-      "en": "Sea Launch",
-      "fr": "Sea Launch"
-    },
-    "SEN": {
-      "en": "Senegal",
-      "fr": "Sénégal",
-      "country": "sn"
-    },
-    "SES": {
-      "en": "SES",
-      "fr": "SES"
-    },
-    "SGJP": {
-      "en": "Singapore / Japan",
-      "fr": "Singapour / Japon"
-    },
-    "SING": {
-      "en": "Singapore",
-      "fr": "Singapour",
-      "country": "sg"
-    },
-    "SKOR": {
-      "en": "South Korea",
-      "fr": "Corée du Sud",
-      "country": "kr"
-    },
-    "SLB": {
-      "en": "Solomon Islands",
-      "fr": "Îles Salomon",
-      "country": "sb"
-    },
-    "SPN": {
-      "en": "Spain",
-      "fr": "Espagne",
-      "country": "es"
-    },
-    "STCT": {
-      "en": "Singapore / Taiwan",
-      "fr": "Singapour / Taïwan"
-    },
-    "SVK": {
-      "en": "Slovakia",
-      "fr": "Slovaquie",
-      "country": "sk"
-    },
-    "SVN": {
-      "en": "Slovenia",
-      "fr": "Slovénie",
-      "country": "si"
-    },
-    "SWED": {
-      "en": "Sweden",
-      "fr": "Suède",
-      "country": "se"
-    },
-    "SWTZ": {
-      "en": "Switzerland",
-      "fr": "Suisse",
-      "country": "ch"
-    },
-    "TBD": {
-      "en": "To be determined",
-      "fr": "À déterminer"
-    },
-    "THAI": {
-      "en": "Thailand",
-      "fr": "Thaïlande",
-      "country": "th"
-    },
-    "TMMC": {
-      "en": "Turkmenistan / Monaco",
-      "fr": "Turkménistan / Monaco"
-    },
-    "TUN": {
-      "en": "Tunisia",
-      "fr": "Tunisie",
-      "country": "tn"
-    },
-    "TURK": {
-      "en": "Türkiye",
-      "fr": "Turquie",
-      "country": "tr"
-    },
-    "UAE": {
-      "en": "United Arab Emirates",
-      "fr": "Émirats arabes unis",
-      "country": "ae"
-    },
-    "UK": {
-      "en": "United Kingdom",
-      "fr": "Royaume-Uni",
-      "country": "gb"
-    },
-    "UKR": {
-      "en": "Ukraine",
-      "fr": "Ukraine",
-      "country": "ua"
-    },
-    "UNK": {
-      "en": "Unknown",
-      "fr": "Inconnu"
-    },
-    "URY": {
-      "en": "Uruguay",
-      "fr": "Uruguay",
-      "country": "uy"
-    },
-    "US": {
-      "en": "United States",
-      "fr": "États-Unis",
-      "country": "us"
-    },
-    "USBZ": {
-      "en": "United States / Brazil",
-      "fr": "États-Unis / Brésil"
-    },
-    "VAT": {
-      "en": "Vatican City",
-      "fr": "Cité du Vatican",
-      "country": "va"
-    },
-    "VENZ": {
-      "en": "Venezuela",
-      "fr": "Venezuela",
-      "country": "ve"
-    },
-    "VTNM": {
-      "en": "Vietnam",
-      "fr": "Viêt Nam",
-      "country": "vn"
-    },
-    "ZWE": {
-      "en": "Zimbabwe",
-      "fr": "Zimbabwe",
-      "country": "zw"
-    }
+    "NETH": { "en": "Netherlands", "fr": "Pays-Bas", "country": "nl" },
+    "NICO": { "en": "New ICO", "fr": "New ICO" },
+    "NIG": { "en": "Nigeria", "fr": "Nigeria", "country": "ng" },
+    "NKOR": { "en": "North Korea", "fr": "Corée du Nord", "country": "kp" },
+    "NOR": { "en": "Norway", "fr": "Norvège", "country": "no" },
+    "NPL": { "en": "Nepal", "fr": "Népal", "country": "np" },
+    "NZ": { "en": "New Zealand", "fr": "Nouvelle-Zélande", "country": "nz" },
+    "O3B": { "en": "O3b Networks", "fr": "O3b Networks" },
+    "ORB": { "en": "ORBCOMM", "fr": "ORBCOMM" },
+    "PAKI": { "en": "Pakistan", "fr": "Pakistan", "country": "pk" },
+    "PERU": { "en": "Peru", "fr": "Pérou", "country": "pe" },
+    "POL": { "en": "Poland", "fr": "Pologne", "country": "pl" },
+    "POR": { "en": "Portugal", "fr": "Portugal", "country": "pt" },
+    "PRC": { "en": "China", "fr": "Chine", "country": "cn" },
+    "PRY": { "en": "Paraguay", "fr": "Paraguay", "country": "py" },
+    "PRES": { "en": "China / European Space Agency", "fr": "Chine / Agence spatiale européenne" },
+    "QAT": { "en": "Qatar", "fr": "Qatar", "country": "qa" },
+    "RASC": { "en": "RascomStar-QAF", "fr": "RascomStar-QAF" },
+    "ROC": { "en": "Taiwan", "fr": "Taïwan", "country": "tw" },
+    "ROM": { "en": "Romania", "fr": "Roumanie", "country": "ro" },
+    "RP": { "en": "Philippines", "fr": "Philippines", "country": "ph" },
+    "RWA": { "en": "Rwanda", "fr": "Rwanda", "country": "rw" },
+    "SAFR": { "en": "South Africa", "fr": "Afrique du Sud", "country": "za" },
+    "SAUD": { "en": "Saudi Arabia", "fr": "Arabie saoudite", "country": "sa" },
+    "SDN": { "en": "Sudan", "fr": "Soudan", "country": "sd" },
+    "SEAL": { "en": "Sea Launch", "fr": "Sea Launch" },
+    "SEN": { "en": "Senegal", "fr": "Sénégal", "country": "sn" },
+    "SES": { "en": "SES", "fr": "SES" },
+    "SGJP": { "en": "Singapore / Japan", "fr": "Singapour / Japon" },
+    "SING": { "en": "Singapore", "fr": "Singapour", "country": "sg" },
+    "SKOR": { "en": "South Korea", "fr": "Corée du Sud", "country": "kr" },
+    "SLB": { "en": "Solomon Islands", "fr": "Îles Salomon", "country": "sb" },
+    "SPN": { "en": "Spain", "fr": "Espagne", "country": "es" },
+    "STCT": { "en": "Singapore / Taiwan", "fr": "Singapour / Taïwan" },
+    "SVK": { "en": "Slovakia", "fr": "Slovaquie", "country": "sk" },
+    "SVN": { "en": "Slovenia", "fr": "Slovénie", "country": "si" },
+    "SWED": { "en": "Sweden", "fr": "Suède", "country": "se" },
+    "SWTZ": { "en": "Switzerland", "fr": "Suisse", "country": "ch" },
+    "TBD": { "en": "To be determined", "fr": "À déterminer" },
+    "THAI": { "en": "Thailand", "fr": "Thaïlande", "country": "th" },
+    "TMMC": { "en": "Turkmenistan / Monaco", "fr": "Turkménistan / Monaco" },
+    "TUN": { "en": "Tunisia", "fr": "Tunisie", "country": "tn" },
+    "TURK": { "en": "Türkiye", "fr": "Turquie", "country": "tr" },
+    "UAE": { "en": "United Arab Emirates", "fr": "Émirats arabes unis", "country": "ae" },
+    "UK": { "en": "United Kingdom", "fr": "Royaume-Uni", "country": "gb" },
+    "UKR": { "en": "Ukraine", "fr": "Ukraine", "country": "ua" },
+    "UNK": { "en": "Unknown", "fr": "Inconnu" },
+    "URY": { "en": "Uruguay", "fr": "Uruguay", "country": "uy" },
+    "US": { "en": "United States", "fr": "États-Unis", "country": "us" },
+    "USBZ": { "en": "United States / Brazil", "fr": "États-Unis / Brésil" },
+    "VAT": { "en": "Vatican City", "fr": "Cité du Vatican", "country": "va" },
+    "VENZ": { "en": "Venezuela", "fr": "Venezuela", "country": "ve" },
+    "VTNM": { "en": "Vietnam", "fr": "Viêt Nam", "country": "vn" },
+    "ZWE": { "en": "Zimbabwe", "fr": "Zimbabwe", "country": "zw" }
   },
   "operators": {
-    "spacex": {
-      "name": "SpaceX",
-      "country": "us",
-      "color": "#d6e4ff",
-      "url": "https://www.spacex.com"
-    },
+    "spacex": { "name": "SpaceX", "country": "us", "color": "#d6e4ff", "url": "https://www.spacex.com" },
     "eutelsat": {
       "name": "Eutelsat Group",
       "country": "fr",
@@ -681,286 +191,87 @@
       "country": "cn",
       "color": "#e05780"
     },
-    "planet": {
-      "name": "Planet Labs",
-      "country": "us",
-      "color": "#7bd389",
-      "url": "https://www.planet.com"
-    },
-    "spire": {
-      "name": "Spire Global",
-      "country": "us",
-      "color": "#5ec8d8",
-      "url": "https://spire.com"
-    },
-    "iridium": {
-      "name": "Iridium",
-      "country": "us",
-      "color": "#b39ddb",
-      "url": "https://www.iridium.com"
-    },
+    "planet": { "name": "Planet Labs", "country": "us", "color": "#7bd389", "url": "https://www.planet.com" },
+    "spire": { "name": "Spire Global", "country": "us", "color": "#5ec8d8", "url": "https://spire.com" },
+    "ghgsat": { "name": "GHGSat", "country": "ca", "color": "#9ccc65", "url": "https://www.ghgsat.com" },
+    "iridium": { "name": "Iridium", "country": "us", "color": "#b39ddb", "url": "https://www.iridium.com" },
     "globalstar": {
       "name": "Globalstar",
       "country": "us",
       "color": "#9fa8da",
       "url": "https://www.globalstar.com"
     },
-    "orbcomm": {
-      "name": "ORBCOMM",
-      "country": "us",
-      "color": "#80cbc4",
-      "url": "https://www.orbcomm.com"
-    },
-    "ses": {
-      "name": "SES",
-      "country": "lu",
-      "color": "#4fc3f7",
-      "url": "https://www.ses.com"
-    },
-    "telesat": {
-      "name": "Telesat",
-      "country": "ca",
-      "color": "#ef5350",
-      "url": "https://www.telesat.com"
-    },
+    "orbcomm": { "name": "ORBCOMM", "country": "us", "color": "#80cbc4", "url": "https://www.orbcomm.com" },
+    "ses": { "name": "SES", "country": "lu", "color": "#4fc3f7", "url": "https://www.ses.com" },
+    "telesat": { "name": "Telesat", "country": "ca", "color": "#ef5350", "url": "https://www.telesat.com" },
     "gps": {
       "name": "GPS (U.S. Space Force)",
       "country": "us",
       "color": "#66bb6a",
       "url": "https://www.gps.gov"
     },
-    "glonass": {
-      "name": "GLONASS (Roscosmos)",
-      "country": "ru",
-      "color": "#aed581"
-    },
-    "galileo": {
-      "name": "Galileo (EUSPA)",
-      "color": "#26a69a",
-      "url": "https://www.euspa.europa.eu"
-    },
+    "glonass": { "name": "GLONASS (Roscosmos)", "country": "ru", "color": "#aed581" },
+    "galileo": { "name": "Galileo (EUSPA)", "color": "#26a69a", "url": "https://www.euspa.europa.eu" },
     "beidou": {
       "name": "BeiDou (China Satellite Navigation Office)",
       "country": "cn",
       "color": "#c5e1a5",
       "url": "http://en.beidou.gov.cn"
-    },
-    "ghgsat": {
-      "name": "GHGSat",
-      "country": "ca",
-      "color": "#9ccc65",
-      "url": "https://www.ghgsat.com"
     }
   },
   "groups": {
-    "starlink": {
-      "en": "Starlink",
-      "fr": "Starlink",
-      "operator": "spacex"
-    },
-    "oneweb": {
-      "en": "OneWeb",
-      "fr": "OneWeb",
-      "operator": "eutelsat"
-    },
-    "kuiper": {
-      "en": "Project Kuiper",
-      "fr": "Projet Kuiper",
-      "operator": "amazon"
-    },
-    "qianfan": {
-      "en": "Qianfan (Thousand Sails)",
-      "fr": "Qianfan (Mille Voiles)",
-      "operator": "ssst"
-    },
-    "hulianwang": {
-      "en": "Guowang (Hulianwang)",
-      "fr": "Guowang (Hulianwang)",
-      "operator": "china-satnet"
-    },
-    "planet": {
-      "en": "Planet",
-      "fr": "Planet",
-      "operator": "planet"
-    },
-    "spire": {
-      "en": "Spire",
-      "fr": "Spire",
-      "operator": "spire"
-    },
-    "iridium-NEXT": {
-      "en": "Iridium NEXT",
-      "fr": "Iridium NEXT",
-      "operator": "iridium"
-    },
-    "globalstar": {
-      "en": "Globalstar",
-      "fr": "Globalstar",
-      "operator": "globalstar"
-    },
-    "orbcomm": {
-      "en": "ORBCOMM",
-      "fr": "ORBCOMM",
-      "operator": "orbcomm"
-    },
-    "ses": {
-      "en": "SES",
-      "fr": "SES",
-      "operator": "ses"
-    },
-    "intelsat": {
-      "en": "Intelsat",
-      "fr": "Intelsat",
-      "operator": "ses"
-    },
-    "eutelsat": {
-      "en": "Eutelsat",
-      "fr": "Eutelsat",
-      "operator": "eutelsat"
-    },
-    "telesat": {
-      "en": "Telesat",
-      "fr": "Telesat",
-      "operator": "telesat"
-    },
-    "gps-ops": {
-      "en": "GPS (operational)",
-      "fr": "GPS (opérationnels)",
-      "operator": "gps"
-    },
-    "glo-ops": {
-      "en": "GLONASS (operational)",
-      "fr": "GLONASS (opérationnels)",
-      "operator": "glonass"
-    },
-    "galileo": {
-      "en": "Galileo",
-      "fr": "Galileo",
-      "operator": "galileo"
-    },
-    "beidou": {
-      "en": "BeiDou",
-      "fr": "BeiDou",
-      "operator": "beidou"
-    },
-    "stations": {
-      "en": "Space stations",
-      "fr": "Stations spatiales"
-    },
-    "weather": {
-      "en": "Weather",
-      "fr": "Météo"
-    },
-    "science": {
-      "en": "Space & Earth science",
-      "fr": "Sciences spatiales et de la Terre"
-    },
-    "amateur": {
-      "en": "Amateur radio",
-      "fr": "Radioamateur"
-    }
+    "starlink": { "en": "Starlink", "fr": "Starlink", "operator": "spacex" },
+    "oneweb": { "en": "OneWeb", "fr": "OneWeb", "operator": "eutelsat" },
+    "kuiper": { "en": "Project Kuiper", "fr": "Projet Kuiper", "operator": "amazon" },
+    "qianfan": { "en": "Qianfan (Thousand Sails)", "fr": "Qianfan (Mille Voiles)", "operator": "ssst" },
+    "hulianwang": { "en": "Guowang (Hulianwang)", "fr": "Guowang (Hulianwang)", "operator": "china-satnet" },
+    "planet": { "en": "Planet", "fr": "Planet", "operator": "planet" },
+    "spire": { "en": "Spire", "fr": "Spire", "operator": "spire" },
+    "iridium-NEXT": { "en": "Iridium NEXT", "fr": "Iridium NEXT", "operator": "iridium" },
+    "globalstar": { "en": "Globalstar", "fr": "Globalstar", "operator": "globalstar" },
+    "orbcomm": { "en": "ORBCOMM", "fr": "ORBCOMM", "operator": "orbcomm" },
+    "ses": { "en": "SES", "fr": "SES", "operator": "ses" },
+    "intelsat": { "en": "Intelsat", "fr": "Intelsat", "operator": "ses" },
+    "eutelsat": { "en": "Eutelsat", "fr": "Eutelsat", "operator": "eutelsat" },
+    "telesat": { "en": "Telesat", "fr": "Telesat", "operator": "telesat" },
+    "gps-ops": { "en": "GPS (operational)", "fr": "GPS (opérationnels)", "operator": "gps" },
+    "glo-ops": { "en": "GLONASS (operational)", "fr": "GLONASS (opérationnels)", "operator": "glonass" },
+    "galileo": { "en": "Galileo", "fr": "Galileo", "operator": "galileo" },
+    "beidou": { "en": "BeiDou", "fr": "BeiDou", "operator": "beidou" },
+    "stations": { "en": "Space stations", "fr": "Stations spatiales" },
+    "weather": { "en": "Weather", "fr": "Météo" },
+    "science": { "en": "Space & Earth science", "fr": "Sciences spatiales et de la Terre" },
+    "amateur": { "en": "Amateur radio", "fr": "Radioamateur" }
   },
   "ignoredGroups": [
-    {
-      "group": "active",
-      "reason": "Every active satellite: fetched separately as the base dataset"
-    },
-    {
-      "group": "last-30-days",
-      "reason": "Recent launches, a moving window rather than an operator"
-    },
-    {
-      "group": "analyst",
-      "reason": "Analyst objects (no public identification)"
-    },
-    {
-      "group": "cosmos-2251-debris",
-      "reason": "Debris cloud, not active satellites"
-    },
-    {
-      "group": "iridium-33-debris",
-      "reason": "Debris cloud, not active satellites"
-    },
-    {
-      "group": "fengyun-1c-debris",
-      "reason": "Debris cloud, not active satellites"
-    },
-    {
-      "group": "visual",
-      "reason": "Brightest objects: a visibility list, not an operator"
-    },
-    {
-      "group": "geo",
-      "reason": "Orbit regime (the orbit facet covers it)"
-    },
+    { "group": "active", "reason": "Every active satellite: fetched separately as the base dataset" },
+    { "group": "last-30-days", "reason": "Recent launches, a moving window rather than an operator" },
+    { "group": "analyst", "reason": "Analyst objects (no public identification)" },
+    { "group": "cosmos-2251-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "iridium-33-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "fengyun-1c-debris", "reason": "Debris cloud, not active satellites" },
+    { "group": "visual", "reason": "Brightest objects: a visibility list, not an operator" },
+    { "group": "geo", "reason": "Orbit regime (the orbit facet covers it)" },
     {
       "group": "gnss",
       "reason": "Union of the GNSS groups already fetched (gps-ops, glo-ops, galileo, beidou)"
     },
-    {
-      "group": "cubesat",
-      "reason": "Form factor, many unrelated operators"
-    },
-    {
-      "group": "education",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "engineering",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "geodetic",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "military",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "other-comm",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "x-comm",
-      "reason": "Thematic list, many unrelated operators"
-    },
-    {
-      "group": "radar",
-      "reason": "Radar calibration targets, thematic"
-    },
-    {
-      "group": "resource",
-      "reason": "Earth resources, thematic"
-    },
-    {
-      "group": "sar",
-      "reason": "Synthetic aperture radar, thematic"
-    },
-    {
-      "group": "sarsat",
-      "reason": "Search and rescue payloads hosted on many operators' satellites"
-    },
-    {
-      "group": "sbas",
-      "reason": "Augmentation payloads of several operators"
-    },
-    {
-      "group": "argos",
-      "reason": "Data-collection payloads hosted on several operators' satellites"
-    },
-    {
-      "group": "dmc",
-      "reason": "Disaster Monitoring Constellation: small, owner codes suffice"
-    },
-    {
-      "group": "tdrss",
-      "reason": "NASA relay satellites: owner code US suffices"
-    },
-    {
-      "group": "satnogs",
-      "reason": "SatNOGS-tracked amateur objects, overlaps amateur"
-    }
+    { "group": "cubesat", "reason": "Form factor, many unrelated operators" },
+    { "group": "education", "reason": "Thematic list, many unrelated operators" },
+    { "group": "engineering", "reason": "Thematic list, many unrelated operators" },
+    { "group": "geodetic", "reason": "Thematic list, many unrelated operators" },
+    { "group": "military", "reason": "Thematic list, many unrelated operators" },
+    { "group": "other-comm", "reason": "Thematic list, many unrelated operators" },
+    { "group": "x-comm", "reason": "Thematic list, many unrelated operators" },
+    { "group": "radar", "reason": "Radar calibration targets, thematic" },
+    { "group": "resource", "reason": "Earth resources, thematic" },
+    { "group": "sar", "reason": "Synthetic aperture radar, thematic" },
+    { "group": "sarsat", "reason": "Search and rescue payloads hosted on many operators' satellites" },
+    { "group": "sbas", "reason": "Augmentation payloads of several operators" },
+    { "group": "argos", "reason": "Data-collection payloads hosted on several operators' satellites" },
+    { "group": "dmc", "reason": "Disaster Monitoring Constellation: small, owner codes suffice" },
+    { "group": "tdrss", "reason": "NASA relay satellites: owner code US suffices" },
+    { "group": "satnogs", "reason": "SatNOGS-tracked amateur objects, overlaps amateur" }
   ],
   "nameRules": [
     {
