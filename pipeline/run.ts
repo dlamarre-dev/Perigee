@@ -264,14 +264,17 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
 
   const candidates = deepSpaceCandidates(launches, missions);
   const matches = new Map<string, { name: string; spkid: string }[]>();
+  // By COSPAR designation first, then by name: the maintenance agent's sandbox cannot reach Horizons.
+  const lookup = async (sstr: string): Promise<{ name: string; spkid: string }[]> => {
+    const body = JSON.parse(await politeGet(horizonsLookupUrl(sstr), { accept: 'application/json' })) as {
+      result?: { name: string; spkid: string }[];
+    };
+    return (body.result ?? []).map((r) => ({ name: r.name, spkid: r.spkid }));
+  };
   for (const c of candidates.slice(0, MAX_HORIZONS_LOOKUPS)) {
-    const body = JSON.parse(
-      await politeGet(horizonsLookupUrl(c.OBJECT_ID), { accept: 'application/json' }),
-    ) as { result?: { name: string; spkid: string }[] };
-    matches.set(
-      String(c.NORAD_CAT_ID),
-      (body.result ?? []).map((r) => ({ name: r.name, spkid: r.spkid })),
-    );
+    let found = await lookup(c.OBJECT_ID);
+    if (found.length === 0) found = await lookup(c.OBJECT_NAME);
+    matches.set(String(c.NORAD_CAT_ID), found);
   }
 
   const items: AuditItem[] = [

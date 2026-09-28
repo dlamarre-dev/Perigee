@@ -19,9 +19,10 @@ to do anything unless you explicitly ask for help.
 2. For each audit item, research and edit the catalog:
    - `deep-space-candidate`: decide whether the payload belongs in `catalog/missions.json` (an active
      probe or orbiter around the Moon, Mars, a Lagrange point or the Sun). If yes, add a complete entry: the
-     Horizons ID must be confirmed with
-     `https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=<COSPAR or name>&group=sct` (one request per
-     object), plus `sampling` following CLAUDE.md §4.3, `norad`, the EN and FR names, the agency, the country,
+     Horizons ID comes from the audit, `details.horizonsMatches` in `audit.json` (looked up in GitHub Actions
+     by COSPAR designation, then by name); use it only when the match clearly is this spacecraft. Without a
+     match, add the entry with `"ephemeris": "none"` (listed, not drawn) and say so in the report. Also
+     fill in `sampling` following CLAUDE.md §4.3, `norad`, the EN and FR names, the agency, the country,
      the launch date, `status`, `sources` and `verified`. If it does not belong (a relay test, a failed
      launch…), note why in the report.
    - `launch-site-code`: either add a site to `catalog/launch-sites.json` (verified coordinates with
@@ -60,8 +61,10 @@ to do anything unless you explicitly ask for help.
 - Allowed files: `catalog/**/*.json`, `CLAUDE.md` (§13 only) and `src/astro/leapSeconds.ts`. The
   `catalog-guard` CI job rejects anything else, deleted entries, missing or non-https sources, changes without a
   new `verified` date, and more than 40 changed entries.
-- Never call CelesTrak GP endpoints (`gp.php`) or Horizons vector requests (`horizons.api`): the Actions
-  pipeline owns them. The only provider requests allowed are the lookups listed above, one per resource.
+- Never call CelesTrak GP endpoints (`gp.php`), JPL Horizons (`ssd.jpl.nasa.gov`) or IERS: the Actions pipeline
+  owns them and the audit already brings what you need. The other CelesTrak pages listed above: one request each.
+- If the network blocks a source, try another official one; if nothing can be read, do not guess: list the item
+  under "Needs a human".
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
 - Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
   typography: a non-breaking space before `:`).
