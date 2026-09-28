@@ -18,7 +18,7 @@ Four views, each centred on a body, with free navigation (quaternions) around th
 | View | Central body | Displayed objects | Main source |
 |------|--------------|-------------------|-------------|
 | A — Earth | Earth (rotating Earth frame) | All active catalogued satellites (~15k+) | CelesTrak GP (OMM) + SATCAT |
-| B — Mocon | Moon (rotating lunar frame) | Active lunar orbiters + landing/impact sites | JPL Horizons + curated catalog |
+| B — Moon | Moon (rotating lunar frame) | Active lunar orbiters + landing/impact sites | JPL Horizons + curated catalog |
 | C — Mars | Mars (rotating Martian frame) | Active Mars orbiters + Phobos/Deimos + landing sites | JPL Horizons + curated catalog |
 | D — Solar system | Sun (barycentre) | Planets + active interplanetary probes | astronomy-engine + JPL Horizons |
 
