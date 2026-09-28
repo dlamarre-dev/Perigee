@@ -98,6 +98,12 @@ export class InfoPanel {
     ];
     if (obj.operatorId)
       rows.push(['info.operator', facetLabel(this.i18n, this.operators, 'operators', obj.operatorId)]);
+    for (const p of obj.hostedPayloads) {
+      rows.push([
+        'info.hostedPayload',
+        `${p.name} · ${facetLabel(this.i18n, this.operators, 'operators', p.operatorId)}`,
+      ]);
+    }
     if (obj.ownerCode)
       rows.push(['info.owner', facetLabel(this.i18n, this.operators, 'owners', obj.ownerCode)]);
     const sc = obj.satcat;

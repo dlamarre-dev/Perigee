@@ -113,6 +113,7 @@ export const en = {
   'info.norad': 'NORAD',
   'info.cospar': 'COSPAR',
   'info.operator': 'Operator',
+  'info.hostedPayload': 'Hosted payload',
   'info.owner': 'Country / owner',
   'info.launch': 'Launch',
   'info.status': 'Status',

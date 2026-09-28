@@ -36,6 +36,10 @@ to do anything unless you explicitly ask for help.
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:
 "ended"`: never delete entries.
+   - Hosted payloads (every week, even without an audit item): check the sources of `operators.json`
+     `hostedPayloads` (e.g. the GHGSat series page on Gunter's Space Page) for newly launched instruments, and add
+     each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),
+     the payload name and sources. Satellites carrying the operator's name are already covered by `nameRules`.
    - `leap-second`: update `src/astro/leapSeconds.ts` from the IERS file, including its "Last checked" line.
 3. Refresh the "Known statuses" summary in `CLAUDE.md` §13 for the missions you changed (same format and
    dates).

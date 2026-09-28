@@ -19,6 +19,8 @@ export interface SatObject {
   readonly satcat: SatcatRecord | undefined;
   readonly groups: readonly string[];
   readonly operatorId: string | undefined;
+  /** Instruments of other operators carried by this satellite (catalog/operators.json hostedPayloads). */
+  readonly hostedPayloads: readonly { readonly operatorId: string; readonly name: string }[];
   readonly ownerCode: string | undefined;
   readonly objectType: string;
   /** SATCAT LAUNCH_SITE code. */
@@ -81,11 +83,27 @@ export function buildCatalog(
     if (!prev || parseOmmEpochMs(omm.EPOCH) > parseOmmEpochMs(prev.EPOCH)) latest.set(omm.NORAD_CAT_ID, omm);
   }
 
+  const nameRules = operators.nameRules.map((r) => ({
+    operator: r.operator,
+    re: new RegExp(r.pattern, 'i'),
+  }));
+  const hostedByNorad = new Map<number, { operatorId: string; name: string }[]>();
+  for (const p of operators.hostedPayloads) {
+    hostedByNorad.set(p.norad, [
+      ...(hostedByNorad.get(p.norad) ?? []),
+      { operatorId: p.operator, name: p.name },
+    ]);
+  }
+
   const objects: SatObject[] = [];
   for (const omm of latest.values()) {
     const sc = satcatByNorad.get(omm.NORAD_CAT_ID);
     const memberOf = groupsByNorad.get(omm.NORAD_CAT_ID) ?? [];
-    const operatorId = memberOf.map((g) => operators.groups[g]?.operator).find((o) => o !== undefined);
+    // CelesTrak group first (constellations), then curated name rules (operators without a group).
+    const operatorId =
+      memberOf.map((g) => operators.groups[g]?.operator).find((o) => o !== undefined) ??
+      nameRules.find((r) => r.re.test(omm.OBJECT_NAME))?.operator;
+    const hostedPayloads = hostedByNorad.get(omm.NORAD_CAT_ID) ?? [];
     const { perigeeAltKm, apogeeAltKm } = apsides(omm.MEAN_MOTION, omm.ECCENTRICITY);
     objects.push({
       index: objects.length,
@@ -96,6 +114,7 @@ export function buildCatalog(
       satcat: sc,
       groups: memberOf,
       operatorId,
+      hostedPayloads,
       ownerCode: sc?.OWNER,
       objectType: sc?.OBJECT_TYPE ?? 'UNK',
       launchSite: sc?.LAUNCH_SITE ?? undefined,
@@ -105,7 +124,9 @@ export function buildCatalog(
       inclinationRad: omm.INCLINATION * DEG_TO_RAD,
       perigeeAltKm,
       apogeeAltKm,
-      searchText: `${omm.OBJECT_NAME} ${omm.OBJECT_ID}`.toLowerCase(),
+      searchText: [omm.OBJECT_NAME, omm.OBJECT_ID, ...hostedPayloads.map((p) => p.name)]
+        .join(' ')
+        .toLowerCase(),
     });
   }
   const launchSiteByCode = new Map(launchSites.flatMap((s) => s.satcatCodes.map((c) => [c, s] as const)));

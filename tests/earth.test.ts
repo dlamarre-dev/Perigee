@@ -208,3 +208,33 @@ describe('GPU pick encoding', () => {
     expect(nearestId(px, size)).toBe(42);
   });
 });
+
+describe('operators without a CelesTrak group', () => {
+  const base = omms[0];
+  if (!base) throw new Error('empty OMM fixture');
+  const sats = [
+    { ...base, NORAD_CAT_ID: 46278, OBJECT_NAME: 'GHGSAT-C1', OBJECT_ID: '2020-061G' },
+    { ...base, NORAD_CAT_ID: 58259, OBJECT_NAME: 'LEMUR-2-BASS', OBJECT_ID: '2023-174D' },
+  ];
+  const cat = buildCatalog(sats, [], { spire: [58259] }, operators);
+  const byName = (name: string) => cat.objects.find((o) => o.name === name);
+
+  it('assigns satellites by curated name rule', () => {
+    expect(byName('GHGSAT-C1')?.operatorId).toBe('ghgsat');
+  });
+
+  it('keeps the host operator and exposes the hosted payload to filters and search', () => {
+    const host = byName('LEMUR-2-BASS');
+    expect(host?.operatorId).toBe('spire');
+    expect(host?.hostedPayloads).toEqual([{ operatorId: 'ghgsat', name: 'GHGSat-C9 (Juba)' }]);
+    const ghgsat = cat.objects.filter((o) => matchesFilters(o, { ...EMPTY_FILTERS, operators: ['ghgsat'] }));
+    expect(ghgsat.map((o) => o.noradId).sort()).toEqual([46278, 58259]);
+    expect(
+      cat.objects.filter((o) => matchesFilters(o, { ...EMPTY_FILTERS, operators: ['spire'] })),
+    ).toHaveLength(1);
+    expect(cat.objects.filter((o) => matchesFilters(o, { ...EMPTY_FILTERS, query: 'ghgsat' }))).toHaveLength(
+      2,
+    );
+    expect(facetCounts(cat.objects, 'operators')).toContainEqual(['ghgsat', 2]);
+  });
+});

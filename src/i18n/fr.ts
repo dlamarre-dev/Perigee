@@ -118,6 +118,7 @@ export const fr: Messages = {
   'info.norad': 'NORAD',
   'info.cospar': 'COSPAR',
   'info.operator': 'Opérateur',
+  'info.hostedPayload': 'Charge utile hébergée',
   'info.owner': 'Pays / propriétaire',
   'info.launch': 'Lancement',
   'info.status': 'Statut',

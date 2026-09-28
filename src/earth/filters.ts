@@ -43,7 +43,10 @@ export const FACET_KEYS: readonly FacetKey[] = [
 export function facetValues(obj: SatObject, facet: FacetKey): readonly string[] {
   switch (facet) {
     case 'operators':
-      return [obj.operatorId ?? NONE];
+      // A satellite carrying another operator's instrument counts for both (e.g. Spire host, GHGSat payload).
+      return obj.hostedPayloads.length > 0
+        ? [...new Set([obj.operatorId ?? NONE, ...obj.hostedPayloads.map((p) => p.operatorId)])]
+        : [obj.operatorId ?? NONE];
     case 'owners':
       return [obj.ownerCode ?? NONE];
     case 'groups':

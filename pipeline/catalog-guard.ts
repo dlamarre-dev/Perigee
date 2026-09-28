@@ -68,6 +68,8 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
       for (const [k, v] of Object.entries(o.owners)) m.set(`owner:${k}`, v);
       for (const [k, v] of Object.entries(o.operators)) m.set(`operator:${k}`, v);
       for (const [k, v] of Object.entries(o.groups)) m.set(`group:${k}`, v);
+      for (const r of o.nameRules) m.set(`rule:${r.operator}:${r.pattern}`, r);
+      for (const p of o.hostedPayloads) m.set(`hosted:${p.norad}:${p.operator}`, p);
       return m;
     },
   },
@@ -113,8 +115,10 @@ export function checkChanges(files: readonly ChangedFile[], today: string): stri
       const before = baseEntries.get(id);
       if (before && JSON.stringify(before) === JSON.stringify(entry)) continue;
       changed++;
-      // Owner, operator and group labels carry no per-entry sources; the file's sources cover them.
-      if (f.path !== 'catalog/operators.json' && !httpsSources(entry)) {
+      // Owner, operator and group labels carry no per-entry sources (the file's sources cover them); name rules
+      // and hosted payloads do.
+      const labelOnly = f.path === 'catalog/operators.json' && !/^(rule|hosted):/.test(id);
+      if (!labelOnly && !httpsSources(entry)) {
         errors.push(`${f.path}: entry "${id}" needs at least one https source`);
       }
       const verified = entry['verified'];

@@ -237,5 +237,26 @@ export const OperatorsCatalogSchema = z.object({
   groups: z.record(z.string(), localized.extend({ operator: z.string().optional() })),
   /** CelesTrak index groups deliberately not fetched (overlapping or thematic lists), with the reason. */
   ignoredGroups: z.array(z.object({ group: z.string(), reason: z.string() })).default([]),
+  /**
+   * Operators without a CelesTrak group, recognised by SATCAT/GP object name (case-insensitive regular
+   * expression), e.g. every "GHGSAT-…" satellite belongs to GHGSat.
+   */
+  nameRules: z
+    .array(z.object({ operator: z.string(), pattern: z.string(), sources: z.array(z.url()).min(1) }))
+    .default([]),
+  /**
+   * Instruments flown on another operator's satellite: the catalogue lists the host, so the payload is mapped
+   * here by the host's NORAD number (shown in the info panel, the operator facet and text search).
+   */
+  hostedPayloads: z
+    .array(
+      z.object({
+        norad: z.number().int().positive(),
+        operator: z.string(),
+        name: z.string(),
+        sources: z.array(z.url()).min(1),
+      }),
+    )
+    .default([]),
 });
 export type OperatorsCatalog = z.infer<typeof OperatorsCatalogSchema>;
