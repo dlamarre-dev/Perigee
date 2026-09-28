@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-27",
+  "verified": "2026-09-28",
   "missions": [
     {
       "id": "lro",
@@ -199,6 +199,41 @@
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct"
+      ]
+    },
+    {
+      "id": "swc-1",
+      "name": {
+        "en": "SWC-1 (Shams)",
+        "fr": "SWC-1 (Shams)"
+      },
+      "agency": "Saudi Space Agency (SSA)",
+      "country": "sa",
+      "launchDate": "2026-04-01",
+      "centralBody": "moon",
+      "status": "active",
+      "orbit": {
+        "en": "Highly elliptical Earth orbit (~500 × 70,000 km) in the Earth–Moon system",
+        "fr": "Orbite terrestre très excentrique (~500 × 70 000 km) dans le système Terre–Lune"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-168540",
+      "norad": 68540,
+      "sampling": {
+        "stepMin": 10,
+        "pastDays": 1,
+        "futureDays": 3
+      },
+      "lowOrbit": false,
+      "color": "#fff176",
+      "notes": {
+        "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords.",
+        "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis."
+      },
+      "verified": "2026-09-28",
+      "sources": [
+        "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
+        "https://space.skyrocket.de/doc_sdat/swc-1.htm"
       ]
     },
     {
@@ -1534,6 +1569,38 @@
         "https://www.cosmos.esa.int/web/euclid/dr1-timeline",
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Euclid"
+      ]
+    },
+    {
+      "id": "roman",
+      "name": {
+        "en": "Nancy Grace Roman Space Telescope",
+        "fr": "Télescope spatial Nancy-Grace-Roman"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2026-08-30",
+      "centralBody": "sun",
+      "status": "cruise",
+      "phase": {
+        "en": "Cruise to Sun-Earth L2 after launch",
+        "fr": "Croisière vers le point L2 Soleil-Terre après le lancement"
+      },
+      "nextEvent": {
+        "en": "Arrival at L2 and start of commissioning",
+        "fr": "Arrivée en L2 et début de la mise en service",
+        "date": "2026-11"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "notes": {
+        "en": "Launched 2026-08-30 on a Falcon Heavy; three-month, ~1.6 million km cruise to an orbit around Sun-Earth L2. The Wide Field Instrument (300-megapixel infrared camera) was activated during commissioning; science operations expected to begin in early 2027. No Horizons match found yet (deep-space-candidate audit, 2026-09-28); add horizonsId once one appears.",
+        "fr": "Lancé le 2026-08-30 sur une Falcon Heavy ; croisière de trois mois (~1,6 million de km) vers une orbite autour du point L2 Soleil-Terre. L'instrument à grand champ (caméra infrarouge de 300 mégapixels) a été activé pendant la mise en service ; opérations scientifiques prévues au début de 2027. Aucune correspondance Horizons trouvée pour l'instant (audit deep-space-candidate du 2026-09-28) ; ajouter horizonsId dès qu'elle apparaîtra."
+      },
+      "verified": "2026-09-28",
+      "sources": [
+        "https://science.nasa.gov/mission/roman-space-telescope/roman-launch/",
+        "https://www.nasa.gov/news-release/nasas-dark-universe-seeking-nancy-grace-roman-space-telescope-launches/"
       ]
     },
     {

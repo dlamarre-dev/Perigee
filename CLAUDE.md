@@ -328,13 +328,14 @@ npm run textures       # offline texture pre-processing (downloads NASA sources,
 
 Known statuses at end of September 2026. Kept current by the weekly maintenance agent (§8), which re-verifies
 entries older than 90 days and anything the audit flags:
-- Lunar orbit (verified 2026-09-26, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
+- Lunar orbit (verified 2026-09-28, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
   orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA mission ended June 2026, Advanced Space still operates it;
-  **public Horizons ephemeris stops 2026-08-14**). No Horizons ephemeris: Queqiao-2, Tiandu-2, Queqiao-1 (L2),
-  DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025). ICUBE-Q: presumed lost.
-  **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to 2027. Artemis II flew
-  1–10 April 2026 (ended).
+  **public Horizons ephemeris stops 2026-08-14**), SWC-1/Shams (−168540, Saudi Space Agency cislunar
+  space-weather 12U CubeSat deployed during Artemis II, launched 2026-04-01). No Horizons ephemeris: Queqiao-2,
+  Tiandu-2, Queqiao-1 (L2), DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025).
+  ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
+  2027. Artemis II flew 1–10 April 2026 (ended).
 - Mars (verified 2026-09-27, details in `catalog/missions.json`): Mars Odyssey (−53, very low on propellant —
   re-check), Mars Express (−41, extended June 2026), MRO (−74), ExoMars TGO (−143), Hope/EMM (−62, extended to
   2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06, mission declared over
@@ -347,8 +348,10 @@ entries older than 90 days and anything the audit flags:
   2026-09-28), Europa Clipper (−159), Psyche (−255), Lucy (−49), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
   Hayabusa2 (−37), Aditya-L1 (−156), SOHO (−21), JWST (−170), Gaia (−139479, retired 2025), Euclid (−680), IMAP
   (−43), Carruthers (−171), STEREO-A (−234). No public ephemeris: Tianwen-2 (at Kamoʻoalewa since June 2026),
-  SOLAR-1. Planned: NEO Surveyor, MBR Explorer, DESTINY+, Comet Interceptor. Several public ephemerides end within
-  weeks (Hera, SOHO, IMAP, Aditya-L1, Hayabusa2, STEREO-A): windows are truncated, re-check coverage regularly.
+  SOLAR-1, Nancy Grace Roman Space Telescope (launched 2026-08-30, cruising to Sun–Earth L2, arrival ~Nov 2026 —
+  re-check for a Horizons match once it settles at L2). Planned: NEO Surveyor, MBR Explorer, DESTINY+, Comet
+  Interceptor. Several public ephemerides end within weeks (Hera, SOHO, IMAP, Aditya-L1, Hayabusa2, STEREO-A):
+  windows are truncated, re-check coverage regularly.
 - Mars rover positions come from NASA MMGIS waypoint feeds (`catalog/landing-sites/mars.json` `feed`, daily).
 
 ## 14. Code conventions
