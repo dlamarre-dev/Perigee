@@ -235,7 +235,7 @@ function main(): void {
     },
   };
 
-  const about = new About(i18n);
+  const about = new About(i18n, import.meta.env.BASE_URL);
   const timeControl = new TimeControl(clock, i18n, syncUrl);
 
   // Phones: the time bar and bottom sheets cover the lower part of the canvas. Their height feeds the CSS

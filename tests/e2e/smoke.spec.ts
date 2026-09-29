@@ -52,3 +52,11 @@ test('time controls update the URL', async ({ page }) => {
   await page.getByRole('button', { name: 'Now' }).click();
   await expect(page).not.toHaveURL(/rate=/);
 });
+
+test('about panel shows the build version and the data refresh date', async ({ page }) => {
+  await page.goto('./?lang=en');
+  await page.getByRole('button', { name: 'About' }).click();
+  const about = page.locator('dialog.about');
+  await expect(about).toContainText(/Version: \w+/);
+  await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
+});

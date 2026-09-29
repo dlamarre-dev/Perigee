@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
@@ -31,8 +32,25 @@ function basisTranscoder(): Plugin {
   };
 }
 
+/** Version shown in the About panel: the commit the site was built from (short hash, commit date). */
+function buildInfo(): { commit: string; date: string } {
+  try {
+    const [commit = 'dev', date = ''] = execFileSync('git', ['log', '-1', '--format=%h|%cI'], {
+      encoding: 'utf8',
+    })
+      .trim()
+      .split('|');
+    return { commit, date };
+  } catch {
+    return { commit: 'dev', date: '' };
+  }
+}
+
 export default defineConfig({
   base,
+  define: {
+    __PERIGEE_BUILD__: JSON.stringify(buildInfo()),
+  },
   plugins: [basisTranscoder()],
   build: {
     target: 'es2022',

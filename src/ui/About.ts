@@ -1,3 +1,5 @@
+import { loadManifest } from '../data/loader';
+import type { Manifest } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h } from './dom';
 
@@ -58,13 +60,20 @@ export class About {
   private readonly intro = h('p');
   private readonly authorLabel = h('span');
   private readonly sourceLink = h('a', { href: REPOSITORY, target: '_blank', rel: 'noopener' });
+  private readonly versionLine = h('p', { class: 'small' });
+  private readonly dataLine = h('p', { class: 'small' });
+  private manifest: Manifest | undefined;
+  private manifestError = false;
   private readonly disclaimer = h('p', { class: 'disclaimer' });
   private readonly sourcesTitle = h('h3');
   private readonly softwareTitle = h('h3');
   private readonly license = h('p');
   private readonly close = h('button', { type: 'button', class: 'btn', autofocus: true });
 
-  constructor(private readonly i18n: I18n) {
+  constructor(
+    private readonly i18n: I18n,
+    private readonly baseUrl: string,
+  ) {
     this.close.addEventListener('click', () => this.element.close());
     this.element = h('dialog', { class: 'panel about', 'aria-labelledby': 'about-title' }, [
       this.title,
@@ -76,6 +85,8 @@ export class About {
         ' · ',
         this.sourceLink,
       ]),
+      this.versionLine,
+      this.dataLine,
       this.disclaimer,
       this.sourcesTitle,
       creditList(DATA_CREDITS),
@@ -94,6 +105,36 @@ export class About {
 
   open(): void {
     this.element.showModal();
+    // Fresh on every opening: the data branch is republished several times a day.
+    loadManifest(this.baseUrl)
+      .then((m) => {
+        this.manifest = m;
+        this.manifestError = false;
+      })
+      .catch(() => {
+        this.manifestError = true;
+      })
+      .finally(() => this.renderData());
+  }
+
+  private renderData(): void {
+    const t = this.i18n.t.bind(this.i18n);
+    const m = this.manifest;
+    if (!m) {
+      this.dataLine.textContent = this.manifestError ? t('about.dataUnavailable') : '';
+      return;
+    }
+    const utc = (iso: string | undefined): string | undefined =>
+      iso ? `${iso.slice(0, 16).replace('T', ' ')} UTC` : undefined;
+    const latest = (isos: readonly string[]): string | undefined => [...isos].sort().at(-1);
+    const parts: string[] = [];
+    const gp = utc(m.datasets['earth.gp']?.fetchedAt);
+    if (gp) parts.push(`${t('about.data.satellites')} ${gp}`);
+    const satcat = utc(m.datasets['earth.satcat']?.fetchedAt);
+    if (satcat) parts.push(`${t('about.data.satcat')} ${satcat}`);
+    const ephem = utc(latest(Object.values(m.ephemerides).map((e) => e.fetchedAt)));
+    if (ephem) parts.push(`${t('about.data.ephemerides')} ${ephem}`);
+    this.dataLine.textContent = `${t('about.dataRefreshed')} ${parts.join(' · ')}`;
   }
 
   private renderLabels(): void {
@@ -102,6 +143,18 @@ export class About {
     this.intro.textContent = t('about.intro');
     this.authorLabel.textContent = t('about.author');
     this.sourceLink.textContent = t('about.sourceCode');
+    const build = __PERIGEE_BUILD__;
+    const commit = h(
+      'a',
+      { href: `${REPOSITORY}/commit/${build.commit}`, target: '_blank', rel: 'noopener' },
+      [build.commit],
+    );
+    this.versionLine.replaceChildren(
+      `${t('about.version')} `,
+      build.commit === 'dev' ? build.commit : commit,
+      build.date ? ` (${build.date.slice(0, 10)})` : '',
+    );
+    this.renderData();
     this.disclaimer.textContent = t('about.disclaimer');
     this.sourcesTitle.textContent = t('about.sources');
     this.softwareTitle.textContent = t('about.software');
