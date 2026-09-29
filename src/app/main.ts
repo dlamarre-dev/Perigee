@@ -206,15 +206,15 @@ function main(): void {
     cb?.();
   };
   const follow: FollowApi = {
-    start(scenePosition, distanceKm, onEnd) {
+    start(scenePosition, distanceKm, onEnd, viewFrom) {
       const pos = scenePosition();
       if (!pos || !view) return false;
       if (controls.following) follow.stop();
       followEnd = onEnd;
       controls.setLimits({ minDistanceKm: FOLLOW_MIN_DISTANCE_KM, maxDistanceKm: view.limits.maxDistanceKm });
       controls.setFollow(scenePosition);
-      // Look at the object from above (radially outward from the body), north up.
-      controls.flyTo(orbitStateLookingFrom(pos, pos, [0, 0, 1], distanceKm));
+      // Look at the object from above (radially outward from the body) unless told otherwise, north up.
+      controls.flyTo(orbitStateLookingFrom(pos, viewFrom ?? pos, [0, 0, 1], distanceKm));
       return true;
     },
     stop() {
@@ -391,6 +391,15 @@ function main(): void {
     const rect = renderer.canvas.getBoundingClientRect();
     view.click(e.clientX - rect.left, e.clientY - rect.top, double);
   };
+  // F: follow the selection / stop following (same guards as the camera keys).
+  window.addEventListener('keydown', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (target && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)))
+      return;
+    if (e.ctrlKey || e.metaKey || e.altKey || e.key.toLowerCase() !== 'f') return;
+    e.preventDefault();
+    view?.toggleFollow();
+  });
   renderer.canvas.addEventListener('click', (e) => handleClick(e, false));
   renderer.canvas.addEventListener('dblclick', (e) => handleClick(e, true));
 

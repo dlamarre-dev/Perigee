@@ -29,10 +29,16 @@ export interface ViewFrame {
 
 export interface FollowApi {
   /**
-   * Locks the camera on a moving scene-frame point, framed from above at `distanceKm`.
+   * Locks the camera on a moving scene-frame point, framed from above at `distanceKm` (radially outward
+   * from the scene origin), or from `viewFrom` (scene-frame direction from the point towards the camera).
    * `onEnd` runs once when following stops for any reason (button, recenter, R key, view change).
    */
-  start(scenePosition: () => Vec3 | undefined, distanceKm: number, onEnd: () => void): boolean;
+  start(
+    scenePosition: () => Vec3 | undefined,
+    distanceKm: number,
+    onEnd: () => void,
+    viewFrom?: Vec3,
+  ): boolean;
   stop(): void;
   readonly active: boolean;
 }
@@ -96,6 +102,8 @@ export interface View {
   /** Low-rate UI refresh (a few times per second). */
   uiTick(nowMs: number): void;
   click(xCss: number, yCss: number, double: boolean): void;
+  /** Keyboard F: follow the selected object, or stop following (no-op without a selection). */
+  toggleFollow(): void;
   writeUrl(params: URLSearchParams): void;
   dispose(): void;
 }

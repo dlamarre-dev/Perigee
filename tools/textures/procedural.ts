@@ -103,6 +103,17 @@ const uniform = (c: Rgb): BandedStyle['stops'] => [
 
 /** Styles; colours are estimates (see DATA_SOURCES.md). */
 export const PROCEDURAL: Record<string, BandedStyle> = {
+  // Moons never mapped globally: grey levels from their visual geometric albedo (NSSDC fact sheets; Nix and
+  // Hydra after Weaver et al. 2016).
+  miranda: { stops: uniform([153, 153, 153]), noise: 0.04, stretch: 1, seed: 20 },
+  ariel: { stops: uniform([168, 168, 168]), noise: 0.04, stretch: 1, seed: 21 },
+  umbriel: { stops: uniform([126, 126, 126]), noise: 0.04, stretch: 1, seed: 22 },
+  titania: { stops: uniform([142, 142, 142]), noise: 0.04, stretch: 1, seed: 23 },
+  oberon: { stops: uniform([136, 130, 126]), noise: 0.04, stretch: 1, seed: 24 },
+  proteus: { stops: uniform([89, 89, 89]), noise: 0.04, stretch: 1, seed: 25 },
+  nereid: { stops: uniform([111, 111, 111]), noise: 0.04, stretch: 1, seed: 26 },
+  nix: { stops: uniform([197, 197, 197]), noise: 0.04, stretch: 1, seed: 27 },
+  hydra: { stops: uniform([235, 235, 235]), noise: 0.04, stretch: 1, seed: 28 },
   eris: { stops: uniform([230, 228, 223]), noise: 0.05, stretch: 1, seed: 11 },
   haumea: { stops: uniform([232, 230, 226]), noise: 0.05, stretch: 1, seed: 12 },
   makemake: { stops: uniform([216, 184, 154]), noise: 0.07, stretch: 1, seed: 13 },

@@ -47,12 +47,28 @@ export const fr: Messages = {
   'texture.artist': 'Vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
   'texture.artistVenus':
     'Sommet des nuages, vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
+  'texture.handDrawn':
+    'Carte du relief dessinée à la main d’après des images de sondes (P. Stooke), pas une photographie',
+  'texture.titanInfrared':
+    'Surface vue à travers la brume dans le proche infrarouge (Cassini, 938 nm), en niveaux de gris',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
   'view.solar.short': 'Solaire',
   'toolbar.menu': 'Menu',
   'time.jump.toggle': 'Aller à une date',
   'panel.collapse': 'Replier ou déplier le panneau',
+  'solar.moonCount': '{n} lunes',
+  'solar.moonCountOne': '1 lune',
+  'info.parent': 'Orbite autour de',
+  'info.distPlanet': 'Distance à la planète',
+  'info.speedPlanet': 'Vitesse par rapport à la planète',
+  'info.semiMajorAxis': 'Demi-grand axe',
+  'info.eccentricity': 'Excentricité',
+  'moon.plane.laplace': 'par rapport au plan de Laplace local',
+  'moon.plane.equator': 'par rapport à l’équateur de la planète',
+  'moon.plane.ecliptic': 'par rapport à l’écliptique',
+  'moon.model.theory': 'Position calculée avec astronomy-engine (théorie analytique)',
+  'moon.model.meanElements': 'Position approximative d’après les éléments orbitaux moyens du JPL',
   'about.author': 'Créé par',
   'about.sourceCode': 'Code source sur GitHub',
   'about.version': 'Version :',
@@ -220,7 +236,7 @@ export const fr: Messages = {
   'music.frameTitle': 'Lecteur SoundCloud : NASA Explorers: Apollo Soundtrack',
   'music.note': 'Lecteur fourni par SoundCloud, chargé seulement à l’ouverture.',
   'app.canvasLabel':
-    'Vue 3D. Glissez ou utilisez les flèches pour tourner, Q/E pour le roulis, +/− pour zoomer, R pour réinitialiser. Les objets sont listés dans le panneau latéral.',
+    'Vue 3D. Glissez ou utilisez les flèches pour tourner, Q/E pour le roulis, +/− pour zoomer, R pour réinitialiser, F pour suivre la sélection. Les objets sont listés dans le panneau latéral.',
   'app.offline': 'Hors ligne — données en cache',
   'app.updateReady': 'Une nouvelle version est disponible : rechargez pour la mettre à jour.',
   'unit.days': 'j',

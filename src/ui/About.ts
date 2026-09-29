@@ -26,6 +26,11 @@ const DATA_CREDITS: readonly Credit[] = [
     url: 'https://science.nasa.gov/photojournal/',
   },
   { name: 'NASA PDS Ring-Moon Systems Node (Voyager ring profiles)', url: 'https://pds-rings.seti.org' },
+  {
+    name: 'P. Stooke — small-body maps (NASA PDS Small Bodies Node)',
+    url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/',
+  },
+  { name: 'NASA/JPL SSD — planetary satellite mean elements', url: 'https://ssd.jpl.nasa.gov/sats/elem/' },
   { name: 'NASA MMGIS (Mars rover traverses)', url: 'https://mars.nasa.gov/maps/' },
   {
     name: 'Solar System Scope (INOVE) — Venus, Saturn, Uranus, Neptune maps, CC BY 4.0, resampled',

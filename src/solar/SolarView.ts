@@ -22,6 +22,7 @@ import {
   type Material,
 } from 'three';
 import missionsJson from '../../catalog/missions.json';
+import moonsJson from '../../catalog/moons.json';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { bodyOrientationEqj, ceresOrientationEqj, earthOrientation } from '../astro/bodies';
 import { AU_KM, DEG_TO_RAD, J2000_JD, MS_PER_DAY, SECONDS_PER_DAY } from '../astro/constants';
@@ -38,13 +39,22 @@ import {
   logScalePosition,
   type PlanetInfo,
 } from '../astro/planets';
-import { quatFromAxisAngle, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { quatFromAxisAngle, quatFromBasis, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import { loadEphemeris, loadManifest } from '../data/loader';
-import { MissionsCatalogSchema, type EphemerisEntry, type Mission } from '../data/schemas';
+import {
+  MissionsCatalogSchema,
+  MoonsCatalogSchema,
+  type EphemerisEntry,
+  type Mission,
+  type Moon,
+} from '../data/schemas';
+import { moonState } from '../astro/moons';
+import type { StateVector } from '../astro/hermite';
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
@@ -73,6 +83,18 @@ const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   eris: 'texture.uniform',
   haumea: 'texture.uniform',
   makemake: 'texture.uniform',
+  amalthea: 'texture.handDrawn',
+  hyperion: 'texture.handDrawn',
+  titan: 'texture.titanInfrared',
+  miranda: 'texture.uniform',
+  ariel: 'texture.uniform',
+  umbriel: 'texture.uniform',
+  titania: 'texture.uniform',
+  oberon: 'texture.uniform',
+  proteus: 'texture.uniform',
+  nereid: 'texture.uniform',
+  nix: 'texture.uniform',
+  hydra: 'texture.uniform',
 };
 /** Hermite sub-samples per ephemeris interval for trajectory lines (1 d steps → 3 h vertices). */
 const TRAJECTORY_SUBSTEPS = 8;
@@ -92,12 +114,46 @@ const TEXTURE_LOAD_RADII = 3000;
 
 type Selection =
   | { readonly kind: 'planet'; readonly planet: PlanetInfo }
+  | { readonly kind: 'moon'; readonly moon: Moon }
   | { readonly kind: 'mission'; readonly mission: Mission }
   | undefined;
 
 /** Deferred texture (and ring) loading, run once the camera comes near the body. */
 interface LazyLoad {
   load: (() => void) | undefined;
+}
+
+/** A moon is drawn once its orbit spans at least this many pixels (it separates from its planet's marker). */
+const MOON_MIN_ORBIT_PX = 14;
+const MOON_PRIORITY = 55;
+
+interface MoonObject extends LazyLoad {
+  readonly moon: Moon;
+  readonly planet: PlanetObject;
+  readonly index: number;
+  readonly mesh: BodyMesh;
+  /** Orbit around the planet: vertices relative to the planet (EQJ), positioned at the planet each frame. */
+  readonly orbit: Line<BufferGeometry, LineBasicMaterial>;
+  orbitBuiltMs: number;
+  orbitKey: string;
+  /** Planet-relative EQJ state (true scale). */
+  state: StateVector | undefined;
+  /** Scene position (undefined in log scale: moons are not drawn there). */
+  scene: Vec3 | undefined;
+  /** Far enough from the planet on screen to be told apart (updated in placeOrigin). */
+  shown: boolean;
+}
+
+/** Selection key used by the panel and the URL. */
+function selectionKey(sel: Selection): string | undefined {
+  if (!sel) return undefined;
+  if (sel.kind === 'planet') return `planet:${sel.planet.id}`;
+  if (sel.kind === 'moon') return `moon:${sel.moon.id}`;
+  return `mission:${sel.mission.id}`;
+}
+
+function selectionId(sel: NonNullable<Selection>): string {
+  return sel.kind === 'planet' ? sel.planet.id : sel.kind === 'moon' ? sel.moon.id : sel.mission.id;
 }
 
 /** Orbit polyline whose vertices are offsets from a body position (see `ellipseOffsetsAround`). */
@@ -180,6 +236,9 @@ class SolarView implements View {
   private readonly glow: Sprite;
   private readonly planets: PlanetObject[] = [];
   private readonly probes: ProbeObject[] = [];
+  private readonly moons: MoonObject[] = [];
+  private readonly moonMarkers: MarkerPoints;
+  private readonly jupiterCache: Parameters<typeof moonState>[3] = {};
   private readonly planetMarkers: MarkerPoints;
   private readonly probeMarkers: MarkerPoints;
   private readonly labels = new LabelLayer();
@@ -266,6 +325,48 @@ class SolarView implements View {
       this.planetMarkers.setColor(index, info.color);
       this.planets.push(planet);
     });
+    const moonCatalog = MoonsCatalogSchema.parse(moonsJson).moons.filter((m) =>
+      this.planets.some((p) => p.info.id === m.planet),
+    );
+    this.moonMarkers = new MarkerPoints(Math.max(1, moonCatalog.length), 7 * pixelRatio, {
+      depthTest: false,
+    });
+    renderer.scene.add(this.moonMarkers.points);
+    moonCatalog.forEach((moon, index) => {
+      const planet = this.planets.find((p) => p.info.id === moon.planet);
+      if (!planet) return;
+      const mesh = new BodyMesh({
+        name: moon.id,
+        radiusKm: moon.radiusKm,
+        dayMap: placeholderTexture(hexToRgb(moon.color)),
+        nightMap: black,
+        ambient: 0.03,
+      });
+      mesh.mesh.visible = false;
+      renderer.scene.add(mesh.mesh);
+      const orbit = new Line(
+        new BufferGeometry(),
+        new LineBasicMaterial({ color: moon.color, transparent: true, opacity: 0.35 }),
+      );
+      orbit.frustumCulled = false;
+      orbit.visible = false;
+      renderer.scene.add(orbit);
+      this.moonMarkers.setColor(index, moon.color);
+      this.colors.set(moon.id, moon.color);
+      this.moons.push({
+        moon,
+        planet,
+        index,
+        mesh,
+        orbit,
+        orbitBuiltMs: 0,
+        orbitKey: '',
+        state: undefined,
+        scene: undefined,
+        shown: false,
+        load: () => this.loadTexture(moon.id, moon.color, mesh),
+      });
+    });
     const palette = ['#7cc4ff', '#ffb74d', '#81c784', '#ce93d8', '#f48fb1', '#4dd0e1', '#fff176', '#a1887f'];
     this.missions.forEach((mission, index) => {
       const natural = mission.objectType === 'natural';
@@ -318,6 +419,7 @@ class SolarView implements View {
     this.panel = new SolarPanel(
       host.i18n,
       PLANETS,
+      this.moons.map((m) => m.moon),
       this.missions,
       this.colors,
       (m) => m.ephemeris === 'horizons',
@@ -325,6 +427,7 @@ class SolarView implements View {
       {
         onSelectPlanet: (p) => this.select({ kind: 'planet', planet: p }, { focus: true, frame: true }),
         onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true, frame: true }),
+        onSelectMoon: (m) => this.select({ kind: 'moon', moon: m }, { focus: true, frame: true }),
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -422,6 +525,23 @@ class SolarView implements View {
       if (!state || !needsRebuild(t.orbit, orbitsKey, f.nowMs)) continue;
       this.buildOrbit(t.orbit, state, GM_KM3_S2.sun, t.mission.radiusKm ?? 100, orbitsKey, f.nowMs, map);
     }
+    this.updateMoons(date, f.nowMs, orbitsKey);
+    if (this.pendingFrame && this.selection?.kind === 'moon') {
+      const m = this.moons.find(
+        (x) => this.selection?.kind === 'moon' && x.moon.id === this.selection.moon.id,
+      );
+      const pos = m?.scene;
+      if (m && pos) {
+        // Close enough to see the moon's whole orbit around its planet.
+        const aKm = m.moon.elements?.aKm ?? (m.state ? length(m.state.posKm) : 0);
+        this.host.frameObject(pos, {
+          tiltRad: 35 * DEG_TO_RAD,
+          targetFraction: 1,
+          distanceKm: Math.max(aKm * 2.2, m.moon.radiusKm * 12),
+        });
+      }
+      this.pendingFrame = false;
+    }
     if (this.pendingFrame) {
       const pos = this.scenePositionOf(this.selection);
       // Look from above the ecliptic so the object does not sit on top of the Sun.
@@ -466,6 +586,7 @@ class SolarView implements View {
           this.occluders.push({ id: t.mission.id, sceneKm: t.scene, radiusKm: t.mission.radiusKm });
       }
     }
+    this.placeMoons(rel);
     for (const p of this.planets) {
       const r = rel(p.scene);
       p.mesh.mesh.position.set(r[0], r[1], r[2]);
@@ -489,6 +610,7 @@ class SolarView implements View {
     this.ring.set(selected ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
+    this.moonMarkers.commit();
     this.placeLabels();
   }
 
@@ -500,7 +622,7 @@ class SolarView implements View {
     let best: { sel: Selection; d: number; depth: number } | undefined;
     const consider = (sel: Selection, scene: Vec3 | undefined): void => {
       if (!scene || !sel) return;
-      const p = this.project(scene, sel.kind === 'planet' ? sel.planet.id : sel.mission.id);
+      const p = this.project(scene, selectionId(sel));
       if (!p) return;
       const d = Math.hypot(p.x - xCss, p.y - yCss);
       if (d > pickRadiusPx(PICK_RADIUS_PX)) return;
@@ -510,6 +632,7 @@ class SolarView implements View {
     };
     for (const p of this.planets) consider({ kind: 'planet', planet: p.info }, p.scene);
     for (const t of this.probes) consider({ kind: 'mission', mission: t.mission }, t.scene);
+    for (const m of this.moons) if (m.shown) consider({ kind: 'moon', moon: m.moon }, m.scene);
     if (best) this.select(best.sel, { follow: double });
   }
 
@@ -517,6 +640,7 @@ class SolarView implements View {
     const sel = this.selection;
     if (sel?.kind === 'planet') p.set('sel', sel.planet.id);
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
+    if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
     if (this.logScale) p.set('log', '1');
   }
 
@@ -556,6 +680,14 @@ class SolarView implements View {
         scene.remove(t.mesh.mesh);
         t.mesh.dispose();
       }
+    }
+    scene.remove(this.moonMarkers.points);
+    this.moonMarkers.dispose();
+    for (const m of this.moons) {
+      scene.remove(m.mesh.mesh, m.orbit);
+      m.mesh.dispose();
+      m.orbit.geometry.dispose();
+      m.orbit.material.dispose();
     }
     this.labels.dispose();
     delete (window as { __perigeeTest?: unknown }).__perigeeTest;
@@ -769,6 +901,11 @@ class SolarView implements View {
         text: t.mission.name[lang],
         className: t.natural ? 'label-planet' : 'label-mission',
       })),
+      ...this.moons.map((m) => ({
+        id: `s:${m.moon.id}`,
+        text: m.moon.name[lang],
+        className: 'label-planet',
+      })),
     ]);
   }
 
@@ -813,6 +950,21 @@ class SolarView implements View {
         selected ? LabelPriority.Selected : t.natural ? PLANET_PRIORITY : LabelPriority.Orbiting,
       );
     }
+    for (const m of this.moons) {
+      const selected = sel?.kind === 'moon' && sel.moon.id === m.moon.id;
+      const scene = m.shown && m.scene && !this.behindBody(m.scene, m.moon.id) ? m.scene : undefined;
+      this.labels.place(
+        `s:${m.moon.id}`,
+        scene ? sub(scene, o) : undefined,
+        scene,
+        camera,
+        o,
+        0,
+        w,
+        hgt,
+        selected ? LabelPriority.Selected : MOON_PRIORITY,
+      );
+    }
     this.labels.layout(w, hgt);
   }
 
@@ -825,19 +977,20 @@ class SolarView implements View {
       return;
     }
     const mission = this.missions.find((m) => m.id === sel);
-    if (mission) this.select({ kind: 'mission', mission }, { frame: true });
+    if (mission) {
+      this.select({ kind: 'mission', mission }, { frame: true });
+      return;
+    }
+    const moon = this.moons.find((m) => `moon:${m.moon.id}` === sel)?.moon;
+    if (moon) this.select({ kind: 'moon', moon }, { frame: true });
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
     const cur = this.selection;
-    const same =
-      (sel?.kind === 'planet' && cur?.kind === 'planet' && sel.planet.id === cur.planet.id) ||
-      (sel?.kind === 'mission' && cur?.kind === 'mission' && sel.mission.id === cur.mission.id);
+    const same = selectionKey(sel) === selectionKey(cur);
     if (!same) this.host.follow.stop();
     this.selection = sel;
-    this.panel.setSelected(
-      sel?.kind === 'planet' ? `planet:${sel.planet.id}` : sel ? `mission:${sel.mission.id}` : undefined,
-    );
+    this.panel.setSelected(selectionKey(sel));
     this.pendingFrame = sel !== undefined && (options.frame ?? false) && !options.follow;
     if (!sel) this.detail.hide();
     else this.renderDetail(options.focus ?? false);
@@ -848,21 +1001,36 @@ class SolarView implements View {
   private scenePositionOf(sel: Selection): Vec3 | undefined {
     if (sel?.kind === 'planet') return this.planets.find((p) => p.info.id === sel.planet.id)?.scene;
     if (sel?.kind === 'mission') return this.probes.find((t) => t.mission.id === sel.mission.id)?.scene;
+    if (sel?.kind === 'moon') return this.moons.find((m) => m.moon.id === sel.moon.id)?.scene;
     return undefined;
+  }
+
+  toggleFollow(): void {
+    if (this.host.follow.active) this.host.follow.stop();
+    else if (this.selection) this.startFollowing();
   }
 
   private startFollowing(): void {
     const sel = this.selection;
     if (!sel || !this.scenePositionOf(sel)) return;
+    // Following supersedes a framing requested by the same selection but not applied yet.
+    this.pendingFrame = false;
     const distanceKm = this.logScale
       ? 0.08 * AU_KM
       : sel.kind === 'planet'
         ? Math.max(sel.planet.radiusKm * 12, 60_000)
-        : 3e6;
+        : sel.kind === 'moon'
+          ? Math.max(sel.moon.radiusKm * 14, 8_000)
+          : 3e6;
+    // Seen from the day side, 45° from the Sun direction towards the scene north (the Sun is at the origin).
+    const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
+    const sunward = normalize(scale(pos, -1));
+    const viewFrom = add(scale(sunward, Math.SQRT1_2), [0, 0, Math.SQRT1_2]);
     this.detail.following = this.host.follow.start(
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
+      viewFrom,
     );
   }
 
@@ -891,7 +1059,12 @@ class SolarView implements View {
   private renderDetail(focus: boolean): void {
     const sel = this.selection;
     if (!sel) return;
-    const content = sel.kind === 'planet' ? this.planetDetail(sel.planet) : this.missionDetail(sel.mission);
+    const content =
+      sel.kind === 'planet'
+        ? this.planetDetail(sel.planet)
+        : sel.kind === 'moon'
+          ? this.moonDetail(sel.moon)
+          : this.missionDetail(sel.mission);
     this.detail.show(content, focus);
   }
 
@@ -926,6 +1099,153 @@ class SolarView implements View {
         'https://github.com/cosinekitty/astronomy',
       ],
       followable: true,
+    };
+  }
+
+  /** Moon states, meshes (lit, tidally locked) and planet-relative orbits; nothing is drawn in log scale. */
+  private updateMoons(date: Date, nowMs: number, orbitsKey: string): void {
+    for (const m of this.moons) {
+      m.state = this.logScale ? undefined : moonState(m.moon, date, this.tdbJd, this.jupiterCache);
+      const s = m.state;
+      m.scene = s ? add(m.planet.scene, quatRotate(this.sceneQ, s.posKm)) : undefined;
+      if (!s || !m.scene) continue;
+      m.mesh.setSunDirection(normalize(scale(m.scene, -1)));
+      m.mesh.setOrientation(quatMultiply(this.sceneQ, this.moonOrientation(m, s, date)));
+      const periodMs =
+        (m.moon.elements?.periodDays ?? osculatingElements(s, this.moonMu(m, s)).periodS ?? 0) * 1000;
+      const period = m.moon.elements ? periodMs * SECONDS_PER_DAY : periodMs;
+      if (m.orbitKey !== orbitsKey || Math.abs(nowMs - m.orbitBuiltMs) > ORBIT_REBUILD_FRACTION * period) {
+        const offsets = ellipseOffsetsAround(
+          s,
+          this.moonMu(m, s),
+          Math.max(1e-6, (0.02 * m.moon.radiusKm) / length(s.posKm)),
+        );
+        if (offsets) {
+          const pts = new Float32Array(offsets.length);
+          for (let i = 0; i + 2 < offsets.length; i += 3) {
+            pts[i] = s.posKm[0] + (offsets[i] ?? 0);
+            pts[i + 1] = s.posKm[1] + (offsets[i + 1] ?? 0);
+            pts[i + 2] = s.posKm[2] + (offsets[i + 2] ?? 0);
+          }
+          m.orbit.geometry.setAttribute('position', new Float32BufferAttribute(pts, 3));
+        }
+        m.orbitBuiltMs = nowMs;
+        m.orbitKey = orbitsKey;
+      }
+    }
+  }
+
+  /** Gravitational parameter for a moon's two-body orbit: from its mean motion, else its planet's GM. */
+  private moonMu(m: MoonObject, s: StateVector): number {
+    const el = m.moon.elements;
+    if (el) {
+      const n = (el.nDegPerDay * DEG_TO_RAD) / SECONDS_PER_DAY;
+      return n * n * el.aKm ** 3;
+    }
+    return m.planet.info.id === 'earth'
+      ? GM_KM3_S2.earth + GM_KM3_S2.moon
+      : m.planet.info.gmKm3S2 || length(s.velKmS) ** 2 * length(s.posKm);
+  }
+
+  /**
+   * EQJ ← moon body frame. The Moon uses its IAU model; the others are assumed tidally locked (true for all the
+   * regular moons shown): longitude 0 faces the planet, north along the orbit normal. Hyperion tumbles and the
+   * outer irregular moons do not face their planet; their orientation is only indicative.
+   */
+  private moonOrientation(m: MoonObject, s: StateVector, date: Date): Quat {
+    if (m.moon.id === 'moon') return bodyOrientationEqj(Astronomy.Body.Moon, date);
+    const x = normalize(scale(s.posKm, -1));
+    const z = normalize(cross(s.posKm, s.velKmS));
+    const y = cross(z, x);
+    return quatFromBasis(x, y, z);
+  }
+
+  /** Shows a moon once its orbit is wide enough on screen, and hides what bodies cover. */
+  private placeMoons(rel: (p: Vec3) => Vec3): void {
+    const camera = this.host.renderer.camera;
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * DEG_TO_RAD) / 2);
+    const sel = this.selection;
+    for (const m of this.moons) {
+      const selected = sel?.kind === 'moon' && sel.moon.id === m.moon.id;
+      let shown = false;
+      if (m.scene && m.state) {
+        const aKm = m.moon.elements?.aKm ?? length(m.state.posKm);
+        const toPlanet = Math.max(1, length(rel(m.planet.scene)));
+        shown = selected || (aKm / toPlanet) * focalPx >= MOON_MIN_ORBIT_PX;
+      }
+      m.shown = shown;
+      m.mesh.mesh.visible = shown;
+      m.orbit.visible = shown;
+      if (!shown || !m.scene) {
+        this.moonMarkers.hide(m.index);
+        continue;
+      }
+      const r = rel(m.scene);
+      m.mesh.mesh.position.set(r[0], r[1], r[2]);
+      const p = rel(m.planet.scene);
+      m.orbit.position.set(p[0], p[1], p[2]);
+      m.orbit.quaternion.set(this.sceneQ.x, this.sceneQ.y, this.sceneQ.z, this.sceneQ.w);
+      this.occluders.push({ id: m.moon.id, sceneKm: m.scene, radiusKm: m.moon.radiusKm });
+      this.maybeLoad(m, r, m.moon.radiusKm);
+    }
+    for (const m of this.moons) {
+      if (!m.shown || !m.scene) continue;
+      if (this.behindBody(m.scene, m.moon.id)) this.moonMarkers.hide(m.index);
+      else {
+        const r = rel(m.scene);
+        this.moonMarkers.setPosition(m.index, r[0], r[1], r[2]);
+      }
+    }
+  }
+
+  private moonDetail(moon: Moon): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const num = (v: number, d = 0): string => i18n.number(v, d);
+    const m = this.moons.find((x) => x.moon.id === moon.id);
+    const s = m?.state;
+    const planetName = m?.planet.info.name[i18n.lang] ?? moon.planet;
+    const rows: [string, string][] = [[t('info.parent'), planetName]];
+    rows.push([t('info.radius'), `${num(moon.radiusKm)} km`]);
+    if (s) {
+      rows.push([t('info.distPlanet'), `${num(length(s.posKm))} km`]);
+      rows.push([t('info.speedPlanet'), `${num(length(s.velKmS), 2)} km/s`]);
+    }
+    const el = moon.elements;
+    const osc = s && m ? osculatingElements(s, this.moonMu(m, s)) : undefined;
+    const aKm = el?.aKm ?? osc?.semiMajorAxisKm;
+    if (aKm) rows.push([t('info.semiMajorAxis'), `${num(aKm)} km`]);
+    const periodDays = el?.periodDays ?? (osc?.periodS ? osc.periodS / SECONDS_PER_DAY : undefined);
+    if (periodDays) {
+      rows.push([
+        t('info.orbitalPeriod'),
+        periodDays < 2 ? `${num(periodDays * 24, 1)} h` : `${num(periodDays, 2)} ${t('unit.days')}`,
+      ]);
+    }
+    const e = el?.e ?? osc?.eccentricity;
+    if (e !== undefined) rows.push([t('info.eccentricity'), num(e, 4)]);
+    if (el) {
+      rows.push([
+        t('info.inclination'),
+        `${num(el.iDeg, 2)}° (${t(el.referencePlane === 'ecliptic' ? 'moon.plane.ecliptic' : el.referencePlane === 'laplace' ? 'moon.plane.laplace' : 'moon.plane.equator')})`,
+      ]);
+    }
+    if (m?.scene && s && m.planet) rows.push(...this.distanceRows(add(m.planet.eqj, s.posKm)));
+    const texture = TEXTURE_NOTES[moon.id];
+    if (texture) rows.push([t('info.texture'), t(texture)]);
+    const badge: { text: string; state: BadgeState } = this.logScale
+      ? { text: t('solar.logWarning'), state: 'stale' }
+      : moon.model === 'mean-elements'
+        ? { text: t('moon.model.meanElements'), state: 'stale' }
+        : { text: t('moon.model.theory'), state: 'fresh' };
+    return {
+      title: moon.name[i18n.lang],
+      badge,
+      rows,
+      ...(moon.notes ? { notes: moon.notes[i18n.lang] } : {}),
+      sources: moon.sources,
+      footnote: i18n.format('info.verified', { date: moon.verified }),
+      followable: m?.scene !== undefined,
     };
   }
 

@@ -19,6 +19,7 @@ import {
   LandingSitesSchema,
   LaunchSitesSchema,
   MissionsCatalogSchema,
+  MoonsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
   type Groups,
@@ -29,6 +30,7 @@ import {
   checkEphemerisCoverage,
   checkLaunchSiteCodes,
   checkLeapSeconds,
+  checkMoonAnchors,
   checkOwnerCodes,
   checkStaleVerification,
   deepSpaceCandidates,
@@ -237,6 +239,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   const missionsCatalog = MissionsCatalogSchema.parse(await readJson('catalog/missions.json'));
   const moon = LandingSitesSchema.parse(await readJson('catalog/landing-sites/moon.json'));
   const mars = LandingSitesSchema.parse(await readJson('catalog/landing-sites/mars.json'));
+  const moons = MoonsCatalogSchema.parse(await readJson('catalog/moons.json'));
   const manifest = await readManifest(dataDir);
   const satcat = SatcatListSchema.parse(
     JSON.parse(gunzipSync(await readFile(join(dataDir, 'earth/satcat.json.gz'))).toString('utf8')),
@@ -289,10 +292,12 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/operators.json', verified: operators.verified },
         { path: 'catalog/landing-sites/moon.json', verified: moon.verified },
         { path: 'catalog/landing-sites/mars.json', verified: mars.verified },
+        { path: 'catalog/moons.json', verified: moons.verified },
       ],
       missions,
       now,
     ),
+    ...checkMoonAnchors(moons.moons, now),
     ...checkLeapSeconds(iers, LATEST_LEAP_SECOND, now),
   ];
   const report = { generatedAt: now.toISOString(), items };

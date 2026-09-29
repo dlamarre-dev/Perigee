@@ -16,6 +16,7 @@ import {
   LandingSitesSchema,
   LaunchSitesSchema,
   MissionsCatalogSchema,
+  MoonsCatalogSchema,
   OperatorsCatalogSchema,
 } from '../src/data/schemas';
 
@@ -59,6 +60,10 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
   'catalog/landing-sites/mars.json': {
     schema: LandingSitesSchema,
     entries: (p) => byId((p as z.infer<typeof LandingSitesSchema>).sites),
+  },
+  'catalog/moons.json': {
+    schema: MoonsCatalogSchema,
+    entries: (p) => byId((p as z.infer<typeof MoonsCatalogSchema>).moons),
   },
   'catalog/operators.json': {
     schema: OperatorsCatalogSchema,

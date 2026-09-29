@@ -674,6 +674,17 @@ input[type='checkbox'] {
 
 /* ---------------------------------------------------------------- small screens */
 
+/* Moons folded under their planet (solar-system panel). */
+.moon-list {
+  margin: 2px 0 6px 18px;
+  padding-left: 8px;
+  border-left: 1px solid var(--line);
+}
+
+.moon-list[hidden] {
+  display: none;
+}
+
 /* Phone-only controls, hidden on larger screens (see the phone layout at the end of this file). */
 .menu-toggle,
 .mobile-only,

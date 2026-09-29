@@ -22,7 +22,8 @@
     "data:fetch": "tsx pipeline/run.ts gp && tsx pipeline/run.ts satcat && tsx pipeline/run.ts horizons && tsx pipeline/run.ts rovers",
     "data:pull": "tsx pipeline/pull.ts",
     "data:audit": "tsx pipeline/run.ts audit",
-    "icons": "tsx tools/icons/make-icons.ts"
+    "icons": "tsx tools/icons/make-icons.ts",
+    "moons:anchor": "tsx tools/moons/anchor.ts"
   },
   "dependencies": {
     "@fontsource/rajdhani": "^5.3.0",

@@ -161,6 +161,54 @@ export type MissionsCatalog = z.infer<typeof MissionsCatalogSchema>;
 export const LandingSiteTypeSchema = z.enum(['soft', 'hard', 'impact', 'crewed', 'rover-last-known']);
 export type LandingSiteType = z.infer<typeof LandingSiteTypeSchema>;
 
+/**
+ * catalog/moons.json — natural satellites of the planets for the solar-system view. Positions are computed in the
+ * browser: astronomy-engine for the Moon and the Galilean moons, JPL SSD mean orbital elements (two-body Kepler
+ * plus apsidal and nodal precession) for the others.
+ */
+export const MoonPlanetSchema = z.enum(['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto']);
+export const MoonElementsSchema = z.object({
+  /** Epoch of the elements, Julian date (TDB). */
+  epochJdTdb: z.number(),
+  aKm: z.number().positive(),
+  e: z.number().min(0).max(1),
+  /** Argument of periapsis, mean anomaly, inclination, longitude of the ascending node (degrees). */
+  wDeg: z.number(),
+  MDeg: z.number(),
+  iDeg: z.number(),
+  nodeDeg: z.number(),
+  nDegPerDay: z.number().positive(),
+  periodDays: z.number().positive(),
+  /** Precession periods (years); positive = apsides advance / node regresses, as JPL tabulates them. */
+  apsidalPeriodYears: z.number().optional(),
+  nodalPeriodYears: z.number().optional(),
+  /** Plane the angles refer to: the local Laplace plane (pole given), the planet's equator, or the ecliptic. */
+  referencePlane: z.enum(['laplace', 'equator', 'ecliptic', 'icrf']),
+  laplacePoleRaDeg: z.number().optional(),
+  laplacePoleDecDeg: z.number().optional(),
+});
+export type MoonElements = z.infer<typeof MoonElementsSchema>;
+export const MoonSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  name: localized,
+  planet: MoonPlanetSchema,
+  spkid: z.number().int().positive(),
+  radiusKm: z.number().positive(),
+  color: hexColor,
+  model: z.enum(['astronomy-engine', 'mean-elements']),
+  elements: MoonElementsSchema.optional(),
+  notes: localized.optional(),
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type Moon = z.infer<typeof MoonSchema>;
+export const MoonsCatalogSchema = z
+  .object({ verified: isoDate, sources: z.array(z.url()).min(1), moons: z.array(MoonSchema) })
+  .refine((c) => c.moons.every((m) => m.model === 'astronomy-engine' || m.elements), {
+    message: 'mean-elements moons need elements',
+  });
+export type MoonsCatalog = z.infer<typeof MoonsCatalogSchema>;
+
 /** catalog/landing-sites/<body>.json — planetocentric coordinates, east-positive longitudes. */
 export const LandingSitesSchema = z.object({
   verified: isoDate,

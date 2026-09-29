@@ -6,7 +6,7 @@ test('shows planets with distances and light time', async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&${FROZEN}`);
   const panel = page.locator('#side-panel');
   await expect(panel).toContainText('Solar system');
-  await panel.locator('[data-planet="jupiter"]').click();
+  await panel.locator('button[data-planet="jupiter"]').click();
   const info = page.locator('aside.info:visible');
   await expect(info.locator('.panel-title')).toHaveText('Jupiter');
   await expect(info).toContainText('Distance to the Sun');
@@ -66,4 +66,29 @@ test('a body hides the labels of objects behind it', async ({ page }) => {
     expect(await look(0.6)).toBe(true);
     await expect(pluto).toHaveAttribute('data-shown', 'false', { timeout: 1500 });
   }).toPass({ timeout: 15_000 });
+});
+
+test('moons unfold under the selected planet, fold again, and F toggles follow', async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  const panel = page.locator('#side-panel');
+  const moons = panel.locator('ul.moon-list[data-planet="jupiter"]');
+  await expect(moons).toBeHidden();
+  await panel.locator('button[data-planet="jupiter"]').click();
+  await expect(moons).toBeVisible();
+  await expect(panel.locator('button[data-planet="jupiter"]')).toHaveAttribute('aria-expanded', 'true');
+  await moons.locator('[data-moon="europa"]').click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Europa');
+  await expect(info).toContainText('Jupiter');
+  await expect(page).toHaveURL(/sel=moon(:|%3A)europa/);
+  await expect(moons).toBeVisible();
+  const follow = info.getByRole('button', { name: 'Follow' });
+  await page.locator('canvas').focus();
+  await page.keyboard.press('f');
+  await expect(info.locator('button[aria-pressed="true"]')).toBeVisible();
+  await page.keyboard.press('f');
+  await expect(follow).toHaveAttribute('aria-pressed', 'false');
+  await panel.locator('button[data-planet="saturn"]').click();
+  await expect(moons).toBeHidden();
+  await expect(panel.locator('ul.moon-list[data-planet="saturn"]')).toBeVisible();
 });

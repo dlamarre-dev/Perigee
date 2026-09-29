@@ -40,6 +40,9 @@ to do anything unless you explicitly ask for help.
      `hostedPayloads` (e.g. the GHGSat series page on Gunter's Space Page) for newly launched instruments, and add
      each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),
      the payload name and sources. Satellites carrying the operator's name are already covered by `nameRules`.
+   - `moon-anchor`: run `npm run moons:anchor` (three Horizons requests per listed moon, a few seconds apart),
+     then `npm run test` (the moons test compares positions with Horizons). It rewrites the epoch angles, the
+     mean motion, `verified` and the Horizons source of each mean-element moon in `catalog/moons.json`.
    - `leap-second`: update `src/astro/leapSeconds.ts` from the IERS file, including its "Last checked" line.
 3. Refresh the "Known statuses" summary in `CLAUDE.md` §13 for the missions you changed (same format and
    dates).
@@ -66,7 +69,8 @@ to do anything unless you explicitly ask for help.
   `catalog-guard` CI job rejects anything else, deleted entries, missing or non-https sources, changes without a
   new `verified` date, and more than 40 changed entries.
 - Never call CelesTrak GP endpoints (`gp.php`), JPL Horizons (`ssd.jpl.nasa.gov`) or IERS: the Actions pipeline
-  owns them and the audit already brings what you need. The other CelesTrak pages listed above: one request each.
+  owns them and the audit already brings what you need. One exception: `npm run moons:anchor`, only for a
+  `moon-anchor` audit item (about once a year), run once. The other CelesTrak pages listed above: one request each.
 - If the network blocks a source, try another official one; if nothing can be read, do not guess: list the item
   under "Needs a human".
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.

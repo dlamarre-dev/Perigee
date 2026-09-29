@@ -63,7 +63,7 @@ test('panels are bottom sheets above the time bar, one at a time', async ({ page
   expect(sheet.y + sheet.height).toBeLessThanOrEqual(time.y);
   await noHorizontalOverflow(page);
 
-  await list.locator('[data-planet="jupiter"]').click();
+  await list.locator('button[data-planet="jupiter"]').click();
   const info = page.locator('aside.info:visible');
   await expect(info.locator('.panel-title')).toHaveText('Jupiter');
   await expect(list).toBeHidden();

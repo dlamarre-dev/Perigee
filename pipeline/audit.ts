@@ -6,7 +6,14 @@
  * Network: a few polite requests per week (CelesTrak index page, this year's SATCAT launches, IERS leap-second
  * file, one Horizons lookup per deep-space candidate). Everything else comes from already-published data.
  */
-import type { LaunchSites, Manifest, Mission, OperatorsCatalog, SatcatRecord } from '../src/data/schemas';
+import type {
+  LaunchSites,
+  Manifest,
+  Mission,
+  Moon,
+  OperatorsCatalog,
+  SatcatRecord,
+} from '../src/data/schemas';
 
 export type AuditKind =
   | 'launch-site-code'
@@ -16,6 +23,7 @@ export type AuditKind =
   | 'ephemeris-ending'
   | 'ephemeris-ended-active'
   | 'stale-verification'
+  | 'moon-anchor'
   | 'leap-second';
 
 export interface AuditItem {
@@ -34,6 +42,8 @@ export interface AuditReport {
 const DAY_MS = 86_400_000;
 export const STALE_AFTER_DAYS = 90;
 export const COVERAGE_WARNING_DAYS = 30;
+/** Mean-element moons drift by a few degrees a year from their anchoring epoch (tools/moons/anchor.ts). */
+export const MOON_ANCHOR_MAX_DAYS = 365;
 
 function examples(records: readonly SatcatRecord[], n = 3): string[] {
   return records.slice(0, n).map((r) => `${r.OBJECT_NAME} (${r.NORAD_CAT_ID})`);
@@ -206,6 +216,21 @@ export function checkStaleVerification(
   return items;
 }
 
+/** Mean-element moons whose anchoring epoch is older than MOON_ANCHOR_MAX_DAYS. */
+export function checkMoonAnchors(moons: readonly Moon[], now: Date): AuditItem[] {
+  const nowJd = now.getTime() / DAY_MS + 2440587.5;
+  const old = moons.filter((m) => m.elements && nowJd - m.elements.epochJdTdb > MOON_ANCHOR_MAX_DAYS);
+  if (old.length === 0) return [];
+  return [
+    {
+      kind: 'moon-anchor',
+      key: 'catalog/moons.json',
+      summary: `${old.length} moons were anchored more than ${MOON_ANCHOR_MAX_DAYS} days ago (${old.map((m) => m.id).join(', ')}): run npm run moons:anchor`,
+      details: { moons: old.map((m) => m.id) },
+    },
+  ];
+}
+
 /** IERS Leap_Second.dat: last TAI − UTC step and the file's expiry date. */
 export function parseIersLeapSeconds(text: string): {
   lastUnixMs: number;
@@ -255,6 +280,7 @@ const TITLES: Record<AuditKind, string> = {
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',
   'ephemeris-ending': 'Public ephemerides ending within 30 days',
   'stale-verification': 'Entries due for re-verification',
+  'moon-anchor': 'Moon mean elements due for re-anchoring',
   'leap-second': 'Leap seconds',
 };
 

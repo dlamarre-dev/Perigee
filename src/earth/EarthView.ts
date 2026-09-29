@@ -180,6 +180,14 @@ class EarthView implements View {
     delete (window as { __perigeeTest?: unknown }).__perigeeTest;
   }
 
+  toggleFollow(): void {
+    // Following supersedes a framing requested by the selection but not applied yet.
+    this.pendingFrame = false;
+    if (this.host.follow.active) this.host.follow.stop();
+    else if (this.selectedSite) this.followSite();
+    else this.startFollowing();
+  }
+
   private startFollowing(): void {
     const sats = this.sats;
     if (!sats?.selection) return;

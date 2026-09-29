@@ -135,6 +135,153 @@ const BODIES: Record<string, readonly Source[]> = {
       centerLonDeg: 180,
     },
   ],
+  // Moons (solar-system view): USGS Astrogeology global mosaics, NASA/JPL products hosted by USGS, and
+  // P. Stooke's small-body maps (PDS Small Bodies Node, public domain with credit); see DATA_SOURCES.md.
+  io: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Io_GalileoSSI-Voyager_Global_Mosaic_ClrMerge_1km.tif',
+      quality: 85,
+      dropEdge: true,
+    },
+  ],
+  europa: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Europa_Voyager_GalileoSSI_global_mosaic_500m.tif',
+      quality: 85,
+      centerLonDeg: 180,
+      dropEdge: true,
+    },
+  ],
+  ganymede: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Ganymede_Voyager_GalileoSSI_Global_ClrMosaic_1435m.tif',
+      quality: 85,
+      centerLonDeg: 180,
+    },
+  ],
+  callisto: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif',
+      quality: 85,
+      centerLonDeg: 180,
+    },
+  ],
+  amalthea: [
+    {
+      name: 'color',
+      url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/miscellaneous/j5amalthea/amalcyl.jpg',
+      quality: 85,
+    },
+  ],
+  mimas: [
+    {
+      name: 'color',
+      url: 'https://asc-pds-services.s3.us-west-2.amazonaws.com/wms_basemaps/Saturn/Mimas/Cassini_DLR/MI_170630_DLR_basemap.tif',
+      quality: 85,
+    },
+  ],
+  enceladus: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Enceladus_Cassini_mosaic_global_110m.tif',
+      quality: 85,
+      dropEdge: true,
+    },
+  ],
+  tethys: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Tethys_Cassini_mosaic_global_293m.tif',
+      quality: 85,
+    },
+  ],
+  dione: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Dione_Cassini_Voyager_mosaic_global_154m.tif',
+      quality: 85,
+    },
+  ],
+  rhea: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Rhea_Cassini_Voyager_mosaic_global_417m.tif',
+      quality: 85,
+    },
+  ],
+  titan: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Titan_ISS_P19658_Mosaic_Global_4km.tif',
+      quality: 85,
+      centerLonDeg: 180,
+    },
+  ],
+  hyperion: [
+    {
+      name: 'color',
+      url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/miscellaneous/s7hyperion/hyrelcyl.jpg',
+      quality: 85,
+    },
+  ],
+  iapetus: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Iapetus_Cassini_Voyager_mosaic_global_783m.tif',
+      quality: 85,
+    },
+  ],
+  phoebe: [
+    {
+      name: 'color',
+      url: 'https://asc-pds-services.s3.us-west-2.amazonaws.com/wms_basemaps/Saturn/Phoebe/Cassini/Phoebe_PDS_8ppd_dd360.tif',
+      quality: 85,
+      centerLonDeg: 180,
+    },
+  ],
+  triton: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Triton_Voyager2_ClrMosaic_GlobalFill_600m.tif',
+      quality: 85,
+    },
+  ],
+  charon: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Charon_NewHorizons_Global_Mosaic_300m_Jul2017_8bit.tif',
+      quality: 85,
+      dropEdge: true,
+    },
+  ],
+  phobos: [
+    {
+      name: 'color',
+      url: 'https://planetarymaps.usgs.gov/mosaic/Phobos_Viking_Mosaic_40ppd_DLRcontrol.tif',
+      quality: 85,
+    },
+  ],
+  deimos: [
+    {
+      name: 'color',
+      url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/miscellaneous/m2deimos/deimos_cyl_viking_mro.jpg',
+      quality: 85,
+    },
+  ],
+  // Moons without a usable global map: uniform colour from their visual geometric albedo.
+  miranda: [{ name: 'color', procedural: 'miranda' }],
+  ariel: [{ name: 'color', procedural: 'ariel' }],
+  umbriel: [{ name: 'color', procedural: 'umbriel' }],
+  titania: [{ name: 'color', procedural: 'titania' }],
+  oberon: [{ name: 'color', procedural: 'oberon' }],
+  proteus: [{ name: 'color', procedural: 'proteus' }],
+  nereid: [{ name: 'color', procedural: 'nereid' }],
+  nix: [{ name: 'color', procedural: 'nix' }],
+  hydra: [{ name: 'color', procedural: 'hydra' }],
   eris: [{ name: 'color', procedural: 'eris' }],
   haumea: [{ name: 'color', procedural: 'haumea' }],
   makemake: [{ name: 'color', procedural: 'makemake' }],

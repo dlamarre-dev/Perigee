@@ -1,0 +1,986 @@
+{
+  "verified": "2026-09-29",
+  "sources": [
+    "https://ssd.jpl.nasa.gov/sats/phys_par/",
+    "https://ssd.jpl.nasa.gov/sats/elem/",
+    "https://github.com/cosinekitty/astronomy",
+    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc"
+  ],
+  "moons": [
+    {
+      "id": "moon",
+      "name": {
+        "en": "Moon",
+        "fr": "Lune"
+      },
+      "planet": "earth",
+      "spkid": 301,
+      "radiusKm": 1737.4,
+      "color": "#c9c5bd",
+      "model": "astronomy-engine",
+      "verified": "2026-09-29",
+      "sources": ["https://ssd.jpl.nasa.gov/sats/phys_par/", "https://github.com/cosinekitty/astronomy"]
+    },
+    {
+      "id": "phobos",
+      "name": {
+        "en": "Phobos",
+        "fr": "Phobos"
+      },
+      "planet": "mars",
+      "spkid": 401,
+      "radiusKm": 11.08,
+      "color": "#8c7f72",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 9375,
+        "e": 0.01681,
+        "wDeg": 80.322,
+        "MDeg": 171.858,
+        "iDeg": 1.0903,
+        "nodeDeg": 235.042,
+        "nDegPerDay": 1128.840122282,
+        "periodDays": 0.318911414,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 1.1,
+        "nodalPeriodYears": 2.3,
+        "laplacePoleRaDeg": 317.7,
+        "laplacePoleDecDeg": 52.9
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='401'&EPHEM_TYPE=VECTORS&CENTER='500@499'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "deimos",
+      "name": {
+        "en": "Deimos",
+        "fr": "Déimos"
+      },
+      "planet": "mars",
+      "spkid": 402,
+      "radiusKm": 6.2,
+      "color": "#a2968a",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 23457,
+        "e": 0.00023,
+        "wDeg": 194.914,
+        "MDeg": 185.724,
+        "iDeg": 1.7796,
+        "nodeDeg": 237.578,
+        "nDegPerDay": 285.161962041,
+        "periodDays": 1.262440465,
+        "referencePlane": "laplace",
+        "nodalPeriodYears": 56.2,
+        "laplacePoleRaDeg": 316.6,
+        "laplacePoleDecDeg": 53.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='402'&EPHEM_TYPE=VECTORS&CENTER='500@499'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "amalthea",
+      "name": {
+        "en": "Amalthea",
+        "fr": "Amalthée"
+      },
+      "planet": "jupiter",
+      "spkid": 505,
+      "radiusKm": 83.5,
+      "color": "#b5654a",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 181400,
+        "e": 0.01077,
+        "wDeg": 255.404,
+        "MDeg": 7.594,
+        "iDeg": 0.3934,
+        "nodeDeg": 295.881,
+        "nDegPerDay": 722.635889837,
+        "periodDays": 0.498176198,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 0.196,
+        "nodalPeriodYears": 0.393,
+        "laplacePoleRaDeg": 268.1,
+        "laplacePoleDecDeg": 64.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='505'&EPHEM_TYPE=VECTORS&CENTER='500@599'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "io",
+      "name": {
+        "en": "Io",
+        "fr": "Io"
+      },
+      "planet": "jupiter",
+      "spkid": 501,
+      "radiusKm": 1821.49,
+      "color": "#e8d36a",
+      "model": "astronomy-engine",
+      "elements": {
+        "epochJdTdb": 2451545,
+        "aKm": 421800,
+        "e": 0.004,
+        "wDeg": 49.1,
+        "MDeg": 330.9,
+        "iDeg": 0,
+        "nodeDeg": 0,
+        "nDegPerDay": 204.228436314,
+        "periodDays": 1.762732,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 1.333,
+        "laplacePoleRaDeg": 268.1,
+        "laplacePoleDecDeg": 64.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc"
+      ]
+    },
+    {
+      "id": "europa",
+      "name": {
+        "en": "Europa",
+        "fr": "Europe"
+      },
+      "planet": "jupiter",
+      "spkid": 502,
+      "radiusKm": 1560.8,
+      "color": "#d9c9a8",
+      "model": "astronomy-engine",
+      "elements": {
+        "epochJdTdb": 2451545,
+        "aKm": 671100,
+        "e": 0.009,
+        "wDeg": 45,
+        "MDeg": 345.4,
+        "iDeg": 0.5,
+        "nodeDeg": 184,
+        "nDegPerDay": 102.114247122,
+        "periodDays": 3.525463,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 1.394,
+        "nodalPeriodYears": 30.202,
+        "laplacePoleRaDeg": 268.1,
+        "laplacePoleDecDeg": 64.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc"
+      ]
+    },
+    {
+      "id": "ganymede",
+      "name": {
+        "en": "Ganymede",
+        "fr": "Ganymède"
+      },
+      "planet": "jupiter",
+      "spkid": 503,
+      "radiusKm": 2631.2,
+      "color": "#a89f92",
+      "model": "astronomy-engine",
+      "elements": {
+        "epochJdTdb": 2451545,
+        "aKm": 1070400,
+        "e": 0.001,
+        "wDeg": 198.3,
+        "MDeg": 324.8,
+        "iDeg": 0.2,
+        "nodeDeg": 58.5,
+        "nDegPerDay": 50.310330891,
+        "periodDays": 7.155588,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 68.301,
+        "nodalPeriodYears": 137.812,
+        "laplacePoleRaDeg": 268.2,
+        "laplacePoleDecDeg": 64.6
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/"
+      ]
+    },
+    {
+      "id": "callisto",
+      "name": {
+        "en": "Callisto",
+        "fr": "Callisto"
+      },
+      "planet": "jupiter",
+      "spkid": 504,
+      "radiusKm": 2410.3,
+      "color": "#7d7468",
+      "model": "astronomy-engine",
+      "elements": {
+        "epochJdTdb": 2451545,
+        "aKm": 1882700,
+        "e": 0.007,
+        "wDeg": 43.8,
+        "MDeg": 87.4,
+        "iDeg": 0.3,
+        "nodeDeg": 309.1,
+        "nDegPerDay": 21.569233645,
+        "periodDays": 16.69044,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 277.921,
+        "nodalPeriodYears": 577.264,
+        "laplacePoleRaDeg": 268.7,
+        "laplacePoleDecDeg": 64.8
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/"
+      ]
+    },
+    {
+      "id": "mimas",
+      "name": {
+        "en": "Mimas",
+        "fr": "Mimas"
+      },
+      "planet": "saturn",
+      "spkid": 601,
+      "radiusKm": 198.2,
+      "color": "#cfcfcf",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 186000,
+        "e": 0.01227,
+        "wDeg": 65.231,
+        "MDeg": 12.219,
+        "iDeg": 1.5963,
+        "nodeDeg": 131.719,
+        "nDegPerDay": 381.997231368,
+        "periodDays": 0.942415207,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 0.493,
+        "nodalPeriodYears": 0.986,
+        "laplacePoleRaDeg": 40.6,
+        "laplacePoleDecDeg": 83.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='601'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "enceladus",
+      "name": {
+        "en": "Enceladus",
+        "fr": "Encelade"
+      },
+      "planet": "saturn",
+      "spkid": 602,
+      "radiusKm": 252.1,
+      "color": "#f2f2f0",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 238400,
+        "e": 0.00727,
+        "wDeg": 6.076,
+        "MDeg": 141.591,
+        "iDeg": 0.0445,
+        "nodeDeg": 188.029,
+        "nDegPerDay": 262.733329673,
+        "periodDays": 1.370210626,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 2.916,
+        "laplacePoleRaDeg": 40.6,
+        "laplacePoleDecDeg": 83.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='602'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "tethys",
+      "name": {
+        "en": "Tethys",
+        "fr": "Téthys"
+      },
+      "planet": "saturn",
+      "spkid": 603,
+      "radiusKm": 531.1,
+      "color": "#e4e1da",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 295000,
+        "e": 0.00336,
+        "wDeg": 245.773,
+        "MDeg": 177.517,
+        "iDeg": 1.1116,
+        "nodeDeg": 128.984,
+        "nDegPerDay": 190.698284506,
+        "periodDays": 1.887798839,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 0.005,
+        "nodalPeriodYears": 4.982,
+        "laplacePoleRaDeg": 40.6,
+        "laplacePoleDecDeg": 83.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='603'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "dione",
+      "name": {
+        "en": "Dione",
+        "fr": "Dioné"
+      },
+      "planet": "saturn",
+      "spkid": 604,
+      "radiusKm": 561.4,
+      "color": "#d6d3cc",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 377700,
+        "e": 0.00435,
+        "wDeg": 109.506,
+        "MDeg": 165.335,
+        "iDeg": 0.0647,
+        "nodeDeg": 189.528,
+        "nDegPerDay": 131.535585795,
+        "periodDays": 2.73690194,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 11.698,
+        "laplacePoleRaDeg": 40.6,
+        "laplacePoleDecDeg": 83.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='604'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "rhea",
+      "name": {
+        "en": "Rhea",
+        "fr": "Rhéa"
+      },
+      "planet": "saturn",
+      "spkid": 605,
+      "radiusKm": 763.5,
+      "color": "#cfcac2",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 527200,
+        "e": 0.00143,
+        "wDeg": 155.829,
+        "MDeg": 218.231,
+        "iDeg": 0.3011,
+        "nodeDeg": 90.628,
+        "nDegPerDay": 79.689775825,
+        "periodDays": 4.517518041,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 33.939,
+        "nodalPeriodYears": 35.775,
+        "laplacePoleRaDeg": 40.6,
+        "laplacePoleDecDeg": 83.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='605'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "titan",
+      "name": {
+        "en": "Titan",
+        "fr": "Titan"
+      },
+      "planet": "saturn",
+      "spkid": 606,
+      "radiusKm": 2574.76,
+      "color": "#d9a441",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 1221900,
+        "e": 0.02865,
+        "wDeg": 208.914,
+        "MDeg": 350.196,
+        "iDeg": 0.3507,
+        "nodeDeg": 13.232,
+        "nDegPerDay": 22.577023486,
+        "periodDays": 15.945414603,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 346.68,
+        "nodalPeriodYears": 687.37,
+        "laplacePoleRaDeg": 36.4,
+        "laplacePoleDecDeg": 84
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='606'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "hyperion",
+      "name": {
+        "en": "Hyperion",
+        "fr": "Hypérion"
+      },
+      "planet": "saturn",
+      "spkid": 607,
+      "radiusKm": 135,
+      "color": "#b8ab98",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 1481500,
+        "e": 0.09932,
+        "wDeg": 248.49,
+        "MDeg": 204.885,
+        "iDeg": 0.9196,
+        "nodeDeg": 220.203,
+        "nDegPerDay": 16.923835599,
+        "periodDays": 21.271773641,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 20.843,
+        "nodalPeriodYears": 257.625,
+        "laplacePoleRaDeg": 40.2,
+        "laplacePoleDecDeg": 83.6
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='607'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ],
+      "notes": {
+        "en": "Hyperion tumbles chaotically: its drawn orientation is only indicative.",
+        "fr": "Hypérion tourne de façon chaotique : son orientation affichée n’est qu’indicative."
+      }
+    },
+    {
+      "id": "iapetus",
+      "name": {
+        "en": "Iapetus",
+        "fr": "Japet"
+      },
+      "planet": "saturn",
+      "spkid": 608,
+      "radiusKm": 734.3,
+      "color": "#b0a890",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 3561700,
+        "e": 0.02922,
+        "wDeg": 282.797,
+        "MDeg": 250.019,
+        "iDeg": 7.5409,
+        "nodeDeg": 71.91,
+        "nDegPerDay": 4.53774512,
+        "periodDays": 79.334557255,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 1662.9,
+        "nodalPeriodYears": 3130.302,
+        "laplacePoleRaDeg": 288.7,
+        "laplacePoleDecDeg": 78.9
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='608'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "phoebe",
+      "name": {
+        "en": "Phoebe",
+        "fr": "Phœbé"
+      },
+      "planet": "saturn",
+      "spkid": 609,
+      "radiusKm": 106.5,
+      "color": "#6f6a64",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 12929400,
+        "e": 0.16392,
+        "wDeg": 1.062,
+        "MDeg": 317.772,
+        "iDeg": 175.0815,
+        "nodeDeg": 254.289,
+        "nDegPerDay": 0.65911223,
+        "periodDays": 546.189227645,
+        "referencePlane": "laplace",
+        "apsidalPeriodYears": 468.321,
+        "nodalPeriodYears": 741.483,
+        "laplacePoleRaDeg": 276,
+        "laplacePoleDecDeg": 67.5
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='609'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "miranda",
+      "name": {
+        "en": "Miranda",
+        "fr": "Miranda"
+      },
+      "planet": "uranus",
+      "spkid": 705,
+      "radiusKm": 235.8,
+      "color": "#c8c8c8",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 129846,
+        "e": 0.00148,
+        "wDeg": 154.909,
+        "MDeg": 345.324,
+        "iDeg": 4.4265,
+        "nodeDeg": 279.645,
+        "nDegPerDay": 254.692898813,
+        "periodDays": 1.41346697,
+        "referencePlane": "equator",
+        "apsidalPeriodYears": 8.939,
+        "nodalPeriodYears": 17.787,
+        "laplacePoleRaDeg": 77.311,
+        "laplacePoleDecDeg": 15.175
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='705'&EPHEM_TYPE=VECTORS&CENTER='500@799'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "ariel",
+      "name": {
+        "en": "Ariel",
+        "fr": "Ariel"
+      },
+      "planet": "uranus",
+      "spkid": 701,
+      "radiusKm": 578.9,
+      "color": "#d5d5d2",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 190929,
+        "e": 0.00057,
+        "wDeg": 155.732,
+        "MDeg": 87.914,
+        "iDeg": 0.0194,
+        "nodeDeg": 106.669,
+        "nDegPerDay": 142.835508446,
+        "periodDays": 2.520381689,
+        "referencePlane": "equator",
+        "apsidalPeriodYears": 28.901,
+        "laplacePoleRaDeg": 77.311,
+        "laplacePoleDecDeg": 15.175
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='701'&EPHEM_TYPE=VECTORS&CENTER='500@799'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "umbriel",
+      "name": {
+        "en": "Umbriel",
+        "fr": "Umbriel"
+      },
+      "planet": "uranus",
+      "spkid": 702,
+      "radiusKm": 584.7,
+      "color": "#8f8f8c",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 265986,
+        "e": 0.00372,
+        "wDeg": 321.929,
+        "MDeg": 160.508,
+        "iDeg": 0.0782,
+        "nodeDeg": 100.553,
+        "nDegPerDay": 86.869021471,
+        "periodDays": 4.144170084,
+        "referencePlane": "equator",
+        "apsidalPeriodYears": 64.126,
+        "nodalPeriodYears": 129.745,
+        "laplacePoleRaDeg": 77.311,
+        "laplacePoleDecDeg": 15.175
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='702'&EPHEM_TYPE=VECTORS&CENTER='500@799'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "titania",
+      "name": {
+        "en": "Titania",
+        "fr": "Titania"
+      },
+      "planet": "uranus",
+      "spkid": 703,
+      "radiusKm": 788.9,
+      "color": "#c3bdb4",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 436298,
+        "e": 0.00195,
+        "wDeg": 284.491,
+        "MDeg": 336.183,
+        "iDeg": 0.0405,
+        "nodeDeg": 0.813,
+        "nDegPerDay": 41.351843657,
+        "periodDays": 8.705778707,
+        "referencePlane": "equator",
+        "apsidalPeriodYears": 579.928,
+        "nodalPeriodYears": 1644.649,
+        "laplacePoleRaDeg": 77.311,
+        "laplacePoleDecDeg": 15.175
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='703'&EPHEM_TYPE=VECTORS&CENTER='500@799'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "oberon",
+      "name": {
+        "en": "Oberon",
+        "fr": "Obéron"
+      },
+      "planet": "uranus",
+      "spkid": 704,
+      "radiusKm": 761.4,
+      "color": "#aba49b",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 583511,
+        "e": 0.00209,
+        "wDeg": 159.585,
+        "MDeg": 347.458,
+        "iDeg": 0.1938,
+        "nodeDeg": 23.418,
+        "nDegPerDay": 26.739132851,
+        "periodDays": 13.463413418,
+        "referencePlane": "equator",
+        "apsidalPeriodYears": 158.604,
+        "nodalPeriodYears": 192.798,
+        "laplacePoleRaDeg": 77.311,
+        "laplacePoleDecDeg": 15.175
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='704'&EPHEM_TYPE=VECTORS&CENTER='500@799'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "proteus",
+      "name": {
+        "en": "Proteus",
+        "fr": "Protée"
+      },
+      "planet": "neptune",
+      "spkid": 808,
+      "radiusKm": 208,
+      "color": "#8a8784",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 117600,
+        "e": 0.0009,
+        "wDeg": 330.132,
+        "MDeg": 338.429,
+        "iDeg": 0.2131,
+        "nodeDeg": 323.586,
+        "nDegPerDay": 320.765232727,
+        "periodDays": 1.122316147,
+        "referencePlane": "laplace",
+        "laplacePoleRaDeg": 299.8,
+        "laplacePoleDecDeg": 42.6
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='808'&EPHEM_TYPE=VECTORS&CENTER='500@899'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "triton",
+      "name": {
+        "en": "Triton",
+        "fr": "Triton"
+      },
+      "planet": "neptune",
+      "spkid": 801,
+      "radiusKm": 1352.6,
+      "color": "#d8c8c0",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 354800,
+        "e": 0.00042,
+        "wDeg": 256.617,
+        "MDeg": 185.66,
+        "iDeg": 157.2399,
+        "nodeDeg": 191.002,
+        "nDegPerDay": 61.263309697,
+        "periodDays": 5.876274099,
+        "referencePlane": "laplace",
+        "nodalPeriodYears": 340.379,
+        "laplacePoleRaDeg": 299.8,
+        "laplacePoleDecDeg": 43.1
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='801'&EPHEM_TYPE=VECTORS&CENTER='500@899'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "nereid",
+      "name": {
+        "en": "Nereid",
+        "fr": "Néréide"
+      },
+      "planet": "neptune",
+      "spkid": 802,
+      "radiusKm": 170,
+      "color": "#b9b6b0",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 5513900,
+        "e": 0.74647,
+        "wDeg": 296.857,
+        "MDeg": 260.895,
+        "iDeg": 5.0512,
+        "nodeDeg": 319.277,
+        "nDegPerDay": 0.999963526,
+        "periodDays": 360.013131085,
+        "referencePlane": "ecliptic",
+        "apsidalPeriodYears": 7990.433,
+        "nodalPeriodYears": 9426.334
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='802'&EPHEM_TYPE=VECTORS&CENTER='500@899'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "charon",
+      "name": {
+        "en": "Charon",
+        "fr": "Charon"
+      },
+      "planet": "pluto",
+      "spkid": 901,
+      "radiusKm": 606,
+      "color": "#b8b1a8",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 19600,
+        "e": 0.00077,
+        "wDeg": 184.734,
+        "MDeg": 189.215,
+        "iDeg": 0.082,
+        "nodeDeg": 11.189,
+        "nDegPerDay": 56.362691738,
+        "periodDays": 6.38720382,
+        "referencePlane": "equator",
+        "laplacePoleRaDeg": 132.993,
+        "laplacePoleDecDeg": -6.163
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='901'&EPHEM_TYPE=VECTORS&CENTER='500@999'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ]
+    },
+    {
+      "id": "nix",
+      "name": {
+        "en": "Nix",
+        "fr": "Nix"
+      },
+      "planet": "pluto",
+      "spkid": 902,
+      "radiusKm": 18,
+      "color": "#d2d0cc",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 49300,
+        "e": 0.03143,
+        "wDeg": 266.045,
+        "MDeg": 165.656,
+        "iDeg": 0.0607,
+        "nodeDeg": 13.556,
+        "nDegPerDay": 14.489937352,
+        "periodDays": 24.844827914,
+        "referencePlane": "equator",
+        "laplacePoleRaDeg": 132.993,
+        "laplacePoleDecDeg": -6.163
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='902'&EPHEM_TYPE=VECTORS&CENTER='500@9'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ],
+      "notes": {
+        "en": "Elements refer to the Pluto–Charon barycentre, drawn around Pluto (offset about 2,100 km).",
+        "fr": "Éléments rapportés au barycentre Pluton–Charon, dessinés autour de Pluton (écart d’environ 2 100 km)."
+      }
+    },
+    {
+      "id": "hydra",
+      "name": {
+        "en": "Hydra",
+        "fr": "Hydre"
+      },
+      "planet": "pluto",
+      "spkid": 903,
+      "radiusKm": 18.5,
+      "color": "#d8d6d2",
+      "model": "mean-elements",
+      "elements": {
+        "epochJdTdb": 2461312.5,
+        "aKm": 65200,
+        "e": 0.02098,
+        "wDeg": 153.538,
+        "MDeg": 194.06,
+        "iDeg": 0.2298,
+        "nodeDeg": 130.197,
+        "nDegPerDay": 9.41932424,
+        "periodDays": 38.219302237,
+        "referencePlane": "equator",
+        "nodalPeriodYears": 14,
+        "laplacePoleRaDeg": 132.993,
+        "laplacePoleDecDeg": -6.163
+      },
+      "verified": "2026-09-29",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/sats/elem/",
+        "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
+        "https://ssd.jpl.nasa.gov/sats/phys_par/",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='903'&EPHEM_TYPE=VECTORS&CENTER='500@9'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+      ],
+      "notes": {
+        "en": "Elements refer to the Pluto–Charon barycentre, drawn around Pluto (offset about 2,100 km).",
+        "fr": "Éléments rapportés au barycentre Pluton–Charon, dessinés autour de Pluton (écart d’environ 2 100 km)."
+      }
+    }
+  ]
+}

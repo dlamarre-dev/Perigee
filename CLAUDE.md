@@ -120,7 +120,8 @@ No single API provides "active probes + landing sites". We maintain:
 - Mars: USGS Astrogeology **colourised Viking MDIM 2.1** + MOLA for relief.
 - Planets (view D): NASA Photojournal / USGS public-domain maps (Mercury, Jupiter, Pluto, Ceres); procedural
   band textures where no public-domain global map exists (Venus cloud tops, Saturn, Uranus, Neptune, unresolved
-  dwarf planets). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' from the NASA
+  dwarf planets, moons never mapped globally). Moons: USGS global mosaics, P. Stooke's PDS maps (Amalthea and
+  Hyperion hand-drawn, labelled). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' from the NASA
   fact sheet (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
 - **Offline** pre-processing (`tools/textures/` script): resample to 2k/4k/8k, KTX2 (Basis) compression,
   progressive loading by zoom level. Source textures are not committed; only compressed derivatives are
@@ -165,6 +166,12 @@ No single API provides "active probes + landing sites". We maintain:
 - Body rotation: `Astronomy.RotationAxis(body, time)` (IAU WGCCRE model) to orient the Moon and Mars; landing
   sites are placed in planetocentric coordinates then rotated with the body.
 - Phobos/Deimos: Horizons (IDs 401/402) like the probes.
+- Moons in the solar view (`catalog/moons.json`, `src/astro/moons.ts`): the Moon and the Galilean moons from
+  astronomy-engine; the others from JPL SSD mean elements (two-body + uniform apsidal/nodal precession in the
+  tabulated Laplace/equator/ecliptic plane), whose epoch angles and mean motion are re-anchored on Horizons states
+  by hand about once a year (`npm run moons:anchor`, 3 Horizons requests per moon; ≤ 7° error after a year).
+  Moons and their orbits are drawn only when the orbit spans ≥ 14 px (or the moon is selected); the panel lists
+  them folded under their planet, unfolded while the planet or one of its moons is selected.
 
 ### 5.3 Missions without public ephemerides
 - `ephemeris: "kepler"`: published mean orbital elements (cited source) propagated as two-body.

@@ -11,12 +11,12 @@ working offline once visited.
 
 ## What you can see
 
-| View             | Contents                                                                                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Earth**        | Every active catalogued satellite (~16,000), propagated with SGP4 from CelesTrak elements refreshed every 4 hours, and 30 orbital launch sites.              |
-| **Moon**         | Active lunar orbiters from JPL Horizons ephemerides, the Earth at its true position, and 50+ landing and impact sites.                                       |
-| **Mars**         | Mars orbiters, Phobos and Deimos, landing sites and the latest positions of the Curiosity and Perseverance rovers.                                           |
-| **Solar system** | The Sun, the planets, five dwarf planets and 20+ interplanetary spacecraft, with distances and light travel time. An optional logarithmic scale fits it all. |
+| View             | Contents                                                                                                                                                                                                    |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Earth**        | Every active catalogued satellite (~16,000), propagated with SGP4 from CelesTrak elements refreshed every 4 hours, and 30 orbital launch sites.                                                             |
+| **Moon**         | Active lunar orbiters from JPL Horizons ephemerides, the Earth at its true position, and 50+ landing and impact sites.                                                                                      |
+| **Mars**         | Mars orbiters, Phobos and Deimos, landing sites and the latest positions of the Curiosity and Perseverance rovers.                                                                                          |
+| **Solar system** | The Sun, the planets, five dwarf planets, 28 of their moons (shown when you come close) and 20+ interplanetary spacecraft, with distances and light travel time. An optional logarithmic scale fits it all. |
 
 Click any object to open its panel: identifiers (NORAD, COSPAR, Horizons), operator, country, launch date,
 status, orbit, and where its position comes from. Positions that are **extrapolated** beyond their data, or
@@ -26,7 +26,7 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 - **Rotate**: left-drag, or the arrow keys. **Roll**: right-drag, two-finger twist, or Q/E.
 - **Zoom**: mouse wheel, pinch, or +/−. **Reset**: R or the _Recenter_ button.
-- **Select**: click an object, or pick it in the side panel list. **Follow**: double-click it.
+- **Select**: click an object, or pick it in the side panel list. **Follow**: double-click it, or press F.
 - **Time**: pause, run at ×1 to ×100,000 (×10,000 in the Earth view), go back to _Now_, or jump to any date.
 - **Frame**: body-fixed (the body stays still) or inertial (the body turns, orbits stay fixed).
 - **Filters** (Earth view): operator, country, constellation group, orbit (LEO, MEO, GEO, HEO), object type,
@@ -38,16 +38,16 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 The address bar always describes what you see, so a link reproduces it:
 
-| Parameter                                      | Meaning                                                                                |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `view=earth\|moon\|mars\|solar`                | View                                                                                   |
-| `lang=en\|fr`                                  | Language                                                                               |
-| `frame=fixed\|inertial`                        | Reference frame                                                                        |
-| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                |
-| `sel=<id>`                                     | Selected object: NORAD number (Earth), mission or planet id, or `site:<id>` for a site |
-| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                 |
-| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                |
-| `log=1`                                        | Logarithmic distances in the solar-system view                                         |
+| Parameter                                      | Meaning                                                                                                        |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `view=earth\|moon\|mars\|solar`                | View                                                                                                           |
+| `lang=en\|fr`                                  | Language                                                                                                       |
+| `frame=fixed\|inertial`                        | Reference frame                                                                                                |
+| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                                        |
+| `sel=<id>`                                     | Selected object: NORAD number (Earth), mission or planet id, `site:<id>` for a site, or `moon:<id>` for a moon |
+| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                         |
+| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                        |
+| `log=1`                                        | Logarithmic distances in the solar-system view                                                                 |
 
 ## Data and credits
 

@@ -682,6 +682,13 @@ export class PlanetaryView implements View {
     return undefined;
   }
 
+  toggleFollow(): void {
+    // Following supersedes a framing requested by the selection but not applied yet.
+    this.pendingFrame = false;
+    if (this.host.follow.active) this.host.follow.stop();
+    else if (this.selection) this.startFollowing();
+  }
+
   private startFollowing(): void {
     const sel = this.selection;
     const pos = this.scenePositionOf(sel);
