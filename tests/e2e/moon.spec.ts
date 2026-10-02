@@ -64,6 +64,8 @@ test('switching views keeps the time and language', async ({ page }) => {
 test('missions can be hidden one by one or all at once, and the choice is kept in the URL', async ({
   page,
 }) => {
+  // Labels fade in over several frames; on software WebGL that takes a while, twice, plus a reload.
+  test.setTimeout(90_000);
   await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
   await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
   const label = page.locator('.label', { hasText: 'Lunar Reconnaissance Orbiter (LRO)' });

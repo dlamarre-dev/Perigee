@@ -22,6 +22,7 @@ import { ensureEnvironment, loadModel } from '../render/models';
 import { h } from './dom';
 
 const SPIN_RAD_PER_S = 0.35;
+const PREVIEW_FRAME_MS = 33;
 
 export class ModelPreview {
   readonly element: HTMLElement;
@@ -123,6 +124,8 @@ export class ModelPreview {
     this.lastMs = performance.now();
     const tick = (now: number): void => {
       this.frame = requestAnimationFrame(tick);
+      // 30 fps is plenty for a slow spin, and leaves the main view its frame budget.
+      if (now - this.lastMs < PREVIEW_FRAME_MS) return;
       const dt = Math.min(0.1, (now - this.lastMs) / 1000);
       this.lastMs = now;
       if (!this.dragging) this.yaw += SPIN_RAD_PER_S * dt;

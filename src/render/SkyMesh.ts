@@ -1,19 +1,27 @@
 /**
  * Real starry sky (all views): the NASA SVS Deep Star Maps 2020 (Hipparcos-2, Tycho-2, Gaia DR2) on a sphere
  * at infinity, in J2000 equatorial coordinates (EQJ). The map is a plate carrée with RA 0h at the centre and RA
- * increasing to the left, as seen from inside: u = 0.5 − α/2π, v = 0.5 + δ/π.
+ * increasing to the left, as seen from inside: u = 0.5 − α/2π, v = 0.5 + δ/π (computed per vertex).
  *
  * The mesh is defined in the inertial frame like the procedural starfield it replaces (the shell rotates it by
  * the scene orientation). It is drawn first, without depth test or write, pinned to the far plane, so it never
  * hides anything; the procedural starfield stays visible until the texture arrives.
  */
-import { BackSide, Mesh, ShaderMaterial, SphereGeometry, type Texture } from 'three';
+import {
+  BufferGeometry,
+  DoubleSide,
+  Float32BufferAttribute,
+  Mesh,
+  RepeatWrapping,
+  ShaderMaterial,
+  type Texture,
+} from 'three';
 import { progressiveTexture } from './textures';
 
 const vertexShader = /* glsl */ `
-  varying vec3 vDir;
+  varying vec2 vUv;
   void main() {
-    vDir = position;
+    vUv = uv;
     // Direction only: ignore translations and pin the sky to the far plane.
     vec4 clip = projectionMatrix * vec4(mat3(viewMatrix) * mat3(modelMatrix) * position, 1.0);
     gl_Position = clip.xyww;
@@ -23,28 +31,44 @@ const vertexShader = /* glsl */ `
 const fragmentShader = /* glsl */ `
   uniform sampler2D map;
   uniform float brightness;
-  varying vec3 vDir;
-  const float PI = 3.141592653589793;
+  varying vec2 vUv;
   void main() {
-    vec3 d = normalize(vDir);
-    float u = 0.5 - atan(d.y, d.x) / (2.0 * PI);
-    float v = 0.5 + asin(clamp(d.z, -1.0, 1.0)) / PI;
-    // The atan wrap at RA 12h makes du/dx jump by 1 across one pixel column, which would pick the smallest
-    // mip there (a visible seam): take derivatives of a copy of u that wraps elsewhere when they are smaller.
-    float uAlt = fract(u + 0.5);
-    vec2 dx = vec2(dFdx(u), dFdx(v));
-    vec2 dy = vec2(dFdy(u), dFdy(v));
-    vec2 dxAlt = vec2(dFdx(uAlt), dx.y);
-    vec2 dyAlt = vec2(dFdy(uAlt), dy.y);
-    if (abs(dxAlt.x) + abs(dyAlt.x) < abs(dx.x) + abs(dy.x)) {
-      dx = dxAlt;
-      dy = dyAlt;
-    }
-    vec3 c = textureGrad(map, vec2(u, v), dx, dy).rgb;
-    gl_FragColor = vec4(c * brightness, 1.0);
+    gl_FragColor = vec4(texture2D(map, vUv).rgb * brightness, 1.0);
     #include <colorspace_fragment>
   }
 `;
+
+/**
+ * Unit sphere in EQJ with the map's coordinates per vertex: column i at RA α = 2π·i/N has u = 0.5 − i/N
+ * (continuous, wrapping through negative values with RepeatWrapping), so the fragment shader is a single
+ * texture lookup (cheap on software renderers) and there is no seam.
+ */
+function skyGeometry(nRa = 128, nDec = 64): BufferGeometry {
+  const pos: number[] = [];
+  const uv: number[] = [];
+  const index: number[] = [];
+  for (let j = 0; j <= nDec; j++) {
+    const dec = -Math.PI / 2 + (Math.PI * j) / nDec;
+    for (let i = 0; i <= nRa; i++) {
+      const ra = (2 * Math.PI * i) / nRa;
+      pos.push(Math.cos(dec) * Math.cos(ra), Math.cos(dec) * Math.sin(ra), Math.sin(dec));
+      uv.push(0.5 - i / nRa, j / nDec);
+    }
+  }
+  const row = nRa + 1;
+  for (let j = 0; j < nDec; j++) {
+    for (let i = 0; i < nRa; i++) {
+      const a = j * row + i;
+      // Seen from inside: wind so the inner faces are front faces.
+      index.push(a, a + row, a + 1, a + 1, a + row, a + row + 1);
+    }
+  }
+  const g = new BufferGeometry();
+  g.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+  g.setIndex(index);
+  return g;
+}
 
 export interface SkyOptions {
   readonly baseUrl: string;
@@ -55,7 +79,7 @@ export interface SkyOptions {
 }
 
 export class SkyMesh {
-  readonly mesh: Mesh<SphereGeometry, ShaderMaterial>;
+  readonly mesh: Mesh<BufferGeometry, ShaderMaterial>;
   private readonly requestDetailFn: () => void;
 
   constructor(options: SkyOptions) {
@@ -64,7 +88,7 @@ export class SkyMesh {
       uniforms: { map: { value: null as Texture | null }, brightness: { value: 0.75 } },
       vertexShader,
       fragmentShader,
-      side: BackSide,
+      side: DoubleSide,
       depthTest: false,
       depthWrite: false,
     });
@@ -76,6 +100,8 @@ export class SkyMesh {
       anisotropy: options.anisotropy,
       placeholderRgb: [0, 0, 0],
       onUpdate: (tex) => {
+        tex.wrapS = RepeatWrapping;
+        tex.needsUpdate = true;
         const map = material.uniforms['map'];
         if (map) map.value = tex;
         this.mesh.visible = true;
@@ -87,7 +113,7 @@ export class SkyMesh {
     });
     const map = material.uniforms['map'];
     if (map) map.value = texture.initial;
-    this.mesh = new Mesh(new SphereGeometry(1, 64, 32), material);
+    this.mesh = new Mesh(skyGeometry(), material);
     this.mesh.name = 'sky';
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = -2;

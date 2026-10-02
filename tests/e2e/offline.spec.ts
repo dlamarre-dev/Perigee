@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 test('works offline after a first visit (service worker)', async ({ page, context }) => {
+  // Two full page loads plus the worker's caching, on software WebGL.
+  test.setTimeout(90_000);
   // Listen before any page script runs: the "cached" reply can arrive early.
   await page.addInitScript(() => {
     const w = window as unknown as { swCached: boolean };
