@@ -12,11 +12,12 @@ import {
   arcballRotationVector,
   cameraPositionKm,
   clampDistance,
+  easeDistanceKm,
   interpolateOrbit,
   roll,
   rotateByVector,
   smoothstep,
-  zoomLog,
+  twistRollRad,
   type OrbitLimits,
   type OrbitState,
   type Quat,
@@ -42,6 +43,17 @@ const KEY_ROTATE_RAD = (3 * Math.PI) / 180;
 const KEY_ROLL_RAD = (3 * Math.PI) / 180;
 const ROLL_RAD_PER_PX = 0.005;
 const MIN_INERTIA_RAD_PER_S = 1e-3;
+/** Smooth zoom: time constant of the ease towards the requested distance (wheel, keys). */
+const ZOOM_SMOOTH_S = 0.12;
+/** Pinch follows the fingers more closely. */
+const PINCH_SMOOTH_S = 0.05;
+/** Touch screens: a finger moves farther than a mouse for the same intent. */
+const TOUCH_ROTATE_GAIN = 0.5;
+const TOUCH_PINCH_GAIN = 0.75;
+/** Two-finger twist: no roll until the fingers turned this much, then a reduced gain. */
+const TOUCH_TWIST_DEAD_RAD = (6 * Math.PI) / 180;
+const TOUCH_TWIST_GAIN = 0.6;
+const TOUCH_INERTIA_FACTOR = 0.7;
 
 function prefersReducedMotion(): boolean {
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -56,8 +68,16 @@ export class QuaternionOrbitControls {
   private angularVelocity: Vec3 = [0, 0, 0];
   private fly: FlyAnimation | undefined;
   private follow: (() => Vec3 | undefined) | undefined;
-  private readonly pointers = new Map<number, { x: number; y: number; button: number }>();
+  private readonly pointers = new Map<number, { x: number; y: number; button: number; touch: boolean }>();
   private lastMoveTimeMs = 0;
+  /** Requested distance, reached smoothly in update(); undefined when idle. */
+  private zoomTargetKm: number | undefined;
+  private zoomSmoothS = ZOOM_SMOOTH_S;
+  /** The last drag came from a finger (shorter inertia). */
+  private touchDrag = false;
+  /** Two-finger gesture: accumulated twist and the roll already applied for it. */
+  private twistRad = 0;
+  private twistRolledRad = 0;
   private readonly abort = new AbortController();
 
   constructor(
@@ -100,6 +120,7 @@ export class QuaternionOrbitControls {
     this.limitsValue = limits;
     // Clamp without cancelling a running fly-to animation.
     this.stateValue = { ...this.stateValue, distanceKm: clampDistance(this.stateValue.distanceKm, limits) };
+    if (this.zoomTargetKm !== undefined) this.zoomTargetKm = clampDistance(this.zoomTargetKm, limits);
     if (this.fly) {
       this.fly = {
         ...this.fly,
@@ -114,12 +135,14 @@ export class QuaternionOrbitControls {
 
   setState(state: OrbitState): void {
     this.fly = undefined;
+    this.zoomTargetKm = undefined;
     this.stateValue = state;
   }
 
   /** Smoothly moves to a new state (target lerp, distance log-lerp, orientation slerp). */
   flyTo(to: OrbitState, durationS = 0.8): void {
     this.angularVelocity = [0, 0, 0];
+    this.zoomTargetKm = undefined;
     // Reduced motion: a near-cut instead of a long glide (keeps the same code path).
     if (prefersReducedMotion()) durationS = Math.min(durationS, 0.12);
     const clamped = { ...to, distanceKm: clampDistance(to.distanceKm, this.limitsValue) };
@@ -156,11 +179,17 @@ export class QuaternionOrbitControls {
       return;
     }
     if (followed) this.stateValue = { ...this.stateValue, targetKm: followed };
+    if (this.zoomTargetKm !== undefined) {
+      const distanceKm = easeDistanceKm(this.stateValue.distanceKm, this.zoomTargetKm, dtS, this.zoomSmoothS);
+      this.stateValue = { ...this.stateValue, distanceKm };
+      if (distanceKm === this.zoomTargetKm) this.zoomTargetKm = undefined;
+    }
     if (this.pointers.size === 0 && this.inertiaTimeS > 0) {
       const w = this.angularVelocity;
       if (Math.hypot(w[0], w[1], w[2]) > MIN_INERTIA_RAD_PER_S) {
         this.stateValue = rotateByVector(this.stateValue, [w[0] * dtS, w[1] * dtS, w[2] * dtS]);
-        const decay = Math.exp(-dtS / this.inertiaTimeS);
+        const tau = this.inertiaTimeS * (this.touchDrag ? TOUCH_INERTIA_FACTOR : 1);
+        const decay = Math.exp(-dtS / tau);
         this.angularVelocity = [w[0] * decay, w[1] * decay, w[2] * decay];
       }
     }
@@ -178,6 +207,14 @@ export class QuaternionOrbitControls {
   }
 
   /** Rotation speed shrinks near the surface so the ground does not fly past. */
+  /** Requests a zoom by exp(kDelta), eased over a few frames from the current request. */
+  private zoomBy(kDelta: number, smoothS: number): void {
+    this.fly = undefined;
+    const from = this.zoomTargetKm ?? this.stateValue.distanceKm;
+    this.zoomTargetKm = clampDistance(from * Math.exp(kDelta), this.limitsValue);
+    this.zoomSmoothS = smoothS;
+  }
+
   private radPerPx(): number {
     const bodyRadiusKm = this.limitsValue.minDistanceKm / 1.02;
     const altitudeFactor = Math.min(
@@ -189,7 +226,11 @@ export class QuaternionOrbitControls {
 
   private onPointerDown(e: PointerEvent): void {
     this.element.setPointerCapture(e.pointerId);
-    this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, button: e.button });
+    const touch = e.pointerType === 'touch';
+    this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, button: e.button, touch });
+    this.touchDrag = touch;
+    this.twistRad = 0;
+    this.twistRolledRad = 0;
     this.fly = undefined;
     this.angularVelocity = [0, 0, 0];
     this.lastMoveTimeMs = e.timeStamp;
@@ -215,7 +256,7 @@ export class QuaternionOrbitControls {
       this.stateValue = roll(this.stateValue, dx * ROLL_RAD_PER_PX);
       return;
     }
-    const rv = arcballRotationVector(dx, dy, this.radPerPx());
+    const rv = arcballRotationVector(dx, dy, this.radPerPx() * (prev.touch ? TOUCH_ROTATE_GAIN : 1));
     this.stateValue = rotateByVector(this.stateValue, rv);
     // Low-pass the instantaneous angular velocity so a release after a pause does not fling.
     const a = 0.5;
@@ -239,15 +280,19 @@ export class QuaternionOrbitControls {
     const distBefore = Math.hypot(before.dx, before.dy);
     const distAfter = Math.hypot(after.dx, after.dy);
     if (distBefore > 0 && distAfter > 0) {
-      this.stateValue = zoomLog(this.stateValue, Math.log(distBefore / distAfter), this.limitsValue);
+      this.zoomBy(Math.log(distBefore / distAfter) * TOUCH_PINCH_GAIN, PINCH_SMOOTH_S);
     }
     const twist = Math.atan2(after.dy, after.dx) - Math.atan2(before.dy, before.dx);
-    const wrapped = Math.atan2(Math.sin(twist), Math.cos(twist));
-    this.stateValue = roll(this.stateValue, -wrapped);
+    this.twistRad += Math.atan2(Math.sin(twist), Math.cos(twist));
+    const rollRad = twistRollRad(this.twistRad, TOUCH_TWIST_DEAD_RAD, TOUCH_TWIST_GAIN);
+    this.stateValue = roll(this.stateValue, -(rollRad - this.twistRolledRad));
+    this.twistRolledRad = rollRad;
   }
 
   private onPointerUp(e: PointerEvent): void {
     this.pointers.delete(e.pointerId);
+    this.twistRad = 0;
+    this.twistRolledRad = 0;
     // Stale velocity: the pointer stopped before being released.
     if (e.timeStamp - this.lastMoveTimeMs > 80) this.angularVelocity = [0, 0, 0];
     if (this.element.hasPointerCapture(e.pointerId)) this.element.releasePointerCapture(e.pointerId);
@@ -257,8 +302,7 @@ export class QuaternionOrbitControls {
     e.preventDefault();
     const scaleByMode =
       e.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : e.deltaMode === WheelEvent.DOM_DELTA_PAGE ? 400 : 1;
-    this.fly = undefined;
-    this.stateValue = zoomLog(this.stateValue, e.deltaY * scaleByMode * ZOOM_WHEEL_K, this.limitsValue);
+    this.zoomBy(e.deltaY * scaleByMode * ZOOM_WHEEL_K, ZOOM_SMOOTH_S);
   }
 
   private onKeyDown(e: KeyboardEvent): void {
@@ -292,12 +336,14 @@ export class QuaternionOrbitControls {
         break;
       case '+':
       case '=':
-        next = zoomLog(s, -ZOOM_KEY_STEP, this.limitsValue);
-        break;
+        this.zoomBy(-ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
+        e.preventDefault();
+        return;
       case '-':
       case '_':
-        next = zoomLog(s, ZOOM_KEY_STEP, this.limitsValue);
-        break;
+        this.zoomBy(ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
+        e.preventDefault();
+        return;
       case 'r':
       case 'R':
         this.reset();

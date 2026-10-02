@@ -120,3 +120,23 @@ export function smoothstep(t: number): number {
   const c = Math.min(1, Math.max(0, t));
   return c * c * (3 - 2 * c);
 }
+
+/**
+ * One frame of smooth zoom: the distance eases towards the target in log space with time constant `tauS`
+ * (exponential, so it never overshoots). Returns the target once within 0.01 % of it.
+ */
+export function easeDistanceKm(currentKm: number, targetKm: number, dtS: number, tauS: number): number {
+  if (tauS <= 0) return targetKm;
+  const k = 1 - Math.exp(-dtS / tauS);
+  const next = Math.exp(Math.log(currentKm) + (Math.log(targetKm) - Math.log(currentKm)) * k);
+  return Math.abs(next / targetKm - 1) < 1e-4 ? targetKm : next;
+}
+
+/**
+ * Roll for a two-finger twist with a dead zone: nothing until the accumulated twist exceeds `deadRad`, then
+ * `gain` times the excess (continuous at the threshold), so a pinch alone does not roll the view.
+ */
+export function twistRollRad(accumulatedRad: number, deadRad: number, gain: number): number {
+  const excess = Math.abs(accumulatedRad) - deadRad;
+  return excess > 0 ? Math.sign(accumulatedRad) * excess * gain : 0;
+}

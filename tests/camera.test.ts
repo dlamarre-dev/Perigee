@@ -4,6 +4,7 @@ import {
   QUAT_IDENTITY,
   arcballRotationVector,
   cameraPositionKm,
+  easeDistanceKm,
   interpolateOrbit,
   orbitStateLookingFrom,
   quatAngleBetween,
@@ -13,6 +14,7 @@ import {
   roll,
   rotateByVector,
   rotateLocal,
+  twistRollRad,
   zoomLog,
   type OrbitState,
 } from '../src/camera/orbitMath';
@@ -120,5 +122,38 @@ describe('quaternion orbit camera', () => {
       quatAngleBetween(equatorView.orientation, QUAT_IDENTITY),
       12,
     );
+  });
+});
+
+describe('smooth zoom and touch twist', () => {
+  it('eases towards the requested distance without overshoot, within 1 % after about 0.6 s', () => {
+    // Five +/− key steps at once (×e^0.75).
+    const target = 100;
+    let d = 100 * Math.exp(0.75);
+    let prev = d;
+    let elapsed = 0;
+    while (d !== target && elapsed < 5) {
+      d = easeDistanceKm(d, target, 1 / 60, 0.12);
+      expect(d).toBeLessThanOrEqual(prev);
+      expect(d).toBeGreaterThanOrEqual(target);
+      prev = d;
+      elapsed += 1 / 60;
+      if (Math.abs(elapsed - 0.6) < 1 / 120) expect(d / target - 1).toBeLessThan(0.01);
+    }
+    expect(d).toBe(target);
+  });
+
+  it('zooms out the same way', () => {
+    let d = 10;
+    for (let i = 0; i < 120; i++) d = easeDistanceKm(d, 20, 1 / 60, 0.12);
+    expect(d).toBe(20);
+  });
+
+  it('ignores small twists and rolls continuously past the dead zone', () => {
+    const dead = (6 * Math.PI) / 180;
+    expect(twistRollRad(dead * 0.9, dead, 0.6)).toBe(0);
+    expect(twistRollRad(-dead * 0.9, dead, 0.6)).toBe(0);
+    expect(twistRollRad(dead + 0.1, dead, 0.6)).toBeCloseTo(0.06, 12);
+    expect(twistRollRad(-(dead + 0.1), dead, 0.6)).toBeCloseTo(-0.06, 12);
   });
 });
