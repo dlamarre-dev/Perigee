@@ -5,7 +5,8 @@
  * Frames: the body-fixed frame of this view is the J2000 ecliptic (planets in the plane); the inertial frame is
  * EQJ. Precision: markers and meshes are written relative to the camera on the CPU (Float64). Orbits of planets
  * and small bodies are osculating ellipses whose vertices are relative to the body (dense near it, exact through
- * it); spacecraft trajectories carry absolute heliocentric Float32 vertices, fine at the scales they are seen.
+ * it); spacecraft trajectories are offsets from an anchor near the spacecraft, plus a dense line over the current
+ * ephemeris interval relative to the marker, so the line passes through it without Float32 jitter.
  */
 import {
   AdditiveBlending,
@@ -42,6 +43,7 @@ import {
 import { quatFromAxisAngle, quatFromBasis, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
+import { nearSampleTimes } from '../astro/trajectory';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
@@ -98,6 +100,10 @@ const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
 };
 /** Hermite sub-samples per ephemeris interval for trajectory lines (1 d steps → 3 h vertices). */
 const TRAJECTORY_SUBSTEPS = 8;
+/** Near-line vertices on each side of the current time (geometric spacing, see nearSampleTimes). */
+const NEAR_SAMPLES_PER_SIDE = 24;
+/** Opacity of unselected osculating orbits (planets, small bodies, moons). */
+const ORBIT_OPACITY = 0.35;
 /**
  * A spacecraft staying longer than this within CAPTURE_HILL_FRACTION of a planet's Hill radius is orbiting that
  * planet (Juno, BepiColombo after insertion) or station-keeping near it (Sun–Earth L1/L2): its heliocentric
@@ -189,8 +195,17 @@ interface ProbeObject extends LazyLoad {
   /** Dwarf planet / small body: drawn like a planet, with its full osculating orbit. */
   readonly natural: boolean;
   readonly mesh: BodyMesh | undefined;
-  /** Spacecraft: trajectory over the ephemeris window. */
+  /**
+   * Spacecraft: trajectory over the ephemeris window, except the current interval. Vertices are offsets from
+   * `lineAnchor` (Float64 subtraction on the CPU), so the line stays precise near the camera.
+   */
   readonly line: Line<BufferGeometry, Material>;
+  /** Current interval, densified around the current time and relative to the marker (rebuilt every frame). */
+  readonly near: Line<BufferGeometry, Material>;
+  /** Mapped EQJ position the far line's vertices are relative to. */
+  lineAnchor: Vec3 | undefined;
+  /** Ephemeris interval left out of the far line (−1: none). */
+  lineInterval: number;
   /** Small bodies: osculating orbit. */
   readonly orbit: AnchoredOrbit | undefined;
   /** Ephemeris rows spent captured by a planet (cached per table). */
@@ -302,7 +317,7 @@ class SolarView implements View {
         orbit: anchoredOrbit(
           new Line(
             new BufferGeometry(),
-            new LineBasicMaterial({ color: info.color, transparent: true, opacity: 0.35 }),
+            new LineBasicMaterial({ color: info.color, transparent: true, opacity: ORBIT_OPACITY }),
           ),
         ),
         eqj: [0, 0, 0],
@@ -346,7 +361,7 @@ class SolarView implements View {
       renderer.scene.add(mesh.mesh);
       const orbit = new Line(
         new BufferGeometry(),
-        new LineBasicMaterial({ color: moon.color, transparent: true, opacity: 0.35 }),
+        new LineBasicMaterial({ color: moon.color, transparent: true, opacity: ORBIT_OPACITY }),
       );
       orbit.frustumCulled = false;
       orbit.visible = false;
@@ -379,7 +394,11 @@ class SolarView implements View {
       );
       line.frustumCulled = false;
       line.visible = false;
-      this.lineGroup.add(line);
+      // Shares the far line's material (same style).
+      const near = new Line(new BufferGeometry(), line.material);
+      near.frustumCulled = false;
+      near.visible = false;
+      this.lineGroup.add(line, near);
       const orbit = natural
         ? anchoredOrbit(
             new Line(
@@ -407,6 +426,9 @@ class SolarView implements View {
         mesh,
         load: mesh ? () => this.loadTexture(mission.id, color, mesh) : undefined,
         line,
+        near,
+        lineAnchor: undefined,
+        lineInterval: -1,
         orbit,
         captured: undefined,
         track: this.makeTrack(undefined),
@@ -473,7 +495,6 @@ class SolarView implements View {
     const date = new Date(f.nowMs);
     this.tdbJd = utcToTdbJd(date);
     this.sceneQ = f.sceneFromInertial;
-    this.lineGroup.quaternion.set(this.sceneQ.x, this.sceneQ.y, this.sceneQ.z, this.sceneQ.w);
     const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
 
     for (const p of this.planets) {
@@ -559,6 +580,11 @@ class SolarView implements View {
       this.trajectoriesKey = trajectoriesKey;
       for (const t of this.probes) this.refreshTrajectory(t, map);
     }
+    for (const t of this.probes) {
+      // The far line leaves out the current interval: rebuild it when time moves to another one.
+      if (this.currentInterval(t) !== t.lineInterval) this.refreshTrajectory(t, map);
+      this.refreshNearTrajectory(t, map);
+    }
   }
 
   placeOrigin(originKm: Vec3): void {
@@ -568,7 +594,19 @@ class SolarView implements View {
     const sun = rel([0, 0, 0]);
     this.sun.mesh.position.set(sun[0], sun[1], sun[2]);
     this.glow.position.copy(this.sun.mesh.position);
-    this.lineGroup.position.set(-o[0], -o[1], -o[2]);
+    const q = this.sceneQ;
+    for (const t of this.probes) {
+      if (t.lineAnchor) {
+        const r = rel(quatRotate(q, t.lineAnchor));
+        t.line.position.set(r[0], r[1], r[2]);
+        t.line.quaternion.set(q.x, q.y, q.z, q.w);
+      }
+      if (t.scene) {
+        const r = rel(t.scene);
+        t.near.position.set(r[0], r[1], r[2]);
+        t.near.quaternion.set(q.x, q.y, q.z, q.w);
+      }
+    }
     const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
     for (const orbit of [...this.planets.map((p) => p.orbit), ...this.probes.map((t) => t.orbit)]) {
       if (!orbit?.anchorEqj) continue;
@@ -762,10 +800,21 @@ class SolarView implements View {
     t.line.visible = table !== undefined && !t.natural;
     if (!table || t.natural) return;
     t.captured ??= this.capturedRows(table);
-    // Segment pairs (LineSegments), densified with the same Hermite interpolation as the marker, so the line
-    // is smooth and passes through the spacecraft; captured stretches are skipped.
+    // Segment pairs (LineSegments), densified with the same Hermite interpolation as the marker; captured
+    // stretches are skipped, and the current interval is drawn by the near line. Offsets from an anchor near
+    // the spacecraft: absolute heliocentric Float32 vertices would be off by kilometres and jitter as the
+    // camera moves.
+    const interval = this.currentInterval(t);
+    t.lineInterval = interval;
+    const anchor = map(t.sample.state?.posKm ?? table.state(table.rows - 1).posKm);
+    t.lineAnchor = anchor;
     const segments: number[] = [];
+    const push = (p: Vec3): void => {
+      const m = map(p);
+      segments.push(m[0] - anchor[0], m[1] - anchor[1], m[2] - anchor[2]);
+    };
     for (let i = 0; i + 1 < table.rows; i++) {
+      if (i === interval) continue;
       if (t.captured[i] && t.captured[i + 1]) continue;
       const t0 = table.time(i);
       const t1 = table.time(i + 1);
@@ -775,7 +824,8 @@ class SolarView implements View {
           k === TRAJECTORY_SUBSTEPS
             ? table.state(i + 1).posKm
             : (table.interpolate(t0 + ((t1 - t0) * k) / TRAJECTORY_SUBSTEPS)?.posKm ?? prev);
-        segments.push(...map(prev), ...map(next));
+        push(prev);
+        push(next);
         prev = next;
       }
     }
@@ -787,11 +837,71 @@ class SolarView implements View {
       t.line.material = dashed
         ? new LineDashedMaterial({ color, dashSize: 0.05 * AU_KM, gapSize: 0.04 * AU_KM, transparent: true })
         : new LineBasicMaterial({ color, transparent: true });
+      t.near.material = t.line.material;
     }
     if (dashed) t.line.computeLineDistances();
+    this.styleTrajectory(t);
+  }
+
+  /** Interval of the ephemeris containing the current time, or −1 outside the window. */
+  private currentInterval(t: ProbeObject): number {
+    const table = t.track.table;
+    if (!table || t.natural || t.sample.kind !== 'interpolated' || table.rows < 2) return -1;
+    return table.intervalIndex(this.tdbJd);
+  }
+
+  /**
+   * The current interval, densified towards the current time (a vertex), relative to the spacecraft: the line
+   * passes exactly through the marker at any zoom.
+   */
+  private refreshNearTrajectory(t: ProbeObject, map: (p: Vec3) => Vec3): void {
+    const table = t.track.table;
+    const i = t.lineInterval;
+    const now = t.sample.state;
+    const captured = t.captured !== undefined && t.captured[i] === 1 && t.captured[i + 1] === 1;
+    t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined && !captured;
+    if (!t.near.visible || !table || !now) return;
+    const centre = map(now.posKm);
+    const points: number[] = [];
+    for (const time of nearSampleTimes(table.time(i), table.time(i + 1), this.tdbJd, NEAR_SAMPLES_PER_SIDE)) {
+      const p = time === this.tdbJd ? now.posKm : (table.interpolate(time)?.posKm ?? now.posKm);
+      const m = map(p);
+      points.push(m[0] - centre[0], m[1] - centre[1], m[2] - centre[2]);
+    }
+    const geometry = t.near.geometry;
+    const attr = geometry.getAttribute('position');
+    if (attr && attr.array.length === points.length) {
+      (attr.array as Float32Array).set(points);
+      attr.needsUpdate = true;
+    } else {
+      geometry.setAttribute('position', new Float32BufferAttribute(points, 3));
+    }
+  }
+
+  /** Probe trajectory style: grey when the position is hidden, opaque when selected. */
+  private styleTrajectory(t: ProbeObject): void {
+    const color = this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR;
+    const kind = t.sample.kind;
+    const selected = this.selection?.kind === 'mission' && this.selection.mission.id === t.mission.id;
     const m = t.line.material as LineBasicMaterial | LineDashedMaterial;
     m.color.set(kind === 'hidden' ? '#8a8f98' : color);
-    m.opacity = kind === 'hidden' ? 0.35 : 0.6;
+    m.opacity = kind === 'hidden' ? (selected ? 0.6 : 0.35) : selected ? 1 : 0.6;
+  }
+
+  /** The selected object's orbit or trajectory stands out (as in the Moon and Mars views). */
+  private styleOrbits(): void {
+    const sel = this.selection;
+    const set = (material: Material, selected: boolean): void => {
+      (material as LineBasicMaterial).opacity = selected ? 0.9 : ORBIT_OPACITY;
+    };
+    for (const p of this.planets)
+      set(p.orbit.line.material, sel?.kind === 'planet' && sel.planet.id === p.info.id);
+    for (const t of this.probes) {
+      const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
+      if (t.orbit) set(t.orbit.line.material, selected);
+      else this.styleTrajectory(t);
+    }
+    for (const m of this.moons) set(m.orbit.material, sel?.kind === 'moon' && sel.moon.id === m.moon.id);
   }
 
   /**
@@ -991,6 +1101,7 @@ class SolarView implements View {
     if (!same) this.host.follow.stop();
     this.selection = sel;
     this.panel.setSelected(selectionKey(sel));
+    this.styleOrbits();
     this.pendingFrame = sel !== undefined && (options.frame ?? false) && !options.follow;
     if (!sel) this.detail.hide();
     else this.renderDetail(options.focus ?? false);
