@@ -4,10 +4,11 @@ import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
 import { earthOrientation } from '../astro/bodies';
-import { quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { alignAxes, axisVector } from '../astro/attitude';
+import { QUAT_IDENTITY, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { sunDirectionEci } from '../astro/sun';
 import { gmstRad } from '../astro/time';
-import { length, type Vec3 } from '../astro/vec3';
+import { length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
@@ -21,6 +22,7 @@ import {
 } from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
+import { SceneModel, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
 import { h } from '../ui/dom';
@@ -71,6 +73,10 @@ class EarthView implements View {
   private filterPanel: FilterPanel | undefined;
   private filters: FilterState;
   private selectedNorad: number | undefined;
+  /** Unit direction of the Sun (scene frame). */
+  private sunScene: Vec3 = [1, 0, 0];
+  /** NASA 3D model of the selected satellite, drawn once it covers a few pixels. */
+  private readonly sceneModel: SceneModel;
   private frameAngleRad = 0;
   private disposed = false;
   /** Frame the selection once its position is known (next update). */
@@ -82,6 +88,7 @@ class EarthView implements View {
     this.selectedNorad = initial.selected;
     this.earth = createEarthMesh(host.renderer, host.baseUrl);
     host.renderer.scene.add(this.earth.mesh);
+    this.sceneModel = new SceneModel(host.renderer.scene, host.renderer.renderer, host.baseUrl);
     this.infoPanel = new InfoPanel(host.i18n, this.operators, {
       onClose: () => this.select(undefined),
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
@@ -122,7 +129,8 @@ class EarthView implements View {
     const date = new Date(f.nowMs);
     const gmst = gmstRad(date);
     this.earth.setOrientation(quatMultiply(f.sceneFromInertial, f.bodyQ));
-    this.earth.setSunDirection(quatRotate(f.sceneFromInertial, sunDirectionEci(date)));
+    this.sunScene = quatRotate(f.sceneFromInertial, sunDirectionEci(date));
+    this.earth.setSunDirection(this.sunScene);
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
     if (this.pendingFrame && this.sats) {
@@ -140,6 +148,27 @@ class EarthView implements View {
     this.sats?.placeOrigin(originKm);
     const canvas = this.host.renderer.canvas;
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
+    this.placeModel(originKm);
+  }
+
+  /** The selected satellite's 3D model (LVLH attitude: nadir axis down, front along the velocity). */
+  private placeModel(originKm: Vec3): void {
+    const camera = this.host.renderer.camera;
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * Math.PI) / 360);
+    const entry = this.selectedNorad !== undefined ? modelFor(`norad:${this.selectedNorad}`) : undefined;
+    const pos = entry ? this.sats?.selectedWorldPositionKm(this.frameAngleRad) : undefined;
+    const vel = entry ? this.sats?.selectedWorldVelocityKmS(this.frameAngleRad) : undefined;
+    if (!entry || !pos || !vel) {
+      this.sceneModel.update(undefined, undefined, QUAT_IDENTITY, this.sunScene, focalPx);
+      return;
+    }
+    const q = alignAxes(
+      axisVector(entry.nadirAxis ?? '-y'),
+      normalize(scale(pos, -1)),
+      axisVector('+z'),
+      vel,
+    );
+    this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx);
   }
 
   uiTick(nowMs: number): void {
@@ -172,6 +201,7 @@ class EarthView implements View {
     this.disposed = true;
     this.host.renderer.scene.remove(this.earth.mesh);
     this.earth.dispose();
+    this.sceneModel.dispose();
     this.launch.dispose();
     if (this.sats) {
       this.host.renderer.scene.remove(this.sats.group);
@@ -195,6 +225,7 @@ class EarthView implements View {
       () => sats.selectedWorldPositionKm(this.frameAngleRad),
       FOLLOW_DISTANCE_KM,
       () => (this.infoPanel.following = false),
+      modelMinDistance(`norad:${this.selectedNorad ?? 0}`),
     );
     this.infoPanel.following = started;
   }

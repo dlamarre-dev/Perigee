@@ -24,7 +24,7 @@ test('logarithmic scale is flagged as not to scale and kept in the URL', async (
 
 test('picking selects the planet under the pointer', async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&${FROZEN}&e2e`);
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator('#viewport canvas').boundingBox();
   if (!box) throw new Error('no canvas');
   await expect(async () => {
     const ok = await page.evaluate(() =>
@@ -83,7 +83,7 @@ test('moons unfold under the selected planet, fold again, and F toggles follow',
   await expect(page).toHaveURL(/sel=moon(:|%3A)europa/);
   await expect(moons).toBeVisible();
   const follow = info.getByRole('button', { name: 'Follow' });
-  await page.locator('canvas').focus();
+  await page.locator('#viewport canvas').focus();
   await page.keyboard.press('f');
   await expect(info.locator('button[aria-pressed="true"]')).toBeVisible();
   await page.keyboard.press('f');

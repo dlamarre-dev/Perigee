@@ -48,7 +48,7 @@ test('facet checkboxes filter and update the URL', async ({ page }) => {
 test('GPU picking selects the object under the pointer', async ({ page }) => {
   await page.goto(`./?lang=en&${FROZEN}&e2e`);
   await waitForSatellites(page);
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator('#viewport canvas').boundingBox();
   if (!box) throw new Error('no canvas');
   // The first SGP4 propagation reaches the GPU asynchronously (slow on software WebGL): retry until it has.
   await expect(async () => {
@@ -60,4 +60,18 @@ test('GPU picking selects the object under the pointer', async ({ page }) => {
     await expect(page.locator('aside.info:visible .panel-title')).toHaveText('HST', { timeout: 1000 });
   }).toPass({ timeout: 20_000 });
   await expect(page).toHaveURL(/sel=20580/);
+});
+
+test('a NASA 3D model previews in the info panel when the object has one', async ({ page }) => {
+  await page.goto('./?lang=en&sel=25544');
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toContainText('ISS');
+  const preview = info.locator('figure.model-preview');
+  await expect(preview).toBeVisible();
+  await expect(preview).toContainText('3D model: NASA');
+  await expect(preview.locator('canvas')).toBeVisible();
+  // An object without a model hides it.
+  await page.goto('./?lang=en&sel=100830');
+  await expect(page.locator('aside.info:visible .panel-title')).toBeVisible();
+  await expect(page.locator('aside.info:visible figure.model-preview')).toBeHidden();
 });

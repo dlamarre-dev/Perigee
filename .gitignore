@@ -16,3 +16,4 @@ playwright/.cache/
 public/data/
 *.tmp.*
 tools/shapes/src/
+tools/models/src/

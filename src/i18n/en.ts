@@ -47,6 +47,8 @@ export const en = {
   'texture.titanInfrared': 'Surface seen through the haze in near-infrared (Cassini, 938 nm), greyscale',
   'info.shape': 'Shape',
   'shape.pds': 'Measured irregular shape (PDS shape model from spacecraft images)',
+  'model.credit': '3D model: {credit} (attitude illustrative)',
+  'model.preview': '3D model of the selected object; drag to turn it',
   'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
   'view.solar.short': 'Solar',
   'toolbar.menu': 'Menu',

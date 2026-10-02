@@ -126,6 +126,12 @@ export class EarthSatellites {
     return s ? rotZ(s.posKm, frameAngleRad) : undefined;
   }
 
+  /** Direction of motion of the selected object in the scene (TEME velocity, frame rotation only). */
+  selectedWorldVelocityKmS(frameAngleRad: number): Vec3 | undefined {
+    const s = this.selectedState;
+    return s ? rotZ(s.velKmS, frameAngleRad) : undefined;
+  }
+
   pick(scene: Scene, camera: PerspectiveCamera, xCss: number, yCss: number): SatObject | undefined {
     const index = this.picker.pick(scene, camera, xCss, yCss);
     return index === undefined ? undefined : this.catalog.objects[index];

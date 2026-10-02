@@ -6,6 +6,8 @@ import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
 import { h, sidePanel } from './dom';
+import { modelFor } from '../render/models';
+import { ModelPreview } from './ModelPreview';
 import { facetLabel, formatUtcDate } from './labels';
 
 export interface InfoPanelCallbacks {
@@ -29,6 +31,8 @@ export class InfoPanel {
   private followingValue = false;
   private launchSiteName: (code: string) => string | undefined = () => undefined;
 
+  private readonly preview: ModelPreview;
+
   constructor(
     private readonly i18n: I18n,
     private readonly operators: OperatorsCatalog,
@@ -36,10 +40,12 @@ export class InfoPanel {
   ) {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
+    this.preview = new ModelPreview(i18n, import.meta.env.BASE_URL);
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'info-title', hidden: true },
       [
         h('div', { class: 'panel-header' }, [this.title, this.close]),
+        this.preview.element,
         this.freshness,
         this.fields,
         h('div', { class: 'dialog-actions' }, [this.follow]),
@@ -56,6 +62,7 @@ export class InfoPanel {
     if (object !== this.object) this.element.classList.remove('collapsed');
     this.object = object;
     this.element.hidden = !object;
+    this.preview.show(object ? modelFor(`norad:${object.noradId}`) : undefined);
     this.render();
     if (object && focus) this.title.focus();
   }

@@ -134,6 +134,14 @@ No single API provides "active probes + landing sites". We maintain:
 - Irregular moons (Amalthea, Proteus, Hyperion, Phoebe): PDS shape models resampled to radius grids
   (`tools/shapes/fetch-shapes.ts` → `public/shapes/<id>.json`, `moons.json` `shape: "grid"`), displacing the body
   sphere (`src/render/shapeGeometry.ts`); UVs unchanged, so the equirectangular maps still apply.
+- 3D models (`catalog/models.json`, targets `mission:`/`moon:`/`site:`/`norad:`): NASA 3D Resources GLBs processed by
+  `tools/models/fetch-models.ts` (simplified, WebP textures ≤ 1024 px, meshopt, metres; NASA insignia and JPL logo
+  decals covered, ISS stray parts dropped) → `public/models/<id>.glb`. The selected object's model replaces its
+  marker once it covers ≥ 4 px (`src/render/models.ts` `SceneModel`, PBR lit by the Sun and a dim room environment;
+  illustrative attitude from `src/astro/attitude.ts`), and a preview spins at the top of the info panel
+  (`src/ui/ModelPreview.ts`). Following such an object lets the camera come to twice its size. Phobos and Deimos
+  (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. ESA models (SCIFLEET) are
+  under a non-commercial licence: not used (permission requested).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.
 - Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); no sunspot map.

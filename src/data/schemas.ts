@@ -211,6 +211,43 @@ export const MoonsCatalogSchema = z
   });
 export type MoonsCatalog = z.infer<typeof MoonsCatalogSchema>;
 
+/** Model axis, in the GLB's own frame (glTF: +Y up, +Z front). */
+export const ModelAxisSchema = z.enum(['+x', '-x', '+y', '-y', '+z', '-z']);
+export type ModelAxis = z.infer<typeof ModelAxisSchema>;
+
+/** NASA 3D model of a spacecraft, rover or Earth satellite (public/models/<id>.glb, tools/models). */
+export const ModelEntrySchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  url: z.url(),
+  /** What it depicts: a mission, a landing/rover site, or Earth satellites by NORAD number. */
+  targets: z
+    .array(z.string().regex(/^(mission:[a-z0-9-]+|moon:[a-z0-9-]+|site:[a-z0-9-]+|norad:\d+)$/))
+    .min(1),
+  /** Largest real dimension (m): sanity check of the model's units, and the scale when they are off. */
+  sizeM: z.number().positive(),
+  credit: z.string().min(1),
+  /**
+   * Natural body: the model replaces the body sphere (BodyMesh) at all distances, in the IAU body frame (x
+   * towards the prime meridian, z north), aligned offline on this PDS radius grid (Thomas shape models).
+   */
+  body: z.object({ alignGridUrl: z.url() }).optional(),
+  /** Axis pointed at the Earth (deep-space probes: high-gain antenna). Default +z. */
+  earthAxis: ModelAxisSchema.optional(),
+  /** Axis pointed at the Sun, used to fix the roll (solar panels). Default +y. */
+  sunAxis: ModelAxisSchema.optional(),
+  /** Axis pointed down (Earth satellites: nadir; rovers: the ground). Default −y. */
+  nadirAxis: ModelAxisSchema.optional(),
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type ModelEntry = z.infer<typeof ModelEntrySchema>;
+export const ModelsCatalogSchema = z.object({
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+  models: z.array(ModelEntrySchema),
+});
+export type ModelsCatalog = z.infer<typeof ModelsCatalogSchema>;
+
 /** catalog/landing-sites/<body>.json — planetocentric coordinates, east-positive longitudes. */
 export const LandingSitesSchema = z.object({
   verified: isoDate,

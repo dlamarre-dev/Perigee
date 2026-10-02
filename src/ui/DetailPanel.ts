@@ -1,5 +1,7 @@
+import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, sidePanel } from './dom';
+import { ModelPreview } from './ModelPreview';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
 
@@ -12,6 +14,8 @@ export interface DetailContent {
   readonly footnote?: string;
   /** Show the Follow button. */
   readonly followable: boolean;
+  /** NASA 3D model shown at the top of the panel. */
+  readonly model?: ModelEntry;
   /** Optional secondary action (e.g. apply a filter). */
   readonly action?: { readonly label: string; readonly run: () => void };
 }
@@ -37,6 +41,7 @@ export class DetailPanel {
   private readonly close = h('button', { type: 'button', class: 'btn' });
   private followingValue = false;
   private lastSourcesKey = '';
+  private readonly preview: ModelPreview;
 
   constructor(
     private readonly i18n: I18n,
@@ -45,10 +50,12 @@ export class DetailPanel {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
     this.action.addEventListener('click', () => this.actionRun?.());
+    this.preview = new ModelPreview(i18n, import.meta.env.BASE_URL);
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'detail-title', hidden: true },
       [
         h('div', { class: 'panel-header' }, [this.title, this.close]),
+        this.preview.element,
         this.badge,
         this.fields,
         this.notes,
@@ -73,6 +80,7 @@ export class DetailPanel {
 
   hide(): void {
     this.element.hidden = true;
+    this.preview.show(undefined);
   }
 
   show(content: DetailContent, focus = false): void {
@@ -81,6 +89,7 @@ export class DetailPanel {
     // Opening (not the periodic refresh) shows the whole sheet on phones.
     if (wasHidden) this.element.classList.remove('collapsed');
     this.title.textContent = content.title;
+    this.preview.show(content.model);
     this.badge.hidden = !content.badge;
     if (content.badge) {
       this.badge.textContent = content.badge.text;

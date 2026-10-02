@@ -1,0 +1,372 @@
+{
+  "verified": "2026-10-02",
+  "sources": [
+    "https://science.nasa.gov/3d-resources/",
+    "https://github.com/nasa/NASA-3D-Resources",
+    "https://www.nasa.gov/nasa-brand-center/images-and-media/"
+  ],
+  "models": [
+    {
+      "id": "phobos",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/24878_Phobos_1_1000.glb",
+      "targets": ["mission:phobos", "moon:phobos"],
+      "sizeM": 27000,
+      "credit": "NASA/JPL-Caltech",
+      "body": {
+        "alignGridUrl": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_5_DDR_SHAPE_MODELS_V2_1/data/m1phobos.tab"
+      },
+      "verified": "2026-10-02",
+      "sources": [
+        "https://science.nasa.gov/resource/phobos-mars-moon-3d-model/",
+        "https://sbn.psi.edu/pds/resource/shapes.html"
+      ]
+    },
+    {
+      "id": "deimos",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/24879_Deimos_1_1000.glb",
+      "targets": ["mission:deimos", "moon:deimos"],
+      "sizeM": 15000,
+      "credit": "NASA/JPL-Caltech",
+      "body": {
+        "alignGridUrl": "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_5_DDR_SHAPE_MODELS_V2_1/data/m2deimos.tab"
+      },
+      "verified": "2026-10-02",
+      "sources": [
+        "https://science.nasa.gov/resource/deimos-mars-moon-3d-model/",
+        "https://sbn.psi.edu/pds/resource/shapes.html"
+      ]
+    },
+    {
+      "id": "lro",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Lunar%20Reconnaissance%20Orbiter%20(B)/Lunar%20Reconnaissance%20Orbiter%20(B).glb",
+      "targets": ["mission:lro"],
+      "sizeM": 5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "themis",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Time%20History%20of%20Events%20and%20Macroscale%20Interactions%20During%20Substorms%20(THEMIS)/Time%20History%20of%20Events%20and%20Macroscale%20Interactions%20During%20Substorms%20(THEMIS).glb",
+      "targets": ["mission:artemis-p1", "mission:artemis-p2", "norad:30580", "norad:30797", "norad:30798"],
+      "sizeM": 3.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "mars-odyssey",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Mars%20Odyssey/Mars%20Odyssey.glb",
+      "targets": ["mission:mars-odyssey"],
+      "sizeM": 5.7,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "mro",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/24884_MRO.glb",
+      "targets": ["mission:mro"],
+      "sizeM": 13.6,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "maven",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/24882_Maven.glb",
+      "targets": ["mission:maven"],
+      "sizeM": 11.4,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "curiosity",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/24584_Curiosity_static.glb",
+      "targets": ["site:curiosity-current"],
+      "sizeM": 3,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "perseverance",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/25042_Perseverance.glb",
+      "targets": ["site:perseverance-current"],
+      "sizeM": 3,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "ingenuity",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/mars/resources/gltf_files/25043_Ingenuity_v3.glb",
+      "targets": ["site:ingenuity-final"],
+      "sizeM": 1.2,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "voyager",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/v/Voyager.glb",
+      "targets": ["mission:voyager-1", "mission:voyager-2"],
+      "sizeM": 13,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "new-horizons",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/n/New_Horizons.glb",
+      "targets": ["mission:new-horizons"],
+      "sizeM": 2.7,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "juno",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/j/Juno.glb",
+      "targets": ["mission:juno"],
+      "sizeM": 20,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "parker-solar-probe",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/p/s/PSP.glb",
+      "targets": ["mission:parker-solar-probe"],
+      "sizeM": 3,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "osiris-rex",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/o/Osiris_Rex.glb",
+      "targets": ["mission:osiris-apex"],
+      "sizeM": 6.2,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "europa-clipper",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/c/clipper_spacecraft.glb",
+      "targets": ["mission:europa-clipper"],
+      "sizeM": 30.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://science.nasa.gov/3d-resources/"]
+    },
+    {
+      "id": "soho",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Solar%20and%20Heliospheric%20Observatory/Solar%20and%20Heliospheric%20Observatory.glb",
+      "targets": ["mission:soho"],
+      "sizeM": 9.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "jwst",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/James%20Webb%20Space%20Telescope%20(A)/James%20Webb%20Space%20Telescope%20(A).glb",
+      "targets": ["mission:jwst"],
+      "sizeM": 21,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "stereo",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Solar%20TErrestrial%20RElations%20Observatory%20(STEREO)/Solar%20TErrestrial%20RElations%20Observatory%20(STEREO).glb",
+      "targets": ["mission:stereo-a"],
+      "sizeM": 6.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "roman",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Nancy%20Grace%20Roman%20Space%20Telescope%20(A)/Nancy%20Grace%20Roman%20Space%20Telescope%20(A).glb",
+      "targets": ["mission:roman"],
+      "sizeM": 12,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "iss",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/International%20Space%20Station%20(ISS)%20(B)/International%20Space%20Station%20(ISS)%20(B).glb",
+      "targets": ["norad:25544"],
+      "sizeM": 109,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "hubble",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Hubble%20Space%20Telescope%20(B)/Hubble%20Space%20Telescope%20(B).glb",
+      "targets": ["norad:20580"],
+      "sizeM": 13.2,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "chandra",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Chandra%20X-ray%20Observatory/Chandra%20X-ray%20Observatory.glb",
+      "targets": ["norad:25867"],
+      "sizeM": 19.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "aqua",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Aqua%20(A)/Aqua%20(A).glb",
+      "targets": ["norad:27424"],
+      "sizeM": 16.7,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "aura",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Aura%20(B)/Aura%20(B).glb",
+      "targets": ["norad:28376"],
+      "sizeM": 17,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "landsat-8",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Landsat%208/Landsat%208.glb",
+      "targets": ["norad:39084"],
+      "sizeM": 9,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "icesat-2",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Ice%2C%20Clouds%2C%20and%20Land%20Elevation%20Satellite-2%20(ICESat-2)%20(B)/Ice%2C%20Clouds%2C%20and%20Land%20Elevation%20Satellite-2%20(ICESat-2)%20(B).glb",
+      "targets": ["norad:43613"],
+      "sizeM": 13.8,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "gpm",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Global%20Precipitation%20Measurement/Global%20Precipitation%20Measurement.glb",
+      "targets": ["norad:39574"],
+      "sizeM": 13,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "suomi-npp",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Suomi%20National%20Polar-orbiting%20Partnership%20(Suomi%20NPP)/Suomi%20National%20Polar-orbiting%20Partnership%20(Suomi%20NPP).glb",
+      "targets": ["norad:37849"],
+      "sizeM": 8.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "tess",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Transiting%20Exoplanet%20Survey%20Satellite%20(TESS)%20(B)/Transiting%20Exoplanet%20Survey%20Satellite%20(TESS)%20(B).glb",
+      "targets": ["norad:43435"],
+      "sizeM": 3.9,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "swift",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Swift/Swift.glb",
+      "targets": ["norad:28485"],
+      "sizeM": 5.6,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "fermi",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Fermi%20Gamma-ray%20Large%20Area%20Space%20Telescope/Fermi%20Gamma-ray%20Large%20Area%20Space%20Telescope.glb",
+      "targets": ["norad:33053"],
+      "sizeM": 9.8,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "sdo",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Solar%20Dynamics%20Observatory/Solar%20Dynamics%20Observatory.glb",
+      "targets": ["norad:36395"],
+      "sizeM": 6.6,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "sentinel-6",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Jason%20Continuity%20of%20Service%20(Sentinel-6)/Jason%20Continuity%20of%20Service%20(Sentinel-6).glb",
+      "targets": ["norad:46984"],
+      "sizeM": 5.3,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "oco-2",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Orbiting%20Carbon%20Observatory%20(OCO)%202/Orbiting%20Carbon%20Observatory%20(OCO)%202.glb",
+      "targets": ["norad:40059"],
+      "sizeM": 6,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "hinode",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Hinode%20(Solar-B)/Hinode%20(Solar-B).glb",
+      "targets": ["norad:29479"],
+      "sizeM": 9,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "mms",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Magnetospheric%20Multiscale%20(MMS)%20(B)/Magnetospheric%20Multiscale%20(MMS)%20(B).glb",
+      "targets": ["norad:40482", "norad:40483", "norad:40484", "norad:40485"],
+      "sizeM": 3.5,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "cygnss",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Cyclone%20Global%20Navigation%20Satellite%20System%20(CYGNSS)/Cyclone%20Global%20Navigation%20Satellite%20System%20(CYGNSS).glb",
+      "targets": [
+        "norad:41884",
+        "norad:41885",
+        "norad:41886",
+        "norad:41887",
+        "norad:41888",
+        "norad:41890",
+        "norad:41891"
+      ],
+      "sizeM": 1.7,
+      "credit": "NASA",
+      "verified": "2026-10-02",
+      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    }
+  ]
+}

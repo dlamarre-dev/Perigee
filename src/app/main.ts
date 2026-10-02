@@ -221,15 +221,18 @@ function main(): void {
     cb?.();
   };
   const follow: FollowApi = {
-    start(scenePosition, distanceKm, onEnd, viewFrom) {
+    start(scenePosition, distanceKm, onEnd, options = {}) {
       const pos = scenePosition();
       if (!pos || !view) return false;
       if (controls.following) follow.stop();
       followEnd = onEnd;
-      controls.setLimits({ minDistanceKm: FOLLOW_MIN_DISTANCE_KM, maxDistanceKm: view.limits.maxDistanceKm });
+      controls.setLimits({
+        minDistanceKm: options.minDistanceKm ?? FOLLOW_MIN_DISTANCE_KM,
+        maxDistanceKm: view.limits.maxDistanceKm,
+      });
       controls.setFollow(scenePosition);
       // Look at the object from above (radially outward from the body) unless told otherwise, north up.
-      controls.flyTo(orbitStateLookingFrom(pos, viewFrom ?? pos, [0, 0, 1], distanceKm));
+      controls.flyTo(orbitStateLookingFrom(pos, options.viewFrom ?? pos, [0, 0, 1], distanceKm));
       return true;
     },
     stop() {

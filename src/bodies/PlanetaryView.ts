@@ -20,7 +20,8 @@ import { bodyOrientationEqj, earthOrientation } from '../astro/bodies';
 import { DEG_TO_RAD, J2000_JD, MS_PER_DAY, RAD_TO_DEG, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
 import { osculatingElements } from '../astro/kepler';
-import { quatConjugate, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { quatConjugate, quatFromBasis, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { alignAxes, axisVector } from '../astro/attitude';
 import { utcToTdbJd } from '../astro/time';
 import {
   EphemerisTrack,
@@ -28,7 +29,7 @@ import {
   LOW_ORBIT_MAX_EXTRAPOLATION_DAYS,
   type TrackSample,
 } from '../astro/track';
-import { length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
@@ -39,9 +40,11 @@ import {
   type LandingSites,
   type Mission,
   type RoverPositions,
+  type ModelEntry,
 } from '../data/schemas';
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
+import { SceneModel, loadBodyShape, modelFor, modelMinDistance, withModel } from '../render/models';
 import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
@@ -159,6 +162,10 @@ export class PlanetaryView implements View {
   private siteScene: Vec3[] = [];
   private earthScene: Vec3 = [0, 0, 0];
   private bodyScene: Quat = { x: 0, y: 0, z: 0, w: 1 };
+  /** Unit direction of the Sun (scene frame). */
+  private sunScene: Vec3 = [1, 0, 0];
+  /** NASA 3D model of the selected orbiter or rover, drawn once it covers a few pixels. */
+  private sceneModel!: SceneModel;
   private bodyQ: Quat = { x: 0, y: 0, z: 0, w: 1 };
   private tdbJd = 0;
   private originKm: Vec3 = [0, 0, 0];
@@ -245,7 +252,17 @@ export class PlanetaryView implements View {
               ambient: 0.05,
             })
           : undefined;
-      if (mesh) renderer.scene.add(mesh.mesh);
+      if (mesh) {
+        renderer.scene.add(mesh.mesh);
+        // Irregular moons (Phobos, Deimos): NASA shape model and map instead of the grey sphere.
+        if (modelFor(`mission:${mission.id}`)?.body) {
+          void loadBodyShape(host.baseUrl, `${modelFor(`mission:${mission.id}`)?.id}`).then((shape) => {
+            if (!shape || this.disposed) return;
+            mesh.setGeometry(shape.geometry);
+            if (shape.map) mesh.setDayMap(shape.map);
+          });
+        }
+      }
       this.tracked.push({
         mission,
         index,
@@ -267,6 +284,7 @@ export class PlanetaryView implements View {
     this.body.mesh.add(this.siteGroup);
 
     this.hiddenMissions = parseHiddenMissions(host.initialParams);
+    this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
     this.panel = new BodyPanel(
       host.i18n,
       { panel: config.keys.panel, sites: config.keys.sites, showSites: config.keys.showSites },
@@ -341,6 +359,7 @@ export class PlanetaryView implements View {
     this.bodyScene = quatMultiply(sceneQ, f.bodyQ);
 
     const sun = quatRotate(sceneQ, normalize(this.config.sunFromBodyKm(date)));
+    this.sunScene = sun;
     this.body.setOrientation(this.bodyScene);
     this.body.setSunDirection(sun);
     if (this.earth && this.config.earthFromBodyKm) {
@@ -364,6 +383,12 @@ export class PlanetaryView implements View {
         t.scene = undefined;
       }
       t.mesh?.setSunDirection(sun);
+      // Natural satellites are tidally locked: body x axis towards the planet, z along the orbit normal.
+      if (t.mesh && s) {
+        const x = normalize(scale(s.posKm, -1));
+        const z = normalize(cross(s.posKm, s.velKmS));
+        t.mesh.setOrientation(quatMultiply(sceneQ, quatFromBasis(x, cross(z, x), z)));
+      }
       if (t.mesh) t.mesh.mesh.visible = t.scene !== undefined;
     }
     this.siteScene = this.siteBodyKm.map((p) => quatRotate(this.bodyScene, p));
@@ -420,7 +445,68 @@ export class PlanetaryView implements View {
         this.siteRing.setOccluded(!shown);
     });
     this.siteMarkers.commit();
+    this.placeModel(originKm);
     this.placeLabels();
+  }
+
+  /**
+   * The selected orbiter's or rover's 3D model, in place of its marker when close. Orbiters: the model's nadir
+   * axis towards the body, then the Sun; rovers: upright on the local vertical, front towards north.
+   */
+  private placeModel(originKm: Vec3): void {
+    const sel = this.selection;
+    const camera = this.host.renderer.camera;
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * Math.PI) / 360);
+    let entry: ModelEntry | undefined;
+    let scene: Vec3 | undefined;
+    let q: Quat = { x: 0, y: 0, z: 0, w: 1 };
+    let hideMarker = (): void => undefined;
+    if (sel?.kind === 'mission') {
+      const t = this.trackedFor(sel.mission.id);
+      // Natural bodies draw their model through their BodyMesh.
+      const found = modelFor(`mission:${sel.mission.id}`);
+      entry = found?.body ? undefined : found;
+      scene = t?.scene;
+      if (t && scene && entry) {
+        q = alignAxes(
+          axisVector(entry.nadirAxis ?? '-y'),
+          normalize(scale(scene, -1)),
+          axisVector(entry.sunAxis ?? '+z'),
+          this.sunScene,
+        );
+        hideMarker = () => {
+          this.missionMarkers.hide(t.index);
+          this.missionMarkers.commit();
+          this.missionRing.set(undefined);
+        };
+      }
+    } else if (sel?.kind === 'site') {
+      const i = this.sites.indexOf(sel.site);
+      entry = modelFor(`site:${sel.site.id}`);
+      scene = this.siteScene[i];
+      if (scene && entry) {
+        const north = quatRotate(this.bodyScene, [0, 0, 1]);
+        q = alignAxes(
+          axisVector(entry.nadirAxis ?? '-y'),
+          normalize(scale(scene, -1)),
+          axisVector('+z'),
+          north,
+        );
+        hideMarker = () => {
+          this.siteMarkers.hide(i);
+          this.siteMarkers.commit();
+          this.siteRing.set(undefined);
+        };
+      }
+    }
+    const shown = this.sceneModel.update(
+      scene ? entry : undefined,
+      scene ? sub(scene, originKm) : undefined,
+      q,
+      this.sunScene,
+      focalPx,
+    );
+    if (shown) hideMarker();
   }
 
   uiTick(): void {
@@ -457,6 +543,7 @@ export class PlanetaryView implements View {
     this.disposed = true;
     const scene = this.host.renderer.scene;
     scene.remove(this.body.mesh, this.missionGroup);
+    this.sceneModel.dispose();
     this.body.dispose();
     if (this.earth) {
       scene.remove(this.earth.mesh);
@@ -713,6 +800,7 @@ export class PlanetaryView implements View {
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
+      modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : `site:${sel.site.id}`),
     );
   }
 
@@ -788,6 +876,7 @@ export class PlanetaryView implements View {
       sources: m.sources,
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,
+      ...withModel(`mission:${m.id}`),
     };
   }
 
@@ -820,6 +909,7 @@ export class PlanetaryView implements View {
       sources: live ? [live.source, ...site.sources.filter((u) => u !== live.source)] : site.sources,
       footnote: i18n.format('info.verified', { date: this.config.sites.verified }),
       followable: true,
+      ...withModel(`site:${site.id}`),
     };
   }
 

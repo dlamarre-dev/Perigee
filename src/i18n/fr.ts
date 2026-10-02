@@ -53,6 +53,8 @@ export const fr: Messages = {
     'Surface vue à travers la brume dans le proche infrarouge (Cassini, 938 nm), en niveaux de gris',
   'info.shape': 'Forme',
   'shape.pds': 'Forme irrégulière mesurée (modèle de forme PDS tiré d’images de sondes)',
+  'model.credit': 'Modèle 3D : {credit} (orientation indicative)',
+  'model.preview': 'Modèle 3D de l’objet sélectionné ; glisser pour le tourner',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
   'view.solar.short': 'Solaire',

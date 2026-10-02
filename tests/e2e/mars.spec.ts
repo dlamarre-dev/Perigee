@@ -20,7 +20,7 @@ test('lists Mars missions and natural satellites, with honest provenance', async
 test('picking selects Phobos under the pointer', async ({ page }) => {
   await page.goto(`./?lang=fr&view=mars&${FROZEN}&e2e`);
   await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator('#viewport canvas').boundingBox();
   if (!box) throw new Error('no canvas');
   await expect(async () => {
     const ok = await page.evaluate(() =>

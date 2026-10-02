@@ -15,7 +15,7 @@ async function noHorizontalOverflow(page: Page): Promise<void> {
 
 test('compact toolbar with a menu, view tabs and a docked time bar', async ({ page }) => {
   await page.goto('./?lang=en');
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('#viewport canvas')).toBeVisible();
   await noHorizontalOverflow(page);
   const toolbar = page.locator('.toolbar');
   const bar = await toolbar.boundingBox();

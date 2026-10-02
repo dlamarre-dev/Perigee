@@ -40,11 +40,20 @@ import {
   logScalePosition,
   type PlanetInfo,
 } from '../astro/planets';
-import { quatFromAxisAngle, quatFromBasis, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import {
+  QUAT_IDENTITY,
+  quatFromAxisAngle,
+  quatFromBasis,
+  quatMultiply,
+  quatRotate,
+  type Quat,
+} from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
 import { nearSampleTimes } from '../astro/trajectory';
+import { alignAxes, axisVector } from '../astro/attitude';
 import { applyShape, loadShape } from '../render/shapeGeometry';
+import { SceneModel, loadBodyShape, modelFor, modelMinDistance, withModel } from '../render/models';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
@@ -276,6 +285,8 @@ class SolarView implements View {
   private pendingFrame = false;
   /** Spacecraft unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
   private hiddenMissions: ReadonlySet<string> = new Set();
+  /** NASA 3D model of the selected spacecraft, drawn once it covers a few pixels. */
+  private readonly sceneModel: SceneModel;
 
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
@@ -384,7 +395,16 @@ class SolarView implements View {
         scene: undefined,
         shown: false,
         load: () => {
-          this.loadTexture(moon.id, moon.color, mesh);
+          const body = modelFor(`moon:${moon.id}`);
+          // A NASA shape model brings its own map; otherwise the equirectangular texture.
+          if (!body?.body) this.loadTexture(moon.id, moon.color, mesh);
+          if (body?.body) {
+            void loadBodyShape(this.host.baseUrl, body.id).then((shape) => {
+              if (!shape || this.disposed) return;
+              mesh.setGeometry(shape.geometry);
+              if (shape.map) mesh.setDayMap(shape.map);
+            });
+          }
           if (moon.shape === 'grid') {
             void loadShape(this.host.baseUrl, moon.id).then((grid) => {
               if (grid && !this.disposed) applyShape(mesh.mesh.geometry, grid);
@@ -449,6 +469,7 @@ class SolarView implements View {
       });
     });
 
+    this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
     this.hiddenMissions = parseHiddenMissions(host.initialParams);
     this.panel = new SolarPanel(
       host.i18n,
@@ -665,12 +686,40 @@ class SolarView implements View {
         this.probeMarkers.hide(t.index);
       }
     }
+    const modelShown = this.placeModel(rel);
     const selected = this.scenePositionOf(this.selection);
-    this.ring.set(selected ? rel(selected) : undefined);
+    this.ring.set(selected && !modelShown ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
     this.moonMarkers.commit();
     this.placeLabels();
+  }
+
+  /** The selected spacecraft's 3D model, in place of its marker when close (true scale only). */
+  private placeModel(rel: (p: Vec3) => Vec3): boolean {
+    const sel = this.selection;
+    const probe =
+      sel?.kind === 'mission' ? this.probes.find((t) => t.mission.id === sel.mission.id) : undefined;
+    const entry = probe && !this.logScale ? modelFor(`mission:${probe.mission.id}`) : undefined;
+    const scene = probe?.scene;
+    const earth = this.planets.find((p) => p.info.id === 'earth')?.scene;
+    const camera = this.host.renderer.camera;
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * DEG_TO_RAD) / 2);
+    if (!probe || !entry || !scene || !earth) {
+      this.sceneModel.update(undefined, undefined, QUAT_IDENTITY, [1, 0, 0], focalPx);
+      return false;
+    }
+    const sunDir = normalize(scale(scene, -1));
+    const toEarth = normalize(sub(earth, scene));
+    const q = alignAxes(
+      axisVector(entry.earthAxis ?? '+z'),
+      toEarth,
+      axisVector(entry.sunAxis ?? '+y'),
+      sunDir,
+    );
+    const shown = this.sceneModel.update(entry, rel(scene), q, sunDir, focalPx);
+    if (shown) this.probeMarkers.hide(probe.index);
+    return shown;
   }
 
   uiTick(): void {
@@ -715,6 +764,7 @@ class SolarView implements View {
       this.probeMarkers.points,
     );
     this.sun.dispose();
+    this.sceneModel.dispose();
     for (const p of this.planets) {
       scene.remove(p.mesh.mesh);
       p.mesh.dispose();
@@ -1163,7 +1213,7 @@ class SolarView implements View {
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
-      viewFrom,
+      { viewFrom, ...modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '') },
     );
   }
 
@@ -1448,6 +1498,7 @@ class SolarView implements View {
       sources: m.sources,
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,
+      ...withModel(`mission:${m.id}`),
     };
   }
 

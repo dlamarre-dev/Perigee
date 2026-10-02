@@ -9,6 +9,7 @@ import {
   Quaternion,
   ShaderMaterial,
   SphereGeometry,
+  type BufferGeometry,
   Vector3,
   type Texture,
 } from 'three';
@@ -77,7 +78,8 @@ export interface BodyMeshOptions {
 }
 
 export class BodyMesh {
-  readonly mesh: Mesh<SphereGeometry, ShaderMaterial>;
+  readonly mesh: Mesh<BufferGeometry, ShaderMaterial>;
+  private readonly occluder: Mesh<BufferGeometry, MeshBasicMaterial>;
   readonly radiusKm: number;
   private readonly sunDirection = new Vector3(1, 0, 0);
   private readonly detailRequests: (() => void)[] = [];
@@ -103,9 +105,9 @@ export class BodyMesh {
     this.mesh = new Mesh(geometry, material);
     this.mesh.name = o.name;
     // Black occluder in the pick pass, so objects behind the body cannot be picked.
-    const occluder = new Mesh(geometry, new MeshBasicMaterial({ color: 0x000000 }));
-    occluder.layers.set(PICK_LAYER);
-    this.mesh.add(occluder);
+    this.occluder = new Mesh(geometry, new MeshBasicMaterial({ color: 0x000000 }));
+    this.occluder.layers.set(PICK_LAYER);
+    this.mesh.add(this.occluder);
   }
 
   /** Registers what to load when high detail is wanted (see `requestDetail`). */
@@ -116,6 +118,14 @@ export class BodyMesh {
   /** The camera is close: load the high-detail texture levels, if any (idempotent). */
   requestDetail(): void {
     for (const handler of this.detailRequests.splice(0)) handler();
+  }
+
+  /** Replaces the sphere by a body-frame shape (km), e.g. a NASA model of an irregular moon. */
+  setGeometry(geometry: BufferGeometry): void {
+    const old = this.mesh.geometry;
+    this.mesh.geometry = geometry;
+    this.occluder.geometry = geometry;
+    old.dispose();
   }
 
   setDayMap(texture: Texture): void {

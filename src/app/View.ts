@@ -31,13 +31,14 @@ export interface FollowApi {
   /**
    * Locks the camera on a moving scene-frame point, framed from above at `distanceKm` (radially outward
    * from the scene origin), or from `viewFrom` (scene-frame direction from the point towards the camera).
+   * `minDistanceKm` lets the camera come closer than the default (objects with a 3D model of a few metres).
    * `onEnd` runs once when following stops for any reason (button, recenter, R key, view change).
    */
   start(
     scenePosition: () => Vec3 | undefined,
     distanceKm: number,
     onEnd: () => void,
-    viewFrom?: Vec3,
+    options?: { readonly viewFrom?: Vec3; readonly minDistanceKm?: number },
   ): boolean;
   stop(): void;
   readonly active: boolean;

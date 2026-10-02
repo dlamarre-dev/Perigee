@@ -10,7 +10,7 @@ test('works offline after a first visit (service worker)', async ({ page, contex
     });
   });
   await page.goto('./?lang=en');
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('#viewport canvas')).toBeVisible();
   // Wait for the worker to take control and cache what the first visit loaded.
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { swCached: boolean }).swCached), {
@@ -35,7 +35,7 @@ test('works offline after a first visit (service worker)', async ({ page, contex
 
   await context.setOffline(true);
   await page.reload();
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('#viewport canvas')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Recenter' })).toBeVisible();
   await expect(page.getByText('Offline — showing cached data')).toBeVisible();
   // Satellites come from the cached data files.

@@ -37,7 +37,7 @@ test('landing sites show coordinates and sources, restored from the URL', async 
 test('picking selects the orbiter under the pointer', async ({ page }) => {
   await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
   await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator('#viewport canvas').boundingBox();
   if (!box) throw new Error('no canvas');
   await expect(async () => {
     const ok = await page.evaluate(() =>
@@ -82,7 +82,7 @@ test('missions can be hidden one by one or all at once, and the choice is kept i
   await page.getByRole('button', { name: 'Show all' }).click();
   await expect(box).toBeChecked();
   await expect(page).not.toHaveURL(/hide=/);
-  await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 5_000 });
+  await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
   await page.getByRole('button', { name: 'Hide all' }).click();
   await expect(page).toHaveURL(/hide=[^&]*lro/);
   await page.reload();

@@ -12,7 +12,7 @@ function collectErrors(page: Page): string[] {
 
 /** Fraction of pixels that are not background-black (decoded in Node, not in the page). */
 async function nonBlackFraction(page: Page): Promise<number> {
-  const png = await page.locator('canvas').screenshot();
+  const png = await page.locator('#viewport canvas').screenshot();
   const { data, info } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   let lit = 0;
   const pixels = info.width * info.height;
@@ -25,7 +25,7 @@ async function nonBlackFraction(page: Page): Promise<number> {
 test('renders the Earth in English', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('./?lang=en');
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('#viewport canvas')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Recenter' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   // Let textures load and a few frames render.

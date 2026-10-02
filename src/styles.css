@@ -675,6 +675,28 @@ input[type='checkbox'] {
 /* ---------------------------------------------------------------- small screens */
 
 /* Moons folded under their planet (solar-system panel). */
+/* NASA 3D model preview at the top of the info panel. */
+.model-preview {
+  margin: 4px 0 8px;
+}
+
+.model-preview .model-canvas {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: radial-gradient(circle at 50% 40%, rgb(90 215 255 / 8%), transparent 70%);
+}
+
+.model-preview canvas {
+  display: block;
+  width: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.model-preview .model-credit {
+  margin: 4px 0 0;
+}
+
 /* Mission visibility: a checkbox before each mission button, "show all / hide all" above the list. */
 .results li.toggle-row {
   display: flex;

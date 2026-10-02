@@ -36,6 +36,10 @@ const DATA_CREDITS: readonly Credit[] = [
   },
   { name: 'NASA/JPL SSD — planetary satellite mean elements', url: 'https://ssd.jpl.nasa.gov/sats/elem/' },
   {
+    name: 'NASA 3D Resources (spacecraft, rover and moon models)',
+    url: 'https://science.nasa.gov/3d-resources/',
+  },
+  {
     name: 'NASA/Goddard Space Flight Center Scientific Visualization Studio — Deep Star Maps 2020 (Gaia DR2: ESA/Gaia/DPAC)',
     url: 'https://svs.gsfc.nasa.gov/4851',
   },
