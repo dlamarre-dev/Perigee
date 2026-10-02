@@ -85,6 +85,7 @@ test('missions can be hidden one by one or all at once, and the choice is kept i
   await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
   await page.getByRole('button', { name: 'Hide all' }).click();
   await expect(page).toHaveURL(/hide=[^&]*lro/);
-  await page.reload();
+  // A fresh load of the shared URL (page.reload can race the page's own history updates in CI).
+  await page.goto(page.url());
   await expect(page.locator('#side-panel input[data-toggle="lro"]')).not.toBeChecked();
 });
