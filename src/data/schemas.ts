@@ -197,6 +197,8 @@ export const MoonSchema = z.object({
   color: hexColor,
   model: z.enum(['astronomy-engine', 'mean-elements']),
   elements: MoonElementsSchema.optional(),
+  /** Irregular body: radius grid in public/shapes/<id>.json (tools/shapes) instead of a sphere. */
+  shape: z.literal('grid').optional(),
   notes: localized.optional(),
   verified: isoDate,
   sources: z.array(z.url()).min(1),

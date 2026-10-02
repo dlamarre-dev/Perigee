@@ -51,6 +51,8 @@ export const fr: Messages = {
     'Carte du relief dessinée à la main d’après des images de sondes (P. Stooke), pas une photographie',
   'texture.titanInfrared':
     'Surface vue à travers la brume dans le proche infrarouge (Cassini, 938 nm), en niveaux de gris',
+  'info.shape': 'Forme',
+  'shape.pds': 'Forme irrégulière mesurée (modèle de forme PDS tiré d’images de sondes)',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
   'view.solar.short': 'Solaire',

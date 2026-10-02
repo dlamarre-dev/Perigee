@@ -119,13 +119,15 @@
         "laplacePoleRaDeg": 268.1,
         "laplacePoleDecDeg": 64.5
       },
+      "shape": "grid",
       "verified": "2026-09-29",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/elem/",
         "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
-        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='505'&EPHEM_TYPE=VECTORS&CENTER='500@599'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='505'&EPHEM_TYPE=VECTORS&CENTER='500@599'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'",
+        "https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.shape-models/data/j5amalthea.tab"
       ]
     },
     {
@@ -506,13 +508,15 @@
         "laplacePoleRaDeg": 40.2,
         "laplacePoleDecDeg": 83.6
       },
+      "shape": "grid",
       "verified": "2026-09-29",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/elem/",
         "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
-        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='607'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='607'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'",
+        "https://sbnarchive.psi.edu/pds3/non_mission/EAR_A_5_DDR_SHAPE_MODELS_V2_1/data/s7hyperion.tab"
       ],
       "notes": {
         "en": "Hyperion tumbles chaotically: its drawn orientation is only indicative.",
@@ -582,13 +586,15 @@
         "laplacePoleRaDeg": 276,
         "laplacePoleDecDeg": 67.5
       },
+      "shape": "grid",
       "verified": "2026-09-29",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/elem/",
         "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
-        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='609'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='609'&EPHEM_TYPE=VECTORS&CENTER='500@699'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'",
+        "https://sbn.psi.edu/pds/resource/phoebeshape.html"
       ]
     },
     {
@@ -795,13 +801,15 @@
         "laplacePoleRaDeg": 299.8,
         "laplacePoleDecDeg": 42.6
       },
+      "shape": "grid",
       "verified": "2026-09-29",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/elem/",
         "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
-        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='808'&EPHEM_TYPE=VECTORS&CENTER='500@899'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'"
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='808'&EPHEM_TYPE=VECTORS&CENTER='500@899'&REF_SYSTEM=ICRF&REF_PLANE=FRAME&OUT_UNITS=KM-S&VEC_TABLE=2&CSV_FORMAT=YES&TLIST='2461312.5'",
+        "https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.shape-models/data/n8proteus.tab"
       ]
     },
     {

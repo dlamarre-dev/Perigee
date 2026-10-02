@@ -44,6 +44,7 @@ import { quatFromAxisAngle, quatFromBasis, quatMultiply, quatRotate, type Quat }
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
 import { nearSampleTimes } from '../astro/trajectory';
+import { applyShape, loadShape } from '../render/shapeGeometry';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
@@ -382,7 +383,14 @@ class SolarView implements View {
         state: undefined,
         scene: undefined,
         shown: false,
-        load: () => this.loadTexture(moon.id, moon.color, mesh),
+        load: () => {
+          this.loadTexture(moon.id, moon.color, mesh);
+          if (moon.shape === 'grid') {
+            void loadShape(this.host.baseUrl, moon.id).then((grid) => {
+              if (grid && !this.disposed) applyShape(mesh.mesh.geometry, grid);
+            });
+          }
+        },
       });
     });
     const palette = ['#7cc4ff', '#ffb74d', '#81c784', '#ce93d8', '#f48fb1', '#4dd0e1', '#fff176', '#a1887f'];
@@ -1145,7 +1153,7 @@ class SolarView implements View {
       : sel.kind === 'planet'
         ? Math.max(sel.planet.radiusKm * 12, 60_000)
         : sel.kind === 'moon'
-          ? Math.max(sel.moon.radiusKm * 14, 8_000)
+          ? sel.moon.radiusKm * 8
           : 3e6;
     // Seen from the day side, 45° from the Sun direction towards the scene north (the Sun is at the origin).
     const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
@@ -1358,6 +1366,7 @@ class SolarView implements View {
     if (m?.scene && s && m.planet) rows.push(...this.distanceRows(add(m.planet.eqj, s.posKm)));
     const texture = TEXTURE_NOTES[moon.id];
     if (texture) rows.push([t('info.texture'), t(texture)]);
+    if (moon.shape === 'grid') rows.push([t('info.shape'), t('shape.pds')]);
     const badge: { text: string; state: BadgeState } = this.logScale
       ? { text: t('solar.logWarning'), state: 'stale' }
       : moon.model === 'mean-elements'

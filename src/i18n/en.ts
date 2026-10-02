@@ -45,6 +45,8 @@ export const en = {
     "Cloud tops, artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
   'texture.handDrawn': 'Hand-drawn relief map from spacecraft images (P. Stooke), not a photograph',
   'texture.titanInfrared': 'Surface seen through the haze in near-infrared (Cassini, 938 nm), greyscale',
+  'info.shape': 'Shape',
+  'shape.pds': 'Measured irregular shape (PDS shape model from spacecraft images)',
   'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
   'view.solar.short': 'Solar',
   'toolbar.menu': 'Menu',

@@ -131,6 +131,9 @@ No single API provides "active probes + landing sites". We maintain:
   `basisu` CLI in its WASI build, run by Node (`tools/textures/basisu.ts`, pinned commit); the browser WASM
   wrappers cap images at ~12 Mpixel. 8k levels (Earth day/night, Moon, Mars) are KTX2-only and load on demand
   when the camera is within one radius of the surface (`BodyMesh.requestDetail()` / `ProgressiveTexture`).
+- Irregular moons (Amalthea, Proteus, Hyperion, Phoebe): PDS shape models resampled to radius grids
+  (`tools/shapes/fetch-shapes.ts` → `public/shapes/<id>.json`, `moons.json` `shape: "grid"`), displacing the body
+  sphere (`src/render/shapeGeometry.ts`); UVs unchanged, so the equirectangular maps still apply.
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.
 - Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); no sunspot map.
