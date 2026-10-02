@@ -27,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 import sharp, { type Sharp } from 'sharp';
 import { BASE_MAX_LEVEL_K, textureLevels, type TextureLevels } from '../../src/render/textureLevels';
 import { encodeKtx2 } from './basisu';
+import { decodeExr } from './exr';
 import { bandedMap, PROCEDURAL } from './procedural';
 import { saturnRings, uranusRings, type RingProfile } from './rings';
 
@@ -40,6 +41,8 @@ interface TextureSource {
   readonly centerLonDeg?: number;
   /** Source repeats the edge meridian and both poles (N+1 × M+1 grid): drop the last column and row. */
   readonly dropEdge?: boolean;
+  /** Linear EXR sources: scale before the sRGB encoding. */
+  readonly exposure?: number;
 }
 
 interface ProceduralSource {
@@ -283,6 +286,16 @@ const BODIES: Record<string, readonly Source[]> = {
   nix: [{ name: 'color', procedural: 'nix' }],
   hydra: [{ name: 'color', procedural: 'hydra' }],
   eris: [{ name: 'color', procedural: 'eris' }],
+  // Sky background: NASA SVS Deep Star Maps 2020 (Hipparcos-2, Tycho-2, Gaia DR2), J2000 equatorial plate
+  // carrée, RA 0h at the centre and increasing to the left (as seen from inside the sphere); not rolled.
+  sky: [
+    {
+      name: 'stars',
+      url: 'https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/starmap_2020_8k.exr',
+      quality: 90,
+      exposure: 1.6,
+    },
+  ],
   haumea: [{ name: 'color', procedural: 'haumea' }],
   makemake: [{ name: 'color', procedural: 'makemake' }],
 };
@@ -338,11 +351,16 @@ function levelName(width: number): string {
 
 /** Decoded source as raw RGB, cropped and rolled so the prime meridian is at the horizontal centre. */
 async function prepared(file: string, source: TextureSource): Promise<Sharp> {
-  const raw = await sharp(file, { limitInputPixels: false })
-    .removeAlpha()
-    .toColourspace('srgb')
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  const raw = file.endsWith('.exr')
+    ? await decodeExr(file, source.exposure).then(({ data, width, height }) => ({
+        data,
+        info: { width, height, channels: 3 as const },
+      }))
+    : await sharp(file, { limitInputPixels: false })
+        .removeAlpha()
+        .toColourspace('srgb')
+        .raw()
+        .toBuffer({ resolveWithObject: true });
   const ch = raw.info.channels;
   const srcWidth = raw.info.width;
   const width = source.dropEdge ? srcWidth - 1 : srcWidth;

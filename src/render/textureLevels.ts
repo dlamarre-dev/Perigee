@@ -22,6 +22,8 @@ const photo = (webp: readonly number[], ktx2: readonly number[] = webp): Texture
 const procedural = (k: number): TextureLevels => ({ webp: [k], ktx2: [] });
 
 export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, TextureLevels>>>> = {
+  // Star background (all views): 4k at first, 8k (UASTC) once the scene has settled on large screens.
+  sky: { stars: photo([2, 4], [4, 8]) },
   earth: { day: photo([2, 4], [2, 4, 8]), night: photo([2, 4], [2, 4, 8]) },
   moon: { color: photo([2, 4], [2, 4, 8]) },
   mars: { color: photo([2, 4], [2, 4, 8]) },

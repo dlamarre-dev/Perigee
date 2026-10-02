@@ -31,6 +31,10 @@ const DATA_CREDITS: readonly Credit[] = [
     url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/',
   },
   { name: 'NASA/JPL SSD — planetary satellite mean elements', url: 'https://ssd.jpl.nasa.gov/sats/elem/' },
+  {
+    name: 'NASA/Goddard Space Flight Center Scientific Visualization Studio — Deep Star Maps 2020 (Gaia DR2: ESA/Gaia/DPAC)',
+    url: 'https://svs.gsfc.nasa.gov/4851',
+  },
   { name: 'NASA MMGIS (Mars rover traverses)', url: 'https://mars.nasa.gov/maps/' },
   {
     name: 'Solar System Scope (INOVE) — Venus, Saturn, Uranus, Neptune maps, CC BY 4.0, resampled',

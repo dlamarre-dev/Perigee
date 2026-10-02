@@ -24,6 +24,7 @@ import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
 import { orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
+import { SkyMesh } from '../render/SkyMesh';
 import { createStarfield } from '../render/starfield';
 import { configureKtx2 } from '../render/textures';
 import { About } from '../ui/About';
@@ -141,8 +142,22 @@ function main(): void {
   if (url.time) clock.jumpTo(url.time);
   clock.setRate(url.rate);
 
+  // Real sky (NASA SVS star map); the procedural starfield shows until it has loaded.
   const stars = createStarfield(4000, renderer.renderer.getPixelRatio());
-  renderer.scene.add(stars);
+  const sky = new SkyMesh({
+    baseUrl: import.meta.env.BASE_URL,
+    maxTextureSize: renderer.maxTextureSize,
+    anisotropy: renderer.renderer.capabilities.getMaxAnisotropy(),
+    onReady: () => {
+      stars.visible = false;
+      // The 8k level (~25 MB) only pays off on large high-density screens, once the page has settled.
+      const px = Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio;
+      const saveData = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData === true;
+      if (px >= 2500 && !saveData && renderer.maxTextureSize >= 8192)
+        window.setTimeout(() => sky.requestDetail(), 8000);
+    },
+  });
+  renderer.scene.add(sky.mesh, stars);
 
   const placeholderHome: OrbitState = orbitStateLookingFrom([0, 0, 0], [1, 0, 0], [0, 0, 1], 20_000);
   const controls = new QuaternionOrbitControls(renderer.canvas, {
@@ -414,6 +429,7 @@ function main(): void {
       const bodyQ = v.bodyOrientation(date);
       const sceneQ = frame === 'fixed' ? quatConjugate(bodyQ) : QUAT_IDENTITY;
       stars.quaternion.set(sceneQ.x, sceneQ.y, sceneQ.z, sceneQ.w);
+      sky.mesh.quaternion.copy(stars.quaternion);
       if (frame === 'inertial') controls.setHome(homeState(date));
 
       // The view first: the camera may follow one of its objects.
