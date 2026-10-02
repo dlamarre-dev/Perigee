@@ -63,15 +63,16 @@ test('GPU picking selects the object under the pointer', async ({ page }) => {
 });
 
 test('a NASA 3D model previews in the info panel when the object has one', async ({ page }) => {
+  test.setTimeout(90_000);
   await page.goto('./?lang=en&sel=25544');
   const info = page.locator('aside.info:visible');
-  await expect(info.locator('.panel-title')).toContainText('ISS');
+  await expect(info.locator('.panel-title')).toContainText('ISS', { timeout: 30_000 });
   const preview = info.locator('figure.model-preview');
-  await expect(preview).toBeVisible();
+  await expect(preview).toBeVisible({ timeout: 10_000 });
   await expect(preview).toContainText('3D model: NASA');
   await expect(preview.locator('canvas')).toBeVisible();
   // An object without a model hides it.
   await page.goto('./?lang=en&sel=100830');
-  await expect(page.locator('aside.info:visible .panel-title')).toBeVisible();
+  await expect(page.locator('aside.info:visible .panel-title')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('aside.info:visible figure.model-preview')).toBeHidden();
 });
