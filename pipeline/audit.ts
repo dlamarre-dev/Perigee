@@ -40,7 +40,14 @@ export interface AuditReport {
 }
 
 const DAY_MS = 86_400_000;
-export const STALE_AFTER_DAYS = 90;
+/**
+ * Missions are re-verified monthly: due after STALE_AFTER_DAYS, at most MAX_STALE_PER_AUDIT per weekly audit
+ * (oldest first), so the agent's budget and the catalog-guard limit hold even when many dates coincide; an
+ * entry waits at most a week or two once due. Catalog files (sites, operators, moons) every FILE_STALE_AFTER_DAYS.
+ */
+export const STALE_AFTER_DAYS = 21;
+export const MAX_STALE_PER_AUDIT = 15;
+export const FILE_STALE_AFTER_DAYS = 180;
 export const COVERAGE_WARNING_DAYS = 30;
 /** Mean-element moons drift by a few degrees a year from their anchoring epoch (tools/moons/anchor.ts). */
 export const MOON_ANCHOR_MAX_DAYS = 365;
@@ -182,7 +189,7 @@ export function checkEphemerisCoverage(
   return items;
 }
 
-/** Catalog entries whose `verified` date is older than STALE_AFTER_DAYS (catalog files use 2× that). */
+/** Missions due for re-verification (oldest first, capped) and catalog files older than FILE_STALE_AFTER_DAYS. */
 export function checkStaleVerification(
   files: readonly { path: string; verified: string }[],
   missions: readonly Mission[],
@@ -190,21 +197,29 @@ export function checkStaleVerification(
 ): AuditItem[] {
   const age = (iso: string): number => Math.floor((now.getTime() - Date.parse(`${iso}T00:00:00Z`)) / DAY_MS);
   const items: AuditItem[] = [];
-  for (const m of missions) {
-    if (m.status === 'ended') continue;
+  const due = missions
+    .filter((m) => m.status !== 'ended' && age(m.verified) > STALE_AFTER_DAYS)
+    .sort((a, b) => a.verified.localeCompare(b.verified) || a.id.localeCompare(b.id));
+  for (const m of due.slice(0, MAX_STALE_PER_AUDIT)) {
     const days = age(m.verified);
-    if (days > STALE_AFTER_DAYS) {
-      items.push({
-        kind: 'stale-verification',
-        key: `mission:${m.id}`,
-        summary: `${m.name.en} (${m.centralBody}, ${m.status}): last verified ${m.verified} (${days} days ago)`,
-        details: { verified: m.verified },
-      });
-    }
+    items.push({
+      kind: 'stale-verification',
+      key: `mission:${m.id}`,
+      summary: `${m.name.en} (${m.centralBody}, ${m.status}): last verified ${m.verified} (${days} days ago)`,
+      details: { verified: m.verified },
+    });
+  }
+  if (due.length > MAX_STALE_PER_AUDIT) {
+    items.push({
+      kind: 'stale-verification',
+      key: 'missions:deferred',
+      summary: `${due.length - MAX_STALE_PER_AUDIT} more missions are due and deferred to next week (at most ${MAX_STALE_PER_AUDIT} per audit)`,
+      details: { deferred: due.slice(MAX_STALE_PER_AUDIT).map((m) => m.id) },
+    });
   }
   for (const f of files) {
     const days = age(f.verified);
-    if (days > 2 * STALE_AFTER_DAYS) {
+    if (days > FILE_STALE_AFTER_DAYS) {
       items.push({
         kind: 'stale-verification',
         key: `file:${f.path}`,

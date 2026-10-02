@@ -184,12 +184,25 @@ describe('maintenance audit', () => {
       ],
       [
         mission({ id: 'old', verified: '2026-05-01' }),
-        mission({ id: 'fresh' }),
+        mission({ id: 'fresh', verified: '2026-09-20' }),
         mission({ id: 'gone', status: 'ended', verified: '2025-01-01' }),
       ],
       NOW,
     );
     expect(items.map((i) => i.key)).toEqual(['mission:old', 'file:catalog/a.json']);
+  });
+
+  it('caps monthly re-verification at 15 missions per audit, oldest first', () => {
+    const many = Array.from({ length: 58 }, (_, i) =>
+      mission({ id: `m${String(i).padStart(2, '0')}`, verified: i < 20 ? '2026-08-01' : '2026-09-01' }),
+    );
+    const items = checkStaleVerification([], many, NOW);
+    const missions = items.filter((i) => i.key.startsWith('mission:'));
+    expect(missions).toHaveLength(15);
+    expect(missions.every((i) => (i.details as { verified: string }).verified === '2026-08-01')).toBe(true);
+    expect(items.find((i) => i.key === 'missions:deferred')?.summary).toMatch(/^43 more missions/);
+    // Not due yet: verified within the last three weeks.
+    expect(checkStaleVerification([], [mission({ id: 'x', verified: '2026-09-10' })], NOW)).toEqual([]);
   });
 
   it('asks for a re-anchoring of mean-element moons after a year', () => {

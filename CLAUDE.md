@@ -248,8 +248,8 @@ Weekly maintenance (hands-off):
 - `pipeline/audit.ts` (`npm run data:audit`) compares published data and a few upstream lists (CelesTrak index
   page, this year's SATCAT launches, IERS leap seconds, Horizons lookups for new deep-space payloads) with the
   catalog: unknown launch-site/owner codes, new CelesTrak groups, deep-space payloads missing from
-  `missions.json`, public ephemerides ending (`coverageEnd` in the manifest), stale `verified` dates, leap
-  seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`
+  `missions.json`, public ephemerides ending (`coverageEnd` in the manifest), stale `verified` dates (missions
+  monthly, at most 15 per week; files after 180 days), leap seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`
   `ignoredGroups`.
 - A scheduled Claude Code routine (maintainer's account, Saturday 02:00 America/Toronto) follows
   `docs/maintenance-agent.md`: researches each item on official sources, edits `catalog/`, opens a
@@ -339,7 +339,8 @@ npm run textures       # offline texture pre-processing (downloads NASA sources,
 ## 13. Things to re-check regularly (verification dates in `catalog/`)
 
 Known statuses at end of September 2026. Kept current by the weekly maintenance agent (§8), which re-verifies
-entries older than 90 days and anything the audit flags:
+every active mission about monthly (due after 21 days, at most 15 per weekly audit, oldest first) and anything
+the audit flags:
 - Lunar orbit (verified 2026-09-28, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
   orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA mission ended June 2026, Advanced Space still operates it;

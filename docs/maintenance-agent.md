@@ -35,7 +35,9 @@ to do anything unless you explicitly ask for help.
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:
-"ended"`: never delete entries.
+"ended"`: never delete entries. Every active mission comes back about once a month (the audit lists at most
+     15 per week, oldest first; `missions:deferred` lists the rest, handled in the next weeks): even when
+     nothing changed, set `verified` to today and add or keep the page you checked in `sources`.
    - Hosted payloads (every week, even without an audit item): check the sources of `operators.json`
      `hostedPayloads` (e.g. the GHGSat series page on Gunter's Space Page) for newly launched instruments, and add
      each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),
@@ -76,4 +78,5 @@ to do anything unless you explicitly ask for help.
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
 - Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
   typography: a non-breaking space before `:`).
-- Budget: stop after about 25 researched items; carry the rest over to next week in the report.
+- Budget: stop after about 25 researched items (re-verifications included); carry the rest over to next week in
+  the report.
