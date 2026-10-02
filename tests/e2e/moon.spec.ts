@@ -60,3 +60,31 @@ test('switching views keeps the time and language', async ({ page }) => {
   await expect(page).not.toHaveURL(/view=/);
   await expect(page).toHaveURL(/t=2026-09-26T12%3A00%3A00Z/);
 });
+
+test('missions can be hidden one by one or all at once, and the choice is kept in the URL', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
+  await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
+  const label = page.locator('.label', { hasText: 'Lunar Reconnaissance Orbiter (LRO)' });
+  // Look at LRO from above so its label is on screen.
+  await expect(async () => {
+    const ok = await page.evaluate(() =>
+      (window as unknown as { __perigeeTest: { lookAt(id: string): boolean } }).__perigeeTest.lookAt('lro'),
+    );
+    expect(ok).toBe(true);
+    await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
+  const box = page.locator('#side-panel input[data-toggle="lro"]');
+  await box.uncheck();
+  await expect(page).toHaveURL(/hide=lro/);
+  await expect(label).toHaveAttribute('data-shown', 'false');
+  await page.getByRole('button', { name: 'Show all' }).click();
+  await expect(box).toBeChecked();
+  await expect(page).not.toHaveURL(/hide=/);
+  await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 5_000 });
+  await page.getByRole('button', { name: 'Hide all' }).click();
+  await expect(page).toHaveURL(/hide=[^&]*lro/);
+  await page.reload();
+  await expect(page.locator('#side-panel input[data-toggle="lro"]')).not.toBeChecked();
+});

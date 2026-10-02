@@ -49,6 +49,7 @@ import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
 import { BodyPanel } from '../ui/BodyPanel';
+import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
 import { formatUtcDate } from '../ui/labels';
@@ -163,6 +164,8 @@ export class PlanetaryView implements View {
   private originKm: Vec3 = [0, 0, 0];
   private selection: Selection;
   private sitesVisible = true;
+  /** Missions unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
+  private hiddenMissions: ReadonlySet<string> = new Set();
   private lastTrajectoryWallMs = -Infinity;
   private lastEpoch = -1;
   private disposed = false;
@@ -263,6 +266,7 @@ export class PlanetaryView implements View {
     this.siteGroup.add(this.siteMarkers.points, this.siteRing.points);
     this.body.mesh.add(this.siteGroup);
 
+    this.hiddenMissions = parseHiddenMissions(host.initialParams);
     this.panel = new BodyPanel(
       host.i18n,
       { panel: config.keys.panel, sites: config.keys.sites, showSites: config.keys.showSites },
@@ -279,7 +283,15 @@ export class PlanetaryView implements View {
           this.refreshLabels();
           host.syncUrl();
         },
+        onMissionVisibility: (hidden) => {
+          this.hiddenMissions = new Set(hidden);
+          const sel = this.selection;
+          if (sel?.kind === 'mission' && hidden.has(sel.mission.id)) this.select(undefined);
+          this.lastTrajectoryWallMs = -Infinity;
+          host.syncUrl();
+        },
       },
+      this.hiddenMissions,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.detail = new DetailPanel(host.i18n, {
@@ -341,7 +353,7 @@ export class PlanetaryView implements View {
     for (const t of this.tracked) {
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
-      if (s) {
+      if (s && !this.hiddenMissions.has(t.mission.id)) {
         this.missionMarkers.setColor(
           t.index,
           this.colors.get(t.mission.id) ?? DEFAULT_MISSION_COLOR,
@@ -365,7 +377,7 @@ export class PlanetaryView implements View {
 
     const sel = this.selection;
     const selTracked = sel?.kind === 'mission' ? this.trackedFor(sel.mission.id) : undefined;
-    this.missionRing.set(selTracked?.sample.state?.posKm);
+    this.missionRing.set(selTracked?.scene ? selTracked.sample.state?.posKm : undefined);
     this.siteRing.set(sel?.kind === 'site' ? this.siteBodyKm[this.sites.indexOf(sel.site)] : undefined);
     if (this.pendingFrame) {
       const pos = this.scenePositionOf(sel);
@@ -438,6 +450,7 @@ export class PlanetaryView implements View {
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'site') p.set('sel', `site:${sel.site.id}`);
     if (!this.sitesVisible) p.set('sites', '0');
+    writeHiddenMissions(p, this.hiddenMissions);
   }
 
   dispose(): void {
@@ -554,7 +567,7 @@ export class PlanetaryView implements View {
     const m = t.line.material as LineBasicMaterial | LineDashedMaterial;
     m.color.set(kind === 'hidden' ? '#8a8f98' : color);
     m.opacity = kind === 'hidden' ? 0.35 : selected ? 1 : 0.55;
-    t.line.visible = kind !== 'none';
+    t.line.visible = kind !== 'none' && !this.hiddenMissions.has(t.mission.id);
   }
 
   /** Behind the central body, or behind the Earth (Moon view), as seen from the camera. */

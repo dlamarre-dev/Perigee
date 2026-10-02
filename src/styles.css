@@ -675,6 +675,34 @@ input[type='checkbox'] {
 /* ---------------------------------------------------------------- small screens */
 
 /* Moons folded under their planet (solar-system panel). */
+/* Mission visibility: a checkbox before each mission button, "show all / hide all" above the list. */
+.results li.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toggle-row .mission-toggle {
+  flex: none;
+  margin: 0 2px 0 4px;
+}
+
+.toggle-row .result {
+  min-width: 0;
+}
+
+.mission-toggles {
+  display: flex;
+  gap: 6px;
+  margin: 2px 0 6px;
+}
+
+.mission-toggles .btn {
+  min-height: 26px;
+  padding: 2px 10px;
+  font-size: 11px;
+}
+
 .moon-list {
   margin: 2px 0 6px 18px;
   padding-left: 8px;

@@ -48,6 +48,7 @@ The address bar always describes what you see, so a link reproduces it:
 | `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                         |
 | `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                        |
 | `log=1`                                        | Logarithmic distances in the solar-system view                                                                 |
+| `hide=<id>,<id>`                               | Missions not drawn in the Moon, Mars and solar-system views (unticked in the panel)                            |
 
 ## Data and credits
 

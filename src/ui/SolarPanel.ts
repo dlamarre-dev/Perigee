@@ -7,12 +7,15 @@ import type { Mission, Moon } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { formatUtcDate } from './labels';
+import { MissionToggles } from './missionToggles';
 
 export interface SolarPanelCallbacks {
   readonly onSelectPlanet: (p: PlanetInfo) => void;
   readonly onSelectMission: (m: Mission) => void;
   readonly onSelectMoon: (m: Moon) => void;
   readonly onToggleLogScale: (on: boolean) => void;
+  /** Spacecraft whose markers, trajectories and labels are not drawn. */
+  readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
 }
 
 export class SolarPanel {
@@ -26,6 +29,7 @@ export class SolarPanel {
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
   private fetchedAt: Date | undefined;
+  private readonly toggles: MissionToggles;
 
   constructor(
     private readonly i18n: I18n,
@@ -36,7 +40,14 @@ export class SolarPanel {
     private readonly hasEphemeris: (m: Mission) => boolean,
     logScale: boolean,
     private readonly callbacks: SolarPanelCallbacks,
+    hiddenMissions: ReadonlySet<string> = new Set(),
   ) {
+    this.toggles = new MissionToggles(
+      i18n,
+      () => missions.filter((m) => m.objectType !== 'natural'),
+      hiddenMissions,
+      callbacks.onMissionVisibility,
+    );
     this.logToggle.checked = logScale;
     this.logToggle.addEventListener('change', () => callbacks.onToggleLogScale(this.logToggle.checked));
     this.element = sidePanel(
@@ -48,6 +59,7 @@ export class SolarPanel {
         this.planetsTitle,
         this.planetsList,
         this.missionsTitle,
+        this.toggles.toolbar,
         this.missionsList,
       ],
     );
@@ -122,6 +134,7 @@ export class SolarPanel {
     this.logLabel.textContent = t('solar.logScale');
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');
+    this.toggles.renderLabels();
     this.planetsList.replaceChildren(
       ...this.planets.map((p) => {
         const moons = this.moons.filter((m) => m.planet === p.id);
@@ -199,7 +212,7 @@ export class SolarPanel {
             h('span', { class: 'result-id' }, [`${status}${extra}`]),
           ]);
           b.addEventListener('click', () => this.callbacks.onSelectMission(m));
-          return h('li', {}, [b]);
+          return this.toggles.row(m, b);
         }),
     );
     this.applyExpanded();

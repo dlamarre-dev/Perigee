@@ -72,6 +72,7 @@ import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
 import { formatUtcDate } from '../ui/labels';
 import { SolarPanel } from '../ui/SolarPanel';
+import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
 const PICK_RADIUS_PX = 14;
@@ -272,6 +273,8 @@ class SolarView implements View {
   private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  /** Spacecraft unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
+  private hiddenMissions: ReadonlySet<string> = new Set();
 
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
@@ -438,6 +441,7 @@ class SolarView implements View {
       });
     });
 
+    this.hiddenMissions = parseHiddenMissions(host.initialParams);
     this.panel = new SolarPanel(
       host.i18n,
       PLANETS,
@@ -457,7 +461,15 @@ class SolarView implements View {
           this.renderDetail(false);
           this.host.syncUrl();
         },
+        onMissionVisibility: (hidden) => {
+          this.hiddenMissions = new Set(hidden);
+          const sel = this.selection;
+          if (sel?.kind === 'mission' && hidden.has(sel.mission.id)) this.select(undefined);
+          this.trajectoriesKey = '';
+          this.host.syncUrl();
+        },
       },
+      this.hiddenMissions,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.ring = new SelectionMarker(pixelRatio);
@@ -509,7 +521,8 @@ class SolarView implements View {
     for (const t of this.probes) {
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
-      t.scene = s ? quatRotate(this.sceneQ, map(s.posKm)) : undefined;
+      t.scene =
+        s && !this.hiddenMissions.has(t.mission.id) ? quatRotate(this.sceneQ, map(s.posKm)) : undefined;
       if (t.mesh) {
         t.mesh.mesh.visible = !this.logScale && t.scene !== undefined;
         if (t.scene) t.mesh.setSunDirection(normalize(scale(t.scene, -1)));
@@ -680,6 +693,7 @@ class SolarView implements View {
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
     if (this.logScale) p.set('log', '1');
+    writeHiddenMissions(p, this.hiddenMissions);
   }
 
   dispose(): void {
@@ -797,7 +811,7 @@ class SolarView implements View {
     const table = t.track.table;
     const kind = t.sample.kind;
     // Small bodies show their osculating orbit instead (their ephemeris window covers only a small arc).
-    t.line.visible = table !== undefined && !t.natural;
+    t.line.visible = table !== undefined && !t.natural && !this.hiddenMissions.has(t.mission.id);
     if (!table || t.natural) return;
     t.captured ??= this.capturedRows(table);
     // Segment pairs (LineSegments), densified with the same Hermite interpolation as the marker; captured

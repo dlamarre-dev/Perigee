@@ -6,11 +6,14 @@ import type { LandingSite, LandingSiteType, Mission } from '../data/schemas';
 import type { I18n, MessageKey } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { formatUtcDate } from './labels';
+import { MissionToggles } from './missionToggles';
 
 export interface BodyPanelCallbacks {
   readonly onSelectMission: (m: Mission) => void;
   readonly onSelectSite: (s: LandingSite) => void;
   readonly onToggleSites: (visible: boolean) => void;
+  /** Missions whose markers, trajectories and labels are not drawn. */
+  readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
 }
 
 const SITE_TYPES: readonly LandingSiteType[] = ['crewed', 'soft', 'rover-last-known', 'hard', 'impact'];
@@ -26,6 +29,7 @@ export class BodyPanel {
   private readonly sitesTitle = h('h3', { class: 'results-title' });
   private readonly sitesBox = h('div', { class: 'facets' });
   private fetchedAt: Date | undefined;
+  private readonly toggles: MissionToggles;
 
   constructor(
     private readonly i18n: I18n,
@@ -35,7 +39,9 @@ export class BodyPanel {
     private readonly colors: ReadonlyMap<string, string>,
     private readonly hasEphemeris: (m: Mission) => boolean,
     private readonly callbacks: BodyPanelCallbacks,
+    hiddenMissions: ReadonlySet<string> = new Set(),
   ) {
+    this.toggles = new MissionToggles(i18n, () => missions, hiddenMissions, callbacks.onMissionVisibility);
     this.sitesToggle.addEventListener('change', () => callbacks.onToggleSites(this.sitesToggle.checked));
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'body-panel-title' },
@@ -43,6 +49,7 @@ export class BodyPanel {
         this.title,
         this.fetched,
         this.missionsTitle,
+        this.toggles.toolbar,
         this.missionsList,
         this.sitesTitle,
         h('p', { class: 'search-row' }, [this.sitesToggle, this.sitesToggleLabel]),
@@ -96,6 +103,7 @@ export class BodyPanel {
       ? this.i18n.format('moon.fetched', { date: formatUtcDate(this.fetchedAt) })
       : '';
     this.missionsTitle.textContent = t('moon.missions');
+    this.toggles.renderLabels();
     this.sitesTitle.textContent = t(this.keys.sites);
     this.sitesToggleLabel.textContent = t(this.keys.showSites);
 
@@ -114,7 +122,7 @@ export class BodyPanel {
           h('span', { class: 'result-id' }, [`${status}${extra}`]),
         ]);
         b.addEventListener('click', () => this.callbacks.onSelectMission(m));
-        return h('li', {}, [b]);
+        return this.toggles.row(m, b);
       }),
     );
 
