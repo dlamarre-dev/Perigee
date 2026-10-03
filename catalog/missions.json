@@ -217,7 +217,7 @@
         "en": "Highly elliptical Earth orbit (~500 × 70,000 km) in the Earth–Moon system",
         "fr": "Orbite terrestre très excentrique (~500 × 70 000 km) dans le système Terre–Lune"
       },
-      "ephemeris": "horizons",
+      "ephemeris": "none",
       "horizonsId": "-168540",
       "norad": 68540,
       "sampling": {
@@ -228,13 +228,14 @@
       "lowOrbit": false,
       "color": "#fff176",
       "notes": {
-        "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords.",
-        "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis."
+        "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
+        "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
-      "verified": "2026-09-28",
+      "verified": "2026-10-03",
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
-        "https://space.skyrocket.de/doc_sdat/swc-1.htm"
+        "https://space.skyrocket.de/doc_sdat/swc-1.htm",
+        "https://www.n2yo.com/satellite/?s=68540"
       ]
     },
     {

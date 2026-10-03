@@ -206,13 +206,15 @@ describe('maintenance audit', () => {
   });
 
   it('asks for a re-anchoring of mean-element moons after a year', () => {
-    const moon = (id: string, epochJdTdb: number) =>
-      ({ id, elements: { epochJdTdb } }) as unknown as Parameters<typeof checkMoonAnchors>[0][number];
+    const moon = (id: string, epochJdTdb: number, model = 'mean-elements') =>
+      ({ id, model, elements: { epochJdTdb } }) as unknown as Parameters<typeof checkMoonAnchors>[0][number];
     const nowJd = NOW.getTime() / 86_400_000 + 2440587.5;
     expect(checkMoonAnchors([moon('a', nowJd - 100), moon('b', nowJd - 400)], NOW)).toMatchObject([
       { kind: 'moon-anchor', details: { moons: ['b'] } },
     ]);
     expect(checkMoonAnchors([moon('a', nowJd - 100)], NOW)).toEqual([]);
+    // Galilean moons: positions from astronomy-engine, their elements are display-only (never anchored).
+    expect(checkMoonAnchors([moon('io', nowJd - 9000, 'astronomy-engine')], NOW)).toEqual([]);
   });
 
   it('compares the IERS leap-second file with the table', () => {

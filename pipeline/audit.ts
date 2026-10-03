@@ -234,7 +234,11 @@ export function checkStaleVerification(
 /** Mean-element moons whose anchoring epoch is older than MOON_ANCHOR_MAX_DAYS. */
 export function checkMoonAnchors(moons: readonly Moon[], now: Date): AuditItem[] {
   const nowJd = now.getTime() / DAY_MS + 2440587.5;
-  const old = moons.filter((m) => m.elements && nowJd - m.elements.epochJdTdb > MOON_ANCHOR_MAX_DAYS);
+  // Only mean-element moons are anchored (tools/moons/anchor.ts); the astronomy-engine ones (Moon, Galilean
+  // moons) carry display-only elements.
+  const old = moons.filter(
+    (m) => m.model === 'mean-elements' && m.elements && nowJd - m.elements.epochJdTdb > MOON_ANCHOR_MAX_DAYS,
+  );
   if (old.length === 0) return [];
   return [
     {

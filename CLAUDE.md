@@ -360,8 +360,9 @@ the audit flags:
   continues flying it commercially (weekly NRHO station-keeping as of mid-2026); **public Horizons ephemeris
   stops 2026-08-14 and has not resumed**, likely permanently now that NASA's DSN-tracked mission has ended —
   re-check periodically), SWC-1/Shams (−168540, Saudi Space Agency cislunar space-weather 12U CubeSat deployed
-  during Artemis II, launched 2026-04-01; public ephemeris stops 2026-04-07 — current operational status
-  **unconfirmed**, needs a human to check non-English sources). No Horizons ephemeris: Queqiao-2,
+  during Artemis II, launched 2026-04-01; still tracked in high Earth orbit in October 2026 (NORAD 68540,
+  Space-Track elements on N2YO, verified 2026-10-03), but its public Horizons ephemeris stops 2026-04-07, so it is
+  `ephemeris: "none"`). No Horizons ephemeris: Queqiao-2,
   Tiandu-2, Queqiao-1 (L2), DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025).
   ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
   2027. Artemis II flew 1–10 April 2026 (ended).
