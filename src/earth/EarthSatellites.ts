@@ -52,6 +52,7 @@ export class EarthSatellites {
   private filters: FilterState = EMPTY_FILTERS;
   private filterMatch: Uint8Array;
   private statesDirty = true;
+  private frameAngleRad = 0;
   /** The selected object's 3D model is drawn: hide its point and ring (they would jitter around it). */
   private selectedPointHidden = false;
   private lastStateRefreshWallMs = 0;
@@ -149,11 +150,14 @@ export class EarthSatellites {
   /** Group matrix = T(−origin) · Rz(angle): the floating origin is applied after the TEME rotation. */
   placeOrigin(originKm: Vec3): void {
     this.group.position.set(-originKm[0], -originKm[1], -originKm[2]);
+    // The points subtract the camera in TEME themselves (high/low split, see SatellitePoints).
+    this.points.setCamera(rotZ(originKm, -this.frameAngleRad));
   }
 
   /** Per-frame update. `frameAngleRad` rotates TEME into the scene frame. */
   update(simNowMs: number, rate: number, clockEpoch: number, frameAngleRad: number): void {
     this.group.rotation.set(0, 0, frameAngleRad);
+    this.frameAngleRad = frameAngleRad;
 
     this.schedule(simNowMs, rate, clockEpoch);
     const interp = this.timeline.interpolation(simNowMs);

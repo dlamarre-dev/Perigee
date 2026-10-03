@@ -8,6 +8,8 @@ import type { WorkerRequest, WorkerResponse } from './propagation.protocol';
 export interface Sample {
   readonly timeMs: number;
   readonly pos: Float32Array;
+  /** Low parts of the positions (see propagation.protocol). */
+  readonly posLow: Float32Array;
   readonly vel: Float32Array;
   readonly ok: Uint8Array;
 }
@@ -69,6 +71,7 @@ export class PropagatorPool {
     const sample: Sample = {
       timeMs,
       pos: new Float32Array(this.count * 3),
+      posLow: new Float32Array(this.count * 3),
       vel: new Float32Array(this.count * 3),
       ok: new Uint8Array(this.count),
     };
@@ -89,6 +92,7 @@ export class PropagatorPool {
     const p = this.pending.get(msg.id);
     if (!p) return;
     p.sample.pos.set(msg.pos, slice.offset * 3);
+    p.sample.posLow.set(msg.posLow, slice.offset * 3);
     p.sample.vel.set(msg.vel, slice.offset * 3);
     p.sample.ok.set(msg.ok, slice.offset);
     if (--p.remaining === 0) {

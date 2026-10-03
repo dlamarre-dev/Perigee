@@ -22,6 +22,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
 
   const n = satrecs.length;
   const pos = new Float32Array(n * 3);
+  const posLow = new Float32Array(n * 3);
   const vel = new Float32Array(n * 3);
   const ok = new Uint8Array(n);
   const date = new Date(msg.timeMs);
@@ -30,9 +31,19 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
     if (!satrec) continue;
     const s = propagateTeme(satrec, date);
     if (!s) continue;
-    pos.set(s.posKm, i * 3);
+    for (let k = 0; k < 3; k++) {
+      const x = s.posKm[k] ?? 0;
+      const high = Math.fround(x);
+      pos[i * 3 + k] = high;
+      posLow[i * 3 + k] = x - high;
+    }
     vel.set(s.velKmS, i * 3);
     ok[i] = 1;
   }
-  post({ type: 'sample', id: msg.id, timeMs: msg.timeMs, pos, vel, ok }, [pos.buffer, vel.buffer, ok.buffer]);
+  post({ type: 'sample', id: msg.id, timeMs: msg.timeMs, pos, posLow, vel, ok }, [
+    pos.buffer,
+    posLow.buffer,
+    vel.buffer,
+    ok.buffer,
+  ]);
 };
