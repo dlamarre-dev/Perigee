@@ -12,6 +12,7 @@ import {
   Float32BufferAttribute,
   DirectionalLight,
   DoubleSide,
+  ShaderChunk,
   Group,
   PMREMGenerator,
   type BufferGeometry,
@@ -77,8 +78,20 @@ export async function loadModel(baseUrl: string, id: string): Promise<Object3D |
         gltf.scene.traverse((o) => {
           const mesh = o as Mesh;
           if (!mesh.isMesh) return;
-          for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material])
+          for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
             mat.side = DoubleSide;
+            // Two-sided lighting from the stored normal, not the winding: in some models the two triangles of
+            // a quad are wound differently, and three's winding-based flip shaded them differently.
+            mat.onBeforeCompile = (shader) => {
+              shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <normal_fragment_begin>',
+                ShaderChunk.normal_fragment_begin.replace(
+                  'float faceDirection = gl_FrontFacing ? 1.0 : - 1.0;',
+                  'float faceDirection = dot( normalize( vNormal ), vViewPosition ) >= 0.0 ? 1.0 : - 1.0;',
+                ),
+              );
+            };
+          }
         });
         return gltf.scene as Object3D;
       })
