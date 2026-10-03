@@ -3,12 +3,13 @@ import launchSitesJson from '../../catalog/launch-sites.json';
 import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
-import { earthOrientation } from '../astro/bodies';
+import { earthOrientation, geoSunKm } from '../astro/bodies';
 import { alignAxes, axisVector } from '../astro/attitude';
 import { QUAT_IDENTITY, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { sunDirectionEci } from '../astro/sun';
+import { SUN_RADIUS_KM } from '../astro/planets';
 import { gmstRad } from '../astro/time';
-import { length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
@@ -22,6 +23,7 @@ import {
 } from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
+import { DistantSun } from '../render/SunMesh';
 import { SceneModel, modelFollowDistanceKm, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
@@ -58,7 +60,8 @@ class EarthView implements View {
   readonly homeDirectionBody = latLonToUnit(20 * DEG_TO_RAD, -73 * DEG_TO_RAD);
   readonly homeDistanceKm = R * 3.4;
   /** Highly elliptical orbits reach beyond 400 000 km. */
-  readonly farKm = 1.2e6;
+  /** Up to the Sun (aphelion + radius): it is drawn at its true distance. */
+  readonly farKm = 1.53e8;
 
   private readonly earth: BodyMesh;
   private readonly operators = OperatorsCatalogSchema.parse(operatorsJson);
@@ -75,6 +78,11 @@ class EarthView implements View {
   private selectedNorad: number | undefined;
   /** Unit direction of the Sun (scene frame). */
   private sunScene: Vec3 = [1, 0, 0];
+  /** Sun centre in the scene frame (km). */
+  private sunSceneKm: Vec3 = [1.496e8, 0, 0];
+  /** Moon centre in the scene frame (km). */
+  private moonSceneKm: Vec3 | undefined;
+  private readonly distantSun: DistantSun;
   /** NASA 3D model of the selected satellite, drawn once it covers a few pixels. */
   private readonly sceneModel: SceneModel;
   private frameAngleRad = 0;
@@ -89,6 +97,7 @@ class EarthView implements View {
     this.earth = createEarthMesh(host.renderer, host.baseUrl);
     host.renderer.scene.add(this.earth.mesh);
     this.sceneModel = new SceneModel(host.renderer.scene, host.renderer.renderer, host.baseUrl);
+    this.distantSun = new DistantSun(host.renderer.scene, SUN_RADIUS_KM);
     this.infoPanel = new InfoPanel(host.i18n, this.operators, {
       onClose: () => this.select(undefined),
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
@@ -130,6 +139,7 @@ class EarthView implements View {
     const gmst = gmstRad(date);
     this.earth.setOrientation(quatMultiply(f.sceneFromInertial, f.bodyQ));
     this.sunScene = quatRotate(f.sceneFromInertial, sunDirectionEci(date));
+    this.sunSceneKm = scale(this.sunScene, length(geoSunKm(date)));
     this.earth.setSunDirection(this.sunScene);
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
@@ -146,6 +156,7 @@ class EarthView implements View {
     // 8k maps once the camera is within one radius of the surface.
     if (length(originKm) < 2 * this.earth.radiusKm) this.earth.requestDetail();
     this.sats?.placeOrigin(originKm);
+    this.distantSun.place(this.sunSceneKm, originKm);
     const canvas = this.host.renderer.canvas;
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
     this.placeModel(originKm);
@@ -204,6 +215,7 @@ class EarthView implements View {
     this.host.renderer.scene.remove(this.earth.mesh);
     this.earth.dispose();
     this.sceneModel.dispose();
+    this.distantSun.dispose();
     this.launch.dispose();
     if (this.sats) {
       this.host.renderer.scene.remove(this.sats.group);
@@ -418,6 +430,17 @@ class EarthView implements View {
           if (!s) return false;
           const world = rotZ(s.posKm, this.frameAngleRad);
           controls.setState(orbitStateLookingFrom([0, 0, 0], world, [0, 0, 1], length(world) + 3000));
+          return true;
+        },
+        /** Camera on the far side of the Earth from the Sun (or the Moon), looking past the Earth at it. */
+        lookToward: (what: 'sun' | 'moon', distanceKm = 30_000): boolean => {
+          const target = what === 'sun' ? this.sunSceneKm : this.moonSceneKm;
+          if (!target) return false;
+          // 22° off the anti-Sun direction, so the target shows beside the body's limb.
+          const away = normalize(scale(target, -1));
+          const side = normalize(cross(away, [0, 0, 1]));
+          const dir = normalize([away[0] - 0.4 * side[0], away[1] - 0.4 * side[1], away[2] - 0.4 * side[2]]);
+          controls.setState(orbitStateLookingFrom([0, 0, 0], dir, [0, 0, 1], distanceKm));
           return true;
         },
         camera: () => ({

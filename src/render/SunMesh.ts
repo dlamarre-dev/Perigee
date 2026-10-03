@@ -4,7 +4,17 @@
  * over larger supergranulation mottling. No sunspots: a fixed map of them would be wrong on any given day.
  * Fine noise octaves fade with their screen-space frequency, so the disc does not shimmer when seen from afar.
  */
-import { Mesh, ShaderMaterial, SphereGeometry } from 'three';
+import {
+  AdditiveBlending,
+  CanvasTexture,
+  Mesh,
+  ShaderMaterial,
+  SphereGeometry,
+  Sprite,
+  SpriteMaterial,
+  type Scene,
+} from 'three';
+import type { Vec3 } from '../astro/vec3';
 
 const vertexShader = /* glsl */ `
   #include <common>
@@ -93,5 +103,72 @@ export class SunMesh {
   dispose(): void {
     this.mesh.geometry.dispose();
     this.mesh.material.dispose();
+  }
+}
+
+function glowTexture(): CanvasTexture {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    g.addColorStop(0, 'rgba(255,240,200,1)');
+    g.addColorStop(0.25, 'rgba(255,210,120,0.6)');
+    g.addColorStop(1, 'rgba(255,170,60,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+  }
+  return new CanvasTexture(canvas);
+}
+
+/** Screen-sized halo around the Sun (additive; hidden by bodies in front through the depth test). */
+export function createSunGlow(screenFraction = 0.05): Sprite {
+  const glow = new Sprite(
+    new SpriteMaterial({
+      map: glowTexture(),
+      blending: AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: false,
+    }),
+  );
+  glow.scale.set(screenFraction, screenFraction, 1);
+  glow.name = 'sun-glow';
+  return glow;
+}
+
+/**
+ * The Sun seen from a planet or a moon (Earth, Moon and Mars views): photosphere at its true size and distance
+ * plus its glow, placed camera-relative in Float64 (positions up to ~2.5e8 km). Bodies in front hide it
+ * through the depth buffer, eclipses included.
+ */
+export class DistantSun {
+  readonly sun: SunMesh;
+  readonly glow: Sprite;
+
+  constructor(
+    private readonly scene: Scene,
+    radiusKm: number,
+    glowFraction = 0.04,
+  ) {
+    this.sun = new SunMesh(radiusKm);
+    this.glow = createSunGlow(glowFraction);
+    scene.add(this.sun.mesh, this.glow);
+  }
+
+  /** `sceneKm`: the Sun centre in the scene frame; `originKm`: the camera (floating origin). */
+  place(sceneKm: Vec3, originKm: Vec3): void {
+    const x = sceneKm[0] - originKm[0];
+    const y = sceneKm[1] - originKm[1];
+    const z = sceneKm[2] - originKm[2];
+    this.sun.mesh.position.set(x, y, z);
+    this.glow.position.set(x, y, z);
+  }
+
+  dispose(): void {
+    this.scene.remove(this.sun.mesh, this.glow);
+    this.sun.dispose();
+    this.glow.material.map?.dispose();
+    this.glow.material.dispose();
   }
 }

@@ -25,6 +25,8 @@ export const createMoonView: ViewFactory = (host) =>
     maxDistanceKm: 600_000,
     // The Earth is up to ~406 000 km away.
     farKm: 600_000,
+    // Earth aphelion + lunar distance + solar radius.
+    sunMaxDistanceKm: 1.535e8,
     missions: MissionsCatalogSchema.parse(missionsJson).missions.filter((m) => m.centralBody === 'moon'),
     sites: LandingSitesSchema.parse(sitesJson),
     sunFromBodyKm: moonToSunKm,

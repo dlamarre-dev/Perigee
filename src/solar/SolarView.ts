@@ -9,9 +9,7 @@
  * ephemeris interval relative to the marker, so the line passes through it without Float32 jitter.
  */
 import {
-  AdditiveBlending,
   BufferGeometry,
-  CanvasTexture,
   Float32BufferAttribute,
   Group,
   Line,
@@ -19,7 +17,6 @@ import {
   LineDashedMaterial,
   LineSegments,
   Sprite,
-  SpriteMaterial,
   type Material,
 } from 'three';
 import missionsJson from '../../catalog/missions.json';
@@ -81,7 +78,7 @@ import { LabelLayer, LabelPriority, occludedBySphereAt } from '../render/Labels'
 import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
-import { SunMesh } from '../render/SunMesh';
+import { SunMesh, createSunGlow } from '../render/SunMesh';
 import { RingMesh } from '../render/RingMesh';
 import { textureLevels } from '../render/textureLevels';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
@@ -249,22 +246,6 @@ function tdbJdToDate(tdbJd: number): Date {
   return new Date((tdbJd - J2000_JD) * MS_PER_DAY + Date.UTC(2000, 0, 1, 12) - 69_184);
 }
 
-function glowTexture(): CanvasTexture {
-  const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-    g.addColorStop(0, 'rgba(255,240,200,1)');
-    g.addColorStop(0.25, 'rgba(255,210,120,0.6)');
-    g.addColorStop(1, 'rgba(255,170,60,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, size, size);
-  }
-  return new CanvasTexture(canvas);
-}
-
 class SolarView implements View {
   readonly id = 'solar' as const;
   readonly limits = { minDistanceKm: SUN_RADIUS_KM * 1.5, maxDistanceKm: 400 * AU_KM };
@@ -312,15 +293,7 @@ class SolarView implements View {
     const renderer = host.renderer;
     const pixelRatio = renderer.renderer.getPixelRatio();
 
-    this.glow = new Sprite(
-      new SpriteMaterial({
-        map: glowTexture(),
-        blending: AdditiveBlending,
-        depthWrite: false,
-        sizeAttenuation: false,
-      }),
-    );
-    this.glow.scale.set(0.05, 0.05, 1);
+    this.glow = createSunGlow(0.05);
     renderer.scene.add(this.sun.mesh, this.glow, this.lineGroup);
 
     this.planetMarkers = new MarkerPoints(PLANETS.length, 10 * pixelRatio, { depthTest: false });

@@ -20,6 +20,7 @@ import { bodyOrientationEqj, earthOrientation } from '../astro/bodies';
 import { DEG_TO_RAD, J2000_JD, MS_PER_DAY, RAD_TO_DEG, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
 import { osculatingElements } from '../astro/kepler';
+import { SUN_RADIUS_KM } from '../astro/planets';
 import { quatConjugate, quatFromBasis, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { alignAxes, axisVector } from '../astro/attitude';
 import { utcToTdbJd } from '../astro/time';
@@ -53,6 +54,7 @@ import {
   withModel,
 } from '../render/models';
 import { createEarthMesh } from '../render/earthMesh';
+import { DistantSun } from '../render/SunMesh';
 import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
@@ -79,6 +81,8 @@ export interface PlanetaryConfig {
   readonly homeDistanceKm: number;
   readonly maxDistanceKm: number;
   readonly farKm: number;
+  /** Largest Sun distance from this body (km), plus the Sun's radius: the far plane must include it. */
+  readonly sunMaxDistanceKm: number;
   readonly missions: readonly Mission[];
   readonly sites: LandingSites;
   /** Sun centre relative to the body centre, EQJ, km. */
@@ -171,6 +175,9 @@ export class PlanetaryView implements View {
   private bodyScene: Quat = { x: 0, y: 0, z: 0, w: 1 };
   /** Unit direction of the Sun (scene frame). */
   private sunScene: Vec3 = [1, 0, 0];
+  /** Sun centre in the scene frame (km), drawn at its true distance. */
+  private sunSceneKm: Vec3 = [1.496e8, 0, 0];
+  private readonly distantSun: DistantSun;
   /** NASA 3D model of the selected orbiter or rover, drawn once it covers a few pixels. */
   private sceneModel!: SceneModel;
   private bodyQ: Quat = { x: 0, y: 0, z: 0, w: 1 };
@@ -197,7 +204,8 @@ export class PlanetaryView implements View {
     this.limits = { minDistanceKm: R * 1.02, maxDistanceKm: config.maxDistanceKm };
     this.bodyRadiusKm = R;
     this.homeDistanceKm = config.homeDistanceKm;
-    this.farKm = config.farKm;
+    // Up to the Sun, drawn at its true distance (~1.53e8 km from the Moon, ~2.5e8 km from Mars).
+    this.farKm = Math.max(config.farKm, config.sunMaxDistanceKm);
     this.missions = config.missions;
     this.sites = config.sites.sites;
     this.siteBodyKm = this.sites.map((s) =>
@@ -292,6 +300,7 @@ export class PlanetaryView implements View {
 
     this.hiddenMissions = parseHiddenMissions(host.initialParams);
     this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
+    this.distantSun = new DistantSun(renderer.scene, SUN_RADIUS_KM);
     this.panel = new BodyPanel(
       host.i18n,
       { panel: config.keys.panel, sites: config.keys.sites, showSites: config.keys.showSites },
@@ -365,7 +374,8 @@ export class PlanetaryView implements View {
     const sceneQ = f.sceneFromInertial;
     this.bodyScene = quatMultiply(sceneQ, f.bodyQ);
 
-    const sun = quatRotate(sceneQ, normalize(this.config.sunFromBodyKm(date)));
+    this.sunSceneKm = quatRotate(sceneQ, this.config.sunFromBodyKm(date));
+    const sun = normalize(this.sunSceneKm);
     this.sunScene = sun;
     this.body.setOrientation(this.bodyScene);
     this.body.setSunDirection(sun);
@@ -432,6 +442,7 @@ export class PlanetaryView implements View {
       this.earth.mesh.position.set(e[0], e[1], e[2]);
     }
     this.missionGroup.position.set(-originKm[0], -originKm[1], -originKm[2]);
+    this.distantSun.place(this.sunSceneKm, originKm);
     for (const t of this.tracked) {
       const p = t.sample.state?.posKm;
       if (p && t.scene && !this.hidden(t.scene)) {
@@ -591,6 +602,7 @@ export class PlanetaryView implements View {
     const scene = this.host.renderer.scene;
     scene.remove(this.body.mesh, this.missionGroup);
     this.sceneModel.dispose();
+    this.distantSun.dispose();
     this.body.dispose();
     if (this.earth) {
       scene.remove(this.earth.mesh);
@@ -985,6 +997,15 @@ export class PlanetaryView implements View {
             : this.trackedFor(id)?.scene;
           if (!pos) return false;
           controls.setState(orbitStateLookingFrom([0, 0, 0], pos, [0, 0, 1], length(pos) + this.R * 1.2));
+          return true;
+        },
+        /** Camera on the far side of the body from the Sun, looking past it at the Sun. */
+        lookToward: (_what: 'sun', distanceKm = this.R * 6): boolean => {
+          // 22° off the anti-Sun direction, so the target shows beside the body's limb.
+          const away = normalize(scale(this.sunSceneKm, -1));
+          const side = normalize(cross(away, [0, 0, 1]));
+          const dir = normalize([away[0] - 0.4 * side[0], away[1] - 0.4 * side[1], away[2] - 0.4 * side[2]]);
+          controls.setState(orbitStateLookingFrom([0, 0, 0], dir, [0, 0, 1], distanceKm));
           return true;
         },
         camera: () => ({

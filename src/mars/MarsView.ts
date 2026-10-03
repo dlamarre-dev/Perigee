@@ -28,6 +28,8 @@ export const createMarsView: ViewFactory = (host) =>
     maxDistanceKm: 300_000,
     // Deimos orbits at ~23 500 km; Hope's apoapsis is ~43 000 km.
     farKm: 300_000,
+    // Mars aphelion + solar radius.
+    sunMaxDistanceKm: 2.5e8,
     missions: MissionsCatalogSchema.parse(missionsJson).missions.filter((m) => m.centralBody === 'mars'),
     sites: LandingSitesSchema.parse(sitesJson),
     sunFromBodyKm: marsToSunKm,
