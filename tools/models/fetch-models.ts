@@ -30,6 +30,8 @@ import { ModelsCatalogSchema, type ModelEntry } from '../../src/data/schemas';
 
 const USER_AGENT = 'Perigee model tool (https://github.com/dlamarre-dev/Perigee)';
 const MAX_TRIANGLES = 60_000;
+/** Models whose thin flat parts the simplifier tears apart (Fermi's solar arrays): kept whole. */
+const KEEP_FULL_DETAIL = new Set(['fermi']);
 const MAX_TEXTURE_PX = 1024;
 /** Models whose native extent is within this factor of the catalog size keep their own scale. */
 const SCALE_TOLERANCE = 1.3;
@@ -181,7 +183,7 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
   // Simplify in steps of growing tolerance until under budget (thin parts of trusses resist at low error).
   for (const error of [0.002, 0.01, 0.03, 0.08]) {
     const tris = triangles(doc);
-    if (tris <= MAX_TRIANGLES) break;
+    if (tris <= MAX_TRIANGLES || KEEP_FULL_DETAIL.has(m.id)) break;
     await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: MAX_TRIANGLES / tris, error }));
   }
   // Scale: glTF units are metres; some exports are in centimetres or arbitrary units.
