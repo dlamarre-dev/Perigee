@@ -272,6 +272,8 @@ export const fr: Messages = {
   'app.canvasLabel':
     'Vue 3D. Glissez ou utilisez les flèches pour tourner, Q/E pour le roulis, +/− pour zoomer, R pour réinitialiser, F pour suivre la sélection. Les objets sont listés dans le panneau latéral.',
   'app.offline': 'Hors ligne — données en cache',
-  'app.updateReady': 'Une nouvelle version est disponible : rechargez pour la mettre à jour.',
+  'app.updateReady': 'Une nouvelle version de Périgée est disponible.',
+  'app.dataReady': 'Des données plus récentes sont disponibles.',
+  'app.refresh': 'Actualiser',
   'unit.days': 'j',
 };

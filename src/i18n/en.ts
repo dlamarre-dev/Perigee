@@ -264,7 +264,9 @@ export const en = {
   'app.canvasLabel':
     '3D view. Drag or use the arrow keys to rotate, Q/E to roll, +/− to zoom, R to reset, F to follow the selection. Objects are listed in the side panel.',
   'app.offline': 'Offline — showing cached data',
-  'app.updateReady': 'A new version is available: reload to update.',
+  'app.updateReady': 'A new version of Perigee is available.',
+  'app.dataReady': 'Newer data are available.',
+  'app.refresh': 'Refresh',
   'unit.days': 'd',
 } as const;
 

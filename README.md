@@ -33,6 +33,8 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   launch site, plus text search by name, NORAD number or COSPAR ID.
 - **Install**: your browser can install Perigee as an app; after a first visit it opens offline with the data
   it last downloaded (a badge tells you when you are offline).
+- **Updates**: a tab left open learns about new data and new versions of the site within 15 minutes and offers
+  to refresh (or refreshes by itself when you come back to it), keeping your view, selection and camera.
 
 ### Sharing a view
 

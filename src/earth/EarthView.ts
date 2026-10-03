@@ -13,6 +13,7 @@ import { gmstRad } from '../astro/time';
 import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
+import { datasetKey } from '../app/updates';
 import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   GroupsSchema,
@@ -95,6 +96,7 @@ class EarthView implements View {
   private disposed = false;
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  private readonly loadedData = new Map<string, string>();
 
   constructor(private readonly host: ViewHost) {
     const initial = parseEarthUrl(host.initialParams);
@@ -225,6 +227,10 @@ class EarthView implements View {
     const obj = this.sats?.pick(renderer.scene, renderer.camera, xCss, yCss);
     if (obj) this.select(obj, { follow: double });
     else if (site) this.selectSite(site.site, { follow: double });
+  }
+
+  dataVersions(): ReadonlyMap<string, string> {
+    return this.loadedData;
   }
 
   writeUrl(p: URLSearchParams): void {
@@ -377,6 +383,9 @@ class EarthView implements View {
         loadOptionalDataset(host.baseUrl, manifest, 'earth.groups', GroupsSchema),
       ]);
       if (this.disposed) return;
+      this.loadedData.set(datasetKey('earth.gp'), gp.entry.sha256);
+      if (satcat) this.loadedData.set(datasetKey('earth.satcat'), satcat.entry.sha256);
+      if (groups) this.loadedData.set(datasetKey('earth.groups'), groups.entry.sha256);
       const catalog = buildCatalog(
         gp.data,
         satcat?.data,

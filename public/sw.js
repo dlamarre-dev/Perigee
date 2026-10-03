@@ -2,10 +2,13 @@
  * Périgée service worker — offline support (CLAUDE.md §8, M5).
  *
  * Same-origin requests only; third parties (e.g. the SoundCloud player) are never intercepted.
- * - page navigations: network first, cached copy when offline;
- * - hashed build assets (assets/*) and versioned data (data/*?v=<sha256>): cache first, they never change;
+ * - page navigations: network first, revalidated past the HTTP cache (GitHub Pages sends max-age=600, so a reload
+ *   right after a deployment would otherwise get the old page), cached copy when offline;
+ * - hashed build assets (assets/*), versioned data (data/*?v=<sha256>) and versioned textures, models and shapes
+ *   (?v=<content hash>, src/render/assetUrl.ts): cache first, they never change;
  * - data/manifest.json: network first (freshness), cached copy when offline;
- * - textures and other static files: stale-while-revalidate.
+ * - version.json (polled by open tabs to detect a new deployment): never cached;
+ * - other static files: stale-while-revalidate.
  * Versioned data keep only the latest version of each file; build assets are evicted least-recently-used first
  * (a cache hit refreshes the entry), so the scripts of the running build are never the ones evicted.
  */
@@ -13,12 +16,14 @@ const VERSION = 'v2';
 const SHELL = `perigee-shell-${VERSION}`;
 /** Hashed build assets (assets/*). */
 const IMMUTABLE = `perigee-immutable-${VERSION}`;
-/** Versioned data (data/*?v=<sha256>): one version per file. */
+/** Versioned files (data/*, textures/*, models/*, shapes/* with ?v=): one version per file. */
 const DATA = `perigee-data-${VERSION}`;
 const RUNTIME = `perigee-runtime-${VERSION}`;
 // Module scripts carry an Origin header; responses may say "Vary: Origin". Same-origin only, so ignore it.
 const MATCH = { ignoreVary: true };
 const LIMITS = { [IMMUTABLE]: 200, [RUNTIME]: 80 };
+/** Static files versioned by a content hash in their URL. */
+const VERSIONED_DIRS = ['data/', 'textures/', 'models/', 'shapes/'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -39,9 +44,23 @@ self.addEventListener('activate', (event) => {
           keys.filter((k) => k.startsWith('perigee-') && !keep.has(k)).map((k) => caches.delete(k)),
         ),
       )
+      .then(dropUnversionedCopies)
       .then(() => self.clients.claim()),
   );
 });
+
+/** Textures, models and shapes cached before they were versioned would only take space now. */
+async function dropUnversionedCopies() {
+  const cache = await caches.open(RUNTIME);
+  const scope = new URL(self.registration.scope).pathname;
+  for (const key of await cache.keys()) {
+    const url = new URL(key.url);
+    const path = url.pathname.slice(scope.length);
+    if (!url.searchParams.has('v') && VERSIONED_DIRS.slice(1).some((d) => path.startsWith(d))) {
+      await cache.delete(key);
+    }
+  }
+}
 
 async function trim(cacheName) {
   const limit = LIMITS[cacheName];
@@ -55,7 +74,7 @@ async function put(cacheName, request, response) {
   if (!response || response.status !== 200 || response.type !== 'basic') return;
   const cache = await caches.open(cacheName);
   if (cacheName === DATA) {
-    // A new version of a data file replaces the older ones (same path, other ?v=).
+    // A new version of a file replaces the older ones (same path, other ?v=).
     const path = new URL(request.url).pathname;
     for (const key of await cache.keys()) {
       if (new URL(key.url).pathname === path && key.url !== request.url) await cache.delete(key);
@@ -65,9 +84,9 @@ async function put(cacheName, request, response) {
   await trim(cacheName);
 }
 
-async function networkFirst(request, cacheName) {
+async function networkFirst(request, cacheName, init) {
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, init);
     void put(cacheName, request, response.clone());
     return response;
   } catch (err) {
@@ -112,9 +131,9 @@ async function staleWhileRevalidate(request, cacheName) {
 function cacheFor(url) {
   if (url.origin !== self.location.origin) return undefined;
   const path = url.pathname.slice(new URL(self.registration.scope).pathname.length);
-  if (path === 'sw.js') return undefined;
+  if (path === 'sw.js' || path === 'version.json') return undefined;
   if (path.startsWith('assets/')) return IMMUTABLE;
-  if (path.startsWith('data/') && url.searchParams.has('v')) return DATA;
+  if (url.searchParams.has('v') && VERSIONED_DIRS.some((d) => path.startsWith(d))) return DATA;
   return RUNTIME;
 }
 
@@ -127,7 +146,7 @@ self.addEventListener('fetch', (event) => {
   const path = url.pathname.slice(new URL(self.registration.scope).pathname.length);
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, SHELL));
+    event.respondWith(networkFirst(request, SHELL, { cache: 'no-cache' }));
   } else if (cacheName === IMMUTABLE || cacheName === DATA) {
     event.respondWith(cacheFirst(request, cacheName));
   } else if (path === 'data/manifest.json') {

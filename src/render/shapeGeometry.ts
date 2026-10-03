@@ -5,6 +5,7 @@
  * longitude.
  */
 import type { BufferGeometry } from 'three';
+import { assetUrl } from './assetUrl';
 
 export interface ShapeGrid {
   readonly id: string;
@@ -82,7 +83,7 @@ const cache = new Map<string, Promise<ShapeGrid | undefined>>();
 export function loadShape(baseUrl: string, id: string): Promise<ShapeGrid | undefined> {
   let p = cache.get(id);
   if (!p) {
-    p = fetch(`${baseUrl}shapes/${id}.json`)
+    p = fetch(assetUrl(baseUrl, `shapes/${id}.json`))
       .then((r) => (r.ok ? (r.json() as Promise<ShapeGrid>) : undefined))
       .catch(() => undefined);
     cache.set(id, p);

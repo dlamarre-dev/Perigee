@@ -303,6 +303,14 @@ Rules:
   production builds only): network-first for pages and `manifest.json`, cache-first for hashed assets (least-recently-used
   eviction, so the running build's scripts stay) and versioned data (`?v=<sha>`, one version kept per file), stale-while-revalidate for textures; same-origin only. After the first visit the
   page posts the URLs it already loaded so they are cached too. Offline, a badge says data come from the cache.
+  Pages sends `max-age=600` on every file: the worker revalidates page navigations (`cache: 'no-cache'`), and the
+  textures, models and shapes of `public/` carry `?v=<content hash>` (build-time map, `src/render/assetUrl.ts`)
+  so they are versioned like the data.
+- Open tabs stay current (`src/app/updates.ts`): every 15 min while visible (and on return to the tab), the page
+  compares its commit with `version.json` (written by the build, never cached) and the data hashes its view
+  loaded (`View.dataVersions()`) with `manifest.json`. A tab in the background reloads on return; a visible one
+  shows a "Refresh" notice. The URL keeps view, selection, filters and time; the camera crosses the reload in
+  `sessionStorage`. A view chunk missing after a deployment triggers one reload (at most one per minute).
 
 ## 9. License and attribution
 

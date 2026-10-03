@@ -32,6 +32,7 @@ import {
 } from '../astro/track';
 import { cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
+import { datasetKey, ephemerisKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   RoverPositionsSchema,
@@ -192,6 +193,7 @@ export class PlanetaryView implements View {
   private disposed = false;
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  private readonly loadedData = new Map<string, string>();
   /** Ephemerides loaded (or failed): a framing request without a position can be dropped. */
   private ephemeridesSettled = false;
   private readonly v = new Vector3();
@@ -592,6 +594,10 @@ export class PlanetaryView implements View {
     if (best) this.select(best.sel, { follow: double });
   }
 
+  dataVersions(): ReadonlyMap<string, string> {
+    return this.loadedData;
+  }
+
   writeUrl(p: URLSearchParams): void {
     const sel = this.selection;
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
@@ -666,6 +672,7 @@ export class PlanetaryView implements View {
           }
           if (this.disposed) return;
           loaded++;
+          this.loadedData.set(ephemerisKey(t.mission.id), entry.sha256);
           t.track = this.makeTrack(t.mission, table);
           t.entry = entry;
           const fetched = new Date(entry.fetchedAt);
@@ -676,7 +683,10 @@ export class PlanetaryView implements View {
       if (failed > 0 && loaded === 0) throw new Error(`no ephemeris could be loaded (${failed} failed)`);
       if (this.config.roverFeed) {
         const rovers = await loadOptionalDataset(host.baseUrl, manifest, 'mars.rovers', RoverPositionsSchema);
-        if (rovers && !this.disposed) this.applyRovers(rovers.data);
+        if (rovers && !this.disposed) {
+          this.loadedData.set(datasetKey('mars.rovers'), rovers.entry.sha256);
+          this.applyRovers(rovers.data);
+        }
       }
       this.panel.setFetched(oldest);
       host.showNotice(undefined);

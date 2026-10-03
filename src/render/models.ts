@@ -31,6 +31,7 @@ import modelsJson from '../../catalog/models.json';
 import type { Quat } from '../astro/quat';
 import type { Vec3 } from '../astro/vec3';
 import { ModelsCatalogSchema, type ModelEntry } from '../data/schemas';
+import { assetUrl } from './assetUrl';
 
 const catalog = ModelsCatalogSchema.parse(modelsJson);
 const byTarget = new Map<string, ModelEntry>();
@@ -95,7 +96,7 @@ export async function loadModel(baseUrl: string, id: string): Promise<Object3D |
     }
     const l = loader;
     p = l
-      .loadAsync(`${baseUrl}models/${id}.glb`)
+      .loadAsync(assetUrl(baseUrl, `models/${id}.glb`))
       .then((gltf) => {
         // Thin parts (solar panels, foils) are often single faces, some with reversed winding (Fermi's
         // arrays looked transparent): draw both sides.

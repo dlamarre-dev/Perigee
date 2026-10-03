@@ -61,6 +61,8 @@ import {
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
+import { ephemerisKey } from '../app/updates';
+import { assetUrl } from '../render/assetUrl';
 import { loadEphemeris, loadManifest } from '../data/loader';
 import {
   MissionsCatalogSchema,
@@ -282,6 +284,7 @@ class SolarView implements View {
   private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  private readonly loadedData = new Map<string, string>();
   /** Ephemerides loaded (or failed): a framing request without a position can be dropped. */
   private ephemeridesSettled = false;
   /** Spacecraft unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
@@ -335,7 +338,7 @@ class SolarView implements View {
         this.loadTexture(info.id, info.color, mesh);
         if (info.rings) {
           planet.rings = new RingMesh({
-            url: `${host.baseUrl}textures/${info.id}/rings.png`,
+            url: assetUrl(host.baseUrl, `textures/${info.id}/rings.png`),
             innerKm: info.rings.innerKm,
             outerKm: info.rings.outerKm,
             tauScale: RING_TAU_SCALE,
@@ -768,6 +771,10 @@ class SolarView implements View {
     if (best) this.select(best.sel, { follow: double });
   }
 
+  dataVersions(): ReadonlyMap<string, string> {
+    return this.loadedData;
+  }
+
   writeUrl(p: URLSearchParams): void {
     const sel = this.selection;
     if (sel?.kind === 'planet') p.set('sel', sel.planet.id);
@@ -886,6 +893,7 @@ class SolarView implements View {
           }
           if (this.disposed) return;
           loaded++;
+          this.loadedData.set(ephemerisKey(t.mission.id), entry.sha256);
           t.track = this.makeTrack(table);
           t.entry = entry;
           const fetched = new Date(entry.fetchedAt);

@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
@@ -46,12 +47,48 @@ function buildInfo(): { commit: string; date: string } {
   }
 }
 
+const buildStamp = buildInfo();
+
+/**
+ * Content hash of the static files that keep a fixed name (public/textures, models, shapes), appended as `?v=`
+ * by src/render/assetUrl.ts so a re-encoded file is never served stale. Skipped under Vitest.
+ */
+function assetVersions(): Record<string, string> {
+  if (process.env['VITEST']) return {};
+  const versions: Record<string, string> = {};
+  for (const dir of ['textures', 'models', 'shapes']) {
+    for (const entry of readdirSync(join('public', dir), { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile()) continue;
+      const file = join(entry.parentPath, entry.name);
+      const path = relative('public', file).replaceAll('\\', '/');
+      versions[path] = createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 10);
+    }
+  }
+  return versions;
+}
+
+/**
+ * `version.json`: the commit of the build, polled by open tabs to learn that a new version was deployed
+ * (src/app/updates.ts). Never cached by the service worker.
+ */
+function versionFile(): Plugin {
+  return {
+    name: 'perigee-version-file',
+    apply: 'build',
+    generateBundle() {
+      const source = `${JSON.stringify({ commit: buildStamp.commit })}\n`;
+      this.emitFile({ type: 'asset', fileName: 'version.json', source });
+    },
+  };
+}
+
 export default defineConfig({
   base,
   define: {
-    __PERIGEE_BUILD__: JSON.stringify(buildInfo()),
+    __PERIGEE_BUILD__: JSON.stringify(buildStamp),
+    __PERIGEE_ASSETS__: JSON.stringify(assetVersions()),
   },
-  plugins: [basisTranscoder()],
+  plugins: [basisTranscoder(), versionFile()],
   build: {
     target: 'es2022',
     sourcemap: true,

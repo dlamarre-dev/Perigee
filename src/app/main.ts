@@ -27,6 +27,7 @@ import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { SkyMesh } from '../render/SkyMesh';
 import { createStarfield } from '../render/starfield';
 import { configureKtx2 } from '../render/textures';
+import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
 import { ReportDialog } from '../ui/ReportDialog';
 import { MusicPanel } from '../ui/MusicPanel';
@@ -34,6 +35,14 @@ import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
 import { h, setSheetGrabLabel } from '../ui/dom';
 import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
+import {
+  UpdateWatcher,
+  claimAutoReload,
+  saveCamera,
+  takeCamera,
+  type CameraSnapshot,
+  type UpdateKind,
+} from './updates';
 import type { FollowApi, View, ViewFactory, ViewHost } from './View';
 
 const UI_REFRESH_S = 0.25;
@@ -49,8 +58,8 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
 };
 
 /**
- * Offline support (production builds only: the dev server's modules are not cacheable assets).
- * `onUpdate` runs when a new worker takes over a page that was already controlled, i.e. a new deployment.
+ * Offline support (production builds only: the dev server's modules are not cacheable assets). New deployments
+ * are detected by the UpdateWatcher (./updates.ts), not by the worker: its script rarely changes.
  */
 /**
  * Phone portrait layout (bottom sheets); must match the media query in styles.css. Landscape phones keep side
@@ -58,7 +67,7 @@ const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
  */
 const PHONE_QUERY = '(max-width: 640px)';
 
-function registerServiceWorker(baseUrl: string, onUpdate: () => void): void {
+function registerServiceWorker(baseUrl: string): void {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
   const hadController = navigator.serviceWorker.controller !== null;
   // First visit: resources fetched before the worker controls the page bypass it, and Chromium keeps routing
@@ -82,8 +91,7 @@ function registerServiceWorker(baseUrl: string, onUpdate: () => void): void {
     for (const delayMs of [3_000, 12_000]) window.setTimeout(post, delayMs);
   };
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (hadController) onUpdate();
-    else handOver();
+    if (!hadController) handOver();
   });
   const register = (): void => {
     navigator.serviceWorker
@@ -192,7 +200,11 @@ function main(): void {
         time: clock.isLive() ? undefined : clock.nowUtc(),
         rate: clock.rate,
       },
-      (p) => view?.writeUrl(p),
+      (p) => {
+        view?.writeUrl(p);
+        // Test hooks survive the URL rewrites (and update reloads).
+        if (startParams.has('e2e')) p.set('e2e', '');
+      },
     );
     history.replaceState(null, '', `${window.location.pathname}${search}${window.location.hash}`);
   };
@@ -207,11 +219,73 @@ function main(): void {
   window.addEventListener('offline', renderOffline);
   i18n.onChange(renderOffline);
   renderOffline();
-  registerServiceWorker(import.meta.env.BASE_URL, () => showNotice(i18n.t('app.updateReady')));
+  registerServiceWorker(import.meta.env.BASE_URL);
   const showNotice = (text: string | undefined): void => {
     notice.hidden = !text;
     notice.textContent = text ?? '';
   };
+
+  // New build or newer data while the tab stays open (./updates.ts): a tab in the background reloads when it
+  // comes back; a visible one offers a button. The URL already holds view, selection, filters and time; the
+  // camera is carried over in sessionStorage.
+  const updateText = h('span');
+  const updateButton = h('button', { type: 'button', class: 'btn' });
+  const updateNotice = h('p', { class: 'update-notice', role: 'status', hidden: true }, [
+    updateText,
+    updateButton,
+  ]);
+  let updateKind: UpdateKind | undefined;
+  const renderUpdateNotice = (): void => {
+    updateText.textContent = updateKind
+      ? i18n.t(updateKind === 'app' ? 'app.updateReady' : 'app.dataReady')
+      : '';
+    updateButton.textContent = i18n.t('app.refresh');
+  };
+  i18n.onChange(renderUpdateNotice);
+  const cameraSnapshot = (): CameraSnapshot => {
+    const s = controls.state;
+    const q = s.orientation;
+    return {
+      view: viewId,
+      frame,
+      savedAtMs: Date.now(),
+      targetKm: [s.targetKm[0], s.targetKm[1], s.targetKm[2]],
+      distanceKm: s.distanceKm,
+      orientation: { x: q.x, y: q.y, z: q.z, w: q.w },
+      following: controls.following,
+    };
+  };
+  const reloadKeepingView = (): void => {
+    syncUrl();
+    if (view) saveCamera(cameraSnapshot());
+    window.location.reload();
+  };
+  updateButton.addEventListener('click', reloadKeepingView);
+  let reloadWhenVisible = false;
+  document.addEventListener('visibilitychange', () => {
+    if (reloadWhenVisible && document.visibilityState === 'visible') reloadKeepingView();
+  });
+  const updates = new UpdateWatcher({
+    baseUrl: import.meta.env.BASE_URL,
+    commit: __PERIGEE_BUILD__.commit,
+    loaded: () => view?.dataVersions?.() ?? new Map<string, string>(),
+    loadManifest: () => loadManifest(import.meta.env.BASE_URL),
+    onUpdate: (kind) => {
+      if (document.visibilityState === 'hidden') {
+        reloadWhenVisible = true;
+        return;
+      }
+      updateKind = kind;
+      renderUpdateNotice();
+      updateNotice.hidden = false;
+    },
+  });
+  updates.start();
+  if (startParams.has('e2e')) {
+    Object.assign(window, {
+      __perigeeShell: { checkUpdates: () => updates.check(), camera: () => controls.state },
+    });
+  }
 
   // Follow mode, shared by all views.
   let followEnd: (() => void) | undefined;
@@ -324,6 +398,7 @@ function main(): void {
     timeControl.element,
     music.element,
     notice,
+    updateNotice,
     offline,
     about.element,
     report.element,
@@ -349,7 +424,7 @@ function main(): void {
         distanceKm?: number;
       } = {},
     ) => {
-      if (!view) return;
+      if (!view || keepRestoredCamera) return;
       follow.stop();
       const r = length(pos);
       if (r === 0) return;
@@ -382,6 +457,27 @@ function main(): void {
     },
   };
 
+  // Camera carried over an update reload: the view's startup framing (selection from the URL) must not move it,
+  // until the user takes the controls. Following resumes once the selected object has a position.
+  let keepRestoredCamera = false;
+  let resumeFollowUntilMs = 0;
+  const releaseRestoredCamera = (): void => {
+    keepRestoredCamera = false;
+  };
+  function restoreCamera(s: CameraSnapshot): void {
+    controls.setState({
+      targetKm: [s.targetKm[0], s.targetKm[1], s.targetKm[2]],
+      distanceKm: s.distanceKm,
+      orientation: quatNormalize(s.orientation),
+    });
+    keepRestoredCamera = true;
+    for (const type of ['pointerdown', 'wheel', 'keydown', 'touchstart']) {
+      window.addEventListener(type, releaseRestoredCamera, { once: true, capture: true });
+    }
+    window.setTimeout(releaseRestoredCamera, 20_000);
+    if (s.following) resumeFollowUntilMs = Date.now() + 20_000;
+  }
+
   // View switches run one after the other (each chained synchronously on the previous one, so two quick
   // clicks cannot run together); a switch superseded by a later request before it starts is skipped.
   let switching = Promise.resolve();
@@ -403,13 +499,22 @@ function main(): void {
       firstView = false;
       viewId = id;
       toolbar.setView(id);
-      const factory = await VIEW_LOADERS[id]();
+      const factory = await VIEW_LOADERS[id]().catch((err: unknown) => {
+        // A tab opened before a deployment asks for chunks that no longer exist: reload on the new build (once).
+        if (claimAutoReload()) {
+          syncUrl();
+          window.location.reload();
+        }
+        throw err;
+      });
       view = factory({ ...host, initialParams: params });
       controls.setLimits(view.limits);
       timeControl.setMaxRate(view.maxRate ?? MAX_ABS_RATE, view.maxRateHint ? i18n.t(view.maxRateHint) : '');
       const home = homeState(clock.nowUtc());
       controls.setHome(home);
       controls.setState(home);
+      const restored = takeCamera(id, frame);
+      if (restored) restoreCamera(restored);
       syncUrl();
     });
     switching = run.catch((err: unknown) => console.error(err));
@@ -493,6 +598,10 @@ function main(): void {
       uiTimerS = 0;
       timeControl.update();
       v?.uiTick(nowMs);
+      if (resumeFollowUntilMs > 0) {
+        if (follow.active || Date.now() > resumeFollowUntilMs) resumeFollowUntilMs = 0;
+        else v?.toggleFollow();
+      }
       updateBottomInset();
     }
   });

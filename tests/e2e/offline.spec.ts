@@ -19,7 +19,8 @@ test('works offline after a first visit (service worker)', async ({ page, contex
       timeout: 20_000,
     })
     .toBe(true);
-  // …including what the view fetched itself (manifest, datasets), written asynchronously by the worker.
+  // …including what the view fetched itself (manifest, datasets) and the SGP4 worker script, written
+  // asynchronously by the worker (the worker script may only arrive with the page's later hand-off, after 3 s).
   await expect
     .poll(
       () =>
@@ -27,9 +28,12 @@ test('works offline after a first visit (service worker)', async ({ page, contex
           const urls: string[] = [];
           for (const k of await caches.keys())
             for (const r of await (await caches.open(k)).keys()) urls.push(r.url);
-          return ['data/manifest.json', 'data/earth/gp-active.json.gz', 'data/earth/satcat.json.gz'].every(
-            (p) => urls.some((u) => u.includes(p)),
-          );
+          return [
+            'data/manifest.json',
+            'data/earth/gp-active.json.gz',
+            'data/earth/satcat.json.gz',
+            'assets/propagation.worker-',
+          ].every((p) => urls.some((u) => u.includes(p)));
         }),
       { timeout: 30_000 },
     )

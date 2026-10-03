@@ -672,6 +672,29 @@ input[type='checkbox'] {
   display: none;
 }
 
+/* New build or newer data: persistent until the visitor refreshes. */
+.update-notice {
+  position: absolute;
+  z-index: 3;
+  top: 84px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--live);
+  background: var(--panel-bottom);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.update-notice[hidden] {
+  display: none;
+}
+
 .offline-badge {
   position: absolute;
   z-index: 2;
@@ -1189,8 +1212,17 @@ body.music-open .info {
   }
 
   .notice,
+  .update-notice,
   .offline-badge {
     top: 112px;
+  }
+
+  .update-notice {
+    right: var(--gutter);
+    left: var(--gutter);
+    justify-content: space-between;
+    transform: none;
+    white-space: normal;
   }
 
   .about {

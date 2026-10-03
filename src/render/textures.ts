@@ -13,6 +13,7 @@ import {
 } from 'three';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { BASE_MAX_LEVEL_K, textureLevels } from './textureLevels';
+import { assetUrl } from './assetUrl';
 
 /** Texture file stem, e.g. "day", "night", "color". */
 export type TextureName = string;
@@ -84,21 +85,21 @@ export function progressiveTexture(options: ProgressiveTextureOptions): Progress
     const k = pending();
     if (k === undefined || busy) return;
     busy = true;
-    const stem = `${options.baseUrl}textures/${options.body}/${options.name}-${k}k`;
+    const stem = `textures/${options.body}/${options.name}-${k}k`;
     const done = (tex: Texture): void => {
       busy = false;
       accept(tex, k);
       next();
     };
     if (useKtx2 && ktx2Loader) {
-      ktx2Loader.load(`${stem}.ktx2`, done, undefined, () => {
+      ktx2Loader.load(assetUrl(options.baseUrl, `${stem}.ktx2`), done, undefined, () => {
         console.warn(`KTX2 texture unavailable, falling back to WebP: ${stem}.ktx2`);
         busy = false;
         useKtx2 = false;
         next();
       });
     } else {
-      new TextureLoader().load(`${stem}.webp`, done, undefined, () => {
+      new TextureLoader().load(assetUrl(options.baseUrl, `${stem}.webp`), done, undefined, () => {
         busy = false;
         console.warn(`Texture unavailable: ${stem}.webp`);
       });

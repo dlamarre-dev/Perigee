@@ -108,6 +108,8 @@ export interface View {
   /** Keyboard F: follow the selected object, or stop following (no-op without a selection). */
   toggleFollow(): void;
   writeUrl(params: URLSearchParams): void;
+  /** Hashes of the published data this view loaded (src/app/updates.ts keys), to detect newer data. */
+  dataVersions?(): ReadonlyMap<string, string>;
   dispose(): void;
 }
 
