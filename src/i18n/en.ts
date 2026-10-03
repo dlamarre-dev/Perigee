@@ -49,6 +49,7 @@ export const en = {
   'shape.pds': 'Measured irregular shape (PDS shape model from spacecraft images)',
   'model.credit': '3D model: {credit} (attitude illustrative)',
   'model.preview': '3D model of the selected object; drag to turn it',
+  'earth.moon': 'Moon',
   'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
   'view.solar.short': 'Solar',
   'toolbar.menu': 'Menu',

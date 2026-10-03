@@ -95,6 +95,8 @@ export interface View {
   readonly homeDistanceKm: number;
   /** Farthest content from the body centre (km), for the far clipping plane. */
   readonly farKm: number;
+  /** Distance from the camera to the nearest surface other than the central body (km), for the near plane. */
+  nearestSurfaceKm?(originKm: Vec3): number;
   bodyOrientation(date: Date): Quat;
   /** Per-frame logic (positions, orientations, sampling), before the camera moves. */
   update(frame: ViewFrame): void;

@@ -55,6 +55,7 @@ export const fr: Messages = {
   'shape.pds': 'Forme irrégulière mesurée (modèle de forme PDS tiré d’images de sondes)',
   'model.credit': 'Modèle 3D : {credit} (orientation indicative)',
   'model.preview': 'Modèle 3D de l’objet sélectionné ; glisser pour le tourner',
+  'earth.moon': 'Lune',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',
   'view.solar.short': 'Solaire',

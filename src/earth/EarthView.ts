@@ -24,6 +24,7 @@ import {
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
 import { DistantSun } from '../render/SunMesh';
+import { MoonInSky } from './MoonInSky';
 import { SceneModel, modelFollowDistanceKm, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
@@ -51,7 +52,8 @@ function formatLatLon(latDeg: number, lonDeg: number): string {
 
 class EarthView implements View {
   readonly id = 'earth' as const;
-  readonly limits = { minDistanceKm: R * 1.02, maxDistanceKm: R * 60 };
+  /** Far enough to frame the Earth and the Moon together. */
+  readonly limits = { minDistanceKm: R * 1.02, maxDistanceKm: R * 100 };
   /** Beyond ×10,000, bulk SGP4 samples would be more than an orbit apart for low satellites. */
   readonly maxRate = 10_000;
   readonly maxRateHint = 'time.maxRate.earth' as const;
@@ -80,8 +82,10 @@ class EarthView implements View {
   private sunScene: Vec3 = [1, 0, 0];
   /** Sun centre in the scene frame (km). */
   private sunSceneKm: Vec3 = [1.496e8, 0, 0];
-  /** Moon centre in the scene frame (km). */
-  private moonSceneKm: Vec3 | undefined;
+  private readonly moon: MoonInSky;
+  private get moonSceneKm(): Vec3 {
+    return this.moon.sceneKm;
+  }
   private readonly distantSun: DistantSun;
   /** NASA 3D model of the selected satellite, drawn once it covers a few pixels. */
   private readonly sceneModel: SceneModel;
@@ -98,6 +102,8 @@ class EarthView implements View {
     host.renderer.scene.add(this.earth.mesh);
     this.sceneModel = new SceneModel(host.renderer.scene, host.renderer.renderer, host.baseUrl);
     this.distantSun = new DistantSun(host.renderer.scene, SUN_RADIUS_KM);
+    this.moon = new MoonInSky(host.renderer.scene, host.renderer, host.baseUrl, host.i18n.t('earth.moon'));
+    host.mount(this.moon.labels.element);
     this.infoPanel = new InfoPanel(host.i18n, this.operators, {
       onClose: () => this.select(undefined),
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
@@ -113,6 +119,7 @@ class EarthView implements View {
     host.i18n.onChange((lang) => {
       if (this.disposed) return;
       this.launch.setLanguage(lang);
+      this.moon.setLabel(host.i18n.t('earth.moon'));
       if (this.selectedSite) this.showSite(this.selectedSite, false);
     });
     host.mount(this.launch.labels.element);
@@ -130,6 +137,11 @@ class EarthView implements View {
     void this.loadSatellites();
   }
 
+  /** Closest surface other than the Earth (the Moon), for the near clipping plane. */
+  nearestSurfaceKm(originKm: Vec3): number {
+    return this.moon.surfaceDistanceKm(originKm);
+  }
+
   bodyOrientation(date: Date): Quat {
     return earthOrientation(date);
   }
@@ -141,6 +153,7 @@ class EarthView implements View {
     this.sunScene = quatRotate(f.sceneFromInertial, sunDirectionEci(date));
     this.sunSceneKm = scale(this.sunScene, length(geoSunKm(date)));
     this.earth.setSunDirection(this.sunScene);
+    this.moon.update(date, f.sceneFromInertial, this.sunScene);
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
     if (this.pendingFrame && this.sats) {
@@ -157,6 +170,14 @@ class EarthView implements View {
     if (length(originKm) < 2 * this.earth.radiusKm) this.earth.requestDetail();
     this.sats?.placeOrigin(originKm);
     this.distantSun.place(this.sunSceneKm, originKm);
+    const canvasEl = this.host.renderer.canvas;
+    this.moon.place(
+      originKm,
+      this.host.renderer.camera,
+      this.earth.radiusKm,
+      canvasEl.clientWidth,
+      canvasEl.clientHeight,
+    );
     const canvas = this.host.renderer.canvas;
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
     this.placeModel(originKm);
@@ -216,6 +237,7 @@ class EarthView implements View {
     this.earth.dispose();
     this.sceneModel.dispose();
     this.distantSun.dispose();
+    this.moon.dispose();
     this.launch.dispose();
     if (this.sats) {
       this.host.renderer.scene.remove(this.sats.group);

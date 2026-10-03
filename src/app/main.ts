@@ -454,8 +454,16 @@ function main(): void {
       const originKm: Vec3 = controls.cameraPositionKm;
       v.placeOrigin(originKm);
       const altitudeKm = length(originKm) - v.bodyRadiusKm;
+      const otherSurfaceKm = v.nearestSurfaceKm?.(originKm) ?? Infinity;
       renderer.setClipPlanes(
-        Math.max(0.001, Math.min(Math.max(altitudeKm, 0.01) * 0.5, controls.state.distanceKm * 0.1)),
+        Math.max(
+          0.001,
+          Math.min(
+            Math.max(altitudeKm, 0.01) * 0.5,
+            controls.state.distanceKm * 0.1,
+            Math.max(otherSurfaceKm, 0.01) * 0.5,
+          ),
+        ),
         length(originKm) + v.farKm,
       );
     }
