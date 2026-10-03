@@ -56,7 +56,43 @@ test('time controls update the URL', async ({ page }) => {
 test('about panel shows the build version and the data refresh date', async ({ page }) => {
   await page.goto('./?lang=en');
   await page.getByRole('button', { name: 'About' }).click();
-  const about = page.locator('dialog.about');
+  const about = page.locator('dialog.about:not(.report)');
   await expect(about).toContainText(/Version: \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
+});
+
+test('report form sends to Web3Forms with the type, message and optional e-mail', async ({ page }) => {
+  let sent: Record<string, unknown> | undefined;
+  await page.route('https://api.web3forms.com/**', async (route) => {
+    sent = route.request().postDataJSON() as Record<string, unknown>;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true}' });
+  });
+  await page.goto('./?lang=en');
+  await page.getByRole('button', { name: 'Report', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Report a problem' });
+  await expect(dialog).toBeVisible();
+  // Empty description: the browser blocks the submission.
+  await dialog.getByRole('button', { name: 'Send' }).click();
+  expect(sent).toBeUndefined();
+  await dialog.getByText('Wrong data', { exact: true }).click();
+  await expect(dialog.getByLabel('Wrong data', { exact: true })).toBeChecked();
+  await dialog.getByLabel('Description').fill('The ISS label is on the wrong side.');
+  await dialog.getByLabel('E-mail (optional)').fill('visitor@example.com');
+  await dialog.getByRole('button', { name: 'Send' }).click();
+  await expect(dialog.locator('.report-status')).toHaveText('Thank you, your report was sent.');
+  expect(sent).toMatchObject({
+    type: 'data',
+    message: 'The ISS label is on the wrong side.',
+    email: 'visitor@example.com',
+  });
+});
+
+test('report form shows an error when the service fails', async ({ page }) => {
+  await page.route('https://api.web3forms.com/**', (route) => route.fulfill({ status: 500, body: '{}' }));
+  await page.goto('./?lang=fr');
+  await page.getByRole('button', { name: 'Signaler', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Signaler un problème' });
+  await dialog.getByLabel('Description').fill('Un problème quelconque à signaler.');
+  await dialog.getByRole('button', { name: 'Envoyer' }).click();
+  await expect(dialog.locator('.report-status')).toHaveAttribute('data-state', 'error');
 });

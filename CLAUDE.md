@@ -37,6 +37,8 @@ Cross-cutting features:
    everything happens in the browser.
 2. **Public data only**, with visible attribution (see §9).
 3. **Respect the providers.** The user's browser **never** contacts CelesTrak or Horizons directly. See §4 for why.
+   The only third-party request the app makes on its own is the "Report" form (`src/ui/ReportDialog.ts`), sent to
+   Web3Forms (which e-mails the maintainer) only when the visitor submits it.
 4. **No mission list hardcoded in the code.** Missions, their IDs and statuses live in `catalog/*.json`,
    versioned and changed through PRs — by the maintainer or by the weekly maintenance agent, whose PRs
    auto-merge only when CI (including `catalog-guard`) passes (§8).

@@ -21,6 +21,27 @@ export const en = {
   'toolbar.frame.fixed.mars': 'Mars-fixed',
   'toolbar.language': 'Language',
   'toolbar.about': 'About',
+  'toolbar.report': 'Report',
+  'report.title': 'Report a problem',
+  'report.intro':
+    'Spotted a bug, wrong data or have an idea? Tell us here; it reaches the maintainer by e-mail.',
+  'report.type': 'Type',
+  'report.type.bug': 'Bug',
+  'report.type.data': 'Wrong data',
+  'report.type.suggestion': 'Suggestion',
+  'report.type.comment': 'Comment',
+  'report.message': 'Description',
+  'report.messagePlaceholder': 'What happened, which object or view, what you expected…',
+  'report.email': 'E-mail (optional)',
+  'report.emailNote':
+    'Used only to reply about this report; sent through Web3Forms, never shared or published.',
+  'report.context': 'Information attached',
+  'report.send': 'Send',
+  'report.sending': 'Sending…',
+  'report.sent': 'Thank you, your report was sent.',
+  'report.error': 'The report could not be sent. Please try again later.',
+  'about.reports':
+    'Reports sent with the "Report" button reach the maintainer by e-mail through Web3Forms, with your e-mail address only if you give it.',
 
   'time.label': 'Simulation time',
   'time.pause': 'Pause',

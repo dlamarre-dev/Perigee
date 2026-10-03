@@ -24,6 +24,27 @@ export const fr: Messages = {
   'toolbar.frame.fixed.mars': 'Martien fixe',
   'toolbar.language': 'Langue',
   'toolbar.about': 'À propos',
+  'toolbar.report': 'Signaler',
+  'report.title': 'Signaler un problème',
+  'report.intro':
+    'Un bogue, une donnée erronée ou une idée ? Écrivez-le ici ; le message parvient au mainteneur par courriel.',
+  'report.type': 'Type',
+  'report.type.bug': 'Bogue',
+  'report.type.data': 'Donnée erronée',
+  'report.type.suggestion': 'Suggestion',
+  'report.type.comment': 'Commentaire',
+  'report.message': 'Description',
+  'report.messagePlaceholder': 'Ce qui s’est passé, quel objet ou quelle vue, ce que vous attendiez…',
+  'report.email': 'Courriel (facultatif)',
+  'report.emailNote':
+    'Utilisé seulement pour vous répondre au sujet de ce signalement ; transmis par Web3Forms, jamais partagé ni publié.',
+  'report.context': 'Informations jointes',
+  'report.send': 'Envoyer',
+  'report.sending': 'Envoi…',
+  'report.sent': 'Merci, votre signalement a été envoyé.',
+  'report.error': 'Le signalement n’a pas pu être envoyé. Réessayez plus tard.',
+  'about.reports':
+    'Les signalements envoyés avec le bouton « Signaler » parviennent au mainteneur par courriel via Web3Forms, avec votre adresse seulement si vous la donnez.',
 
   'time.label': 'Temps de simulation',
   'time.pause': 'Pause',

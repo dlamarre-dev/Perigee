@@ -85,6 +85,7 @@ export class About {
   private readonly sourcesTitle = h('h3');
   private readonly softwareTitle = h('h3');
   private readonly license = h('p');
+  private readonly reports = h('p', { class: 'small' });
   private readonly close = h('button', { type: 'button', class: 'btn', autofocus: true });
 
   constructor(
@@ -110,6 +111,7 @@ export class About {
       this.softwareTitle,
       creditList(SOFTWARE_CREDITS),
       this.license,
+      this.reports,
       h('div', { class: 'dialog-actions' }, [this.close]),
     ]);
     // Close when clicking the backdrop.
@@ -176,6 +178,7 @@ export class About {
     this.sourcesTitle.textContent = t('about.sources');
     this.softwareTitle.textContent = t('about.software');
     this.license.textContent = t('about.license');
+    this.reports.textContent = t('about.reports');
     this.close.textContent = t('about.close');
   }
 }

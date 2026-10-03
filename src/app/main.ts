@@ -28,6 +28,7 @@ import { SkyMesh } from '../render/SkyMesh';
 import { createStarfield } from '../render/starfield';
 import { configureKtx2 } from '../render/textures';
 import { About } from '../ui/About';
+import { ReportDialog } from '../ui/ReportDialog';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
@@ -254,6 +255,7 @@ function main(): void {
   };
 
   const about = new About(i18n, import.meta.env.BASE_URL);
+  const report = new ReportDialog(i18n);
   const timeControl = new TimeControl(clock, i18n, syncUrl);
 
   // Phones: the time bar and bottom sheets cover the lower part of the canvas. Their height feeds the CSS
@@ -311,12 +313,21 @@ function main(): void {
       syncUrl();
     },
     onAbout: () => about.open(),
+    onReport: () => report.open(),
     onTogglePanel: () => {
       if (panelToggle) toolbar.setPanelOpen(panelToggle());
     },
   });
   const music = new MusicPanel(i18n);
-  app.append(toolbar.element, timeControl.element, music.element, notice, offline, about.element);
+  app.append(
+    toolbar.element,
+    timeControl.element,
+    music.element,
+    notice,
+    offline,
+    about.element,
+    report.element,
+  );
   app.querySelector('.loading')?.remove();
 
   const host: ViewHost = {

@@ -8,6 +8,7 @@ export interface ToolbarCallbacks {
   readonly onFrameChange: (mode: FrameMode) => void;
   readonly onLangChange: (lang: Lang) => void;
   readonly onAbout: () => void;
+  readonly onReport: () => void;
   readonly onTogglePanel: () => void;
   /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
   readonly onSoundtrack: () => void;
@@ -57,6 +58,7 @@ export class Toolbar {
   private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons: HTMLButtonElement[];
   private readonly about = h('button', { type: 'button', class: 'btn' });
+  private readonly report = h('button', { type: 'button', class: 'btn' });
   private readonly soundtrack = h('button', { type: 'button', class: 'btn mobile-only' });
   private readonly menuButton = h('button', {
     type: 'button',
@@ -91,6 +93,7 @@ export class Toolbar {
 
     this.recenter.addEventListener('click', callbacks.onRecenter);
     this.about.addEventListener('click', callbacks.onAbout);
+    this.report.addEventListener('click', callbacks.onReport);
     this.panel.addEventListener('click', callbacks.onTogglePanel);
     for (const mode of ['fixed', 'inertial'] as const) {
       this.frameButtons[mode].addEventListener('click', () => {
@@ -117,6 +120,7 @@ export class Toolbar {
       this.langGroup,
       this.soundtrack,
       this.about,
+      this.report,
     );
     this.element = h('header', { class: 'panel toolbar' }, [
       this.title,
@@ -195,6 +199,7 @@ export class Toolbar {
     this.frameButtons.inertial.textContent = t('toolbar.frame.inertial');
     this.langGroup.setAttribute('aria-label', t('toolbar.language'));
     this.about.textContent = t('toolbar.about');
+    this.report.textContent = t('toolbar.report');
     this.renderState();
   }
 

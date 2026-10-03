@@ -108,6 +108,12 @@ coordinates of Luna 9/13 are of lower confidence; see the `note` field of each e
 The service worker (`public/sw.js`) caches same-origin files only (build assets, data files, textures) with the
 Cache API; nothing from third parties (e.g. the optional SoundCloud player) is cached or intercepted.
 
+## Problem reports
+
+The _Report_ form sends its type, description, the optional e-mail address and the attached context (page
+address, build, language, window size, all shown before sending) to [Web3Forms](https://web3forms.com), which
+forwards them by e-mail to the maintainer. Nothing is sent until the visitor presses _Send_.
+
 ## Software
 
 - [three.js](https://threejs.org) — MIT

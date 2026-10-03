@@ -343,6 +343,90 @@ input[type='checkbox'] {
   color: var(--accent-strong);
 }
 
+/* Report dialog. */
+.report-form {
+  display: grid;
+  gap: 6px;
+}
+
+.report-form label,
+.report-types legend {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.report-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 4px;
+  padding: 0;
+  border: 0;
+}
+
+.report-types legend {
+  margin-bottom: 6px;
+}
+
+.report-type input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.report-type label {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+
+.report-type input:checked + label {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.report-type input:focus-visible + label {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.report-form textarea {
+  min-height: 7em;
+  resize: vertical;
+  font: inherit;
+}
+
+.report-form .muted {
+  margin: 0;
+}
+
+.report-context summary {
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.report-context ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  overflow-wrap: anywhere;
+}
+
+.report-status[data-state='sent'] {
+  color: var(--live);
+}
+
+.report-status[data-state='error'] {
+  color: var(--paused);
+}
+
 .disclaimer {
   color: var(--paused);
 }

@@ -62,5 +62,6 @@ Created by David Fugère-Lamarre. Code under the [MIT license](LICENSE).
 
 ## Contributing
 
-Corrections to missions, statuses and sites are especially welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
+Corrections to missions, statuses and sites are especially welcome: use the _Report_ button on the site, or open
+an issue. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 the development setup (`npm install`, `npm run data:pull`, `npm run dev`) and the project rules.
