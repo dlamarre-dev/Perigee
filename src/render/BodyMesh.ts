@@ -83,6 +83,7 @@ export class BodyMesh {
   readonly radiusKm: number;
   private readonly sunDirection = new Vector3(1, 0, 0);
   private readonly detailRequests: (() => void)[] = [];
+  private disposed = false;
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
@@ -146,12 +147,23 @@ export class BodyMesh {
     this.mesh.quaternion.copy(new Quaternion(q.x, q.y, q.z, q.w));
   }
 
+  /** Frees the geometry, materials and textures (also those that finish loading afterwards). */
   dispose(): void {
+    this.disposed = true;
     this.mesh.geometry.dispose();
+    for (const name of ['dayMap', 'nightMap'] as const) {
+      (this.mesh.material.uniforms[name]?.value as Texture | null | undefined)?.dispose();
+    }
     this.mesh.material.dispose();
+    this.occluder.material.dispose();
   }
 
   private setMap(name: 'dayMap' | 'nightMap', texture: Texture): void {
+    // A progressive level arriving after dispose: free it right away.
+    if (this.disposed) {
+      texture.dispose();
+      return;
+    }
     const uniform = this.mesh.material.uniforms[name];
     if (uniform) uniform.value = texture;
   }

@@ -277,7 +277,8 @@ Weekly maintenance (hands-off):
   `maintenance/<date>` PR with the change report and enables auto-merge, then comments on the pinned
   `maintenance-report` issue (mentioning the maintainer only when something needs a human).
 - `pipeline/catalog-guard.ts` (CI job on `maintenance/*` PRs): curated files only, schema-valid, no deleted
-  entries, https sources and a new `verified` date on every changed entry, ≤ 40 changes. Branch protection on
+  entries (renames count as deletions), no unknown catalog files, https sources and a new `verified` date on every
+  changed entry (the file's date for entries without their own; new entries verified within 14 days), ≤ 40 changes. Branch protection on
   `master` requires CI; pipeline failure and watchdog issues are assigned to the maintainer (e-mail).
 - Only the maintainer's own PRs are ever merged without review: `maintenance-merge.yml` (backup for auto-merge)
   merges a `maintenance/*` PR only if it comes from this repository (not a fork), is authored by the repository
@@ -297,8 +298,8 @@ Rules:
 - Published on an **orphan `data` branch** force-pushed (no history) to avoid bloating the repo, then copied into
   the Pages artifact at deploy time. Same origin → no CORS issue.
 - The client caches via Pages `Cache-Control` + a hand-written Service Worker (`public/sw.js`, Cache API,
-  production builds only): network-first for pages and `manifest.json`, cache-first for hashed assets and
-  versioned data (`?v=<sha>`), stale-while-revalidate for textures; same-origin only. After the first visit the
+  production builds only): network-first for pages and `manifest.json`, cache-first for hashed assets (least-recently-used
+  eviction, so the running build's scripts stay) and versioned data (`?v=<sha>`, one version kept per file), stale-while-revalidate for textures; same-origin only. After the first visit the
   page posts the URLs it already loaded so they are cached too. Offline, a badge says data come from the cache.
 
 ## 9. License and attribution

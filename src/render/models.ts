@@ -211,6 +211,7 @@ export class SceneModel {
   private high: Object3D | undefined;
   private highLoading = false;
   private largeSinceMs: number | undefined;
+  private disposed = false;
 
   constructor(
     private readonly scene: Scene,
@@ -288,7 +289,7 @@ export class SceneModel {
     void loadModel(this.baseUrl, id).then((obj) => {
       this.highLoading = false;
       if (!obj) return;
-      if (this.entry?.id !== entry.id || this.largeSinceMs === undefined) {
+      if (this.disposed || this.entry?.id !== entry.id || this.largeSinceMs === undefined) {
         void releaseModel(id);
         return;
       }
@@ -308,6 +309,7 @@ export class SceneModel {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.dropHigh();
     this.scene.remove(this.group, this.sun, this.ambient);
   }

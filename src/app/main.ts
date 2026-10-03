@@ -371,17 +371,25 @@ function main(): void {
     },
   };
 
+  // View switches run one after the other (each chained synchronously on the previous one, so two quick
+  // clicks cannot run together); a switch superseded by a later request before it starts is skipped.
   let switching = Promise.resolve();
+  let requestedView: ViewId = viewId;
+  let firstView = true;
   async function switchView(id: ViewId): Promise<void> {
-    await switching;
-    switching = (async () => {
+    requestedView = id;
+    const run = switching.then(async () => {
+      if (id !== requestedView) return;
       follow.stop();
       view?.dispose();
+      view = undefined;
       for (const el of viewDom) el.remove();
       viewDom = [];
       host.setPanelToggle(undefined);
       showNotice(undefined);
-      const params = id === url.view && !view ? startParams : new URLSearchParams();
+      // The page's URL parameters (selection, filters…) apply to the first view only.
+      const params = firstView && id === url.view ? startParams : new URLSearchParams();
+      firstView = false;
       viewId = id;
       toolbar.setView(id);
       const factory = await VIEW_LOADERS[id]();
@@ -392,8 +400,9 @@ function main(): void {
       controls.setHome(home);
       controls.setState(home);
       syncUrl();
-    })();
-    await switching;
+    });
+    switching = run.catch((err: unknown) => console.error(err));
+    await run;
   }
   void switchView(viewId);
 

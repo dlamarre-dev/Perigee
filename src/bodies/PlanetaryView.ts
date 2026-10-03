@@ -192,6 +192,8 @@ export class PlanetaryView implements View {
   private disposed = false;
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  /** Ephemerides loaded (or failed): a framing request without a position can be dropped. */
+  private ephemeridesSettled = false;
   private readonly v = new Vector3();
 
   constructor(
@@ -427,8 +429,9 @@ export class PlanetaryView implements View {
     if (this.pendingFrame) {
       const pos = this.scenePositionOf(sel);
       if (pos) this.host.frameObject(pos);
-      // Objects without a 3D position (no ephemeris) cannot be framed: give up rather than wait forever.
-      this.pendingFrame = false;
+      // Wait for the ephemerides (a selection from the URL precedes them); objects without a 3D position once
+      // they are loaded cannot be framed: give up rather than wait forever.
+      if (pos || this.ephemeridesSettled) this.pendingFrame = false;
     }
   }
 
@@ -646,12 +649,23 @@ export class PlanetaryView implements View {
     try {
       const manifest = await loadManifest(host.baseUrl);
       let oldest: Date | undefined;
+      // Each ephemeris on its own: one missing or corrupt file must not hide the others.
+      let failed = 0;
+      let loaded = 0;
       await Promise.all(
         this.tracked.map(async (t) => {
           const entry = manifest.ephemerides[t.mission.id];
           if (!entry || entry.centralBody !== this.config.centralBody) return;
-          const table = await loadEphemeris(host.baseUrl, entry);
+          let table;
+          try {
+            table = await loadEphemeris(host.baseUrl, entry);
+          } catch (err) {
+            failed++;
+            console.warn(`Ephemeris unavailable: ${t.mission.id}`, err);
+            return;
+          }
           if (this.disposed) return;
+          loaded++;
           t.track = this.makeTrack(t.mission, table);
           t.entry = entry;
           const fetched = new Date(entry.fetchedAt);
@@ -659,15 +673,18 @@ export class PlanetaryView implements View {
         }),
       );
       if (this.disposed) return;
+      if (failed > 0 && loaded === 0) throw new Error(`no ephemeris could be loaded (${failed} failed)`);
       if (this.config.roverFeed) {
         const rovers = await loadOptionalDataset(host.baseUrl, manifest, 'mars.rovers', RoverPositionsSchema);
         if (rovers && !this.disposed) this.applyRovers(rovers.data);
       }
       this.panel.setFetched(oldest);
       host.showNotice(undefined);
+      this.ephemeridesSettled = true;
       this.renderDetail(false);
     } catch (err) {
       console.error(err);
+      this.ephemeridesSettled = true;
       host.showNotice(host.i18n.t(this.config.keys.unavailable));
     }
   }

@@ -6,15 +6,19 @@
  * - hashed build assets (assets/*) and versioned data (data/*?v=<sha256>): cache first, they never change;
  * - data/manifest.json: network first (freshness), cached copy when offline;
  * - textures and other static files: stale-while-revalidate.
- * Cache sizes are bounded (oldest entries evicted first) so outdated builds and datasets do not pile up.
+ * Versioned data keep only the latest version of each file; build assets are evicted least-recently-used first
+ * (a cache hit refreshes the entry), so the scripts of the running build are never the ones evicted.
  */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `perigee-shell-${VERSION}`;
+/** Hashed build assets (assets/*). */
 const IMMUTABLE = `perigee-immutable-${VERSION}`;
+/** Versioned data (data/*?v=<sha256>): one version per file. */
+const DATA = `perigee-data-${VERSION}`;
 const RUNTIME = `perigee-runtime-${VERSION}`;
 // Module scripts carry an Origin header; responses may say "Vary: Origin". Same-origin only, so ignore it.
 const MATCH = { ignoreVary: true };
-const LIMITS = { [IMMUTABLE]: 120, [RUNTIME]: 80 };
+const LIMITS = { [IMMUTABLE]: 200, [RUNTIME]: 80 };
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -26,7 +30,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  const keep = new Set([SHELL, IMMUTABLE, RUNTIME]);
+  const keep = new Set([SHELL, IMMUTABLE, DATA, RUNTIME]);
   event.waitUntil(
     caches
       .keys()
@@ -50,6 +54,13 @@ async function trim(cacheName) {
 async function put(cacheName, request, response) {
   if (!response || response.status !== 200 || response.type !== 'basic') return;
   const cache = await caches.open(cacheName);
+  if (cacheName === DATA) {
+    // A new version of a data file replaces the older ones (same path, other ?v=).
+    const path = new URL(request.url).pathname;
+    for (const key of await cache.keys()) {
+      if (new URL(key.url).pathname === path && key.url !== request.url) await cache.delete(key);
+    }
+  }
   await cache.put(request, response);
   await trim(cacheName);
 }
@@ -70,10 +81,20 @@ async function networkFirst(request, cacheName) {
 
 async function cacheFirst(request, cacheName) {
   const cached = await caches.match(request, MATCH);
-  if (cached) return cached;
+  if (cached) {
+    if (cacheName === IMMUTABLE) void touch(cacheName, request, cached.clone());
+    return cached;
+  }
   const response = await fetch(request);
   void put(cacheName, request, response.clone());
   return response;
+}
+
+/** Moves an entry to the most-recently-used end (cache keys keep insertion order). */
+async function touch(cacheName, request, response) {
+  const cache = await caches.open(cacheName);
+  await cache.delete(request, MATCH);
+  await cache.put(request, response);
 }
 
 async function staleWhileRevalidate(request, cacheName) {
@@ -92,7 +113,8 @@ function cacheFor(url) {
   if (url.origin !== self.location.origin) return undefined;
   const path = url.pathname.slice(new URL(self.registration.scope).pathname.length);
   if (path === 'sw.js') return undefined;
-  if (path.startsWith('assets/') || (path.startsWith('data/') && url.searchParams.has('v'))) return IMMUTABLE;
+  if (path.startsWith('assets/')) return IMMUTABLE;
+  if (path.startsWith('data/') && url.searchParams.has('v')) return DATA;
   return RUNTIME;
 }
 
@@ -106,8 +128,8 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, SHELL));
-  } else if (cacheName === IMMUTABLE) {
-    event.respondWith(cacheFirst(request, IMMUTABLE));
+  } else if (cacheName === IMMUTABLE || cacheName === DATA) {
+    event.respondWith(cacheFirst(request, cacheName));
   } else if (path === 'data/manifest.json') {
     event.respondWith(networkFirst(request, RUNTIME));
   } else {

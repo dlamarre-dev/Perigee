@@ -282,6 +282,8 @@ class SolarView implements View {
   private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
+  /** Ephemerides loaded (or failed): a framing request without a position can be dropped. */
+  private ephemeridesSettled = false;
   /** Spacecraft unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
   private hiddenMissions: ReadonlySet<string> = new Set();
   /** NASA 3D model of the selected spacecraft, drawn once it covers a few pixels. */
@@ -614,7 +616,8 @@ class SolarView implements View {
           targetFraction: 0.5,
           distanceKm: length(pos) * 1.9,
         });
-      this.pendingFrame = false;
+      // A spacecraft selected from the URL has no position until its ephemeris loads: keep the request until then.
+      if (pos || this.ephemeridesSettled) this.pendingFrame = false;
     }
     const trajectoriesKey = `${this.logScale}|${this.probes.map((t) => (t.entry ? 1 : 0)).join('')}|${this.probes.map((t) => t.sample.kind).join()}`;
     if (trajectoriesKey !== this.trajectoriesKey) {
@@ -866,12 +869,23 @@ class SolarView implements View {
     try {
       const manifest = await loadManifest(host.baseUrl);
       let oldest: Date | undefined;
+      // Each ephemeris on its own: one missing or corrupt file must not hide the others.
+      let failed = 0;
+      let loaded = 0;
       await Promise.all(
         this.probes.map(async (t) => {
           const entry = manifest.ephemerides[t.mission.id];
           if (!entry || entry.centralBody !== 'sun') return;
-          const table = await loadEphemeris(host.baseUrl, entry);
+          let table;
+          try {
+            table = await loadEphemeris(host.baseUrl, entry);
+          } catch (err) {
+            failed++;
+            console.warn(`Ephemeris unavailable: ${t.mission.id}`, err);
+            return;
+          }
           if (this.disposed) return;
+          loaded++;
           t.track = this.makeTrack(table);
           t.entry = entry;
           const fetched = new Date(entry.fetchedAt);
@@ -879,11 +893,14 @@ class SolarView implements View {
         }),
       );
       if (this.disposed) return;
+      if (failed > 0 && loaded === 0) throw new Error(`no ephemeris could be loaded (${failed} failed)`);
       this.panel.setFetched(oldest);
       host.showNotice(undefined);
+      this.ephemeridesSettled = true;
       this.renderDetail(false);
     } catch (err) {
       console.error(err);
+      this.ephemeridesSettled = true;
       host.showNotice(host.i18n.t('solar.unavailable'));
     }
   }
