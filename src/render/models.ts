@@ -80,6 +80,15 @@ export async function loadModel(baseUrl: string, id: string): Promise<Object3D |
           if (!mesh.isMesh) return;
           for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
             mat.side = DoubleSide;
+            // glTF BLEND parts (the ISS arrays and truss) are cut-outs in practice; drawn as transparent, three
+            // disables their depth writes and they overlap in storage order. Alpha test + alpha to coverage
+            // keeps the soft edges with correct depth.
+            if (mat.transparent) {
+              mat.transparent = false;
+              mat.depthWrite = true;
+              mat.alphaTest = 0.5;
+              mat.alphaToCoverage = true;
+            }
             // Two-sided lighting from the stored normal, not the winding: in some models the two triangles of
             // a quad are wound differently, and three's winding-based flip shaded them differently.
             mat.onBeforeCompile = (shader) => {

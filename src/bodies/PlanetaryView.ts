@@ -29,7 +29,7 @@ import {
   LOW_ORBIT_MAX_EXTRAPOLATION_DAYS,
   type TrackSample,
 } from '../astro/track';
-import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
@@ -516,7 +516,44 @@ export class PlanetaryView implements View {
       this.sunScene,
       focalPx,
     );
-    if (shown) hideMarker();
+    if (shown && scene && entry) {
+      hideMarker();
+      this.hideBehindModel(originKm, scene, entry.sizeM / 1000);
+    }
+  }
+
+  /**
+   * Markers drawn without depth test (sites, other spacecraft) would show through a 3D model: hide those behind
+   * it, within its bounding circle on screen.
+   */
+  private hideBehindModel(originKm: Vec3, modelScene: Vec3, sizeKm: number): void {
+    const toModel = sub(modelScene, originKm);
+    const distKm = length(toModel);
+    if (distKm === 0) return;
+    const radiusRad = Math.atan2(sizeKm * 0.6, distKm);
+    const dir = scale(toModel, 1 / distKm);
+    const behind = (p: Vec3): boolean => {
+      const v = sub(p, originKm);
+      const d = length(v);
+      return d > distKm && Math.acos(Math.min(1, dot(v, dir) / d)) < radiusRad;
+    };
+    let sites = false;
+    this.sites.forEach((_, i) => {
+      const p = this.siteScene[i];
+      if (p && behind(p)) {
+        this.siteMarkers.hide(i);
+        sites = true;
+      }
+    });
+    if (sites) this.siteMarkers.commit();
+    let missions = false;
+    for (const t of this.tracked) {
+      if (t.scene && t.scene !== modelScene && behind(t.scene)) {
+        this.missionMarkers.hide(t.index);
+        missions = true;
+      }
+    }
+    if (missions) this.missionMarkers.commit();
   }
 
   uiTick(): void {
