@@ -214,12 +214,15 @@
     },
     {
       "id": "hubble",
-      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Hubble%20Space%20Telescope%20(B)/Hubble%20Space%20Telescope%20(B).glb",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Hubble%20Space%20Telescope%20(A)/Hubble%20Space%20Telescope%20(A).glb",
       "targets": ["norad:20580"],
       "sizeM": 13.2,
       "credit": "NASA",
       "verified": "2026-10-02",
-      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+      "sources": [
+        "https://science.nasa.gov/3d-resources/hubble-space-telescope-a/",
+        "https://github.com/nasa/NASA-3D-Resources"
+      ]
     },
     {
       "id": "chandra",

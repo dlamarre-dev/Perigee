@@ -52,6 +52,8 @@ export class EarthSatellites {
   private filters: FilterState = EMPTY_FILTERS;
   private filterMatch: Uint8Array;
   private statesDirty = true;
+  /** The selected object's 3D model is drawn: hide its point and ring (they would jitter around it). */
+  private selectedPointHidden = false;
   private lastStateRefreshWallMs = 0;
   private selected: { object: SatObject; satrec: SatRec | undefined } | undefined;
   private selectedState: TemeState | undefined;
@@ -130,6 +132,15 @@ export class EarthSatellites {
     return s ? rotZ(s.velKmS, frameAngleRad) : undefined;
   }
 
+  /** Hides the selected object's point and selection ring while its 3D model replaces them. */
+  setSelectedPointHidden(hidden: boolean): void {
+    if (hidden !== this.selectedPointHidden) {
+      this.selectedPointHidden = hidden;
+      this.statesDirty = true;
+    }
+    this.marker.points.visible = !hidden && this.selectedState !== undefined;
+  }
+
   pick(scene: Scene, camera: PerspectiveCamera, xCss: number, yCss: number): SatObject | undefined {
     const index = this.picker.pick(scene, camera, xCss, yCss);
     return index === undefined ? undefined : this.catalog.objects[index];
@@ -200,7 +211,9 @@ export class EarthSatellites {
       if (isOld) stale++;
       const visible = ok && this.filterMatch[i] === 1;
       if (visible) shown++;
-      this.states[i] = visible ? (isOld ? SatState.Stale : SatState.Normal) : SatState.Hidden;
+      const replaced = this.selectedPointHidden && this.selected?.object.index === i;
+      this.states[i] =
+        visible && !replaced ? (isOld ? SatState.Stale : SatState.Normal) : SatState.Hidden;
     }
     this.points.setStates(this.states);
     this.statsValue = { total: objects.length, shown, invalid, stale };

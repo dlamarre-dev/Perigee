@@ -160,6 +160,7 @@ class EarthView implements View {
     const vel = entry ? this.sats?.selectedWorldVelocityKmS(this.frameAngleRad) : undefined;
     if (!entry || !pos || !vel) {
       this.sceneModel.update(undefined, undefined, QUAT_IDENTITY, this.sunScene, focalPx);
+      this.sats?.setSelectedPointHidden(false);
       return;
     }
     const q = alignAxes(
@@ -168,7 +169,8 @@ class EarthView implements View {
       axisVector('+z'),
       vel,
     );
-    this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx);
+    const shown = this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx);
+    this.sats?.setSelectedPointHidden(shown);
   }
 
   uiTick(nowMs: number): void {

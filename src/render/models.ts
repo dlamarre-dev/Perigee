@@ -11,6 +11,7 @@ import {
   BufferGeometry as BufferGeometryClass,
   Float32BufferAttribute,
   DirectionalLight,
+  DoubleSide,
   Group,
   PMREMGenerator,
   type BufferGeometry,
@@ -70,7 +71,17 @@ export async function loadModel(baseUrl: string, id: string): Promise<Object3D |
     const l = loader;
     p = l
       .loadAsync(`${baseUrl}models/${id}.glb`)
-      .then((gltf) => gltf.scene as Object3D)
+      .then((gltf) => {
+        // Thin parts (solar panels, foils) are often single faces, some with reversed winding (Fermi's
+        // arrays looked transparent): draw both sides.
+        gltf.scene.traverse((o) => {
+          const mesh = o as Mesh;
+          if (!mesh.isMesh) return;
+          for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material])
+            mat.side = DoubleSide;
+        });
+        return gltf.scene as Object3D;
+      })
       .catch((err: unknown) => {
         console.warn(`Model unavailable: ${id}`, err);
         return undefined;
