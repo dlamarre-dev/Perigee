@@ -192,12 +192,13 @@
       "lowOrbit": false,
       "color": "#4dd0e1",
       "notes": {
-        "en": "NASA’s mission ended in June 2026; Advanced Space still operates the spacecraft. The public Horizons ephemeris stops on 2026-08-14.",
-        "fr": "La mission de la NASA s’est terminée en juin 2026 ; Advanced Space exploite toujours l’engin. L’éphéméride publique Horizons s’arrête le 2026-08-14."
+        "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window.",
+        "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-03",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
+        "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct"
       ]
     },
@@ -1592,15 +1593,18 @@
         "date": "2026-11"
       },
       "ephemeris": "none",
+      "norad": 100532,
       "lowOrbit": false,
       "notes": {
-        "en": "Launched 2026-08-30 on a Falcon Heavy; three-month, ~1.6 million km cruise to an orbit around Sun-Earth L2. The Wide Field Instrument (300-megapixel infrared camera) was activated during commissioning; science operations expected to begin in early 2027. No Horizons match found yet (deep-space-candidate audit, 2026-09-28); add horizonsId once one appears.",
-        "fr": "Lancé le 2026-08-30 sur une Falcon Heavy ; croisière de trois mois (~1,6 million de km) vers une orbite autour du point L2 Soleil-Terre. L'instrument à grand champ (caméra infrarouge de 300 mégapixels) a été activé pendant la mise en service ; opérations scientifiques prévues au début de 2027. Aucune correspondance Horizons trouvée pour l'instant (audit deep-space-candidate du 2026-09-28) ; ajouter horizonsId dès qu'elle apparaîtra."
+        "en": "Launched 2026-08-30 on a Falcon Heavy; three-month, ~1.6 million km cruise to an orbit around Sun-Earth L2. The Wide Field Instrument (300-megapixel infrared camera) was activated during commissioning; the Coronagraph Instrument took its first light on 2026-09-22 and its guidance system was checked on 2026-09-30. Science operations expected to begin in early 2027. No Horizons match found yet (deep-space-candidate audit); add horizonsId once one appears.",
+        "fr": "Lancé le 2026-08-30 sur une Falcon Heavy ; croisière de trois mois (~1,6 million de km) vers une orbite autour du point L2 Soleil-Terre. L'instrument à grand champ (caméra infrarouge de 300 mégapixels) a été activé pendant la mise en service ; le coronographe a pris sa première lumière le 2026-09-22 et son système de guidage a été vérifié le 2026-09-30. Opérations scientifiques prévues au début de 2027. Aucune correspondance Horizons trouvée pour l'instant (audit deep-space-candidate) ; ajouter horizonsId dès qu'elle apparaîtra."
       },
-      "verified": "2026-09-28",
+      "verified": "2026-10-03",
       "sources": [
         "https://science.nasa.gov/mission/roman-space-telescope/roman-launch/",
-        "https://www.nasa.gov/news-release/nasas-dark-universe-seeking-nancy-grace-roman-space-telescope-launches/"
+        "https://www.nasa.gov/news-release/nasas-dark-universe-seeking-nancy-grace-roman-space-telescope-launches/",
+        "https://science.nasa.gov/blogs/roman/2026/09/30/nasa-checks-roman-guidance-system-takes-first-coronagraph-observation/",
+        "https://science.nasa.gov/blogs/roman/2026/09/15/nasa-activates-romans-primary-instrument-checks-out-coronagraph/"
       ]
     },
     {
