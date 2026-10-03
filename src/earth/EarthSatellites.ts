@@ -212,8 +212,7 @@ export class EarthSatellites {
       const visible = ok && this.filterMatch[i] === 1;
       if (visible) shown++;
       const replaced = this.selectedPointHidden && this.selected?.object.index === i;
-      this.states[i] =
-        visible && !replaced ? (isOld ? SatState.Stale : SatState.Normal) : SatState.Hidden;
+      this.states[i] = visible && !replaced ? (isOld ? SatState.Stale : SatState.Normal) : SatState.Hidden;
     }
     this.points.setStates(this.states);
     this.statsValue = { total: objects.length, shown, invalid, stale };
