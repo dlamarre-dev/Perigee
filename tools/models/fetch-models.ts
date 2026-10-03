@@ -10,10 +10,12 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NodeIO, type Document } from '@gltf-transform/core';
+import { NodeIO, type Document, type Transform } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import {
   dedup,
+  flatten,
+  join as joinPrimitives,
   getBounds,
   prune,
   simplify,
@@ -32,6 +34,34 @@ const USER_AGENT = 'Perigee model tool (https://github.com/dlamarre-dev/Perigee)
 const MAX_TRIANGLES = 60_000;
 /** Models whose thin flat parts the simplifier tears apart (Fermi's solar arrays): kept whole. */
 const KEEP_FULL_DETAIL = new Set(['fermi']);
+/**
+ * Models made of thousands of small parts (the IGOAL ISS): parts merged by material before simplifying, a
+ * looser final tolerance, smaller textures.
+ */
+const HEAVY_MODELS: Readonly<
+  Record<
+    string,
+    {
+      readonly maxError: number;
+      readonly texturePx: number;
+      readonly maxTriangles: number;
+      /** Parts left out (fine details invisible at the scales shown). */
+      readonly dropNames?: RegExp;
+      /** The export is mirrored (left-handed): flip X so the layout matches the real spacecraft. */
+      readonly mirrorX?: boolean;
+    }
+  >
+> = {
+  iss: {
+    maxError: 0.3,
+    texturePx: 512,
+    maxTriangles: 200_000,
+    dropNames: /detail|handrail|misc|bolt|cable|wire/i,
+    // Columbus and the S trusses sit to starboard of a forward-flying lab, the Cupola under Node 3: only a
+    // mirror image satisfies all three in this export.
+    mirrorX: true,
+  },
+};
 const MAX_TEXTURE_PX = 1024;
 /** Models whose native extent is within this factor of the catalog size keep their own scale. */
 const SCALE_TOLERANCE = 1.3;
@@ -88,6 +118,14 @@ function extentM(doc: Document): number {
 const LOGO_MASKS: Readonly<
   Record<string, readonly { texture: string; x: number; y: number; w: number; h: number }[]>
 > = {
+  // ISS (IGOAL model): the NASA insignia on the Airlock, Unity (Node 1), Node 2/3, PMM and Lab decals.
+  iss: [
+    { texture: 'Airlock_Diffuse', x: 700, y: 640, w: 130, h: 128 },
+    { texture: 'Node1_Diffuse', x: 700, y: 508, w: 76, h: 60 },
+    { texture: 'Node2_Node3_Diffuse', x: 290, y: 414, w: 126, h: 128 },
+    { texture: 'PMM_Diffuse', x: 562, y: 434, w: 130, h: 120 },
+    { texture: 'USLab_diffuse', x: 896, y: 896, w: 124, h: 124 },
+  ],
   curiosity: [
     { texture: 'tex_05.jpg', x: 412, y: 343, w: 102, h: 102 },
     { texture: 'tex_05.jpg', x: 416, y: 148, w: 96, h: 96 },
@@ -106,9 +144,7 @@ const LOGO_MASKS: Readonly<
 };
 
 /** Stray parts left in some exports (e.g. seven discs floating 41 units above the ISS model, before rescaling). */
-const DROP_NODES: Readonly<Record<string, (centre: readonly number[]) => boolean>> = {
-  iss: (c) => (c[1] ?? 0) > 35,
-};
+const DROP_NODES: Readonly<Record<string, (centre: readonly number[]) => boolean>> = {};
 
 function dropStrayNodes(doc: Document, modelId: string): void {
   const drop = DROP_NODES[modelId];
@@ -179,12 +215,26 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
   await maskLogos(doc, m.id);
   dropStrayNodes(doc, m.id);
   const trisIn = triangles(doc);
-  await doc.transform(dedup(), prune(), weld());
+  const heavy = HEAVY_MODELS[m.id];
+  if (heavy?.dropNames) {
+    let dropped = 0;
+    for (const node of doc.getRoot().listNodes()) {
+      const mesh = node.getMesh();
+      if (mesh && heavy.dropNames.test(`${node.getName()} ${mesh.getName()}`)) {
+        node.dispose();
+        dropped++;
+      }
+    }
+    console.log(`drop    ${m.id}: ${dropped} detail part(s)`);
+  }
+  const merge: Transform[] = heavy ? [flatten(), joinPrimitives()] : [];
+  await doc.transform(dedup(), prune(), ...merge, weld());
   // Simplify in steps of growing tolerance until under budget (thin parts of trusses resist at low error).
-  for (const error of [0.002, 0.01, 0.03, 0.08]) {
+  for (const error of [0.002, 0.01, 0.03, 0.08, ...(heavy ? [0.15, heavy.maxError] : [])]) {
     const tris = triangles(doc);
-    if (tris <= MAX_TRIANGLES || KEEP_FULL_DETAIL.has(m.id)) break;
-    await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: MAX_TRIANGLES / tris, error }));
+    const budget = heavy?.maxTriangles ?? MAX_TRIANGLES;
+    if (tris <= budget || KEEP_FULL_DETAIL.has(m.id)) break;
+    await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: budget / tris, error }));
   }
   // Scale: glTF units are metres; some exports are in centimetres or arbitrary units.
   const native = extentM(doc);
@@ -192,6 +242,17 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
     !m.body && native > 0 && (native > m.sizeM * SCALE_TOLERANCE || native < m.sizeM / SCALE_TOLERANCE)
       ? m.sizeM / native
       : 1;
+  if (heavy?.mirrorX) {
+    const scene = doc.getRoot().getDefaultScene() ?? doc.getRoot().listScenes()[0];
+    if (scene) {
+      const mirror = doc.createNode('mirror').setScale([-1, 1, 1]);
+      for (const child of scene.listChildren()) {
+        scene.removeChild(child);
+        mirror.addChild(child);
+      }
+      scene.addChild(mirror);
+    }
+  }
   if (m.body) {
     // Bake node transforms, then rotate and scale into the IAU body frame (metres), fitted on the PDS grid.
     for (const node of doc.getRoot().listNodes()) {
@@ -220,7 +281,9 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
       encoder: sharp,
       targetFormat: 'webp',
       // Bodies are seen close up: keep their maps sharper.
-      resize: m.body ? [2048, 2048] : [MAX_TEXTURE_PX, MAX_TEXTURE_PX],
+      resize: m.body
+        ? [2048, 2048]
+        : [heavy?.texturePx ?? MAX_TEXTURE_PX, heavy?.texturePx ?? MAX_TEXTURE_PX],
     }),
     prune(),
     // Output without Draco (meshopt only, decoded by three's MeshoptDecoder).

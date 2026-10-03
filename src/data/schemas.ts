@@ -235,6 +235,8 @@ export const ModelEntrySchema = z.object({
   earthAxis: ModelAxisSchema.optional(),
   /** Axis pointed at the Sun, used to fix the roll (solar panels). Default +y. */
   sunAxis: ModelAxisSchema.optional(),
+  /** Axis along the velocity (Earth satellites). Default +z. */
+  forwardAxis: ModelAxisSchema.optional(),
   /** Axis pointed down (Earth satellites: nadir; rovers: the ground). Default −y. */
   nadirAxis: ModelAxisSchema.optional(),
   verified: isoDate,

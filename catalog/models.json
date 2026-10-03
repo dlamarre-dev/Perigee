@@ -205,12 +205,16 @@
     },
     {
       "id": "iss",
-      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/International%20Space%20Station%20(ISS)%20(B)/International%20Space%20Station%20(ISS)%20(B).glb",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/International%20Space%20Station%20(ISS)%20(D)%20(IGOAL)/International%20Space%20Station%20(ISS).glb",
       "targets": ["norad:25544"],
       "sizeM": 109,
       "credit": "NASA",
+      "forwardAxis": "+x",
+      "nadirAxis": "-y",
       "verified": "2026-10-02",
-      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+      "sources": [
+        "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/International%20Space%20Station%20(ISS)%20(D)%20(IGOAL)"
+      ]
     },
     {
       "id": "hubble",

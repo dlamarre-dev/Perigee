@@ -166,7 +166,7 @@ class EarthView implements View {
     const q = alignAxes(
       axisVector(entry.nadirAxis ?? '-y'),
       normalize(scale(pos, -1)),
-      axisVector('+z'),
+      axisVector(entry.forwardAxis ?? '+z'),
       vel,
     );
     const shown = this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx);
