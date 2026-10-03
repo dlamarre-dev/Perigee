@@ -147,7 +147,8 @@ export class ModelPreview {
     if (w === 0) return;
     const size = r.getSize(this.size);
     if (size.x !== w || size.y !== hgt) {
-      r.setSize(w, hgt, true);
+      // CSS owns the canvas size (aspect ratio); only the drawing buffer follows it.
+      r.setSize(w, hgt, false);
       this.camera.aspect = w / hgt;
       this.camera.updateProjectionMatrix();
     }
