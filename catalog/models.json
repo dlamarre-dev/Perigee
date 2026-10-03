@@ -211,6 +211,9 @@
       "credit": "NASA",
       "forwardAxis": "+x",
       "nadirAxis": "-y",
+      "high": {
+        "minPx": 300
+      },
       "verified": "2026-10-02",
       "sources": [
         "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/International%20Space%20Station%20(ISS)%20(D)%20(IGOAL)"

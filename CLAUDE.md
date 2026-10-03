@@ -144,7 +144,11 @@ No single API provides "active probes + landing sites". We maintain:
   marker once it covers ≥ 4 px (`src/render/models.ts` `SceneModel`, PBR lit by the Sun and a dim room environment;
   illustrative attitude from `src/astro/attitude.ts`), and a preview spins at the top of the info panel
   (`src/ui/ModelPreview.ts`). Following such an object lets the camera come to twice its size. Phobos and Deimos
-  (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. ESA models (SCIFLEET) are
+  (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. Entries with `high` (the
+  ISS) also get a full-quality variant (`--high`: every part, no simplification beyond 1e-3 of the extent, KTX2
+  textures) loaded only on large screens while the model covers ≥ `minPx`, and released (GPU memory freed) when it
+  shrinks; the light model stays for the panel preview. glTF BLEND materials are drawn as cut-outs (alpha test +
+  alpha to coverage) so overlapping parts keep their depth order. ESA models (SCIFLEET) are
   under a non-commercial licence: not used (permission requested).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.

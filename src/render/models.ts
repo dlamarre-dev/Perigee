@@ -26,6 +26,7 @@ import {
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { getKtx2Loader } from './textures';
 import modelsJson from '../../catalog/models.json';
 import type { Quat } from '../astro/quat';
 import type { Vec3 } from '../astro/vec3';
@@ -65,10 +66,33 @@ let loader: GLTFLoader | undefined;
 const scenes = new Map<string, Promise<Object3D | undefined>>();
 
 /** Loads a model once; every call gets its own clone (geometry and materials shared). */
+/** Drops a cached model and frees its GPU resources (geometries, materials, textures). */
+export async function releaseModel(id: string): Promise<void> {
+  const p = scenes.get(id);
+  if (!p) return;
+  scenes.delete(id);
+  const obj = await p;
+  obj?.traverse((o) => {
+    const mesh = o as Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.dispose();
+    for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      for (const value of Object.values(mat)) {
+        if (value && typeof value === 'object' && (value as Texture).isTexture) (value as Texture).dispose();
+      }
+      mat.dispose();
+    }
+  });
+}
+
 export async function loadModel(baseUrl: string, id: string): Promise<Object3D | undefined> {
   let p = scenes.get(id);
   if (!p) {
-    loader ??= new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+    if (!loader) {
+      loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+      const ktx2 = getKtx2Loader();
+      if (ktx2) loader.setKTX2Loader(ktx2);
+    }
     const l = loader;
     p = l
       .loadAsync(`${baseUrl}models/${id}.glb`)
@@ -162,6 +186,17 @@ export function ensureEnvironment(renderer: WebGLRenderer, scene: Scene, intensi
   pmrem.dispose();
 }
 
+/** The model must stay this long above its full-quality threshold before the heavy variant is fetched. */
+const HIGH_DWELL_MS = 500;
+/**
+ * Full-quality variants are tens of megabytes: only on large high-density screens (where the light model shows
+ * its limits) and without the data-saver preference.
+ */
+const HIGH_ALLOWED =
+  typeof window !== 'undefined' &&
+  Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio >= 2500 &&
+  (navigator as { connection?: { saveData?: boolean } }).connection?.saveData !== true;
+
 /** Below this apparent size (CSS px) the marker stays; above it the model replaces it. */
 const MODEL_MIN_PX = 4;
 
@@ -172,6 +207,10 @@ export class SceneModel {
   private entry: ModelEntry | undefined;
   private object: Object3D | undefined;
   private loading = '';
+  /** Full-quality variant (entry.high): requested after the model has stayed large for HIGH_DWELL_MS. */
+  private high: Object3D | undefined;
+  private highLoading = false;
+  private largeSinceMs: number | undefined;
 
   constructor(
     private readonly scene: Scene,
@@ -201,8 +240,10 @@ export class SceneModel {
     if (entry?.id !== this.entry?.id) {
       if (this.object) this.group.remove(this.object);
       this.object = undefined;
+      this.dropHigh();
       this.entry = entry;
     }
+    this.updateHigh(entry, sizePx);
     if (wanted && !this.object && this.loading !== entry.id) {
       this.loading = entry.id;
       ensureEnvironment(this.renderer, this.scene);
@@ -226,7 +267,48 @@ export class SceneModel {
     return shown;
   }
 
+  /**
+   * Full quality only when the model fills the screen: requested once it has covered entry.high.minPx for a
+   * moment, swapped in when loaded, released (GPU memory freed) below half that size.
+   */
+  private updateHigh(entry: ModelEntry | undefined, sizePx: number): void {
+    const high = entry?.high;
+    if (!entry || !high || !HIGH_ALLOWED) return;
+    const now = performance.now();
+    if (sizePx >= high.minPx) this.largeSinceMs ??= now;
+    else this.largeSinceMs = undefined;
+    if (this.high && sizePx < high.minPx / 2) {
+      this.dropHigh();
+      return;
+    }
+    const due = this.largeSinceMs !== undefined && now - this.largeSinceMs > HIGH_DWELL_MS;
+    if (!due || this.high || this.highLoading) return;
+    this.highLoading = true;
+    const id = `${entry.id}-high`;
+    void loadModel(this.baseUrl, id).then((obj) => {
+      this.highLoading = false;
+      if (!obj) return;
+      if (this.entry?.id !== entry.id || this.largeSinceMs === undefined) {
+        void releaseModel(id);
+        return;
+      }
+      this.high = obj;
+      if (this.object) this.object.visible = false;
+      this.group.add(obj);
+    });
+  }
+
+  private dropHigh(): void {
+    const high = this.high;
+    if (!high) return;
+    this.group.remove(high);
+    this.high = undefined;
+    if (this.object) this.object.visible = true;
+    if (this.entry) void releaseModel(`${this.entry.id}-high`);
+  }
+
   dispose(): void {
+    this.dropHigh();
     this.scene.remove(this.group, this.sun, this.ambient);
   }
 }

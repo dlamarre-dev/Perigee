@@ -41,6 +41,10 @@ export async function encodeKtx2(
      * Zstandard: transcoded to BC7/ASTC, near-lossless, ~3× larger; used for close-up levels.
      */
     codec?: 'etc1s' | 'uastc';
+    /** Colour data (default) or linear data (normal, metal/roughness maps). */
+    srgb?: boolean;
+    /** Flip rows (default, equirectangular maps); glTF textures are not flipped. */
+    yFlip?: boolean;
   },
 ): Promise<void> {
   module ??= basisuModule(options.cacheDir, options.userAgent);
@@ -54,9 +58,9 @@ export async function encodeKtx2(
       ...(options.codec === 'uastc'
         ? ['-uastc', '-quality', '70', '-effort', '3']
         : ['-etc1s', '-quality', '90', '-effort', '3']),
-      '-srgb',
+      ...(options.srgb === false ? ['-linear'] : ['-srgb']),
       '-mipmap',
-      '-y_flip',
+      ...(options.yFlip === false ? [] : ['-y_flip']),
       '-output_file',
       '/w/out.ktx2',
       '/w/in.png',

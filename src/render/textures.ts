@@ -37,6 +37,11 @@ export interface ProgressiveTexture {
 
 let ktx2Loader: KTX2Loader | undefined;
 
+/** The shell's KTX2 loader (models with KHR_texture_basisu textures), once configured. */
+export function getKtx2Loader(): KTX2Loader | undefined {
+  return ktx2Loader;
+}
+
 /** Enables KTX2 textures (called once by the shell, with the page renderer). */
 export function configureKtx2(renderer: WebGLRenderer, baseUrl: string): void {
   ktx2Loader = new KTX2Loader().setTranscoderPath(`${baseUrl}basis/`).detectSupport(renderer);

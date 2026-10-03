@@ -214,6 +214,8 @@ export const fr: Messages = {
   'info.verified': 'Vérifié le {date}',
 
   'country.su': 'Union soviétique',
+  'country.int': 'International',
+  'country.eu': 'Europe (ESA)',
   'info.radius': 'Rayon moyen',
   'info.sol': 'Sol',
   'info.odometry': 'Distance parcourue',

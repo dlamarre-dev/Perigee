@@ -4,14 +4,14 @@
  * (EXT_texture_webp), geometry compressed with meshoptimizer (EXT_meshopt_compression), scaled to metres.
  * One request per file, User-Agent, stop on any non-200 response. Downloads are cached in tools/models/src/.
  *
- *   npx tsx tools/models/fetch-models.ts [id…] [--dump-textures]
+ *   npx tsx tools/models/fetch-models.ts [id…] [--dump-textures] [--high]   (--high: full-quality variants only)
  */
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NodeIO, type Document, type Transform } from '@gltf-transform/core';
-import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import { NodeIO, type Document, type Texture, type Transform } from '@gltf-transform/core';
+import { ALL_EXTENSIONS, KHRTextureBasisu } from '@gltf-transform/extensions';
 import {
   dedup,
   flatten,
@@ -27,6 +27,7 @@ import {
 import draco3d from 'draco3dgltf';
 import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
 import sharp from 'sharp';
+import { encodeKtx2 } from '../textures/basisu';
 import { alignToGrid } from './alignBody';
 import { ModelsCatalogSchema, type ModelEntry } from '../../src/data/schemas';
 
@@ -210,6 +211,111 @@ async function maskLogos(doc: Document, modelId: string): Promise<void> {
     );
 }
 
+/**
+ * Full-quality variant (`high` entries, loaded by the client only when the model fills the screen): every part
+ * kept, no simplification, unused vertex attributes stripped, textures ≤ HIGH_TEXTURE_PX as KTX2 (Basis:
+ * ETC1S for colour, UASTC for normal maps), so GPU memory stays a fraction of the uncompressed size.
+ */
+const HIGH_TEXTURE_PX = 2048;
+
+async function compressTexturesKtx2(doc: Document, modelId: string): Promise<void> {
+  const linear = new Set<Texture>();
+  const normals = new Set<Texture>();
+  for (const mat of doc.getRoot().listMaterials()) {
+    for (const t of [mat.getMetallicRoughnessTexture(), mat.getOcclusionTexture()]) if (t) linear.add(t);
+    const n = mat.getNormalTexture();
+    if (n) normals.add(n);
+  }
+  const textures = doc.getRoot().listTextures();
+  let i = 0;
+  for (const tex of textures) {
+    i++;
+    const image = tex.getImage();
+    if (!image) continue;
+    const meta = await sharp(image).metadata();
+    // Normal maps (UASTC, ~8 bits/texel) at most 1024 px: they dominated the file at 2048.
+    const cap = normals.has(tex) ? HIGH_TEXTURE_PX / 2 : HIGH_TEXTURE_PX;
+    const size = Math.min(cap, Math.max(meta.width ?? 4, meta.height ?? 4));
+    // Basis needs dimensions that are multiples of 4; powers of two keep the mip chain clean.
+    const pot = 2 ** Math.round(Math.log2(size));
+    const png = await sharp(image).resize(pot, pot, { fit: 'fill' }).png().toBuffer();
+    const out = join(here, 'src', 'tmp', `${modelId}-${i}.ktx2`);
+    await encodeKtx2(png, out, {
+      workDir: join(here, 'src', 'tmp', 'w'),
+      cacheDir: join(here, '..', 'textures', 'src', 'bin'),
+      userAgent: USER_AGENT,
+      codec: normals.has(tex) ? 'uastc' : 'etc1s',
+      srgb: !(normals.has(tex) || linear.has(tex)),
+      yFlip: false,
+    });
+    tex.setImage(new Uint8Array(await readFile(out))).setMimeType('image/ktx2');
+    if (i % 10 === 0) console.log(`ktx2    ${modelId}: ${i}/${textures.length}`);
+  }
+  doc.createExtension(KHRTextureBasisu).setRequired(true);
+}
+
+async function processHigh(io: NodeIO, m: ModelEntry): Promise<void> {
+  const doc = await io.readBinary(await download(m));
+  await maskLogos(doc, m.id);
+  dropStrayNodes(doc, m.id);
+  const heavy = HEAVY_MODELS[m.id];
+  for (const mesh of doc.getRoot().listMeshes()) {
+    for (const prim of mesh.listPrimitives()) {
+      for (const semantic of prim.listSemantics()) {
+        if (/^COLOR_|^TEXCOORD_[1-9]/.test(semantic)) prim.setAttribute(semantic, null);
+      }
+    }
+  }
+  await doc.transform(dedup(), prune(), flatten(), joinPrimitives(), weld());
+  // Error bound only (1e-3 of the extent, ~11 cm on the ISS): removes redundant vertices, invisible at the
+  // closest follow distance.
+  await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: 0, error: 0.001 }));
+  const native = extentM(doc);
+  const factor =
+    native > 0 && (native > m.sizeM * SCALE_TOLERANCE || native < m.sizeM / SCALE_TOLERANCE)
+      ? m.sizeM / native
+      : 1;
+  if (heavy?.mirrorX) mirrorScene(doc);
+  if (factor !== 1) scaleScene(doc, factor);
+  await compressTexturesKtx2(doc, m.id);
+  await doc.transform(
+    prune(),
+    (d: Document) => {
+      d.getRoot()
+        .listExtensionsUsed()
+        .find((e) => e.extensionName === 'KHR_draco_mesh_compression')
+        ?.dispose();
+    },
+    meshopt({ encoder: MeshoptEncoder, level: 'high' }),
+  );
+  const out = join(here, '..', '..', 'public', 'models', `${m.id}-high.glb`);
+  const bytes = await io.writeBinary(doc);
+  await writeFile(out, bytes);
+  console.log(
+    `write   ${(m.id + '-high').padEnd(20)} ${(bytes.byteLength / 1e6).toFixed(2)} MB  ${triangles(doc)} tris  textures ${doc.getRoot().listTextures().length}`,
+  );
+}
+
+function mirrorScene(doc: Document): void {
+  const scene = doc.getRoot().getDefaultScene() ?? doc.getRoot().listScenes()[0];
+  if (!scene) return;
+  const mirror = doc.createNode('mirror').setScale([-1, 1, 1]);
+  for (const child of scene.listChildren()) {
+    scene.removeChild(child);
+    mirror.addChild(child);
+  }
+  scene.addChild(mirror);
+}
+
+function scaleScene(doc: Document, factor: number): void {
+  const scale = [factor, 0, 0, 0, 0, factor, 0, 0, 0, 0, factor, 0, 0, 0, 0, 1] as const;
+  for (const mesh of doc.getRoot().listMeshes()) transformMesh(mesh, [...scale]);
+  for (const node of doc.getRoot().listNodes()) {
+    const t = node.getTranslation();
+    node.setTranslation([t[0] * factor, t[1] * factor, t[2] * factor]);
+  }
+}
+
 async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): Promise<void> {
   const doc = await io.readBinary(await download(m));
   await maskLogos(doc, m.id);
@@ -242,17 +348,7 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
     !m.body && native > 0 && (native > m.sizeM * SCALE_TOLERANCE || native < m.sizeM / SCALE_TOLERANCE)
       ? m.sizeM / native
       : 1;
-  if (heavy?.mirrorX) {
-    const scene = doc.getRoot().getDefaultScene() ?? doc.getRoot().listScenes()[0];
-    if (scene) {
-      const mirror = doc.createNode('mirror').setScale([-1, 1, 1]);
-      for (const child of scene.listChildren()) {
-        scene.removeChild(child);
-        mirror.addChild(child);
-      }
-      scene.addChild(mirror);
-    }
-  }
+  if (heavy?.mirrorX) mirrorScene(doc);
   if (m.body) {
     // Bake node transforms, then rotate and scale into the IAU body frame (metres), fitted on the PDS grid.
     for (const node of doc.getRoot().listNodes()) {
@@ -268,14 +364,7 @@ async function processModel(io: NodeIO, m: ModelEntry, dumpTextures: boolean): P
       `align   ${m.id}: ${fit.scaleKmPerUnit.toFixed(4)} km/unit, residual ${fit.rmsKm.toFixed(2)} km RMS vs the PDS grid`,
     );
   }
-  if (factor !== 1) {
-    const scale = [factor, 0, 0, 0, 0, factor, 0, 0, 0, 0, factor, 0, 0, 0, 0, 1] as const;
-    for (const mesh of doc.getRoot().listMeshes()) transformMesh(mesh, [...scale]);
-    for (const node of doc.getRoot().listNodes()) {
-      const t = node.getTranslation();
-      node.setTranslation([t[0] * factor, t[1] * factor, t[2] * factor]);
-    }
-  }
+  if (factor !== 1) scaleScene(doc, factor);
   await doc.transform(
     textureCompress({
       encoder: sharp,
@@ -336,6 +425,10 @@ async function main(): Promise<void> {
   for (const m of catalog.models) {
     if (ids.length > 0 && !ids.includes(m.id)) continue;
     try {
+      if (args.includes('--high')) {
+        if (m.high) await processHigh(io, m);
+        continue;
+      }
       await processModel(io, m, dumpTextures);
     } catch (err) {
       failed.push(`${m.id}: ${err instanceof Error ? err.message : String(err)}`);

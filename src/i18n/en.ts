@@ -206,6 +206,8 @@ export const en = {
   'info.verified': 'Checked {date}',
 
   'country.su': 'Soviet Union',
+  'country.int': 'International',
+  'country.eu': 'Europe (ESA)',
   'info.radius': 'Mean radius',
   'info.sol': 'Sol',
   'info.odometry': 'Distance driven',
