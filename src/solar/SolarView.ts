@@ -220,14 +220,25 @@ interface ProbeObject extends LazyLoad {
   readonly line: Line<BufferGeometry, Material>;
   /** Current interval, densified around the current time and relative to the marker (rebuilt every frame). */
   readonly near: Line<BufferGeometry, Material>;
+  /**
+   * Stretches spent orbiting a planet (Juno at Jupiter), drawn relative to that planet (vertices = spacecraft −
+   * planet), placed at the planet each frame like the moon orbits; heliocentric, they would only retrace the
+   * planet's orbit.
+   */
+  readonly capturedLine: LineSegments<BufferGeometry, Material>;
+  /** Planet the captured line is drawn around, and the line's extent (km) for the on-screen size rule. */
+  capturedPlanet: PlanetObject | undefined;
+  capturedExtentKm: number;
   /** Mapped EQJ position the far line's vertices are relative to. */
   lineAnchor: Vec3 | undefined;
   /** Ephemeris interval left out of the far line (−1: none). */
   lineInterval: number;
   /** Small bodies: osculating orbit. */
   readonly orbit: AnchoredOrbit | undefined;
-  /** Ephemeris rows spent captured by a planet (cached per table). */
+  /** Ephemeris rows spent captured by a planet: 0, or the planet's index in `planets` + 1 (cached per table). */
   captured: Uint8Array | undefined;
+  /** Heliocentric EQJ positions of the capturing planet at the trajectory substeps (cached per table). */
+  capturedPlanetKm: Map<number, Vec3> | undefined;
   track: EphemerisTrack;
   entry: EphemerisEntry | undefined;
   sample: TrackSample;
@@ -437,6 +448,10 @@ class SolarView implements View {
       near.frustumCulled = false;
       near.visible = false;
       this.lineGroup.add(line, near);
+      const capturedLine = new LineSegments(new BufferGeometry(), line.material);
+      capturedLine.frustumCulled = false;
+      capturedLine.visible = false;
+      renderer.scene.add(capturedLine);
       const orbit = natural
         ? anchoredOrbit(
             new Line(
@@ -469,6 +484,10 @@ class SolarView implements View {
         lineInterval: -1,
         orbit,
         captured: undefined,
+        capturedPlanetKm: undefined,
+        capturedLine,
+        capturedPlanet: undefined,
+        capturedExtentKm: 0,
         track: this.makeTrack(undefined),
         entry: undefined,
         sample: { kind: 'none', state: undefined, beyondS: 0 },
@@ -655,6 +674,7 @@ class SolarView implements View {
         t.near.position.set(r[0], r[1], r[2]);
         t.near.quaternion.set(q.x, q.y, q.z, q.w);
       }
+      this.placeCapturedLine(t, rel);
     }
     const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
     for (const orbit of [...this.planets.map((p) => p.orbit), ...this.probes.map((t) => t.orbit)]) {
@@ -732,6 +752,24 @@ class SolarView implements View {
     return shown;
   }
 
+  /** Captured line at its planet; shown like the moons (wide enough on screen, or selected), not in log scale. */
+  private placeCapturedLine(t: ProbeObject, rel: (p: Vec3) => Vec3): void {
+    const planet = t.capturedPlanet;
+    const line = t.capturedLine;
+    if (!planet || this.logScale || !t.line.visible || t.capturedExtentKm === 0) {
+      line.visible = false;
+      return;
+    }
+    const camera = this.host.renderer.camera;
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * DEG_TO_RAD) / 2);
+    const r = rel(planet.scene);
+    const selected = this.selection?.kind === 'mission' && this.selection.mission.id === t.mission.id;
+    line.visible = selected || (t.capturedExtentKm / Math.max(1, length(r))) * focalPx >= MOON_MIN_ORBIT_PX;
+    const q = this.sceneQ;
+    line.position.set(r[0], r[1], r[2]);
+    line.quaternion.set(q.x, q.y, q.z, q.w);
+  }
+
   uiTick(): void {
     this.renderDetail(false);
   }
@@ -785,6 +823,9 @@ class SolarView implements View {
     }
     for (const t of this.probes) {
       t.line.geometry.dispose();
+      scene.remove(t.capturedLine);
+      t.capturedLine.geometry.dispose();
+      t.near.geometry.dispose();
       t.line.material.dispose();
       if (t.orbit) {
         scene.remove(t.orbit.line);
@@ -912,6 +953,7 @@ class SolarView implements View {
       }
     }
     t.line.geometry.setAttribute('position', new Float32BufferAttribute(segments, 3));
+    this.buildCapturedLine(t, table, interval);
     const color = this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR;
     const dashed = kind === 'extrapolated';
     if (dashed !== t.line.material instanceof LineDashedMaterial) {
@@ -920,9 +962,70 @@ class SolarView implements View {
         ? new LineDashedMaterial({ color, dashSize: 0.05 * AU_KM, gapSize: 0.04 * AU_KM, transparent: true })
         : new LineBasicMaterial({ color, transparent: true });
       t.near.material = t.line.material;
+      t.capturedLine.material = t.line.material;
     }
-    if (dashed) t.line.computeLineDistances();
+    if (dashed) {
+      t.line.computeLineDistances();
+      t.capturedLine.computeLineDistances();
+    }
     this.styleTrajectory(t);
+  }
+
+  /** Captured stretches around one planet (that of the current interval, else the first one), planet-relative. */
+  private buildCapturedLine(
+    t: ProbeObject,
+    table: NonNullable<EphemerisTrack['table']>,
+    interval: number,
+  ): void {
+    const captured = t.captured;
+    const code = captured
+      ? interval >= 0 && captured[interval] && captured[interval] === captured[interval + 1]
+        ? captured[interval]
+        : captured.find((c) => c > 0)
+      : undefined;
+    const planet = code ? this.planets[code - 1] : undefined;
+    t.capturedPlanet = planet;
+    if (!captured || !code || !planet) {
+      t.capturedLine.geometry.setAttribute('position', new Float32BufferAttribute([], 3));
+      return;
+    }
+    t.capturedPlanetKm ??= new Map();
+    const cache = t.capturedPlanetKm;
+    const planetAt = (key: number, time: number): Vec3 => {
+      let p = cache.get(key);
+      if (!p) {
+        p = heliocentricKm(planet.info.body, tdbJdToDate(time));
+        cache.set(key, p);
+      }
+      return p;
+    };
+    const segments: number[] = [];
+    let extent = 0;
+    const push = (p: Vec3, planetKm: Vec3): void => {
+      const x = p[0] - planetKm[0];
+      const y = p[1] - planetKm[1];
+      const z = p[2] - planetKm[2];
+      extent = Math.max(extent, Math.hypot(x, y, z));
+      segments.push(x, y, z);
+    };
+    for (let i = 0; i + 1 < table.rows; i++) {
+      if (i === interval || captured[i] !== code || captured[i + 1] !== code) continue;
+      const t0 = table.time(i);
+      const t1 = table.time(i + 1);
+      let prevTime = t0;
+      let prev = table.state(i).posKm;
+      for (let k = 1; k <= TRAJECTORY_SUBSTEPS; k++) {
+        const time = t0 + ((t1 - t0) * k) / TRAJECTORY_SUBSTEPS;
+        const next =
+          k === TRAJECTORY_SUBSTEPS ? table.state(i + 1).posKm : (table.interpolate(time)?.posKm ?? prev);
+        push(prev, planetAt(i * TRAJECTORY_SUBSTEPS + k - 1, prevTime));
+        push(next, planetAt(i * TRAJECTORY_SUBSTEPS + k, time));
+        prev = next;
+        prevTime = time;
+      }
+    }
+    t.capturedExtentKm = extent;
+    t.capturedLine.geometry.setAttribute('position', new Float32BufferAttribute(segments, 3));
   }
 
   /** Interval of the ephemeris containing the current time, or −1 outside the window. */
@@ -940,13 +1043,26 @@ class SolarView implements View {
     const table = t.track.table;
     const i = t.lineInterval;
     const now = t.sample.state;
-    const captured = t.captured !== undefined && t.captured[i] === 1 && t.captured[i + 1] === 1;
-    t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined && !captured;
+    const code = t.captured?.[i];
+    const planet =
+      code && t.captured?.[i + 1] === code && !this.logScale ? this.planets[code - 1] : undefined;
+    t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined;
     if (!t.near.visible || !table || !now) return;
     const centre = map(now.posKm);
+    // Captured: follow the planet's motion, so the near line continues the planet-relative captured line.
+    const planetNow = planet ? heliocentricKm(planet.info.body, tdbJdToDate(this.tdbJd)) : undefined;
     const points: number[] = [];
     for (const time of nearSampleTimes(table.time(i), table.time(i + 1), this.tdbJd, NEAR_SAMPLES_PER_SIDE)) {
       const p = time === this.tdbJd ? now.posKm : (table.interpolate(time)?.posKm ?? now.posKm);
+      if (planet && planetNow) {
+        const pl = time === this.tdbJd ? planetNow : heliocentricKm(planet.info.body, tdbJdToDate(time));
+        points.push(
+          p[0] - pl[0] - (now.posKm[0] - planetNow[0]),
+          p[1] - pl[1] - (now.posKm[1] - planetNow[1]),
+          p[2] - pl[2] - (now.posKm[2] - planetNow[2]),
+        );
+        continue;
+      }
       const m = map(p);
       points.push(m[0] - centre[0], m[1] - centre[1], m[2] - centre[2]);
     }
@@ -993,7 +1109,7 @@ class SolarView implements View {
   private capturedRows(table: NonNullable<EphemerisTrack['table']>): Uint8Array {
     const rows = table.rows;
     const inside = new Uint8Array(rows);
-    for (const planet of PLANETS) {
+    for (const [index, planet] of PLANETS.entries()) {
       if (planet.dwarf) continue;
       const aKm = Math.cbrt(GM_KM3_S2.sun * ((planet.periodDays * SECONDS_PER_DAY) / (2 * Math.PI)) ** 2);
       for (let i = 0; i < rows; i++) {
@@ -1003,7 +1119,7 @@ class SolarView implements View {
         // Planet eccentricities are ≤ 0.21 (Mercury).
         if (r < aKm * 0.78 - reach || r > aKm * 1.22 + reach) continue;
         const planetKm = heliocentricKm(planet.body, tdbJdToDate(table.time(i)));
-        if (length(sub(pos, planetKm)) < reach) inside[i] = 1;
+        if (length(sub(pos, planetKm)) < reach) inside[i] = index + 1;
       }
     }
     // Keep only long stays (orbiting, station-keeping), not flybys.
@@ -1013,7 +1129,7 @@ class SolarView implements View {
         continue;
       }
       let j = i;
-      while (j + 1 < rows && inside[j + 1]) j++;
+      while (j + 1 < rows && inside[j + 1] === inside[i]) j++;
       if (table.time(j) - table.time(i) < CAPTURE_MIN_DAYS) inside.fill(0, i, j + 1);
       i = j + 1;
     }
