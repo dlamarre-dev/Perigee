@@ -86,24 +86,34 @@ export interface EphemerisToWrite {
 }
 
 /**
- * Writes data/ephem/<mission>.bin files and their manifest entries. Same guard as datasets: all
- * ephemerides are checked first, then written together or not at all. Missions not listed keep
- * their previously published file.
+ * Writes data/ephem/<mission>.bin files and their manifest entries. Guard per mission: an empty table, or one
+ * below half the previous size without an explanation (a coverage end reported by Horizons now truncating the
+ * window, or a coarser sampling step), keeps that mission's previous file; the others are still published,
+ * then the refused ones are reported (ShrinkGuardError) so the run fails and opens an issue. Missions not listed
+ * keep their previously published file.
  */
 export async function publishEphemerides(
   dataDir: string,
   list: readonly EphemerisToWrite[],
 ): Promise<Manifest> {
   const manifest = await readManifest(dataDir);
-  for (const e of list) {
+  const refused: ShrinkGuardError[] = [];
+  const accepted = list.filter((e) => {
     const count = e.rows.length / 7;
-    const previous = manifest.ephemerides[e.missionId]?.count ?? 0;
-    if (count === 0 || count < previous * MIN_RATIO_VS_PREVIOUS) {
-      throw new ShrinkGuardError(`ephem.${e.missionId}`, count, previous);
+    const prev = manifest.ephemerides[e.missionId];
+    const previous = prev?.count ?? 0;
+    const explained =
+      prev !== undefined &&
+      ((e.coverageEnd !== undefined && e.coverageEnd.toISOString() !== prev.coverageEnd) ||
+        e.stepMin > prev.stepMin);
+    if (count === 0 || (count < previous * MIN_RATIO_VS_PREVIOUS && !explained)) {
+      refused.push(new ShrinkGuardError(`ephem.${e.missionId}`, count, previous));
+      return false;
     }
-  }
+    return true;
+  });
   const next: Manifest = { ...manifest, ephemerides: { ...manifest.ephemerides } };
-  for (const e of list) {
+  for (const e of accepted) {
     const path = `ephem/${e.missionId}.bin`;
     const file = join(dataDir, path);
     await mkdir(dirname(file), { recursive: true });
@@ -129,5 +139,14 @@ export async function publishEphemerides(
   next.generatedAt = new Date().toISOString();
   ManifestSchema.parse(next);
   await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+  if (refused.length > 0) throw new AggregateShrinkError(refused);
   return next;
+}
+
+/** Ephemerides refused by the shrink guard (the others were published). */
+export class AggregateShrinkError extends Error {
+  constructor(readonly errors: readonly ShrinkGuardError[]) {
+    super(errors.map((e) => e.message).join('; '));
+    this.name = 'ShrinkGuardError';
+  }
 }

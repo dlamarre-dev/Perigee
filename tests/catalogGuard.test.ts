@@ -71,4 +71,39 @@ describe('catalog guard (maintenance PRs)', () => {
     const errors = checkChanges([{ path: MISSIONS, base, head: many }], TODAY);
     expect(errors.join()).toContain(`more than ${MAX_CHANGED_ENTRIES}`);
   });
+
+  it('rejects unknown catalog files (renames show as a deletion plus an addition)', () => {
+    const renamed = checkChanges(
+      [
+        { path: MISSIONS, base },
+        { path: 'catalog/missions-old.json', head: base },
+      ],
+      TODAY,
+    ).join();
+    expect(renamed).toContain('may not be deleted');
+    expect(renamed).toContain('unknown catalog file');
+  });
+
+  it('treats an edited name-rule pattern as a change, and keeps undated changes under the file date', () => {
+    const OPS = 'catalog/operators.json';
+    const opsBase = readFileSync(OPS, 'utf8');
+    const ops = JSON.parse(opsBase) as { verified: string; nameRules: { pattern: string }[] };
+    const rule = ops.nameRules[0];
+    if (!rule) throw new Error('no name rule');
+    rule.pattern = `${rule.pattern}|EXTRA`;
+    const later = '2026-12-01';
+    const sameDate = checkChanges([{ path: OPS, base: opsBase, head: JSON.stringify(ops) }], later).join();
+    expect(sameDate).not.toContain('deleted');
+    expect(sameDate).toContain('without a new file verified date');
+    ops.verified = later;
+    expect(checkChanges([{ path: OPS, base: opsBase, head: JSON.stringify(ops) }], later)).toEqual([]);
+  });
+
+  it('requires new entries to be verified recently', () => {
+    const head = edit((c) => {
+      const copy = { ...(c.missions[0] ?? {}), id: 'new-probe', verified: '2025-01-01' };
+      c.missions.push(copy);
+    });
+    expect(checkChanges([{ path: MISSIONS, base, head }], TODAY).join()).toContain('verified recently');
+  });
 });

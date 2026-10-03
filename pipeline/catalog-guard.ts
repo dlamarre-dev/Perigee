@@ -28,6 +28,12 @@ export const ALLOWED_PATHS: readonly RegExp[] = [
   /^src\/astro\/leapSeconds\.ts$/,
 ];
 export const MAX_CHANGED_ENTRIES = 40;
+/** A new entry must have been verified within this many days (it was researched for this PR). */
+export const NEW_ENTRY_MAX_AGE_DAYS = 14;
+
+function daysBetween(from: string, to: string): number {
+  return (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000;
+}
 
 export interface ChangedFile {
   readonly path: string;
@@ -83,8 +89,16 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
       for (const [k, v] of Object.entries(o.owners)) m.set(`owner:${k}`, v);
       for (const [k, v] of Object.entries(o.operators)) m.set(`operator:${k}`, v);
       for (const [k, v] of Object.entries(o.groups)) m.set(`group:${k}`, v);
-      for (const r of o.nameRules) m.set(`rule:${r.operator}:${r.pattern}`, r);
-      for (const p of o.hostedPayloads) m.set(`hosted:${p.norad}:${p.operator}`, p);
+      // Keyed by position within the operator (or host), not by content: editing a pattern or a payload name
+      // is a change, not a deletion, and two payloads of one operator on one host stay distinct.
+      const nth = new Map<string, number>();
+      const key = (prefix: string): string => {
+        const n = nth.get(prefix) ?? 0;
+        nth.set(prefix, n + 1);
+        return `${prefix}:${n}`;
+      };
+      for (const r of o.nameRules) m.set(key(`rule:${r.operator}`), r);
+      for (const p of o.hostedPayloads) m.set(key(`hosted:${p.norad}:${p.operator}`), p);
       return m;
     },
   },
@@ -104,7 +118,11 @@ export function checkChanges(files: readonly ChangedFile[], today: string): stri
       continue;
     }
     const catalog = CATALOGS[f.path];
-    if (!catalog) continue;
+    if (!catalog) {
+      // Every curated file the agent may touch is known; a new or renamed catalog file is not allowed.
+      if (f.path.startsWith('catalog/')) errors.push(`${f.path}: unknown catalog file`);
+      continue;
+    }
     if (f.head === undefined) {
       errors.push(`${f.path}: catalog files may not be deleted`);
       continue;
@@ -126,10 +144,13 @@ export function checkChanges(files: readonly ChangedFile[], today: string): stri
       if (!headEntries.has(id))
         errors.push(`${f.path}: entry "${id}" was deleted (change its status instead)`);
     }
+    let changedHere = 0;
+    let undatedChange = false;
     for (const [id, entry] of headEntries) {
       const before = baseEntries.get(id);
       if (before && JSON.stringify(before) === JSON.stringify(entry)) continue;
       changed++;
+      changedHere++;
       // Owner, operator and group labels carry no per-entry sources (the file's sources cover them); name rules
       // and hosted payloads do.
       const labelOnly = f.path === 'catalog/operators.json' && !/^(rule|hosted):/.test(id);
@@ -144,11 +165,23 @@ export function checkChanges(files: readonly ChangedFile[], today: string): stri
           errors.push(`${f.path}: entry "${id}" verified date went back from ${prev} to ${verified}`);
         } else if (typeof prev === 'string' && verified === prev) {
           errors.push(`${f.path}: entry "${id}" changed without a new verified date`);
+        } else if (!before && daysBetween(verified, today) > NEW_ENTRY_MAX_AGE_DAYS) {
+          errors.push(`${f.path}: new entry "${id}" must be verified recently (got ${verified})`);
         }
+      } else {
+        // Entries without their own date (sites, labels, rules, hosted payloads): the file's date covers them.
+        undatedChange = true;
       }
     }
     const fileVerified = (head as { verified?: string }).verified;
+    const baseFileVerified = (base as { verified?: string } | undefined)?.verified;
     if (fileVerified && fileVerified > today) errors.push(`${f.path}: future verified date ${fileVerified}`);
+    if (fileVerified && baseFileVerified && fileVerified < baseFileVerified) {
+      errors.push(`${f.path}: verified date went back from ${baseFileVerified} to ${fileVerified}`);
+    }
+    if (changedHere > 0 && undatedChange && fileVerified && fileVerified === baseFileVerified) {
+      errors.push(`${f.path}: entries changed without a new file verified date`);
+    }
   }
   if (changed > MAX_CHANGED_ENTRIES) {
     errors.push(`${changed} entries changed: more than ${MAX_CHANGED_ENTRIES} in one maintenance PR`);
@@ -172,7 +205,8 @@ function main(): void {
   const baseRef = process.argv[2];
   if (!baseRef) throw new Error('Usage: tsx pipeline/catalog-guard.ts <base-ref>');
   const mergeBase = git(['merge-base', baseRef, 'HEAD']).trim();
-  const paths = git(['diff', '--name-only', mergeBase, 'HEAD']).split('\n').filter(Boolean);
+  // No rename detection: a renamed file must show as a deletion of its old path plus an addition.
+  const paths = git(['diff', '--name-only', '--no-renames', mergeBase, 'HEAD']).split('\n').filter(Boolean);
   const files = paths.map((path) => {
     const base = show(mergeBase, path);
     const head = show('HEAD', path);

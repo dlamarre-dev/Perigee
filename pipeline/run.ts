@@ -112,6 +112,16 @@ async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
   ]);
 }
 
+async function readPublishedGroups(dataDir: string): Promise<Groups> {
+  const file = join(dataDir, 'earth/groups.json.gz');
+  if (!existsSync(file)) return {};
+  try {
+    return GroupsSchema.parse(JSON.parse(gunzipSync(await readFile(file)).toString('utf8')));
+  } catch {
+    return {};
+  }
+}
+
 async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void> {
   const operators = await loadOperators();
   const groupNames = Object.keys(operators.groups);
@@ -129,7 +139,9 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
     );
   }
 
-  // One request per group, sequentially; any non-200 aborts the whole run.
+  // One request per group, sequentially; any non-200 aborts the whole run. A group CelesTrak reports as not
+  // updated since our last fetch keeps its previously published members.
+  const previousGroups = await readPublishedGroups(dataDir);
   const groups: Groups = {};
   for (const name of groupNames) {
     await guard.mark(gpUrl(name));
@@ -138,6 +150,8 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
     } catch (err) {
       if (!(err instanceof NotUpdatedError)) throw err;
       console.warn(err.message);
+      const kept = previousGroups[name];
+      if (kept) groups[name] = kept;
     }
   }
   const groupMembers = Object.values(groups).reduce((n, ids) => n + ids.length, 0);

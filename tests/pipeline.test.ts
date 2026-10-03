@@ -4,7 +4,13 @@ import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ManifestSchema } from '../src/data/schemas';
-import { publishDatasets, readManifest, ShrinkGuardError } from '../pipeline/publish';
+import {
+  AggregateShrinkError,
+  publishDatasets,
+  publishEphemerides,
+  readManifest,
+  ShrinkGuardError,
+} from '../pipeline/publish';
 
 let dir: string;
 beforeEach(async () => {
@@ -43,6 +49,46 @@ describe('publishDatasets', () => {
 
   it('refuses an empty dataset', async () => {
     await expect(publishDatasets(dir, [dataset(0)])).rejects.toBeInstanceOf(ShrinkGuardError);
+  });
+});
+
+describe('publishEphemerides', () => {
+  const ephem = (missionId: string, rows: number, extra: { coverageEnd?: Date; stepMin?: number } = {}) => {
+    const data = new Float64Array(rows * 7);
+    for (let i = 0; i < rows; i++) data[i * 7] = 2461300 + i;
+    return {
+      missionId,
+      horizonsId: '-1',
+      center: '500@10',
+      centralBody: 'sun' as const,
+      stepMin: extra.stepMin ?? 1440,
+      source: 'https://example.test/h',
+      fetchedAt: new Date('2026-09-26T00:00:00Z'),
+      rows: data,
+      bytes: Buffer.from(data.buffer),
+      ...(extra.coverageEnd ? { coverageEnd: extra.coverageEnd } : {}),
+    };
+  };
+
+  it('refuses an unexplained shrink for that mission only, and still publishes the others', async () => {
+    await publishEphemerides(dir, [ephem('a', 400), ephem('b', 400)]);
+    await expect(publishEphemerides(dir, [ephem('a', 100), ephem('b', 410)])).rejects.toBeInstanceOf(
+      AggregateShrinkError,
+    );
+    const m = await readManifest(dir);
+    expect(m.ephemerides['a']?.count).toBe(400);
+    expect(m.ephemerides['b']?.count).toBe(410);
+  });
+
+  it('accepts a shrink explained by a new coverage end or a coarser step', async () => {
+    await publishEphemerides(dir, [ephem('a', 400), ephem('b', 400)]);
+    await publishEphemerides(dir, [
+      ephem('a', 120, { coverageEnd: new Date('2026-12-01T00:00:00Z') }),
+      ephem('b', 100, { stepMin: 4 * 1440 }),
+    ]);
+    const m = await readManifest(dir);
+    expect(m.ephemerides['a']?.count).toBe(120);
+    expect(m.ephemerides['b']?.count).toBe(100);
   });
 });
 

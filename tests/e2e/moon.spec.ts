@@ -91,3 +91,45 @@ test('missions can be hidden one by one or all at once, and the choice is kept i
   await page.goto(page.url());
   await expect(page.locator('#side-panel input[data-toggle="lro"]')).not.toBeChecked();
 });
+
+test('a shared link to a spacecraft frames it once its ephemeris has loaded', async ({ page }) => {
+  type Hook = { camera(): { positionKm: number[] } };
+  const cameraDir = () =>
+    page.evaluate(() => {
+      const p = (window as unknown as { __perigeeTest: Hook }).__perigeeTest.camera().positionKm;
+      const n = Math.hypot(p[0] ?? 0, p[1] ?? 0, p[2] ?? 0);
+      return p.map((v) => v / n);
+    });
+  // Home viewpoint, without a selection.
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
+  await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
+  const home = await cameraDir();
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&sel=lro&e2e`);
+  await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
+  await expect
+    .poll(
+      async () => {
+        const d = await cameraDir();
+        return Math.acos(
+          Math.min(
+            1,
+            d.reduce((s, v, i) => s + v * (home[i] ?? 0), 0),
+          ),
+        );
+      },
+      { timeout: 15_000 },
+    )
+    .toBeGreaterThan(0.05);
+});
+
+test('switching views quickly leaves exactly one view', async ({ page }) => {
+  await page.goto(`./?lang=en&view=earth&${FROZEN}`);
+  await page.getByRole('button', { name: 'Moon', exact: true }).click();
+  await page.getByRole('button', { name: 'Mars', exact: true }).click();
+  await expect(page).toHaveURL(/view=mars/);
+  await expect(page.locator('#side-panel')).toHaveCount(1, { timeout: 15_000 });
+  await expect(page.locator('#side-panel')).toContainText('Around Mars');
+  await page.waitForTimeout(3000);
+  await expect(page.locator('#side-panel')).toHaveCount(1);
+  await expect(page.locator('aside.side-panel')).toHaveCount(2);
+});
