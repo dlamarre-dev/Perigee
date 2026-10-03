@@ -1,0 +1,938 @@
+{
+  "verified": "2026-10-03",
+  "sources": ["https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON"],
+  "satellites": [
+    {
+      "id": "iss",
+      "norad": 25544,
+      "name": { "en": "International Space Station (ISS)", "fr": "Station spatiale internationale (ISS)" },
+      "agency": "NASA / Roscosmos / ESA / JAXA / CSA",
+      "country": "int",
+      "launchDate": "1998-11-20",
+      "status": "active",
+      "purpose": { "en": "Crewed orbital laboratory", "fr": "Laboratoire orbital habité" },
+      "notes": {
+        "en": "Permanently crewed since November 2000, the station hosts research in biology, physics, materials and Earth observation. Its first module, Zarya, was launched on 20 November 1998.",
+        "fr": "Occupée en permanence depuis novembre 2000, la station accueille des recherches en biologie, en physique, sur les matériaux et en observation de la Terre. Son premier module, Zarya, a été lancé le 20 novembre 1998."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.nasa.gov/international-space-station/"]
+    },
+    {
+      "id": "hubble",
+      "norad": 20580,
+      "name": { "en": "Hubble Space Telescope (HST)", "fr": "Télescope spatial Hubble (HST)" },
+      "agency": "NASA / ESA",
+      "country": "us",
+      "launchDate": "1990-04-24",
+      "status": "active",
+      "purpose": {
+        "en": "Optical/UV/near-IR space telescope",
+        "fr": "Télescope spatial optique, UV et proche IR"
+      },
+      "notes": {
+        "en": "Launched by Space Shuttle Discovery and serviced five times by astronauts. Since June 2024 it observes in one-gyro mode to save its remaining gyroscopes, which limits some targets but keeps science going.",
+        "fr": "Lancé par la navette Discovery et réparé cinq fois par des astronautes. Depuis juin 2024, il observe avec un seul gyroscope pour ménager les autres, ce qui limite certaines cibles sans arrêter la science."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://science.nasa.gov/mission/hubble/",
+        "https://science.nasa.gov/missions/hubble/nasas-hubble-pauses-science-due-to-gyro-issue/"
+      ]
+    },
+    {
+      "id": "polar",
+      "norad": 23802,
+      "name": { "en": "Polar", "fr": "Polar" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1996-02-24",
+      "status": "ended",
+      "purpose": {
+        "en": "Polar magnetosphere and aurora observatory",
+        "fr": "Étude de la magnétosphère polaire et des aurores"
+      },
+      "notes": {
+        "en": "Part of the International Solar-Terrestrial Physics programme, Polar imaged aurorae and measured particles and fields over the poles. The mission ended in April 2008 and the spacecraft was switched off; it remains in orbit.",
+        "fr": "Membre du programme International Solar-Terrestrial Physics, Polar a photographié les aurores et mesuré particules et champs au-dessus des pôles. La mission a pris fin en avril 2008 et l'engin a été éteint ; il reste en orbite."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1996-013A"]
+    },
+    {
+      "id": "swas",
+      "norad": 25560,
+      "name": {
+        "en": "Submillimeter Wave Astronomy Satellite (SWAS)",
+        "fr": "Satellite d'astronomie submillimétrique (SWAS)"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1998-12-06",
+      "status": "inactive",
+      "purpose": {
+        "en": "Submillimetre telescope (water, oxygen in clouds)",
+        "fr": "Télescope submillimétrique (eau, oxygène des nuages)"
+      },
+      "notes": {
+        "en": "A Small Explorer that studied water, molecular oxygen and carbon in interstellar clouds. Science ended in 2004; it was briefly reactivated in 2005 to watch the Deep Impact comet collision, then put back into hibernation.",
+        "fr": "Petit satellite Explorer qui a étudié l'eau, l'oxygène moléculaire et le carbone des nuages interstellaires. Sa mission scientifique a pris fin en 2004 ; il a été brièvement réactivé en 2005 pour observer l'impact de Deep Impact sur une comète, puis remis en hibernation."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1998-071A"]
+    },
+    {
+      "id": "chandra",
+      "norad": 25867,
+      "name": { "en": "Chandra X-ray Observatory (CXO)", "fr": "Observatoire de rayons X Chandra (CXO)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1999-07-23",
+      "status": "active",
+      "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "notes": {
+        "en": "NASA's flagship X-ray observatory, on a highly elliptical orbit reaching about a third of the way to the Moon. Proposed for cancellation, it was funded again by Congress in the FY2026 budget (January 2026) and keeps observing.",
+        "fr": "Grand observatoire de rayons X de la NASA, sur une orbite très elliptique qui s'éloigne jusqu'au tiers environ de la distance de la Lune. Menacé d'annulation, il a été refinancé par le Congrès dans le budget 2026 (janvier 2026) et poursuit ses observations."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://science.nasa.gov/mission/chandra-x-ray-observatory/",
+        "https://aas.org/posts/news/2026/01/congress-passes-fiscal-year-2026-spending-bills-nsf-nasa-and-doe"
+      ]
+    },
+    {
+      "id": "xmm-newton",
+      "norad": 25989,
+      "name": { "en": "XMM-Newton", "fr": "XMM-Newton" },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "1999-12-10",
+      "status": "active",
+      "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "notes": {
+        "en": "ESA's X-ray Multi-Mirror Mission, with three X-ray telescopes and an optical/UV monitor, on a 48-hour elliptical orbit. Still observing more than 25 years after launch.",
+        "fr": "Mission X-ray Multi-Mirror de l'ESA, dotée de trois télescopes à rayons X et d'un moniteur optique et UV, sur une orbite elliptique de 48 heures. Toujours en service plus de 25 ans après son lancement."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.esa.int/Science_Exploration/Space_Science/XMM-Newton"]
+    },
+    {
+      "id": "terra",
+      "norad": 25994,
+      "name": { "en": "Terra (EOS AM-1)", "fr": "Terra (EOS AM-1)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1999-12-18",
+      "status": "active",
+      "purpose": {
+        "en": "Earth observation (land, oceans, atmosphere)",
+        "fr": "Observation de la Terre (sols, océans, atmosphère)"
+      },
+      "notes": {
+        "en": "Flagship of NASA's Earth Observing System, with Japanese and Canadian instruments. Drifting to an earlier overpass time with less power, it switched off MOPITT in April 2025, but MODIS, MISR, CERES and ASTER's visible camera still operate.",
+        "fr": "Satellite phare du système d'observation de la Terre de la NASA, avec des instruments japonais et canadiens. Son heure de passage dérive et sa puissance diminue : MOPITT a été éteint en avril 2025, mais MODIS, MISR, CERES et la caméra visible d'ASTER fonctionnent toujours."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://terra.nasa.gov/"]
+    },
+    {
+      "id": "timed",
+      "norad": 26998,
+      "name": { "en": "TIMED", "fr": "TIMED" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2001-12-07",
+      "status": "active",
+      "purpose": {
+        "en": "Upper atmosphere (mesosphere, thermosphere)",
+        "fr": "Haute atmosphère (mésosphère, thermosphère)"
+      },
+      "notes": {
+        "en": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics: studies how the Sun and human activity affect the gateway between Earth's atmosphere and space. Still listed as an active NASA mission after more than 20 years.",
+        "fr": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics : étudie l'influence du Soleil et des activités humaines sur la zone de transition entre l'atmosphère terrestre et l'espace. Toujours une mission active de la NASA après plus de 20 ans."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/timed/"]
+    },
+    {
+      "id": "coriolis",
+      "norad": 27640,
+      "name": { "en": "Coriolis (WindSat)", "fr": "Coriolis (WindSat)" },
+      "agency": "US Navy / USAF",
+      "country": "us",
+      "launchDate": "2003-01-06",
+      "status": "inactive",
+      "purpose": {
+        "en": "Ocean wind radiometer and solar CME imager",
+        "fr": "Radiomètre des vents marins et imageur d'éjections solaires"
+      },
+      "notes": {
+        "en": "Carried WindSat, a polarimetric radiometer measuring ocean-surface wind speed and direction, and the SMEI solar imager (off since 2011). WindSat data production stopped in October 2020; the satellite is listed as inactive since December 2020.",
+        "fr": "Portait WindSat, radiomètre polarimétrique mesurant la vitesse et la direction du vent à la surface des océans, et l'imageur solaire SMEI (éteint depuis 2011). La production des données WindSat a cessé en octobre 2020 ; le satellite est considéré inactif depuis décembre 2020."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://space.oscar.wmo.int/satellites/view/coriolis",
+        "https://www.ospo.noaa.gov/data/messages/2020/10/MSG_20201020_1304.html"
+      ]
+    },
+    {
+      "id": "sorce",
+      "norad": 27651,
+      "name": { "en": "SORCE", "fr": "SORCE" },
+      "agency": "NASA / LASP",
+      "country": "us",
+      "launchDate": "2003-01-25",
+      "status": "ended",
+      "purpose": { "en": "Solar irradiance measurement", "fr": "Mesure de l'éclairement solaire" },
+      "notes": {
+        "en": "Solar Radiation and Climate Experiment: measured the Sun's total and spectral irradiance, a key input for climate studies. Science ended in February 2020 and the spacecraft was decommissioned; it remains in orbit.",
+        "fr": "Solar Radiation and Climate Experiment : a mesuré l'éclairement solaire total et spectral, une donnée clé pour l'étude du climat. La mission scientifique a pris fin en février 2020 et le satellite a été désactivé ; il reste en orbite."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://lasp.colorado.edu/sorce/",
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2003-004A"
+      ]
+    },
+    {
+      "id": "most",
+      "norad": 27843,
+      "name": { "en": "MOST space telescope", "fr": "Télescope spatial MOST" },
+      "agency": "CSA",
+      "country": "ca",
+      "launchDate": "2003-06-30",
+      "status": "ended",
+      "purpose": { "en": "Stellar oscillation photometry", "fr": "Photométrie des oscillations stellaires" },
+      "notes": {
+        "en": "Microvariability and Oscillations of Stars, Canada's first space telescope (53 kg, nicknamed the 'Humble Space Telescope'). CSA funding ended in 2014; operated afterwards by Microsatellite Systems Canada until a failure ended it in 2019.",
+        "fr": "Microvariabilité et oscillations stellaires, premier télescope spatial canadien (53 kg). Le financement de l'ASC a pris fin en 2014 ; exploité ensuite par Microsatellite Systems Canada jusqu'à une panne qui y a mis fin en 2019."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.asc-csa.gc.ca/eng/satellites/most/"]
+    },
+    {
+      "id": "scisat",
+      "norad": 27858,
+      "name": { "en": "SCISAT (ACE)", "fr": "SCISAT (ACE)" },
+      "agency": "CSA",
+      "country": "ca",
+      "launchDate": "2003-08-13",
+      "status": "active",
+      "purpose": {
+        "en": "Ozone-layer and atmospheric chemistry",
+        "fr": "Couche d'ozone et chimie atmosphérique"
+      },
+      "notes": {
+        "en": "Atmospheric Chemistry Experiment: measures ozone and dozens of trace gases by watching sunrises and sunsets through the atmosphere. Designed for 2 years, it has operated for more than 20; the science team still released new data products in 2026.",
+        "fr": "Atmospheric Chemistry Experiment : mesure l'ozone et des dizaines de gaz traces en observant les levers et couchers de Soleil à travers l'atmosphère. Conçu pour 2 ans, il fonctionne depuis plus de 20 ans ; l'équipe scientifique publiait encore de nouveaux produits en 2026."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.asc-csa.gc.ca/eng/satellites/scisat/about.asp", "https://databace.scisat.ca/"]
+    },
+    {
+      "id": "swift",
+      "norad": 28485,
+      "name": { "en": "Neil Gehrels Swift Observatory", "fr": "Observatoire Neil Gehrels Swift" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2004-11-20",
+      "status": "active",
+      "purpose": {
+        "en": "Gamma-ray burst observatory (gamma, X, UV)",
+        "fr": "Observatoire des sursauts gamma (gamma, X, UV)"
+      },
+      "notes": {
+        "en": "Detects gamma-ray bursts and swings within minutes to observe them in X-rays and UV. A commercial reboost attempt (Katalyst LINK) was called off in August 2026; Swift resumed full science in September 2026 and is expected to re-enter in late 2026.",
+        "fr": "Détecte les sursauts gamma et pivote en quelques minutes pour les observer en rayons X et en UV. Une tentative commerciale de rehaussement d'orbite (Katalyst LINK) a été abandonnée en août 2026 ; Swift a repris toute sa science en septembre 2026 et devrait rentrer dans l'atmosphère d'ici la fin de 2026."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://science.nasa.gov/blogs/swift/2026/09/25/nasas-swift-powers-on-third-instrument-restarts-automated-slewing/",
+        "https://science.nasa.gov/mission/swift/"
+      ]
+    },
+    {
+      "id": "hinode",
+      "norad": 29479,
+      "name": { "en": "Hinode (Solar-B)", "fr": "Hinode (Solar-B)" },
+      "agency": "JAXA / NAOJ / NASA / UKSA",
+      "country": "jp",
+      "launchDate": "2006-09-22",
+      "status": "active",
+      "purpose": {
+        "en": "Solar observatory (magnetic fields, corona)",
+        "fr": "Observatoire solaire (champs magnétiques, couronne)"
+      },
+      "notes": {
+        "en": "Japanese solar observatory with optical, X-ray and EUV telescopes built with US and UK partners, studying the Sun's magnetic fields and the heating of the corona. Still operating after nearly 20 years.",
+        "fr": "Observatoire solaire japonais doté de télescopes optique, X et UV extrême construits avec des partenaires américains et britanniques ; il étudie les champs magnétiques du Soleil et le chauffage de la couronne. Toujours en service après près de 20 ans."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://global.jaxa.jp/projects/sas/hinode/", "https://hinode.nao.ac.jp/en/"]
+    },
+    {
+      "id": "shijian-6-02a",
+      "norad": 29505,
+      "name": { "en": "Shijian-6 02A (SJ-6C)", "fr": "Shijian-6 02A (SJ-6C)" },
+      "agency": "CAST / SAST",
+      "country": "cn",
+      "launchDate": "2006-10-23",
+      "status": "unknown",
+      "purpose": {
+        "en": "Space environment research (officially)",
+        "fr": "Étude de l'environnement spatial (officiellement)"
+      },
+      "notes": {
+        "en": "Second pair of the Shijian-6 series, officially measuring the space environment and radiation effects; some analysts suspect a signals-intelligence role. No official statement on its current status: listed as unknown.",
+        "fr": "Deuxième paire de la série Shijian-6, chargée officiellement de mesurer l'environnement spatial et les effets des radiations ; certains analystes y voient un rôle de renseignement électronique. Aucune information officielle sur son état actuel : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2006-046A",
+        "https://space.skyrocket.de/doc_sdat/sj-6.htm"
+      ]
+    },
+    {
+      "id": "shijian-6-02b",
+      "norad": 29506,
+      "name": { "en": "Shijian-6 02B (SJ-6D)", "fr": "Shijian-6 02B (SJ-6D)" },
+      "agency": "CAST / DFH",
+      "country": "cn",
+      "launchDate": "2006-10-23",
+      "status": "unknown",
+      "purpose": {
+        "en": "Space environment research (officially)",
+        "fr": "Étude de l'environnement spatial (officiellement)"
+      },
+      "notes": {
+        "en": "Companion of Shijian-6 02A, launched on the same rocket; officially a space-environment satellite, suspected by analysts of signals-intelligence work. No official statement on its current status: listed as unknown.",
+        "fr": "Compagnon de Shijian-6 02A, lancé par la même fusée ; officiellement un satellite d'étude de l'environnement spatial, soupçonné par des analystes de faire du renseignement électronique. Aucune information officielle sur son état actuel : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2006-046B",
+        "https://space.skyrocket.de/doc_sdat/sj-6.htm"
+      ]
+    },
+    {
+      "id": "fermi",
+      "norad": 33053,
+      "name": {
+        "en": "Fermi Gamma-ray Space Telescope (GLAST)",
+        "fr": "Télescope spatial à rayons gamma Fermi (GLAST)"
+      },
+      "agency": "NASA / DOE",
+      "country": "us",
+      "launchDate": "2008-06-11",
+      "status": "active",
+      "purpose": { "en": "Gamma-ray space telescope", "fr": "Télescope spatial à rayons gamma" },
+      "notes": {
+        "en": "Launched as GLAST and renamed after physicist Enrico Fermi; its Large Area Telescope maps the whole gamma-ray sky every three hours, and its burst monitor catches gamma-ray bursts. Still operating.",
+        "fr": "Lancé sous le nom de GLAST puis renommé en l'honneur du physicien Enrico Fermi ; son grand télescope cartographie tout le ciel gamma toutes les trois heures et son moniteur détecte les sursauts gamma. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/fermi/"]
+    },
+    {
+      "id": "sdo",
+      "norad": 36395,
+      "name": {
+        "en": "Solar Dynamics Observatory (SDO)",
+        "fr": "Observatoire de la dynamique solaire (SDO)"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2010-02-11",
+      "status": "active",
+      "purpose": {
+        "en": "Solar observatory (continuous full-disc imaging)",
+        "fr": "Observatoire solaire (images continues du disque)"
+      },
+      "notes": {
+        "en": "From an inclined geosynchronous orbit, SDO images the full Sun in many wavelengths every few seconds and maps its magnetic field, feeding space-weather forecasts. Still operating.",
+        "fr": "Depuis une orbite géosynchrone inclinée, SDO photographie le Soleil entier dans plusieurs longueurs d'onde toutes les quelques secondes et cartographie son champ magnétique, au service de la météo spatiale. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/sdo/"]
+    },
+    {
+      "id": "cryosat-2",
+      "norad": 36508,
+      "name": { "en": "CryoSat-2", "fr": "CryoSat-2" },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2010-04-08",
+      "status": "active",
+      "purpose": {
+        "en": "Radar altimetry of ice sheets and sea ice",
+        "fr": "Altimétrie radar des calottes et de la banquise"
+      },
+      "notes": {
+        "en": "ESA Earth Explorer that measures changes in the thickness of polar ice sheets and Arctic sea ice with a radar altimeter. Still operating, well beyond its planned 3.5-year mission.",
+        "fr": "Satellite Earth Explorer de l'ESA qui mesure, par altimétrie radar, l'évolution de l'épaisseur des calottes polaires et de la banquise arctique. Toujours en service, bien au-delà de sa mission prévue de 3 ans et demi."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat"]
+    },
+    {
+      "id": "x-sat",
+      "norad": 37389,
+      "name": { "en": "X-SAT", "fr": "X-SAT" },
+      "agency": "NTU / DSO",
+      "country": "sg",
+      "launchDate": "2011-04-20",
+      "status": "unknown",
+      "purpose": {
+        "en": "Earth-imaging technology demonstrator",
+        "fr": "Démonstrateur technologique d'imagerie terrestre"
+      },
+      "notes": {
+        "en": "Singapore's first locally built satellite (106 kg), from Nanyang Technological University with DSO National Laboratories. Last reported operational well past its 3-year design life; no recent official status, so listed as unknown.",
+        "fr": "Premier satellite construit à Singapour (106 kg), par l'Université technologique Nanyang avec DSO National Laboratories. Signalé en fonctionnement bien au-delà de sa durée de vie prévue de 3 ans ; faute d'état officiel récent, statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.eoportal.org/satellite-missions/xsat",
+        "https://spacenews.com/singapores-first-locally-made-satellite-launched-into-space/"
+      ]
+    },
+    {
+      "id": "gcom-w",
+      "norad": 38337,
+      "name": { "en": "GCOM-W \"Shizuku\"", "fr": "GCOM-W « Shizuku »" },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2012-05-17",
+      "status": "active",
+      "purpose": {
+        "en": "Water-cycle microwave radiometer (AMSR2)",
+        "fr": "Radiomètre micro-ondes du cycle de l'eau (AMSR2)"
+      },
+      "notes": {
+        "en": "Global Change Observation Mission – Water: its AMSR2 radiometer measures rainfall, water vapour, sea-surface temperature, sea ice and soil moisture day and night. Still operating in good health past its 5-year design life.",
+        "fr": "Global Change Observation Mission – Water : son radiomètre AMSR2 mesure jour et nuit les précipitations, la vapeur d'eau, la température de la mer, la banquise et l'humidité des sols. Toujours en service et en bon état, au-delà de sa durée de vie prévue de 5 ans."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.eorc.jaxa.jp/AMSR/satellite/gcom-w_en.html"]
+    },
+    {
+      "id": "nustar",
+      "norad": 38358,
+      "name": { "en": "NuSTAR", "fr": "NuSTAR" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2012-06-13",
+      "status": "active",
+      "purpose": { "en": "High-energy X-ray space telescope", "fr": "Télescope spatial à rayons X durs" },
+      "notes": {
+        "en": "Nuclear Spectroscopic Telescope Array, the first telescope to focus high-energy X-rays, using optics on a 10-metre deployable mast. Studies black holes, neutron stars and supernova remnants; still operating.",
+        "fr": "Nuclear Spectroscopic Telescope Array, premier télescope à focaliser les rayons X de haute énergie, grâce à un mât déployable de 10 mètres. Étudie les trous noirs, les étoiles à neutrons et les restes de supernova ; toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/nustar/"]
+    },
+    {
+      "id": "neossat",
+      "norad": 39089,
+      "name": { "en": "NEOSSat", "fr": "NEOSSat" },
+      "agency": "CSA / DRDC",
+      "country": "ca",
+      "launchDate": "2013-02-25",
+      "status": "active",
+      "purpose": {
+        "en": "Asteroid and space-object surveillance",
+        "fr": "Surveillance des astéroïdes et des objets spatiaux"
+      },
+      "notes": {
+        "en": "Near-Earth Object Surveillance Satellite, a suitcase-sized Canadian telescope that tracks asteroids, comets and satellites in high orbits, and also observes exoplanet transits. Its guest-observer programme ran into 2026.",
+        "fr": "Satellite de surveillance des objets géocroiseurs, petit télescope canadien de la taille d'une valise qui suit astéroïdes, comètes et satellites en orbite haute, et observe aussi des transits d'exoplanètes. Son programme d'observateurs invités se poursuivait en 2026."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.asc-csa.gc.ca/eng/satellites/neossat/",
+        "https://www.asc-csa.gc.ca/eng/funding-programs/funding-opportunities/ao/2025-neossat-science-guest-observation-program-cycle-10.asp"
+      ]
+    },
+    {
+      "id": "brite-austria",
+      "norad": 39091,
+      "name": { "en": "BRITE-Austria (TUGSAT-1)", "fr": "BRITE-Austria (TUGSAT-1)" },
+      "agency": "TU Graz",
+      "country": "at",
+      "launchDate": "2013-02-25",
+      "status": "unknown",
+      "purpose": {
+        "en": "Bright-star photometry nanosatellite",
+        "fr": "Nanosatellite de photométrie d'étoiles brillantes"
+      },
+      "notes": {
+        "en": "Austria's first satellite and one of the six 7-kg BRITE-Constellation nanosatellites that monitor the brightness of the brightest stars (blue filter). Last reported as one of the three still operating; no recent official update, so listed as unknown.",
+        "fr": "Premier satellite autrichien et l'un des six nanosatellites de 7 kg de la constellation BRITE, qui suivent l'éclat des étoiles les plus brillantes (filtre bleu). Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://brite-constellation.at/constellation/basic_information/",
+        "https://link.springer.com/article/10.1007/s00502-022-00987-5"
+      ]
+    },
+    {
+      "id": "iris",
+      "norad": 39197,
+      "name": { "en": "IRIS", "fr": "IRIS" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2013-06-28",
+      "status": "active",
+      "purpose": { "en": "Solar UV imaging spectrograph", "fr": "Spectrographe imageur solaire UV" },
+      "notes": {
+        "en": "Interface Region Imaging Spectrograph: observes the chromosphere and transition region, the layers where energy flows from the Sun's surface into its hot corona. Still operating.",
+        "fr": "Interface Region Imaging Spectrograph : observe la chromosphère et la région de transition, les couches où l'énergie passe de la surface du Soleil à sa couronne brûlante. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/iris/"]
+    },
+    {
+      "id": "hisaki",
+      "norad": 39253,
+      "name": { "en": "Hisaki (SPRINT-A)", "fr": "Hisaki (SPRINT-A)" },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2013-09-14",
+      "status": "ended",
+      "purpose": { "en": "Planetary EUV space telescope", "fr": "Télescope spatial UV extrême planétaire" },
+      "notes": {
+        "en": "The first space telescope dedicated to observing planets (Venus, Mars, Jupiter's Io torus) in extreme ultraviolet, launched on the first Epsilon rocket. JAXA ended operations in December 2023 after ten years; it remains in orbit.",
+        "fr": "Premier télescope spatial consacré à l'observation des planètes (Vénus, Mars, tore d'Io autour de Jupiter) en ultraviolet extrême, lancé par la première fusée Epsilon. La JAXA a mis fin à son exploitation en décembre 2023, après dix ans ; il reste en orbite."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.isas.jaxa.jp/home/sprint-a/index_en.html",
+        "https://www.shimadzu.com/today/20250605-1.html"
+      ]
+    },
+    {
+      "id": "cassiope",
+      "norad": 39265,
+      "name": { "en": "CASSIOPE (e-POP / Swarm-Echo)", "fr": "CASSIOPE (e-POP / Swarm-Echo)" },
+      "agency": "CSA / University of Calgary",
+      "country": "ca",
+      "launchDate": "2013-09-29",
+      "status": "unknown",
+      "purpose": {
+        "en": "Ionosphere and space-weather research",
+        "fr": "Étude de l'ionosphère et de la météo spatiale"
+      },
+      "notes": {
+        "en": "Canadian satellite carrying the e-POP plasma instruments, which joined ESA's Swarm mission as Swarm-Echo in 2018. Routine science ended after a reaction-wheel failure in December 2021; limited data collection continued, with an end of life planned for December 2025, unconfirmed.",
+        "fr": "Satellite canadien portant les instruments de plasma e-POP, intégré en 2018 à la mission Swarm de l'ESA sous le nom de Swarm-Echo. Les opérations scientifiques régulières ont cessé après une panne de roue de réaction en décembre 2021 ; une collecte limitée s'est poursuivie, avec une fin de vie prévue en décembre 2025, non confirmée."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://epop.phys.ucalgary.ca/routine-cassiope-swarm-echo-science-operations-come-to-an-end/",
+        "https://www.eoportal.org/satellite-missions/cassiope"
+      ]
+    },
+    {
+      "id": "stsat-3",
+      "norad": 39422,
+      "name": { "en": "STSAT-3", "fr": "STSAT-3" },
+      "agency": "KAIST / MSIP",
+      "country": "kr",
+      "launchDate": "2013-11-21",
+      "status": "inactive",
+      "purpose": {
+        "en": "Infrared astronomy and Earth-observation tech",
+        "fr": "Astronomie infrarouge et technologies d'observation"
+      },
+      "notes": {
+        "en": "Korean Science and Technology Satellite 3, carrying an infrared space telescope and a compact imaging spectrometer. Korea declared its observation mission complete in December 2015; it remains in orbit.",
+        "fr": "Satellite coréen de science et technologie no 3, doté d'un télescope spatial infrarouge et d'un spectromètre imageur compact. La Corée a déclaré sa mission d'observation terminée en décembre 2015 ; il reste en orbite."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.eoportal.org/satellite-missions/stsat-3"]
+    },
+    {
+      "id": "swarm-b",
+      "norad": 39451,
+      "name": { "en": "Swarm B", "fr": "Swarm B" },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2013-11-22",
+      "status": "active",
+      "purpose": {
+        "en": "Earth's magnetic field mapping",
+        "fr": "Cartographie du champ magnétique terrestre"
+      },
+      "notes": {
+        "en": "One of the three Swarm satellites measuring Earth's magnetic field from the core, crust and oceans to the ionosphere. Swarm B flies alone in a higher orbit than the A/C pair. Still operating.",
+        "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre, du noyau, de la croûte et des océans jusqu'à l'ionosphère. Swarm B vole seul, sur une orbite plus haute que la paire A/C. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
+    },
+    {
+      "id": "swarm-a",
+      "norad": 39452,
+      "name": { "en": "Swarm A", "fr": "Swarm A" },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2013-11-22",
+      "status": "active",
+      "purpose": {
+        "en": "Earth's magnetic field mapping",
+        "fr": "Cartographie du champ magnétique terrestre"
+      },
+      "notes": {
+        "en": "One of the three Swarm satellites measuring Earth's magnetic field and the ionosphere. Swarm A flies side by side with Swarm C to measure field gradients. Still operating.",
+        "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre et l'ionosphère. Swarm A vole côte à côte avec Swarm C pour mesurer les gradients du champ. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
+    },
+    {
+      "id": "swarm-c",
+      "norad": 39453,
+      "name": { "en": "Swarm C", "fr": "Swarm C" },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2013-11-22",
+      "status": "active",
+      "purpose": {
+        "en": "Earth's magnetic field mapping",
+        "fr": "Cartographie du champ magnétique terrestre"
+      },
+      "notes": {
+        "en": "One of the three Swarm satellites measuring Earth's magnetic field and the ionosphere. Swarm C flies side by side with Swarm A to measure field gradients. Still operating.",
+        "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre et l'ionosphère. Swarm C vole côte à côte avec Swarm A pour mesurer les gradients du champ. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
+    },
+    {
+      "id": "brite-toronto",
+      "norad": 40020,
+      "name": { "en": "BRITE-Toronto (BRITE-CA1)", "fr": "BRITE-Toronto (BRITE-CA1)" },
+      "agency": "CSA / University of Toronto",
+      "country": "ca",
+      "launchDate": "2014-06-19",
+      "status": "unknown",
+      "purpose": {
+        "en": "Bright-star photometry nanosatellite",
+        "fr": "Nanosatellite de photométrie d'étoiles brillantes"
+      },
+      "notes": {
+        "en": "Canadian member of the BRITE-Constellation (red filter), built by the University of Toronto's Space Flight Laboratory. Last reported as one of the three still operating; its builder now lists it as a legacy mission and no recent official update exists, so listed as unknown.",
+        "fr": "Membre canadien de la constellation BRITE (filtre rouge), construit par le Space Flight Laboratory de l'Université de Toronto. Signalé comme l'un des trois encore actifs, mais son constructeur le classe parmi ses missions passées et aucune mise à jour officielle récente n'existe : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.asc-csa.gc.ca/eng/satellites/brite/",
+        "https://sflmissions.com/brite-toronto-brite-montreal/"
+      ]
+    },
+    {
+      "id": "oco-2",
+      "norad": 40059,
+      "name": {
+        "en": "Orbiting Carbon Observatory-2 (OCO-2)",
+        "fr": "Observatoire orbital du carbone 2 (OCO-2)"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2014-07-02",
+      "status": "active",
+      "purpose": { "en": "Atmospheric CO₂ measurement", "fr": "Mesure du CO₂ atmosphérique" },
+      "notes": {
+        "en": "Maps carbon dioxide in the atmosphere and plant fluorescence from space. Threatened with termination in 2025, it kept operating; in August 2026 NASA selected Caltech to run OCO-2 and OCO-3 for up to five years.",
+        "fr": "Cartographie depuis l'espace le dioxyde de carbone de l'atmosphère et la fluorescence des plantes. Menacé d'arrêt en 2025, il a continué de fonctionner ; en août 2026, la NASA a confié à Caltech l'exploitation d'OCO-2 et d'OCO-3 pour un maximum de cinq ans."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://ocov2.jpl.nasa.gov/",
+        "https://www.earthdata.nasa.gov/data/alerts-outages/oco-2-instrument-anomaly-from-july-28-august-13-2026"
+      ]
+    },
+    {
+      "id": "brite-heweliusz",
+      "norad": 40119,
+      "name": { "en": "BRITE-Heweliusz (BRITE-PL2)", "fr": "BRITE-Heweliusz (BRITE-PL2)" },
+      "agency": "Polish Academy of Sciences (CBK PAN)",
+      "country": "pl",
+      "launchDate": "2014-08-19",
+      "status": "unknown",
+      "purpose": {
+        "en": "Bright-star photometry nanosatellite",
+        "fr": "Nanosatellite de photométrie d'étoiles brillantes"
+      },
+      "notes": {
+        "en": "Polish member of the BRITE-Constellation (red filter), named after astronomer Johannes Hevelius. Last reported as one of the three still operating; no recent official update, so listed as unknown.",
+        "fr": "Membre polonais de la constellation BRITE (filtre rouge), nommé en l'honneur de l'astronome Johannes Hevelius. Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://brite-constellation.at/constellation/basic_information/",
+        "https://www.eoportal.org/satellite-missions/brite-poland"
+      ]
+    },
+    {
+      "id": "mms-1",
+      "norad": 40482,
+      "name": { "en": "Magnetospheric Multiscale 1 (MMS 1)", "fr": "Magnetospheric Multiscale 1 (MMS 1)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2015-03-13",
+      "status": "active",
+      "purpose": {
+        "en": "Magnetic reconnection in Earth's magnetosphere",
+        "fr": "Reconnexion magnétique dans la magnétosphère"
+      },
+      "notes": {
+        "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
+        "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/mms/"]
+    },
+    {
+      "id": "mms-2",
+      "norad": 40483,
+      "name": { "en": "Magnetospheric Multiscale 2 (MMS 2)", "fr": "Magnetospheric Multiscale 2 (MMS 2)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2015-03-13",
+      "status": "active",
+      "purpose": {
+        "en": "Magnetic reconnection in Earth's magnetosphere",
+        "fr": "Reconnexion magnétique dans la magnétosphère"
+      },
+      "notes": {
+        "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
+        "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/mms/"]
+    },
+    {
+      "id": "mms-3",
+      "norad": 40484,
+      "name": { "en": "Magnetospheric Multiscale 3 (MMS 3)", "fr": "Magnetospheric Multiscale 3 (MMS 3)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2015-03-13",
+      "status": "active",
+      "purpose": {
+        "en": "Magnetic reconnection in Earth's magnetosphere",
+        "fr": "Reconnexion magnétique dans la magnétosphère"
+      },
+      "notes": {
+        "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
+        "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/mms/"]
+    },
+    {
+      "id": "mms-4",
+      "norad": 40485,
+      "name": { "en": "Magnetospheric Multiscale 4 (MMS 4)", "fr": "Magnetospheric Multiscale 4 (MMS 4)" },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2015-03-13",
+      "status": "active",
+      "purpose": {
+        "en": "Magnetic reconnection in Earth's magnetosphere",
+        "fr": "Reconnexion magnétique dans la magnétosphère"
+      },
+      "notes": {
+        "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
+        "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/mms/"]
+    },
+    {
+      "id": "astrosat",
+      "norad": 40930,
+      "name": { "en": "AstroSat", "fr": "AstroSat" },
+      "agency": "ISRO",
+      "country": "in",
+      "launchDate": "2015-09-28",
+      "status": "active",
+      "purpose": {
+        "en": "Multi-wavelength space observatory (UV to X)",
+        "fr": "Observatoire spatial multilongueur d'onde (UV à X)"
+      },
+      "notes": {
+        "en": "India's first dedicated space observatory, observing simultaneously in ultraviolet, optical and X-rays. Designed for 5 years, it completed 10 years of operations in September 2025 and is still delivering data.",
+        "fr": "Premier observatoire spatial indien, qui observe simultanément en ultraviolet, en visible et en rayons X. Conçu pour 5 ans, il a franchi le cap des 10 ans d'exploitation en septembre 2025 et fournit toujours des données."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.isro.gov.in/Celebrating_Ten_years_of_AstroSat.html"]
+    },
+    {
+      "id": "dampe",
+      "norad": 41173,
+      "name": { "en": "DAMPE \"Wukong\"", "fr": "DAMPE « Wukong »" },
+      "agency": "CAS",
+      "country": "cn",
+      "launchDate": "2015-12-17",
+      "status": "active",
+      "purpose": {
+        "en": "Cosmic-ray and dark-matter detector",
+        "fr": "Détecteur de rayons cosmiques et de matière noire"
+      },
+      "notes": {
+        "en": "Dark Matter Particle Explorer, nicknamed Wukong after the Monkey King: measures high-energy cosmic-ray electrons, protons and gamma rays in search of dark-matter signatures. Designed for 3 years, still operating after 10.",
+        "fr": "Dark Matter Particle Explorer, surnommé Wukong d'après le Roi des singes : mesure les électrons, protons et rayons gamma cosmiques de haute énergie à la recherche de signatures de matière noire. Conçu pour 3 ans, toujours en service après 10 ans."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html"]
+    },
+    {
+      "id": "pisat",
+      "norad": 41784,
+      "name": { "en": "PISAT", "fr": "PISAT" },
+      "agency": "PES University / ISRO",
+      "country": "in",
+      "launchDate": "2016-09-26",
+      "status": "unknown",
+      "purpose": {
+        "en": "Student Earth-imaging nanosatellite",
+        "fr": "Nanosatellite étudiant d'imagerie terrestre"
+      },
+      "notes": {
+        "en": "5-kg imaging nanosatellite (80 m resolution) built by students of PES University, Bengaluru, with ISRO support, launched on PSLV-C35. No recent official status: listed as unknown.",
+        "fr": "Nanosatellite d'imagerie de 5 kg (résolution de 80 m) construit par des étudiants de l'Université PES de Bengaluru avec l'appui de l'ISRO, lancé par PSLV-C35. Aucun état officiel récent : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://news.pes.edu/10125/", "https://www.eoportal.org/satellite-missions/pisat"]
+    },
+    {
+      "id": "insight-hxmt",
+      "norad": 42758,
+      "name": { "en": "Insight-HXMT (Huiyan)", "fr": "Insight-HXMT (Huiyan)" },
+      "agency": "CAS / CNSA",
+      "country": "cn",
+      "launchDate": "2017-06-15",
+      "status": "active",
+      "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "notes": {
+        "en": "Hard X-ray Modulation Telescope, China's first X-ray astronomy satellite, studying black holes, neutron stars and gamma-ray bursts. Still operating: its Cycle 9 call for observations was issued in May 2026.",
+        "fr": "Hard X-ray Modulation Telescope, premier satellite chinois d'astronomie X, qui étudie trous noirs, étoiles à neutrons et sursauts gamma. Toujours en service : son 9e appel à observations a été publié en mai 2026."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://hxmt.nssdc.ac.cn/",
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2017-034A"
+      ]
+    },
+    {
+      "id": "flying-laptop",
+      "norad": 42831,
+      "name": { "en": "Flying Laptop", "fr": "Flying Laptop" },
+      "agency": "University of Stuttgart (IRS)",
+      "country": "de",
+      "launchDate": "2017-07-14",
+      "status": "unknown",
+      "purpose": {
+        "en": "University technology and Earth-imaging satellite",
+        "fr": "Satellite universitaire technologique et d'imagerie"
+      },
+      "notes": {
+        "en": "110-kg small satellite of the University of Stuttgart demonstrating new technologies (laser downlink, on-board computing) and imaging the Earth; also used for teaching. Last reported working well years after launch; no recent official status, so listed as unknown.",
+        "fr": "Petit satellite de 110 kg de l'Université de Stuttgart qui démontre de nouvelles technologies (liaison laser, calcul à bord) et photographie la Terre ; il sert aussi à l'enseignement. Signalé en bon état des années après son lancement, sans état officiel récent : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.irs.uni-stuttgart.de/en/research/satellitetechnology-and-instruments/smallsatelliteprogram/flying-laptop/",
+        "https://www.eoportal.org/satellite-missions/flying-laptop"
+      ]
+    },
+    {
+      "id": "cses-1",
+      "norad": 43194,
+      "name": { "en": "Zhangheng-1 (CSES-1)", "fr": "Zhangheng-1 (CSES-1)" },
+      "agency": "CNSA / CEA / ASI",
+      "country": "cn",
+      "launchDate": "2018-02-02",
+      "status": "active",
+      "purpose": {
+        "en": "Ionosphere and seismo-electromagnetic research",
+        "fr": "Étude de l'ionosphère et électromagnétisme sismique"
+      },
+      "notes": {
+        "en": "China Seismo-Electromagnetic Satellite, built with Italian instruments, monitors electromagnetic fields and particles in the ionosphere, including possible links with earthquakes. Since June 2025 it flies with its successor CSES-2 as a pair.",
+        "fr": "China Seismo-Electromagnetic Satellite, doté d'instruments italiens, surveille les champs électromagnétiques et les particules de l'ionosphère, y compris leurs liens possibles avec les séismes. Depuis juin 2025, il vole en tandem avec son successeur CSES-2."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.eoportal.org/satellite-missions/cses",
+        "https://spacenews.com/china-launches-new-seismo-electromagnetic-satellite-with-european-partners/"
+      ]
+    },
+    {
+      "id": "salsat",
+      "norad": 46495,
+      "name": { "en": "SALSAT", "fr": "SALSAT" },
+      "agency": "TU Berlin",
+      "country": "de",
+      "launchDate": "2020-09-28",
+      "status": "unknown",
+      "purpose": {
+        "en": "Radio-spectrum monitoring nanosatellite",
+        "fr": "Nanosatellite de surveillance du spectre radio"
+      },
+      "notes": {
+        "en": "Spectrum Analysis Satellite of TU Berlin: maps the use of VHF, UHF and S-band frequencies around the world to detect interference; its data fed an open-access world map published in 2024. No recent official status: listed as unknown.",
+        "fr": "Spectrum Analysis Satellite de la TU Berlin : cartographie l'utilisation des fréquences VHF, UHF et bande S dans le monde pour repérer les interférences ; ses données ont alimenté une carte mondiale en libre accès publiée en 2024. Aucun état officiel récent : statut inconnu."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.tu.berlin/en/news/reports/salsat-mission",
+        "https://www.tu.berlin/en/news/press-release/combating-interference-in-orbit"
+      ]
+    },
+    {
+      "id": "ixpe",
+      "norad": 49954,
+      "name": {
+        "en": "Imaging X-ray Polarimetry Explorer (IXPE)",
+        "fr": "Explorateur de polarimétrie X par imagerie (IXPE)"
+      },
+      "agency": "NASA / ASI",
+      "country": "us",
+      "launchDate": "2021-12-09",
+      "status": "active",
+      "purpose": { "en": "X-ray polarimetry space telescope", "fr": "Télescope spatial de polarimétrie X" },
+      "notes": {
+        "en": "Measures the polarisation of X-rays from black holes, neutron stars and supernova remnants, revealing their geometry and magnetic fields; built with the Italian Space Agency. Still operating.",
+        "fr": "Mesure la polarisation des rayons X émis par les trous noirs, les étoiles à neutrons et les restes de supernova, ce qui révèle leur géométrie et leurs champs magnétiques ; construit avec l'Agence spatiale italienne. Toujours en service."
+      },
+      "verified": "2026-10-03",
+      "sources": ["https://science.nasa.gov/mission/ixpe/"]
+    },
+    {
+      "id": "smile",
+      "norad": 69123,
+      "name": { "en": "SMILE", "fr": "SMILE" },
+      "agency": "ESA / CAS",
+      "country": "eu",
+      "launchDate": "2026-05-19",
+      "status": "active",
+      "purpose": {
+        "en": "Solar wind–magnetosphere interaction imaging",
+        "fr": "Imagerie de l'interaction vent solaire-magnétosphère"
+      },
+      "notes": {
+        "en": "Solar wind Magnetosphere Ionosphere Link Explorer, a joint ESA–Chinese Academy of Sciences mission taking the first global X-ray images of Earth's magnetosphere. Reached its 121,000 km-apogee orbit on 20 June 2026; science was to begin in September 2026 after commissioning.",
+        "fr": "Solar wind Magnetosphere Ionosphere Link Explorer, mission conjointe de l'ESA et de l'Académie chinoise des sciences qui prend les premières images X globales de la magnétosphère terrestre. Arrivé sur son orbite (apogée de 121 000 km) le 20 juin 2026 ; la science devait commencer en septembre 2026, après la mise en service."
+      },
+      "verified": "2026-10-03",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Smile",
+        "https://www.esa.int/ESA_Multimedia/Images/2026/06/Smile_reaches_science_orbit"
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@
  * file, one Horizons lookup per deep-space candidate). Everything else comes from already-published data.
  */
 import type {
+  EarthScienceSatellite,
   LaunchSites,
   Manifest,
   Mission,
@@ -24,6 +25,7 @@ export type AuditKind =
   | 'ephemeris-ended-active'
   | 'stale-verification'
   | 'moon-anchor'
+  | 'earth-science-member'
   | 'leap-second';
 
 export interface AuditItem {
@@ -194,18 +196,36 @@ export function checkStaleVerification(
   files: readonly { path: string; verified: string }[],
   missions: readonly Mission[],
   now: Date,
+  earthScience: readonly EarthScienceSatellite[] = [],
 ): AuditItem[] {
   const age = (iso: string): number => Math.floor((now.getTime() - Date.parse(`${iso}T00:00:00Z`)) / DAY_MS);
   const items: AuditItem[] = [];
-  const due = missions
+  // Missions and featured Earth science satellites share the monthly cadence and the weekly cap.
+  const entries = [
+    ...missions.map((m) => ({
+      key: `mission:${m.id}`,
+      id: m.id,
+      status: m.status,
+      verified: m.verified,
+      label: `${m.name.en} (${m.centralBody}, ${m.status})`,
+    })),
+    ...earthScience.map((s) => ({
+      key: `earth-science:${s.id}`,
+      id: s.id,
+      status: s.status,
+      verified: s.verified,
+      label: `${s.name.en} (NORAD ${s.norad}, ${s.status})`,
+    })),
+  ];
+  const due = entries
     .filter((m) => m.status !== 'ended' && age(m.verified) > STALE_AFTER_DAYS)
-    .sort((a, b) => a.verified.localeCompare(b.verified) || a.id.localeCompare(b.id));
+    .sort((a, b) => a.verified.localeCompare(b.verified) || a.key.localeCompare(b.key));
   for (const m of due.slice(0, MAX_STALE_PER_AUDIT)) {
     const days = age(m.verified);
     items.push({
       kind: 'stale-verification',
-      key: `mission:${m.id}`,
-      summary: `${m.name.en} (${m.centralBody}, ${m.status}): last verified ${m.verified} (${days} days ago)`,
+      key: m.key,
+      summary: `${m.label}: last verified ${m.verified} (${days} days ago)`,
       details: { verified: m.verified },
     });
   }
@@ -213,8 +233,8 @@ export function checkStaleVerification(
     items.push({
       kind: 'stale-verification',
       key: 'missions:deferred',
-      summary: `${due.length - MAX_STALE_PER_AUDIT} more missions are due and deferred to next week (at most ${MAX_STALE_PER_AUDIT} per audit)`,
-      details: { deferred: due.slice(MAX_STALE_PER_AUDIT).map((m) => m.id) },
+      summary: `${due.length - MAX_STALE_PER_AUDIT} more entries are due and deferred to next week (at most ${MAX_STALE_PER_AUDIT} per audit)`,
+      details: { deferred: due.slice(MAX_STALE_PER_AUDIT).map((m) => m.key) },
     });
   }
   for (const f of files) {
@@ -229,6 +249,23 @@ export function checkStaleVerification(
     }
   }
   return items;
+}
+
+/** Members of the CelesTrak science group missing from catalog/earth-science.json (new science satellites). */
+export function checkEarthScienceMembers(
+  groups: Readonly<Record<string, readonly number[]>>,
+  earthScience: readonly EarthScienceSatellite[],
+  names: ReadonlyMap<number, string>,
+): AuditItem[] {
+  const known = new Set(earthScience.map((s) => s.norad));
+  return (groups['science'] ?? [])
+    .filter((n) => !known.has(n))
+    .map((n) => ({
+      kind: 'earth-science-member' as const,
+      key: String(n),
+      summary: `${names.get(n) ?? 'NORAD ' + n} (${n}) is in the CelesTrak science group but not in catalog/earth-science.json`,
+      details: { norad: n },
+    }));
 }
 
 /** Mean-element moons whose anchoring epoch is older than MOON_ANCHOR_MAX_DAYS. */
@@ -300,6 +337,7 @@ const TITLES: Record<AuditKind, string> = {
   'ephemeris-ending': 'Public ephemerides ending within 30 days',
   'stale-verification': 'Entries due for re-verification',
   'moon-anchor': 'Moon mean elements due for re-anchoring',
+  'earth-science-member': 'Science satellites to add to catalog/earth-science.json',
   'leap-second': 'Leap seconds',
 };
 

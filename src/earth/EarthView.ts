@@ -1,5 +1,6 @@
 /** View A — Earth: every active catalogued satellite, propagated with SGP4 (CLAUDE.md §5.1). */
 import launchSitesJson from '../../catalog/launch-sites.json';
+import earthScienceJson from '../../catalog/earth-science.json';
 import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
@@ -15,6 +16,7 @@ import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   GroupsSchema,
+  EarthScienceCatalogSchema,
   LaunchSitesSchema,
   OmmListSchema,
   OperatorsCatalogSchema,
@@ -375,7 +377,14 @@ class EarthView implements View {
         loadOptionalDataset(host.baseUrl, manifest, 'earth.groups', GroupsSchema),
       ]);
       if (this.disposed) return;
-      const catalog = buildCatalog(gp.data, satcat?.data, groups?.data, this.operators, this.launchSites);
+      const catalog = buildCatalog(
+        gp.data,
+        satcat?.data,
+        groups?.data,
+        this.operators,
+        this.launchSites,
+        EarthScienceCatalogSchema.parse(earthScienceJson).satellites,
+      );
       this.catalog = catalog;
       this.infoPanel.setLaunchSiteNames((code) => catalog.launchSiteByCode.get(code)?.name[host.i18n.lang]);
       const layer = new EarthSatellites(catalog, host.renderer.renderer);

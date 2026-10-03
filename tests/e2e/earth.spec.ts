@@ -31,7 +31,9 @@ test('searches a 6-digit NORAD number and shows its details', async ({ page }) =
 test('restores filters and selection from the URL, in French', async ({ page }) => {
   await page.goto(`./?lang=fr&${FROZEN}&own=ISS&sel=25544`);
   await expect(page.locator('.stats')).toContainText('1 affichés sur 3', { timeout: 20_000 });
-  await expect(page.locator('aside.info:visible .panel-title')).toHaveText('ISS (ZARYA)');
+  await expect(page.locator('aside.info:visible .panel-title')).toHaveText(
+    'Station spatiale internationale (ISS)',
+  );
   await expect(page.locator('aside.info:visible')).toContainText('Station spatiale internationale');
   await expect(page.locator('aside.info:visible .freshness')).toHaveAttribute('data-state', 'fresh');
 });
@@ -57,7 +59,9 @@ test('GPU picking selects the object under the pointer', async ({ page }) => {
     );
     expect(ok).toBe(true);
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-    await expect(page.locator('aside.info:visible .panel-title')).toHaveText('HST', { timeout: 1000 });
+    await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Hubble Space Telescope (HST)', {
+      timeout: 1000,
+    });
   }).toPass({ timeout: 20_000 });
   await expect(page).toHaveURL(/sel=20580/);
 });
@@ -75,4 +79,22 @@ test('a NASA 3D model previews in the info panel when the object has one', async
   await page.goto('./?lang=en&sel=100830');
   await expect(page.locator('aside.info:visible .panel-title')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('aside.info:visible figure.model-preview')).toBeHidden();
+});
+
+test('space and Earth science satellites come first, with their known names, status and sources', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.goto('./?lang=en&sel=25544');
+  const section = page.locator('#side-panel details[data-facet]').first();
+  await expect(section).toHaveAttribute('data-facet', 'science', { timeout: 30_000 });
+  await expect(section).toHaveAttribute('open', '');
+  await expect(section).toContainText('International Space Station (ISS)');
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('International Space Station (ISS)', {
+    timeout: 30_000,
+  });
+  await expect(info).toContainText('ISS (ZARYA)');
+  await expect(info).toContainText('Checked');
+  await expect(info.locator('.sources a').first()).toBeVisible();
 });

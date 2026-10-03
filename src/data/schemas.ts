@@ -231,6 +231,11 @@ export const ModelEntrySchema = z.object({
    * towards the prime meridian, z north), aligned offline on this PDS radius grid (Thomas shape models).
    */
   body: z.object({ alignGridUrl: z.url() }).optional(),
+  /**
+   * Full-quality variant public/models/<id>-high.glb (tools/models --high), loaded only while the model covers
+   * at least `minPx` on screen and released when it shrinks; the light model stays for the panel preview.
+   */
+  high: z.object({ minPx: z.number().positive() }).optional(),
   /** Axis pointed at the Earth (deep-space probes: high-gain antenna). Default +z. */
   earthAxis: ModelAxisSchema.optional(),
   /** Axis pointed at the Sun, used to fix the roll (solar panels). Default +y. */
@@ -349,3 +354,33 @@ export const OperatorsCatalogSchema = z.object({
     .default([]),
 });
 export type OperatorsCatalog = z.infer<typeof OperatorsCatalogSchema>;
+
+/**
+ * Space and Earth science satellites shown first in the Earth view (catalog/earth-science.json): the CelesTrak
+ * "science" group plus curated members (the ISS), with the names people know, status, notes and sources,
+ * re-verified monthly like the missions.
+ */
+export const EarthScienceSatelliteSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  norad: z.number().int().positive(),
+  name: localized,
+  agency: z.string().min(1),
+  country: z.string().regex(/^[a-z]{2,3}$/),
+  launchDate: isoDate.optional(),
+  status: MissionStatusSchema,
+  purpose: localized,
+  notes: localized.optional(),
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type EarthScienceSatellite = z.infer<typeof EarthScienceSatelliteSchema>;
+export const EarthScienceCatalogSchema = z
+  .object({
+    verified: isoDate,
+    sources: z.array(z.url()).min(1),
+    satellites: z.array(EarthScienceSatelliteSchema),
+  })
+  .refine((c) => new Set(c.satellites.map((x) => x.norad)).size === c.satellites.length, {
+    message: 'duplicate NORAD number',
+  });
+export type EarthScienceCatalog = z.infer<typeof EarthScienceCatalogSchema>;

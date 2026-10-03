@@ -109,6 +109,10 @@ No single API provides "active probes + landing sites". We maintain:
 - `catalog/missions.json`: missions beyond Earth orbit (internal id, EN/FR name, agency, country, launch date,
   Horizons ID, NORAD if any, central body, status, `ephemeris: horizons|kepler|none`, `verified: YYYY-MM-DD`,
   `sources: [url]`).
+- `catalog/earth-science.json`: the featured "space & Earth science" satellites of the Earth view (CelesTrak
+  `science` group + the ISS): known name EN/FR, agency, country, status, purpose, notes, `verified`, `sources`.
+  Shown first in the filters, with curated names in the list and the info panel; re-verified monthly like the
+  missions; the audit flags new members of the CelesTrak group.
 - `catalog/landing-sites/moon.json`, `catalog/landing-sites/mars.json`: planetocentric lat/lon, date, mission,
   type (`soft|hard|impact|crewed|rover-last-known`), source.
 - Every entry must cite at least one source (NASA, ESA, JAXA, CNSA, ISRO, KARI, LROC, Wikipedia as last resort).

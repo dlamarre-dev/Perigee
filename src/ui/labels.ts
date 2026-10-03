@@ -12,6 +12,8 @@ export function facetLabel(
 ): string {
   if (value === NONE) return i18n.t('filters.none');
   switch (facet) {
+    case 'science':
+      return value;
     case 'operators':
       return operators.operators[value]?.name ?? value;
     case 'owners': {

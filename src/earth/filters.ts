@@ -3,12 +3,14 @@
  * Pure functions; state round-trips through the URL.
  */
 import { ORBIT_REGIMES, type OrbitRegime } from '../astro/orbit';
-import type { SatObject } from './catalog';
+import { SCIENCE_GROUP, type SatObject } from './catalog';
 
 /** Facet value for objects without an operator / owner. */
 export const NONE = '-';
 
 export interface FilterState {
+  /** Featured space and Earth science satellites (NORAD numbers). */
+  readonly science: readonly string[];
   readonly operators: readonly string[];
   readonly owners: readonly string[];
   readonly groups: readonly string[];
@@ -20,6 +22,7 @@ export interface FilterState {
 }
 
 export const EMPTY_FILTERS: FilterState = {
+  science: [],
   operators: [],
   owners: [],
   groups: [],
@@ -31,6 +34,7 @@ export const EMPTY_FILTERS: FilterState = {
 
 export type FacetKey = Exclude<keyof FilterState, 'query'>;
 export const FACET_KEYS: readonly FacetKey[] = [
+  'science',
   'operators',
   'owners',
   'groups',
@@ -42,6 +46,8 @@ export const FACET_KEYS: readonly FacetKey[] = [
 /** Values of an object for a facet (several for groups). */
 export function facetValues(obj: SatObject, facet: FacetKey): readonly string[] {
   switch (facet) {
+    case 'science':
+      return obj.science ? [String(obj.noradId)] : [];
     case 'operators':
       // A satellite carrying another operator's instrument counts for both (e.g. Spire host, GHGSat payload).
       return obj.hostedPayloads.length > 0
@@ -50,7 +56,8 @@ export function facetValues(obj: SatObject, facet: FacetKey): readonly string[] 
     case 'owners':
       return [obj.ownerCode ?? NONE];
     case 'groups':
-      return obj.groups;
+      // The science group has its own section.
+      return obj.groups.filter((g) => g !== SCIENCE_GROUP);
     case 'regimes':
       return [obj.regime];
     case 'types':
@@ -94,6 +101,7 @@ export function facetCounts(objects: readonly SatObject[], facet: FacetKey): [st
 }
 
 const URL_KEYS: Record<FacetKey, string> = {
+  science: 'sci',
   operators: 'op',
   owners: 'own',
   groups: 'grp',
@@ -116,6 +124,7 @@ export function filtersFromParams(p: URLSearchParams): FilterState {
       .map((s) => s.trim())
       .filter(Boolean);
   return {
+    science: list(URL_KEYS.science),
     operators: list(URL_KEYS.operators),
     owners: list(URL_KEYS.owners),
     groups: list(URL_KEYS.groups),

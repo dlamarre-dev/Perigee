@@ -42,6 +42,10 @@ to do anything unless you explicitly ask for help.
      `hostedPayloads` (e.g. the GHGSat series page on Gunter's Space Page) for newly launched instruments, and add
      each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),
      the payload name and sources. Satellites carrying the operator's name are already covered by `nameRules`.
+   - `earth-science-member`: a new member of the CelesTrak `science` group. Add it to `catalog/earth-science.json`
+     with the name the public knows (acronym in parentheses), agency, country, launch date, status, purpose, notes,
+     official sources and `verified`. Stale `earth-science:<id>` items are re-verified like missions (status,
+     notes, sources).
    - `moon-anchor`: run `npm run moons:anchor` (three Horizons requests per listed moon, a few seconds apart),
      then `npm run test` (the moons test compares positions with Horizons). It rewrites the epoch angles, the
      mean motion, `verified` and the Horizons source of each mean-element moon in `catalog/moons.json`.

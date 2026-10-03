@@ -19,6 +19,8 @@ import {
   LandingSitesSchema,
   LaunchSitesSchema,
   MissionsCatalogSchema,
+  EarthScienceCatalogSchema,
+  GroupsSchema,
   MoonsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
@@ -30,6 +32,7 @@ import {
   checkEphemerisCoverage,
   checkLaunchSiteCodes,
   checkLeapSeconds,
+  checkEarthScienceMembers,
   checkMoonAnchors,
   checkOwnerCodes,
   checkStaleVerification,
@@ -240,11 +243,17 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   const moon = LandingSitesSchema.parse(await readJson('catalog/landing-sites/moon.json'));
   const mars = LandingSitesSchema.parse(await readJson('catalog/landing-sites/mars.json'));
   const moons = MoonsCatalogSchema.parse(await readJson('catalog/moons.json'));
+  const earthScience = EarthScienceCatalogSchema.parse(await readJson('catalog/earth-science.json'));
   const manifest = await readManifest(dataDir);
   const satcat = SatcatListSchema.parse(
     JSON.parse(gunzipSync(await readFile(join(dataDir, 'earth/satcat.json.gz'))).toString('utf8')),
   );
   const missions = missionsCatalog.missions;
+  const groupsPath = join(dataDir, 'earth/groups.json.gz');
+  const publishedGroups = existsSync(groupsPath)
+    ? GroupsSchema.parse(JSON.parse(gunzipSync(await readFile(groupsPath)).toString('utf8')))
+    : {};
+  const satcatNames = new Map(satcat.map((r) => [r.NORAD_CAT_ID, r.OBJECT_NAME]));
 
   // Upstream lists: one request each (CelesTrak ones go through the local 2 h guard too).
   const years =
@@ -293,10 +302,13 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/landing-sites/moon.json', verified: moon.verified },
         { path: 'catalog/landing-sites/mars.json', verified: mars.verified },
         { path: 'catalog/moons.json', verified: moons.verified },
+        { path: 'catalog/earth-science.json', verified: earthScience.verified },
       ],
       missions,
       now,
+      earthScience.satellites,
     ),
+    ...checkEarthScienceMembers(publishedGroups, earthScience.satellites, satcatNames),
     ...checkMoonAnchors(moons.moons, now),
     ...checkLeapSeconds(iers, LATEST_LEAP_SECOND, now),
   ];

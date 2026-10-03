@@ -91,6 +91,7 @@ export const en = {
   'filters.title': 'Filters',
   'filters.search': 'Search: name, NORAD or COSPAR',
   'filters.clear': 'Clear',
+  'filters.science': 'Space & Earth science',
   'filters.operators': 'Operator',
   'filters.owners': 'Country / owner',
   'filters.groups': 'Group',
@@ -199,6 +200,8 @@ export const en = {
   'info.date': 'Date',
   'info.coordinates': 'Coordinates',
   'info.notes': 'Notes',
+  'info.purpose': 'Mission',
+  'info.catalogName': 'Catalogue name',
   'info.sources': 'Sources',
   'info.verified': 'Checked {date}',
 

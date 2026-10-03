@@ -238,3 +238,27 @@ describe('operators without a CelesTrak group', () => {
     expect(facetCounts(cat.objects, 'operators')).toContainEqual(['ghgsat', 2]);
   });
 });
+
+describe('space and Earth science section', () => {
+  it('uses curated names, features the ISS and finds objects by their known name', async () => {
+    const science = (await import('../catalog/earth-science.json')).default;
+    const { EarthScienceCatalogSchema } = await import('../src/data/schemas');
+    const { displayName, matchesQuery } = {
+      ...(await import('../src/earth/catalog')),
+      ...(await import('../src/earth/filters')),
+    };
+    const curated = EarthScienceCatalogSchema.parse(science).satellites;
+    expect(curated.some((s) => s.norad === 25544)).toBe(true);
+    const cat = buildCatalog(omms, satcat, { stations: [25544] }, operators, [], curated);
+    const iss = cat.byNorad.get(25544);
+    expect(iss?.science).toBe(true);
+    expect(iss && displayName(iss, 'en')).toBe('International Space Station (ISS)');
+    expect(iss && displayName(iss, 'fr')).toBe('Station spatiale internationale (ISS)');
+    expect(iss && matchesQuery(iss, 'space station')).toBe(true);
+    expect(facetCounts(cat.objects, 'science').map(([v]) => v)).toContain('25544');
+    // The CelesTrak science group no longer appears among the groups.
+    const sci = buildCatalog(omms, satcat, { science: [25544] }, operators);
+    expect(facetCounts(sci.objects, 'groups').some(([v]) => v === 'science')).toBe(false);
+    expect(facetCounts(sci.objects, 'science')).toEqual([['25544', 1]]);
+  });
+});

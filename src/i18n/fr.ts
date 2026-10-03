@@ -98,6 +98,7 @@ export const fr: Messages = {
   'filters.title': 'Filtres',
   'filters.search': 'Recherche : nom, NORAD ou COSPAR',
   'filters.clear': 'Effacer',
+  'filters.science': 'Sciences spatiales et de la Terre',
   'filters.operators': 'Opérateur',
   'filters.owners': 'Pays / propriétaire',
   'filters.groups': 'Groupe',
@@ -207,6 +208,8 @@ export const fr: Messages = {
   'info.date': 'Date',
   'info.coordinates': 'Coordonnées',
   'info.notes': 'Notes',
+  'info.purpose': 'Mission',
+  'info.catalogName': 'Nom au catalogue',
   'info.sources': 'Sources',
   'info.verified': 'Vérifié le {date}',
 

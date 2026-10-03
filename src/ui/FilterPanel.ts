@@ -1,4 +1,4 @@
-import type { SatCatalog, SatObject } from '../earth/catalog';
+import { displayName, type SatCatalog, type SatObject } from '../earth/catalog';
 import {
   EMPTY_FILTERS,
   FACET_KEYS,
@@ -13,6 +13,7 @@ import { h, markCurrent, sidePanel } from './dom';
 import { facetLabel, formatUtcDate } from './labels';
 
 const FACET_TITLES: Record<FacetKey, MessageKey> = {
+  science: 'filters.science',
   operators: 'filters.operators',
   owners: 'filters.owners',
   groups: 'filters.groups',
@@ -54,6 +55,7 @@ export class FilterPanel {
   private lastStats: SatStats | undefined;
   private matching: readonly SatObject[] = [];
   private readonly summaries = new Map<FacetKey, HTMLElement>();
+  private facetsRendered = false;
 
   constructor(
     private readonly i18n: I18n,
@@ -191,7 +193,14 @@ export class FilterPanel {
       [...this.facetsBox.querySelectorAll('details[open]')].map((d) => (d as HTMLElement).dataset['facet']),
     );
     const sections = FACET_KEYS.map((facet) => {
-      const counts = facetCounts(this.catalog.objects, facet);
+      // Science satellites: one entry each, by name; the section is open by default (the most interesting
+      // objects to look at).
+      const science = facet === 'science';
+      const counts = science
+        ? facetCounts(this.catalog.objects, facet).sort((a, b) =>
+            this.valueLabel(facet, a[0]).localeCompare(this.valueLabel(facet, b[0]), this.i18n.lang),
+          )
+        : facetCounts(this.catalog.objects, facet);
       const selected = new Set(this.filters[facet] as readonly string[]);
       const items = counts.map(([value, count]) => {
         const id = `f-${facet}-${value.replace(/[^a-z0-9]/gi, '_')}`;
@@ -199,21 +208,29 @@ export class FilterPanel {
         box.addEventListener('change', () => this.toggle(facet, value, box.checked));
         return h('li', {}, [
           box,
-          h('label', { for: id }, [
-            facetLabel(this.i18n, this.catalog.operators, facet, value, this.catalog.launchSiteByCode),
-          ]),
-          h('span', { class: 'count' }, [this.i18n.number(count)]),
+          h('label', { for: id }, [this.valueLabel(facet, value)]),
+          ...(science ? [] : [h('span', { class: 'count' }, [this.i18n.number(count)])]),
         ]);
       });
       const summary = h('summary');
       this.summaries.set(facet, summary);
-      return h('details', { 'data-facet': facet, open: open.has(facet) || selected.size > 0 }, [
+      const isOpen = open.has(facet) || selected.size > 0 || (science && !this.facetsRendered);
+      return h('details', { 'data-facet': facet, open: isOpen }, [
         summary,
         h('ul', { class: 'facet-list' }, items),
       ]);
     });
     this.facetsBox.replaceChildren(...sections);
+    this.facetsRendered = true;
     for (const facet of FACET_KEYS) this.renderSummary(facet);
+  }
+
+  private valueLabel(facet: FacetKey, value: string): string {
+    if (facet === 'science') {
+      const obj = this.catalog.byNorad.get(Number(value));
+      return obj ? displayName(obj, this.i18n.lang) : value;
+    }
+    return facetLabel(this.i18n, this.catalog.operators, facet, value, this.catalog.launchSiteByCode);
   }
 
   private renderStats(): void {
@@ -231,7 +248,7 @@ export class FilterPanel {
   private renderResults(): void {
     const list = this.matching.slice(0, MAX_LISTED).map((obj) => {
       const b = h('button', { type: 'button', class: 'result', 'data-norad': obj.noradId }, [
-        h('span', { class: 'result-name' }, [obj.name]),
+        h('span', { class: 'result-name' }, [displayName(obj, this.i18n.lang)]),
         h('span', { class: 'result-id' }, [String(obj.noradId)]),
       ]);
       b.addEventListener('click', () => this.callbacks.onSelect(obj));

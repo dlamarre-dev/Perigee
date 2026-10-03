@@ -78,6 +78,12 @@ maps centred on 180°). Public-domain / NASA media first; attribution-only CC BY
 Curiosity and Perseverance "last known" positions are snapshots (Sept 2026) and go stale; Mars 2/3/6 sites are
 predicted, never located.
 
+## Space & Earth science satellites (Earth view)
+
+`catalog/earth-science.json`: names, agencies, statuses and notes of the CelesTrak `science` group members (plus
+the ISS), curated from the operating agencies' mission pages (NASA, ESA, JAXA, CSA, CNSA, ISRO, …) cited per entry;
+re-verified monthly by the maintenance agent.
+
 ## Launch sites (Earth view)
 
 `catalog/launch-sites.json`: 30 orbital spaceports with geodetic coordinates (mostly from Wikipedia articles, each entry

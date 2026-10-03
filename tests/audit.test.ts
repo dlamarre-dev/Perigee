@@ -5,6 +5,7 @@ import {
   checkLaunchSiteCodes,
   checkLeapSeconds,
   checkOwnerCodes,
+  checkEarthScienceMembers,
   checkMoonAnchors,
   checkStaleVerification,
   deepSpaceCandidates,
@@ -18,6 +19,7 @@ import {
   ManifestSchema,
   MissionSchema,
   OperatorsCatalogSchema,
+  type EarthScienceSatellite,
   type SatcatRecord,
 } from '../src/data/schemas';
 
@@ -200,9 +202,35 @@ describe('maintenance audit', () => {
     const missions = items.filter((i) => i.key.startsWith('mission:'));
     expect(missions).toHaveLength(15);
     expect(missions.every((i) => (i.details as { verified: string }).verified === '2026-08-01')).toBe(true);
-    expect(items.find((i) => i.key === 'missions:deferred')?.summary).toMatch(/^43 more missions/);
+    expect(items.find((i) => i.key === 'missions:deferred')?.summary).toMatch(/^43 more entries/);
     // Not due yet: verified within the last three weeks.
     expect(checkStaleVerification([], [mission({ id: 'x', verified: '2026-09-10' })], NOW)).toEqual([]);
+  });
+
+  it('re-verifies Earth science satellites with the missions, under the same cap', () => {
+    const sat = (id: string, verified: string) =>
+      ({
+        id,
+        norad: 1,
+        name: { en: id, fr: id },
+        status: 'active',
+        verified,
+      }) as unknown as EarthScienceSatellite;
+    const items = checkStaleVerification([], [mission({ id: 'm', verified: '2026-08-01' })], NOW, [
+      sat('hubble', '2026-07-01'),
+      sat('fresh', '2026-09-25'),
+    ]);
+    expect(items.map((i) => i.key)).toEqual(['earth-science:hubble', 'mission:m']);
+  });
+
+  it('flags science group members missing from the curated catalog', () => {
+    const items = checkEarthScienceMembers(
+      { science: [20580, 99999], stations: [25544] },
+      [{ norad: 20580 }] as unknown as Parameters<typeof checkEarthScienceMembers>[1],
+      new Map([[99999, 'NEWSAT']]),
+    );
+    expect(items).toMatchObject([{ kind: 'earth-science-member', key: '99999' }]);
+    expect(items[0]?.summary).toContain('NEWSAT');
   });
 
   it('asks for a re-anchoring of mean-element moons after a year', () => {

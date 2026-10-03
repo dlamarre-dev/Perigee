@@ -5,7 +5,14 @@
  */
 import { apsides, orbitRegime, periodMin, type OrbitRegime } from '../astro/orbit';
 import { DEG_TO_RAD, MS_PER_DAY } from '../astro/constants';
-import type { Groups, LaunchSite, Omm, OperatorsCatalog, SatcatRecord } from '../data/schemas';
+import type {
+  EarthScienceSatellite,
+  Groups,
+  LaunchSite,
+  Omm,
+  OperatorsCatalog,
+  SatcatRecord,
+} from '../data/schemas';
 
 /** Elements older than this are flagged "stale" (CLAUDE.md §5.1). */
 export const STALE_AFTER_DAYS = 14;
@@ -13,7 +20,12 @@ export const STALE_AFTER_DAYS = 14;
 export interface SatObject {
   readonly index: number;
   readonly noradId: number;
+  /** CelesTrak OBJECT_NAME (see displayName for the name shown to people). */
   readonly name: string;
+  /** Curated entry of the space and Earth science section (catalog/earth-science.json). */
+  readonly curated: EarthScienceSatellite | undefined;
+  /** In the featured space and Earth science section (CelesTrak "science" group or curated). */
+  readonly science: boolean;
   readonly cosparId: string;
   readonly omm: Omm;
   readonly satcat: SatcatRecord | undefined;
@@ -59,13 +71,26 @@ export function isStale(obj: Pick<SatObject, 'epochMs'>, nowMs: number): boolean
   return Math.abs(elementAgeDays(obj, nowMs)) > STALE_AFTER_DAYS;
 }
 
+/**
+ * Name shown to people: the curated one for featured satellites ("Hubble Space Telescope (HST)"), else the
+ * CelesTrak OBJECT_NAME.
+ */
+export function displayName(obj: Pick<SatObject, 'name' | 'curated'>, lang: 'en' | 'fr'): string {
+  return obj.curated?.name[lang] ?? obj.name;
+}
+
+/** CelesTrak group featured as the "space and Earth science" section of the Earth view. */
+export const SCIENCE_GROUP = 'science';
+
 export function buildCatalog(
   gp: readonly Omm[],
   satcat: readonly SatcatRecord[] | undefined,
   groups: Groups | undefined,
   operators: OperatorsCatalog,
   launchSites: readonly LaunchSite[] = [],
+  earthScience: readonly EarthScienceSatellite[] = [],
 ): SatCatalog {
+  const curatedByNorad = new Map(earthScience.map((e) => [e.norad, e]));
   const satcatByNorad = new Map((satcat ?? []).map((r) => [r.NORAD_CAT_ID, r]));
   const groupsByNorad = new Map<number, string[]>();
   for (const [group, ids] of Object.entries(groups ?? {})) {
@@ -105,10 +130,13 @@ export function buildCatalog(
       nameRules.find((r) => r.re.test(omm.OBJECT_NAME))?.operator;
     const hostedPayloads = hostedByNorad.get(omm.NORAD_CAT_ID) ?? [];
     const { perigeeAltKm, apogeeAltKm } = apsides(omm.MEAN_MOTION, omm.ECCENTRICITY);
+    const curated = curatedByNorad.get(omm.NORAD_CAT_ID);
     objects.push({
       index: objects.length,
       noradId: omm.NORAD_CAT_ID,
       name: omm.OBJECT_NAME,
+      curated,
+      science: curated !== undefined || memberOf.includes(SCIENCE_GROUP),
       cosparId: omm.OBJECT_ID,
       omm,
       satcat: sc,
@@ -124,7 +152,12 @@ export function buildCatalog(
       inclinationRad: omm.INCLINATION * DEG_TO_RAD,
       perigeeAltKm,
       apogeeAltKm,
-      searchText: [omm.OBJECT_NAME, omm.OBJECT_ID, ...hostedPayloads.map((p) => p.name)]
+      searchText: [
+        omm.OBJECT_NAME,
+        omm.OBJECT_ID,
+        ...hostedPayloads.map((p) => p.name),
+        ...(curated ? [curated.name.en, curated.name.fr] : []),
+      ]
         .join(' ')
         .toLowerCase(),
     });
