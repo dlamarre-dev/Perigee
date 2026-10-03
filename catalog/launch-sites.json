@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-26",
+  "verified": "2026-10-03",
   "sites": [
     {
       "id": "cape-canaveral",
@@ -61,15 +61,17 @@
       },
       "operator": "SpaceX",
       "country": "us",
-      "satcatCodes": [],
+      "satcatCodes": ["STARB"],
       "latDeg": 25.997,
       "lonDeg": -97.157,
-      "active": false,
+      "firstOrbitalLaunch": "2026-09-28",
+      "active": true,
       "sources": [
         "https://en.wikipedia.org/wiki/SpaceX_Starbase",
-        "https://en.wikipedia.org/wiki/2025_in_spaceflight"
+        "https://en.wikipedia.org/wiki/List_of_Starship_launches",
+        "https://www.npr.org/2026/09/28/nx-s1-5983418/spacex-starship-first-orbital-flight-14-nasa"
       ],
-      "note": "Starship test flights (2023–2026) were suborbital/transatmospheric, so no orbital launch is counted."
+      "note": "First orbital launch (Starship Flight 14, 2026-09-28) deployed 26 Starlink V3 satellites, giving Starbase its own SATCAT launch-site code (STARB)."
     },
     {
       "id": "kodiak",
