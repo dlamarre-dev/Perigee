@@ -53,7 +53,14 @@ import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } f
 import { nearSampleTimes } from '../astro/trajectory';
 import { alignAxes, axisVector } from '../astro/attitude';
 import { applyShape, loadShape } from '../render/shapeGeometry';
-import { SceneModel, loadBodyShape, modelFor, modelMinDistance, withModel } from '../render/models';
+import {
+  SceneModel,
+  loadBodyShape,
+  modelFollowDistanceKm,
+  modelFor,
+  modelMinDistance,
+  withModel,
+} from '../render/models';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
@@ -711,11 +718,14 @@ class SolarView implements View {
     }
     const sunDir = normalize(scale(scene, -1));
     const toEarth = normalize(sub(earth, scene));
+    // High-gain antenna at the Earth; roll from the scene north (seen from afar, the Sun and the Earth are
+    // nearly aligned, so the Sun would not fix it).
+    const earthAxis = entry.earthAxis ?? '+z';
     const q = alignAxes(
-      axisVector(entry.earthAxis ?? '+z'),
+      axisVector(earthAxis),
       toEarth,
-      axisVector(entry.sunAxis ?? '+y'),
-      sunDir,
+      axisVector(earthAxis.endsWith('z') ? '+y' : '+z'),
+      [0, 0, 1],
     );
     const shown = this.sceneModel.update(entry, rel(scene), q, sunDir, focalPx);
     if (shown) this.probeMarkers.hide(probe.index);
@@ -1198,13 +1208,20 @@ class SolarView implements View {
     if (!sel || !this.scenePositionOf(sel)) return;
     // Following supersedes a framing requested by the same selection but not applied yet.
     this.pendingFrame = false;
-    const distanceKm = this.logScale
-      ? 0.08 * AU_KM
-      : sel.kind === 'planet'
-        ? Math.max(sel.planet.radiusKm * 12, 60_000)
-        : sel.kind === 'moon'
-          ? sel.moon.radiusKm * 8
-          : 3e6;
+    const modelKm =
+      sel.kind === 'mission' && !this.logScale
+        ? modelFollowDistanceKm(`mission:${sel.mission.id}`)
+        : undefined;
+    const distanceKm =
+      modelKm !== undefined
+        ? modelKm
+        : this.logScale
+          ? 0.08 * AU_KM
+          : sel.kind === 'planet'
+            ? Math.max(sel.planet.radiusKm * 12, 60_000)
+            : sel.kind === 'moon'
+              ? sel.moon.radiusKm * 8
+              : 3e6;
     // Seen from the day side, 45° from the Sun direction towards the scene north (the Sun is at the origin).
     const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
     const sunward = normalize(scale(pos, -1));

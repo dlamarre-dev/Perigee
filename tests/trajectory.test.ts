@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nearSampleTimes } from '../src/astro/trajectory';
+import { nearSampleTimes, trajectoryTimes } from '../src/astro/trajectory';
 
 describe('nearSampleTimes', () => {
   it('includes the current time and both ends, ascending, denser near now', () => {
@@ -22,5 +22,25 @@ describe('nearSampleTimes', () => {
     expect(t[0]).toBe(0);
     expect(t).toHaveLength(9);
     expect(t[8]).toBeCloseTo(1, 12);
+  });
+});
+
+describe('trajectoryTimes', () => {
+  it('keeps the far grid away from now and densifies around it, ascending', () => {
+    const t = trajectoryTimes(0, 100, 50.3, 50, 8);
+    for (let i = 1; i < t.length; i++) expect(t[i] ?? 0).toBeGreaterThan(t[i - 1] ?? 0);
+    expect(t).toContain(50.3);
+    expect(t[0]).toBe(0);
+    expect(t[t.length - 1]).toBe(100);
+    // No coarse vertex within one step (2) of now apart from the dense ones, which start tiny.
+    const i = t.indexOf(50.3);
+    expect((t[i + 1] ?? 0) - 50.3).toBeLessThan(0.1);
+    expect(50.3 - (t[i - 1] ?? 0)).toBeLessThan(0.1);
+  });
+
+  it('handles now at an end of the span', () => {
+    const t = trajectoryTimes(0, 10, 10, 10, 4);
+    expect(t[t.length - 1]).toBe(10);
+    expect(t).toContain(0);
   });
 });

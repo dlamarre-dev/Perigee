@@ -114,6 +114,7 @@
       "targets": ["mission:voyager-1", "mission:voyager-2"],
       "sizeM": 13,
       "credit": "NASA",
+      "earthAxis": "+y",
       "verified": "2026-10-02",
       "sources": ["https://science.nasa.gov/3d-resources/"]
     },
@@ -123,6 +124,7 @@
       "targets": ["mission:new-horizons"],
       "sizeM": 2.7,
       "credit": "NASA",
+      "earthAxis": "+y",
       "verified": "2026-10-02",
       "sources": ["https://science.nasa.gov/3d-resources/"]
     },
@@ -132,6 +134,7 @@
       "targets": ["mission:juno"],
       "sizeM": 20,
       "credit": "NASA",
+      "earthAxis": "+y",
       "verified": "2026-10-02",
       "sources": ["https://science.nasa.gov/3d-resources/"]
     },
@@ -150,6 +153,7 @@
       "targets": ["mission:osiris-apex"],
       "sizeM": 6.2,
       "credit": "NASA",
+      "earthAxis": "+x",
       "verified": "2026-10-02",
       "sources": ["https://science.nasa.gov/3d-resources/"]
     },
@@ -159,6 +163,7 @@
       "targets": ["mission:europa-clipper"],
       "sizeM": 30.5,
       "credit": "NASA",
+      "earthAxis": "+z",
       "verified": "2026-10-02",
       "sources": ["https://science.nasa.gov/3d-resources/"]
     },

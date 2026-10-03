@@ -85,7 +85,7 @@ export class SkyMesh {
   constructor(options: SkyOptions) {
     let ready = false;
     const material = new ShaderMaterial({
-      uniforms: { map: { value: null as Texture | null }, brightness: { value: 0.75 } },
+      uniforms: { map: { value: null as Texture | null }, brightness: { value: 0.375 } },
       vertexShader,
       fragmentShader,
       side: DoubleSide,

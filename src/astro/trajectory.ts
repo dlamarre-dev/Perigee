@@ -33,3 +33,34 @@ export function nearSampleTimes(
   const after = side(t1 - now, 1);
   return [...before, now, ...after];
 }
+
+/**
+ * Sample times for a whole trajectory drawn around a moving object: a uniform grid of `farIntervals` over
+ * [tStart, tEnd] for the far parts, and around `tNow` (± one grid step) the dense geometric samples of
+ * `nearSampleTimes`, so the line passes through the object and no polyline corner sits next to a camera
+ * that is following it. Ascending, `tNow` included (clamped to the span).
+ */
+export function trajectoryTimes(
+  tStart: number,
+  tEnd: number,
+  tNow: number,
+  farIntervals: number,
+  perSide = 24,
+): number[] {
+  if (!(tEnd > tStart) || farIntervals < 1) return [tStart];
+  const step = (tEnd - tStart) / farIntervals;
+  const now = Math.min(Math.max(tNow, tStart), tEnd);
+  const lo = Math.max(tStart, now - step);
+  const hi = Math.min(tEnd, now + step);
+  const out: number[] = [];
+  for (let i = 0; i <= farIntervals; i++) {
+    const t = tStart + i * step;
+    if (t < lo) out.push(t);
+  }
+  out.push(...nearSampleTimes(lo, hi, now, perSide));
+  for (let i = 0; i <= farIntervals; i++) {
+    const t = tStart + i * step;
+    if (t > hi) out.push(t);
+  }
+  return out;
+}

@@ -216,6 +216,9 @@ export class QuaternionOrbitControls {
   }
 
   private radPerPx(): number {
+    // Following an object, the camera turns around it, not around the body: no surface slowdown (it made the
+    // view crawl when zoomed in on a spacecraft, the follow limits being far below the body radius).
+    if (this.follow) return Math.PI / Math.max(1, this.element.clientHeight);
     const bodyRadiusKm = this.limitsValue.minDistanceKm / 1.02;
     const altitudeFactor = Math.min(
       1,

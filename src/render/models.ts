@@ -44,6 +44,15 @@ export function withModel(target: string): { model?: ModelEntry } {
   return model ? { model } : {};
 }
 
+/**
+ * Following a spacecraft, rover or satellite with a model: the camera comes close enough for the model to fill
+ * the middle of the screen (about 2.5 times its size). Natural bodies keep their own framing.
+ */
+export function modelFollowDistanceKm(target: string): number | undefined {
+  const model = byTarget.get(target);
+  return model && !model.body ? (model.sizeM * 2.5) / 1000 : undefined;
+}
+
 /** Follow option letting the camera come to about twice the model's size. */
 export function modelMinDistance(target: string): { minDistanceKm?: number } {
   const model = byTarget.get(target);

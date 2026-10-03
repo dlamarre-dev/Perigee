@@ -22,7 +22,7 @@ import {
 } from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
-import { SceneModel, modelFor, modelMinDistance } from '../render/models';
+import { SceneModel, modelFollowDistanceKm, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
 import { h } from '../ui/dom';
@@ -223,7 +223,7 @@ class EarthView implements View {
     if (!sats?.selection) return;
     const started = this.host.follow.start(
       () => sats.selectedWorldPositionKm(this.frameAngleRad),
-      FOLLOW_DISTANCE_KM,
+      modelFollowDistanceKm(`norad:${this.selectedNorad ?? 0}`) ?? FOLLOW_DISTANCE_KM,
       () => (this.infoPanel.following = false),
       modelMinDistance(`norad:${this.selectedNorad ?? 0}`),
     );

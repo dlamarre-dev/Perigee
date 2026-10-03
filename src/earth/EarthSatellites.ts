@@ -5,6 +5,7 @@
 import { Color, Group } from 'three';
 import { rotZ } from '../astro/frames';
 import type { Vec3 } from '../astro/vec3';
+import { trajectoryTimes } from '../astro/trajectory';
 import { GpuPicker } from '../render/GpuPicker';
 import { OrbitLine, SelectionMarker } from '../render/OrbitLine';
 import { SatState, SatellitePoints } from '../render/SatellitePoints';
@@ -54,8 +55,6 @@ export class EarthSatellites {
   private lastStateRefreshWallMs = 0;
   private selected: { object: SatObject; satrec: SatRec | undefined } | undefined;
   private selectedState: TemeState | undefined;
-  private orbitComputedAtMs = Number.NaN;
-  private orbitEpoch = -1;
   private lastOk: Uint8Array | undefined;
   private statsValue: SatStats;
   private disposed = false;
@@ -112,7 +111,6 @@ export class EarthSatellites {
 
   select(object: SatObject | undefined): void {
     this.selected = object ? { object, satrec: makeSatrec(object.omm) } : undefined;
-    this.orbitComputedAtMs = Number.NaN;
     if (!object) {
       this.orbit.set(undefined);
       this.marker.set(undefined);
@@ -155,7 +153,7 @@ export class EarthSatellites {
       this.refreshStates(simNowMs);
       this.lastStateRefreshWallMs = wallMs;
     }
-    this.updateSelection(simNowMs, clockEpoch);
+    this.updateSelection(simNowMs);
   }
 
   dispose(): void {
@@ -209,21 +207,21 @@ export class EarthSatellites {
     this.statesDirty = false;
   }
 
-  private updateSelection(simNowMs: number, clockEpoch: number): void {
+  private updateSelection(simNowMs: number): void {
     const sel = this.selected;
     if (!sel) return;
     this.selectedState = sel.satrec ? propagateTeme(sel.satrec, new Date(simNowMs)) : undefined;
     this.marker.set(this.selectedState?.posKm);
 
+    // Rebuilt every frame around the object (relative to it, densified near it): exact through the marker
+    // and free of Float32 jitter when the camera follows it closely.
     const periodMs = sel.object.periodMin * 60_000;
-    const needsOrbit =
-      Number.isNaN(this.orbitComputedAtMs) ||
-      clockEpoch !== this.orbitEpoch ||
-      Math.abs(simNowMs - this.orbitComputedAtMs) > periodMs / 8;
-    if (needsOrbit && sel.satrec) {
-      this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs));
-      this.orbitComputedAtMs = simNowMs;
-      this.orbitEpoch = clockEpoch;
+    const centre = this.selectedState?.posKm;
+    if (sel.satrec && centre) {
+      this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs, centre));
+      this.orbit.line.position.set(centre[0], centre[1], centre[2]);
+    } else {
+      this.orbit.set(undefined);
     }
   }
 
@@ -239,15 +237,25 @@ export class EarthSatellites {
   }
 }
 
-/** One revolution centred on `simNowMs`, TEME km, packed xyz; undefined if propagation fails. */
-export function orbitTrace(satrec: SatRec, simNowMs: number, periodMs: number): Float32Array | undefined {
-  const out = new Float32Array((ORBIT_SAMPLES + 1) * 3);
+/**
+ * One revolution centred on `simNowMs`, densified around it (trajectoryTimes), TEME km relative to `centreKm`
+ * (the object's current position), packed xyz; undefined if propagation fails.
+ */
+export function orbitTrace(
+  satrec: SatRec,
+  simNowMs: number,
+  periodMs: number,
+  centreKm: Vec3 = [0, 0, 0],
+): Float32Array | undefined {
+  const times = trajectoryTimes(simNowMs - periodMs / 2, simNowMs + periodMs / 2, simNowMs, ORBIT_SAMPLES);
+  const out = new Float32Array(times.length * 3);
   let written = 0;
-  for (let i = 0; i <= ORBIT_SAMPLES; i++) {
-    const t = simNowMs + (i / ORBIT_SAMPLES - 0.5) * periodMs;
+  for (const t of times) {
     const s = propagateTeme(satrec, new Date(t));
     if (!s) continue;
-    out.set(s.posKm, written * 3);
+    out[written * 3] = s.posKm[0] - centreKm[0];
+    out[written * 3 + 1] = s.posKm[1] - centreKm[1];
+    out[written * 3 + 2] = s.posKm[2] - centreKm[2];
     written++;
   }
   return written > 1 ? out.subarray(0, written * 3) : undefined;

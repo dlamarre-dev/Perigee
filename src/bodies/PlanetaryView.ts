@@ -44,7 +44,14 @@ import {
 } from '../data/schemas';
 import type { MessageKey } from '../i18n';
 import { BodyMesh } from '../render/BodyMesh';
-import { SceneModel, loadBodyShape, modelFor, modelMinDistance, withModel } from '../render/models';
+import {
+  SceneModel,
+  loadBodyShape,
+  modelFollowDistanceKm,
+  modelFor,
+  modelMinDistance,
+  withModel,
+} from '../render/models';
 import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
@@ -171,10 +178,10 @@ export class PlanetaryView implements View {
   private originKm: Vec3 = [0, 0, 0];
   private selection: Selection;
   private sitesVisible = true;
-  /** Missions unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
-  private hiddenMissions: ReadonlySet<string> = new Set();
   private lastTrajectoryWallMs = -Infinity;
   private lastEpoch = -1;
+  /** Missions unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
+  private hiddenMissions: ReadonlySet<string> = new Set();
   private disposed = false;
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
@@ -393,12 +400,15 @@ export class PlanetaryView implements View {
     }
     this.siteScene = this.siteBodyKm.map((p) => quatRotate(this.bodyScene, p));
 
+    // Trajectories are drawn relative to their spacecraft, densified around it: the selected one (which the
+    // camera may follow closely) every frame, the others a few times per second.
     const wall = performance.now();
-    if (f.clockEpoch !== this.lastEpoch || wall - this.lastTrajectoryWallMs > TRAJECTORY_REFRESH_MS) {
+    const all = f.clockEpoch !== this.lastEpoch || wall - this.lastTrajectoryWallMs > TRAJECTORY_REFRESH_MS;
+    if (all) {
       this.lastEpoch = f.clockEpoch;
       this.lastTrajectoryWallMs = wall;
-      this.refreshTrajectories();
     }
+    this.refreshTrajectories(!all);
 
     const sel = this.selection;
     const selTracked = sel?.kind === 'mission' ? this.trackedFor(sel.mission.id) : undefined;
@@ -605,7 +615,6 @@ export class PlanetaryView implements View {
         if (rovers && !this.disposed) this.applyRovers(rovers.data);
       }
       this.panel.setFetched(oldest);
-      this.lastTrajectoryWallMs = -Infinity;
       host.showNotice(undefined);
       this.renderDetail(false);
     } catch (err) {
@@ -626,12 +635,24 @@ export class PlanetaryView implements View {
     return scale(latLonToUnit(latDeg * DEG_TO_RAD, lonDeg * DEG_TO_RAD), this.R * (1 + 3e-4));
   }
 
-  private refreshTrajectories(): void {
+  private refreshTrajectories(selectedOnly = false): void {
+    const sel = this.selection;
     for (const t of this.tracked) {
+      if (selectedOnly && !(sel?.kind === 'mission' && sel.mission.id === t.mission.id)) continue;
       const period = t.track.periodS(this.tdbJd);
       const spanS = Math.min(Math.max(period ?? SECONDS_PER_DAY, 3600), 7 * SECONDS_PER_DAY);
       const pts = t.track.trajectory(this.tdbJd, spanS, TRAJECTORY_POINTS);
-      t.line.geometry.setAttribute('position', new Float32BufferAttribute(Float32Array.from(pts), 3));
+      // Vertices relative to the spacecraft (Float64 subtraction), the line placed at it: no Float32 jitter
+      // when the camera follows it closely, and the line passes exactly through the marker.
+      const c: Vec3 = t.sample.state?.posKm ?? [pts[0] ?? 0, pts[1] ?? 0, pts[2] ?? 0];
+      const rel = new Float32Array(pts.length);
+      for (let i = 0; i < pts.length; i += 3) {
+        rel[i] = (pts[i] ?? 0) - c[0];
+        rel[i + 1] = (pts[i + 1] ?? 0) - c[1];
+        rel[i + 2] = (pts[i + 2] ?? 0) - c[2];
+      }
+      t.line.position.set(c[0], c[1], c[2]);
+      t.line.geometry.setAttribute('position', new Float32BufferAttribute(rel, 3));
       const selected = this.selection?.kind === 'mission' && this.selection.mission.id === t.mission.id;
       this.styleLine(t, selected);
     }
@@ -795,7 +816,10 @@ export class PlanetaryView implements View {
     if (!sel || !pos) return;
     const R = this.R;
     const altitudeKm = length(pos) - R;
-    const distanceKm = sel.kind === 'site' ? R * 0.25 : Math.min(Math.max(altitudeKm * 2, R * 0.25), R * 17);
+    const target = sel.kind === 'mission' ? `mission:${sel.mission.id}` : `site:${sel.site.id}`;
+    const distanceKm =
+      modelFollowDistanceKm(target) ??
+      (sel.kind === 'site' ? R * 0.25 : Math.min(Math.max(altitudeKm * 2, R * 0.25), R * 17));
     this.detail.following = this.host.follow.start(
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,

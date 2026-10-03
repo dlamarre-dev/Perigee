@@ -6,6 +6,7 @@
 import { SECONDS_PER_DAY } from './constants';
 import type { EphemerisTable, StateVector } from './hermite';
 import { osculatingElements, propagateKepler } from './kepler';
+import { trajectoryTimes } from './trajectory';
 
 export type TrackKind = 'interpolated' | 'extrapolated' | 'hidden' | 'none';
 
@@ -73,12 +74,17 @@ export class EphemerisTrack {
     const table = this.table;
     if (!table) return new Float64Array(0);
     let centre = tCentreJd;
-    if (this.sample(tCentreJd).kind === 'hidden') {
+    const hidden = this.sample(tCentreJd).kind === 'hidden';
+    if (hidden) {
       centre = tCentreJd > table.endTdbJd ? table.endTdbJd - spanS / 2 / SECONDS_PER_DAY : table.startTdbJd;
     }
+    const half = spanS / 2 / SECONDS_PER_DAY;
+    // Around the current position: dense samples, the current time being one of them (see trajectoryTimes).
+    const times = hidden
+      ? Array.from({ length: points + 1 }, (_, i) => centre - half + (2 * half * i) / points)
+      : trajectoryTimes(centre - half, centre + half, centre, points);
     const out: number[] = [];
-    for (let i = 0; i <= points; i++) {
-      const t = centre + ((i / points - 0.5) * spanS) / SECONDS_PER_DAY;
+    for (const t of times) {
       const s = this.sample(t).state;
       if (s) out.push(s.posKm[0], s.posKm[1], s.posKm[2]);
     }
