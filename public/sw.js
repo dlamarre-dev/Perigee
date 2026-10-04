@@ -109,10 +109,13 @@ async function cacheFirst(request, cacheName) {
   return response;
 }
 
-/** Moves an entry to the most-recently-used end (cache keys keep insertion order). */
+/**
+ * Moves an entry to the most-recently-used end: put() replaces the entry and appends it in one atomic step
+ * (cache keys keep insertion order). Never delete first: concurrent requests for the same file (several workers
+ * starting together) would miss the cache in between and fail offline.
+ */
 async function touch(cacheName, request, response) {
   const cache = await caches.open(cacheName);
-  await cache.delete(request, MATCH);
   await cache.put(request, response);
 }
 
