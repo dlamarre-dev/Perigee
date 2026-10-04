@@ -90,7 +90,8 @@ test('a view chunk missing after a deployment reloads the page once', async ({ p
   await expect(page.locator('.stats')).toContainText('3 shown of 3', { timeout: 20_000 });
   await page.route('**/assets/MoonView-*.js', (route) => route.fulfill({ status: 404, body: '' }));
   await page.getByRole('button', { name: 'Moon' }).click();
-  await expect.poll(() => loads).toBe(2);
+  // A full page load on software WebGL can take several seconds on CI runners.
+  await expect.poll(() => loads, { timeout: 20_000 }).toBe(2);
   await expect(page).toHaveURL(/view=moon/);
   // The chunk still fails after the reload: no loop.
   await page.waitForTimeout(3000);
