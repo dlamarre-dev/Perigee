@@ -229,7 +229,9 @@ the "up" vector and causes gimbal lock at the poles).
   (per view).
 - Optional inertia (exponential damping of angular velocity).
 - Double-click on an object: `target` glides to the object (orientation slerp + distance interpolation over 0.8 s);
-  "recenter" button to return to the body.
+  "recenter" button to return to the body. Following a celestial body (planet, dwarf planet, moon, Phobos/Deimos)
+  frames it at 10 radii in every view, from its day side, and keeps the camera outside it (`bodyFollow` in
+  `src/camera/orbitMath.ts`); spacecraft with a 3D model are framed by the model's size.
 - Keyboard: arrows (rotation), Q/E (roll), +/− (zoom), R (reset).
 - Renormalise the quaternion every frame. Unit tests: no drift after 10⁶ small rotations, rotation around the
   poles without singularity.

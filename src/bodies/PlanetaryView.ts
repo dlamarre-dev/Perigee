@@ -30,8 +30,8 @@ import {
   LOW_ORBIT_MAX_EXTRAPOLATION_DAYS,
   type TrackSample,
 } from '../astro/track';
-import { cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
-import { orbitStateLookingFrom } from '../camera/orbitMath';
+import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { bodyFollow, orbitStateLookingFrom } from '../camera/orbitMath';
 import { datasetKey, ephemerisKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
@@ -893,15 +893,31 @@ export class PlanetaryView implements View {
     const R = this.R;
     const altitudeKm = length(pos) - R;
     const target = sel.kind === 'mission' ? `mission:${sel.mission.id}` : `site:${sel.site.id}`;
+    // Natural satellites (Phobos, Deimos) are framed by their own size, like bodies in the other views.
+    const radiusKm =
+      sel.kind === 'mission' && sel.mission.objectType === 'natural' ? sel.mission.radiusKm : undefined;
+    const body = radiusKm !== undefined ? bodyFollow(radiusKm) : undefined;
     const distanceKm =
+      body?.distanceKm ??
       modelFollowDistanceKm(target) ??
       (sel.kind === 'site' ? R * 0.25 : Math.min(Math.max(altitudeKm * 2, R * 0.25), R * 17));
     this.detail.following = this.host.follow.start(
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
-      modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : `site:${sel.site.id}`),
+      body
+        ? { minDistanceKm: body.minDistanceKm, viewFrom: this.litViewFrom(pos) }
+        : modelMinDistance(target),
     );
+  }
+
+  /**
+   * Direction (scene frame) from a natural satellite to a camera that sees its day side, leaning outward so the
+   * planet shows behind it when it can; straight from the Sun when the satellite is behind the planet.
+   */
+  private litViewFrom(posKm: Vec3): Vec3 {
+    const v = add(this.sunScene, scale(normalize(posKm), 0.5));
+    return length(v) > 0.3 ? normalize(v) : this.sunScene;
   }
 
   private renderDetail(focus: boolean): void {

@@ -60,7 +60,7 @@ import {
 } from '../render/models';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
-import { orbitStateLookingFrom } from '../camera/orbitMath';
+import { bodyFollow, orbitStateLookingFrom } from '../camera/orbitMath';
 import { ephemerisKey } from '../app/updates';
 import { assetUrl } from '../render/assetUrl';
 import { loadEphemeris, loadManifest } from '../data/loader';
@@ -1322,20 +1322,21 @@ class SolarView implements View {
     if (!sel || !this.scenePositionOf(sel)) return;
     // Following supersedes a framing requested by the same selection but not applied yet.
     this.pendingFrame = false;
+    // Planets, moons and natural objects (dwarf planets) are framed by their size; spacecraft by their model.
+    const radiusKm =
+      sel.kind === 'planet'
+        ? sel.planet.radiusKm
+        : sel.kind === 'moon'
+          ? sel.moon.radiusKm
+          : sel.mission.objectType === 'natural'
+            ? sel.mission.radiusKm
+            : undefined;
+    const body = radiusKm !== undefined && !this.logScale ? bodyFollow(radiusKm) : undefined;
     const modelKm =
       sel.kind === 'mission' && !this.logScale
         ? modelFollowDistanceKm(`mission:${sel.mission.id}`)
         : undefined;
-    const distanceKm =
-      modelKm !== undefined
-        ? modelKm
-        : this.logScale
-          ? 0.08 * AU_KM
-          : sel.kind === 'planet'
-            ? Math.max(sel.planet.radiusKm * 12, 60_000)
-            : sel.kind === 'moon'
-              ? sel.moon.radiusKm * 8
-              : 3e6;
+    const distanceKm = this.logScale ? 0.08 * AU_KM : (body?.distanceKm ?? modelKm ?? 3e6);
     // Seen from the day side, 45° from the Sun direction towards the scene north (the Sun is at the origin).
     const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
     const sunward = normalize(scale(pos, -1));
@@ -1344,7 +1345,12 @@ class SolarView implements View {
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
-      { viewFrom, ...modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '') },
+      {
+        viewFrom,
+        ...(body
+          ? { minDistanceKm: body.minDistanceKm }
+          : modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '')),
+      },
     );
   }
 

@@ -140,3 +140,14 @@ export function twistRollRad(accumulatedRad: number, deadRad: number, gain: numb
   const excess = Math.abs(accumulatedRad) - deadRad;
   return excess > 0 ? Math.sign(accumulatedRad) * excess * gain : 0;
 }
+
+/**
+ * Following a celestial body (planet, dwarf planet, moon) frames it at this many radii: with the 45° field of
+ * view its disc fills about a quarter of the screen height, the same in every view.
+ */
+export const BODY_FOLLOW_RADII = 10;
+
+/** Follow distance and closest approach for a celestial body of the given radius. */
+export function bodyFollow(radiusKm: number): { distanceKm: number; minDistanceKm: number } {
+  return { distanceKm: radiusKm * BODY_FOLLOW_RADII, minDistanceKm: radiusKm * 1.05 };
+}
