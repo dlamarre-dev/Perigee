@@ -80,15 +80,24 @@ async function downloadText(name: string, url: string): Promise<string> {
   return text;
 }
 
+/**
+ * The cached download of a model, or a fresh one when its catalog URL changed (recorded next to it in
+ * `<id>.url`; older downloads without that record are trusted).
+ */
 async function download(m: ModelEntry): Promise<Uint8Array> {
   const file = join(here, 'src', `${m.id}.glb`);
-  if (existsSync(file)) return new Uint8Array(await readFile(file));
+  const urlFile = join(here, 'src', `${m.id}.url`);
+  const cachedUrl = existsSync(urlFile) ? (await readFile(urlFile, 'utf8')).trim() : undefined;
+  if (existsSync(file) && (cachedUrl === undefined || cachedUrl === m.url)) {
+    return new Uint8Array(await readFile(file));
+  }
   console.log(`fetch   ${m.url}`);
   const res = await fetch(m.url, { headers: { 'User-Agent': USER_AGENT } });
   if (res.status !== 200) throw new Error(`HTTP ${res.status} for ${m.url}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, bytes);
+  await writeFile(urlFile, `${m.url}\n`);
   return bytes;
 }
 

@@ -178,12 +178,15 @@
     },
     {
       "id": "jwst",
-      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/James%20Webb%20Space%20Telescope%20(A)/James%20Webb%20Space%20Telescope%20(A).glb",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/James%20Webb%20Space%20Telescope%20(B)/James%20Webb%20Space%20Telescope%20(B).glb",
       "targets": ["mission:jwst"],
       "sizeM": 21,
       "credit": "NASA",
-      "verified": "2026-10-02",
-      "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+      "verified": "2026-10-04",
+      "sources": [
+        "https://science.nasa.gov/3d-resources/james-webb-space-telescope-b/",
+        "https://github.com/nasa/NASA-3D-Resources"
+      ]
     },
     {
       "id": "stereo",
