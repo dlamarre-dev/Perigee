@@ -2,10 +2,11 @@
  * Schedules bulk propagations and tells the renderer how to interpolate between the two latest samples.
  *
  * Samples A and B bracket the current simulation time: the next request is placed ahead of "now" by
- * rate × measured latency, so B lands in the future by the time it arrives. Rendering uses cubic Hermite
- * interpolation on position + velocity (exact endpoints, C¹), which stays accurate even when samples are
- * minutes apart at high time rates; outside [A, B] it falls back to linear extrapolation from the nearest
- * sample. A clock jump (new epoch) discards everything.
+ * rate × measured latency, so B lands in the future by the time it arrives. Rendering moves each object along
+ * its orbit from the samples (two-body Lagrange series, src/astro/lagrangeSeries.ts: exact endpoints, C¹), which
+ * stays accurate when samples are 10–25 minutes apart at ×10 000, and past B when a sample is late (a straight
+ * line would leave a low orbit by tens of kilometres within two minutes). A clock jump (new epoch) discards
+ * everything.
  */
 
 export interface TimedSample {
@@ -13,7 +14,7 @@ export interface TimedSample {
 }
 
 export interface Interpolation {
-  /** Normalised time in [A, B]; outside [0, 1] the shader extrapolates linearly. */
+  /** Normalised time in [A, B]; outside [0, 1] the shader extrapolates from the nearest sample. */
   readonly tau: number;
   /** B − A in seconds (0 when only one sample is available). */
   readonly spanS: number;

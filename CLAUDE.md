@@ -172,9 +172,12 @@ No single API provides "active probes + landing sites". We maintain:
 - TEME → scene: satellites live in one `Group` rotated by −GMST (Earth-fixed view) or 0 (inertial view); the GMST
   is the IAU-82 formula in `src/astro/time.ts` (same as `satellite.gstime`).
 - Propagation in a worker pool (N = `navigator.hardwareConcurrency - 1`, max 4). Budget: 15k objects propagated
-  at ≥ 10 Hz (measured: ~17 ms for 16.6k objects on one thread). Between two samples the vertex shader uses
-  **cubic Hermite interpolation on position + velocity** (instead of linear), so motion stays on the orbit even
-  when samples are minutes apart at ×1000–×10000 (`src/earth/SampleTimeline.ts`, `src/render/SatellitePoints.ts`).
+  at ≥ 10 Hz (measured: ~17 ms for 16.6k objects on one thread). The vertex shader moves each object along its
+  orbit from the two samples with the **two-body Lagrange f and g series** (to dt⁵, each sample covering its side,
+  blended over the middle of the span; `src/astro/lagrangeSeries.ts`, tested against Kepler), also past the last
+  sample when a propagation is late. Samples are 10–25 min apart at ×10 000: a cubic Hermite was off by 60–280 km
+  in LEO there, and the former straight-line extrapolation made low orbits jump outward (`src/earth/SampleTimeline.ts`,
+  `src/render/SatellitePoints.ts`).
 - Objects with SGP4 errors (`satrec.error != 0`, decay): hidden and counted in an "invalid" counter.
 - Element age = `now - EPOCH`; beyond 14 days, flag as "stale elements".
 

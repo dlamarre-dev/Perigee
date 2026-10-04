@@ -1,13 +1,18 @@
 /**
  * All satellites as a single THREE.Points draw call. Positions are TEME (km) samples A and B produced by the
- * SGP4 workers; the vertex shader interpolates them (cubic Hermite on position + velocity) at render time,
- * so the CPU only uploads new buffers when a propagation finishes.
+ * SGP4 workers; the vertex shader moves each object along its orbit from them at render time (two-body Lagrange
+ * f and g series from each sample, blended between them, src/astro/lagrangeSeries.ts), so the CPU only uploads
+ * new buffers when a propagation finishes.
  *
  * A twin Points object on layer 1 shares the geometry and uniforms and renders index-encoded colours for
  * GPU picking (CLAUDE.md §7).
  */
 import { BufferAttribute, BufferGeometry, Points, ShaderMaterial, Vector3, type IUniform } from 'three';
+import { GM_KM3_S2 } from '../astro/kepler';
+import { BLEND_END, BLEND_START, SERIES_LIMIT } from '../astro/lagrangeSeries';
 import type { Interpolation } from '../earth/SampleTimeline';
+
+const glslFloat = (x: number): string => (Number.isInteger(x) ? x.toFixed(1) : String(x));
 
 export const PICK_LAYER = 1;
 
@@ -30,11 +35,29 @@ const vertexShader = /* glsl */ `
   attribute vec3 color;
   attribute vec3 pickColor;
   uniform float uTau;
-  uniform float uSpan;
   uniform float uDtA;
   uniform float uDtB;
   uniform float uSize;
   varying vec3 vColor;
+
+  // Mirror of src/astro/lagrangeSeries.ts (tested there): offset (f − 1)·r + g·v from a TEME state after dt.
+  vec3 seriesOffset(vec3 r, vec3 v, float dt) {
+    float r2 = dot(r, r);
+    float u = ${glslFloat(GM_KM3_S2.earth)} / (r2 * sqrt(r2));
+    float p = dot(r, v) / r2;
+    float v2r2 = dot(v, v) / r2;
+    float q = v2r2 - u;
+    float limit = ${glslFloat(SERIES_LIMIT)} / sqrt(max(u, v2r2));
+    float t = clamp(dt, -limit, limit);
+    float t2 = t * t;
+    float t3 = t2 * t;
+    float t4 = t3 * t;
+    float t5 = t4 * t;
+    float fm1 = -0.5 * u * t2 + 0.5 * u * p * t3 + (3.0 * u * q - 15.0 * u * p * p + u * u) * t4 / 24.0
+      + (7.0 * u * p * p * p - 3.0 * u * p * q - u * u * p) * t5 / 8.0;
+    float g = t - u * t3 / 6.0 + 0.25 * u * p * t4 + (9.0 * u * q - 45.0 * u * p * p + u * u) * t5 / 120.0;
+    return fm1 * r + g * v;
+  }
 
   void main() {
     if (valid < 0.5 || state < 0.5) {
@@ -45,20 +68,16 @@ const vertexShader = /* glsl */ `
     // Relative to the camera (TEME), with the high/low split: exact near the camera, no Float32 jitter.
     vec3 rA = (posA - uCamHigh) + (posALow - uCamLow);
     vec3 rB = (posB - uCamHigh) + (posBLow - uCamLow);
+    // Along the orbit from each sample (the offsets use the Earth-centred position, the result stays
+    // camera-relative), blended in the middle of [A, B]; beyond B (a late sample) or before A, from the nearest.
+    float w = smoothstep(${glslFloat(BLEND_START)}, ${glslFloat(BLEND_END)}, uTau);
     vec3 p;
-    if (uTau < 0.0) {
-      p = rA + velA * uDtA;
-    } else if (uTau > 1.0) {
-      p = rB + velB * uDtB;
+    if (w <= 0.0) {
+      p = rA + seriesOffset(posA + posALow, velA, uDtA);
+    } else if (w >= 1.0) {
+      p = rB + seriesOffset(posB + posBLow, velB, uDtB);
     } else {
-      // Hermite weights of the positions sum to 1, so interpolating camera-relative positions is exact.
-      float t = uTau;
-      float t2 = t * t;
-      float t3 = t2 * t;
-      p = (2.0 * t3 - 3.0 * t2 + 1.0) * rA
-        + (t3 - 2.0 * t2 + t) * uSpan * velA
-        + (-2.0 * t3 + 3.0 * t2) * rB
-        + (t3 - t2) * uSpan * velB;
+      p = mix(rA + seriesOffset(posA + posALow, velA, uDtA), rB + seriesOffset(posB + posBLow, velB, uDtB), w);
     }
     // The group's rotation only (TEME → scene); its translation is the camera offset handled above.
     gl_Position = projectionMatrix * viewMatrix * vec4(mat3(modelMatrix) * p, 1.0);
@@ -94,7 +113,6 @@ interface SatUniforms {
   uCamHigh: IUniform<Vector3>;
   uCamLow: IUniform<Vector3>;
   uTau: IUniform<number>;
-  uSpan: IUniform<number>;
   uDtA: IUniform<number>;
   uDtB: IUniform<number>;
   uSize: IUniform<number>;
@@ -120,7 +138,6 @@ export class SatellitePoints {
   private readonly geometry = new BufferGeometry();
   private readonly uniforms: SatUniforms = {
     uTau: { value: 0 },
-    uSpan: { value: 0 },
     uDtA: { value: 0 },
     uDtB: { value: 0 },
     uSize: { value: 3 },
@@ -190,7 +207,6 @@ export class SatellitePoints {
 
   setInterpolation(i: Interpolation): void {
     this.uniforms.uTau.value = i.tau;
-    this.uniforms.uSpan.value = i.spanS;
     this.uniforms.uDtA.value = i.dtAS;
     this.uniforms.uDtB.value = i.dtBS;
   }
