@@ -48,6 +48,8 @@ test('facet checkboxes filter and update the URL', async ({ page }) => {
 });
 
 test('GPU picking selects the object under the pointer', async ({ page }) => {
+  // Loading (up to 20 s) plus picking retries (up to 20 s): more than the default budget on slow CI runners.
+  test.setTimeout(60_000);
   await page.goto(`./?lang=en&${FROZEN}&e2e`);
   await waitForSatellites(page);
   const box = await page.locator('#viewport canvas').boundingBox();
