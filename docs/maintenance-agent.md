@@ -32,6 +32,11 @@ to do anything unless you explicitly ask for help.
      `https://celestrak.org/satcat/sources.php` (one request).
    - `celestrak-group`: add the group to `operators.json` `groups` (a constellation run by one operator, with
      its `operator` link) or to `ignoredGroups` with a reason.
+   - `celestrak-supgp`: a new CelesTrak supplemental GP set (SGP4 fits to operator ephemerides). Add it to
+     `operators.json` `supplemental` (EN/FR label naming the operator, `sources` with the SupGP page and the
+     operator's data page) when it covers operational satellites of the GP "active" group, or to
+     `ignoredSupplemental` with a reason (laser-ranging predictions, a launch's temporary post-deployment set
+     once its satellites are in the regular sets).
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:

@@ -8,8 +8,10 @@ import {
   OmmSchema,
   SatcatListSchema,
   SatcatRecordSchema,
+  SupGpRecordSchema,
   type Omm,
   type SatcatRecord,
+  type SupGpRecord,
 } from '../src/data/schemas';
 import { ProviderError, politeGet } from './http';
 
@@ -17,6 +19,11 @@ const BASE = 'https://celestrak.org';
 
 export const gpUrl = (group: string): string =>
   `${BASE}/NORAD/elements/gp.php?GROUP=${encodeURIComponent(group)}&FORMAT=JSON`;
+/** A CelesTrak supplemental GP set (SupGP): SGP4 fits to an operator's ephemerides. */
+export const supGpUrl = (file: string): string =>
+  `${BASE}/NORAD/elements/supplemental/sup-gp.php?FILE=${encodeURIComponent(file)}&FORMAT=JSON`;
+/** Index of the supplemental sets (read by the weekly audit to spot new ones). */
+export const SUPGP_INDEX_URL = `${BASE}/NORAD/elements/supplemental/`;
 /** SATCAT records of the same "active" group as the GP data (records.php requires a search field). */
 export const SATCAT_URL = `${BASE}/satcat/records.php?GROUP=active&FORMAT=JSON`;
 
@@ -64,6 +71,15 @@ export async function fetchGp(group: string): Promise<ParsedList<Omm>> {
   );
   OmmListSchema.parse(result.records);
   return result;
+}
+
+export async function fetchSupGp(file: string): Promise<ParsedList<SupGpRecord>> {
+  const url = supGpUrl(file);
+  return parseRows(
+    parseJsonBody(await politeGet(url, { accept: 'application/json' }), url),
+    url,
+    SupGpRecordSchema,
+  );
 }
 
 const SATCAT_TIMEOUT_MS = 300_000;

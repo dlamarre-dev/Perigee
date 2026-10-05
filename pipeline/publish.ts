@@ -69,6 +69,17 @@ export async function publishDatasets(
   return next;
 }
 
+/** Records which CelesTrak supplemental GP sets fed the last earth.gp (manifest `supplemental`). */
+export async function writeSupplementalInfo(
+  dataDir: string,
+  info: NonNullable<Manifest['supplemental']>,
+): Promise<void> {
+  const manifest = await readManifest(dataDir);
+  const next: Manifest = { ...manifest, supplemental: info };
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+}
+
 export interface EphemerisToWrite {
   readonly missionId: string;
   readonly horizonsId: string;

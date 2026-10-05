@@ -28,9 +28,22 @@ export const OmmSchema = z.object({
   BSTAR: numeric,
   MEAN_MOTION_DOT: numeric,
   MEAN_MOTION_DDOT: numeric,
+  /**
+   * Set by the pipeline when the elements come from a CelesTrak supplemental GP set (SupGP: SGP4 fits to the
+   * operator's own ephemerides) instead of the Space Force GP data: the set's file name, e.g. "ses".
+   */
+  SOURCE: z.string().optional(),
+  /** RMS of that fit as CelesTrak reports it (unit undocumented; kept for reference, not shown). */
+  RMS: z.coerce.number().optional().catch(undefined),
 });
 export type Omm = z.infer<typeof OmmSchema>;
 export const OmmListSchema = z.array(OmmSchema);
+
+/** A record of a CelesTrak supplemental GP set: OMM plus the fit's RMS and the operator data it came from. */
+export const SupGpRecordSchema = OmmSchema.extend({
+  DATA_SOURCE: z.string().optional(),
+});
+export type SupGpRecord = z.infer<typeof SupGpRecordSchema>;
 
 const nullableNumber = z.coerce.number().nullable().catch(null);
 const nullableString = z
@@ -98,6 +111,20 @@ export const ManifestSchema = z.object({
   generatedAt: z.string(),
   datasets: z.partialRecord(DatasetKeySchema, DatasetEntrySchema),
   ephemerides: z.record(z.string(), EphemerisEntrySchema).default({}),
+  /**
+   * CelesTrak supplemental GP sets merged into earth.gp: when each was last downloaded, how many records it had
+   * and how many replaced the GP elements.
+   */
+  supplemental: z
+    .record(
+      z.string(),
+      z.object({
+        fetchedAt: z.string(),
+        count: z.number().int().nonnegative(),
+        used: z.number().int().nonnegative(),
+      }),
+    )
+    .optional(),
 });
 export type Manifest = z.infer<typeof ManifestSchema>;
 
@@ -331,6 +358,13 @@ export const OperatorsCatalogSchema = z.object({
   groups: z.record(z.string(), localized.extend({ operator: z.string().optional() })),
   /** CelesTrak index groups deliberately not fetched (overlapping or thematic lists), with the reason. */
   ignoredGroups: z.array(z.object({ group: z.string(), reason: z.string() })).default([]),
+  /**
+   * CelesTrak supplemental GP sets (SupGP, keyed by FILE name) merged into the GP data: SGP4 fits to operator
+   * ephemerides, more accurate and fresher than the Space Force elements for the satellites they cover.
+   */
+  supplemental: z.record(z.string(), localized.extend({ sources: z.array(z.url()).min(1) })).default({}),
+  /** SupGP sets deliberately not used (geodetic laser-ranging predictions, temporary launch sets…). */
+  ignoredSupplemental: z.array(z.object({ file: z.string(), reason: z.string() })).default([]),
   /**
    * Operators without a CelesTrak group, recognised by SATCAT/GP object name (case-insensitive regular
    * expression), e.g. every "GHGSAT-…" satellite belongs to GHGSat.

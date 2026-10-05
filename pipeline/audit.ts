@@ -20,6 +20,7 @@ export type AuditKind =
   | 'launch-site-code'
   | 'owner-code'
   | 'celestrak-group'
+  | 'celestrak-supgp'
   | 'deep-space-candidate'
   | 'ephemeris-ending'
   | 'ephemeris-ended-active'
@@ -113,6 +114,29 @@ export function checkCelestrakGroups(
       key: g,
       summary: `New CelesTrak group "${g}": add it to operators.json groups (constellation) or ignoredGroups`,
       details: { url: `https://celestrak.org/NORAD/elements/gp.php?GROUP=${g}&FORMAT=JSON` },
+    }));
+}
+
+/** FILE names of the supplemental GP sets linked from CelesTrak's SupGP index page. */
+export function parseSupGpFiles(indexHtml: string): string[] {
+  return [...new Set([...indexHtml.matchAll(/sup-gp\.php\?FILE=([A-Za-z0-9._-]+)/g)].map((m) => m[1] ?? ''))]
+    .filter(Boolean)
+    .sort();
+}
+
+/** SupGP sets that are neither merged nor deliberately ignored (a new operator, a launch's temporary set…). */
+export function checkSupGpSets(indexFiles: readonly string[], operators: OperatorsCatalog): AuditItem[] {
+  const known = new Set([
+    ...Object.keys(operators.supplemental),
+    ...operators.ignoredSupplemental.map((s) => s.file),
+  ]);
+  return indexFiles
+    .filter((f) => !known.has(f))
+    .map((f) => ({
+      kind: 'celestrak-supgp' as const,
+      key: f,
+      summary: `New CelesTrak supplemental GP set "${f}": add it to operators.json supplemental or ignoredSupplemental`,
+      details: { url: `https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=${f}&FORMAT=JSON` },
     }));
 }
 
@@ -332,6 +356,7 @@ const TITLES: Record<AuditKind, string> = {
   'launch-site-code': 'Launch site codes not in catalog/launch-sites.json',
   'owner-code': 'SATCAT owner codes without a label',
   'celestrak-group': 'New CelesTrak groups',
+  'celestrak-supgp': 'New CelesTrak supplemental GP sets',
   'deep-space-candidate': 'Deep-space payloads not in catalog/missions.json',
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',
   'ephemeris-ending': 'Public ephemerides ending within 30 days',

@@ -1,8 +1,9 @@
 {
-  "verified": "2026-09-28",
+  "verified": "2026-10-05",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
+    "https://celestrak.org/NORAD/elements/supplemental/",
     "https://celestrak.org/satcat/satcat-format.php",
     "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm"
   ],
@@ -272,6 +273,99 @@
     { "group": "dmc", "reason": "Disaster Monitoring Constellation: small, owner codes suffice" },
     { "group": "tdrss", "reason": "NASA relay satellites: owner code US suffices" },
     { "group": "satnogs", "reason": "SatNOGS-tracked amateur objects, overlaps amateur" }
+  ],
+  "supplemental": {
+    "starlink": {
+      "en": "SpaceX ephemerides",
+      "fr": "éphémérides de SpaceX",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "oneweb": {
+      "en": "OneWeb ephemerides",
+      "fr": "éphémérides de OneWeb",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "kuiper": {
+      "en": "Amazon Kuiper ephemerides",
+      "fr": "éphémérides d’Amazon Kuiper",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "planet": {
+      "en": "Planet Labs ephemerides",
+      "fr": "éphémérides de Planet Labs",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "iridium": {
+      "en": "Iridium ephemerides",
+      "fr": "éphémérides d’Iridium",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "gps": {
+      "en": "GPS almanac",
+      "fr": "almanach GPS",
+      "sources": [
+        "https://celestrak.org/NORAD/elements/supplemental/",
+        "https://www.navcen.uscg.gov/gps-almanacs"
+      ]
+    },
+    "glonass": {
+      "en": "GLONASS ephemerides",
+      "fr": "éphémérides GLONASS",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "ses": {
+      "en": "SES ephemerides",
+      "fr": "éphémérides de SES",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "intelsat": {
+      "en": "Intelsat ephemerides",
+      "fr": "éphémérides d’Intelsat",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "telesat": {
+      "en": "Telesat ephemerides",
+      "fr": "éphémérides de Telesat",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "orbcomm": {
+      "en": "Orbcomm ephemerides",
+      "fr": "éphémérides d’Orbcomm",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "iss": {
+      "en": "NASA ISS trajectory",
+      "fr": "trajectoire de l’ISS (NASA)",
+      "sources": [
+        "https://celestrak.org/NORAD/elements/supplemental/",
+        "https://spotthestation.nasa.gov/trajectory_data.cfm"
+      ]
+    },
+    "css": {
+      "en": "China Manned Space trajectory",
+      "fr": "trajectoire de la CSS (CMS)",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "ast": {
+      "en": "AST SpaceMobile ephemerides",
+      "fr": "éphémérides d’AST SpaceMobile",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    },
+    "eumetsat": {
+      "en": "EUMETSAT ephemerides",
+      "fr": "éphémérides d’EUMETSAT",
+      "sources": ["https://celestrak.org/NORAD/elements/supplemental/"]
+    }
+  },
+  "ignoredSupplemental": [
+    {
+      "file": "cpf",
+      "reason": "ILRS laser-ranging predictions of geodetic satellites, mostly outside the GP active group"
+    },
+    {
+      "file": "transporter-18",
+      "reason": "Temporary post-deployment set of one launch (2026-10-01); its satellites move to the regular data within weeks"
+    }
   ],
   "nameRules": [
     {

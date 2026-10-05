@@ -76,6 +76,16 @@ Cross-cutting features:
   - `NORAD_CAT_ID` is an integer; never format/pad it to 5 characters nor parse it with fixed columns.
   - The legacy text SATCAT is truncated; use the CSV/JSON SATCAT.
 - Always use `celestrak.org` (not `.com`, which 301-redirects).
+- **Supplemental GP (SupGP)**: `https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=<set>&FORMAT=JSON`,
+  SGP4 fits by CelesTrak to operator ephemerides (SpaceX, SES, Intelsat, NASA ISS, CMS CSS, GPS almanac, GLONASS…),
+  ~10× more accurate than GP and usually < 1 day old (GPS fits are dated a few days ahead). Same OMM JSON plus
+  `RMS` (unit undocumented, not shown) and `DATA_SOURCE`. The sets used are the keys of `catalog/operators.json`
+  `supplemental` (deliberate exclusions in `ignoredSupplemental`; the weekly audit flags new sets). The `gp` run
+  fetches them after `active` (one request per set) and merges them (`pipeline/supgp.ts`): an object of the
+  `active` group takes the freshest SupGP fit dated within [−3 d, +7 d] of the run and not older than its GP
+  elements, keeping its GP name, with `SOURCE: <set>`; SupGP-only objects are not added. The info panel says
+  where the elements come from. Galileo has no SupGP set, and new satellites appear in a set only once
+  operational.
 
 ### 4.2 CelesTrak SATCAT — metadata (info panel, filters)
 - `https://celestrak.org/satcat/records.php?GROUP=active&FORMAT=JSON` (same set as the GP `active` group).
@@ -310,7 +320,9 @@ Weekly maintenance (hands-off):
 Rules:
 - Scripts in `pipeline/` (Node 20+ + TS, run with `tsx`). No server dependency.
 - **One call per resource per run**, `User-Agent` identifying the project and the repo URL, stop on any non-200
-  response, no retry loops (at most 1 retry, after 10 min).
+  response, no retry loops (at most 1 retry, after 10 min). A failing SupGP set stops the remaining SupGP
+  requests but the validated `active` data are still published (merged with the sets already gathered or kept
+  from the last run, `data/earth/supgp-sets.json.gz`), then the run fails and opens an issue.
 - Schema validation (zod) before publication: an invalid or near-empty file (< 50 % of the previous one) does
   **not** overwrite the previous version; the action fails and opens an issue.
 - Output: `data/earth/gp-active.json.gz`, `data/earth/satcat.json.gz`, `data/ephem/<mission>.bin`

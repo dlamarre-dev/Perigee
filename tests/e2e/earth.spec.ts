@@ -120,3 +120,13 @@ test('the science section selects or deselects all its satellites in one click',
   await expect(section.getByLabel('International Space Station (ISS)')).not.toBeChecked();
   await expect(page).toHaveTitle('Perigee - objects in orbit, in real time');
 });
+
+test('the info panel says where the elements come from', async ({ page }) => {
+  await page.goto(`./?lang=en&${FROZEN}&sel=25544`);
+  const info = page.locator('aside.info:visible');
+  await expect(info).toContainText('Fit to NASA ISS trajectory (CelesTrak SupGP)', { timeout: 30_000 });
+  await page.goto(`./?lang=en&${FROZEN}&sel=20580`);
+  await expect(page.locator('aside.info:visible')).toContainText('US Space Force tracking (CelesTrak GP)', {
+    timeout: 30_000,
+  });
+});

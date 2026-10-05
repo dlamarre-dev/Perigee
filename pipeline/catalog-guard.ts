@@ -89,6 +89,7 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
       for (const [k, v] of Object.entries(o.owners)) m.set(`owner:${k}`, v);
       for (const [k, v] of Object.entries(o.operators)) m.set(`operator:${k}`, v);
       for (const [k, v] of Object.entries(o.groups)) m.set(`group:${k}`, v);
+      for (const [k, v] of Object.entries(o.supplemental)) m.set(`sup:${k}`, v);
       // Keyed by position within the operator (or host), not by content: editing a pattern or a payload name
       // is a change, not a deletion, and two payloads of one operator on one host stay distinct.
       const nth = new Map<string, number>();
@@ -151,9 +152,9 @@ export function checkChanges(files: readonly ChangedFile[], today: string): stri
       if (before && JSON.stringify(before) === JSON.stringify(entry)) continue;
       changed++;
       changedHere++;
-      // Owner, operator and group labels carry no per-entry sources (the file's sources cover them); name rules
-      // and hosted payloads do.
-      const labelOnly = f.path === 'catalog/operators.json' && !/^(rule|hosted):/.test(id);
+      // Owner, operator and group labels carry no per-entry sources (the file's sources cover them); name rules,
+      // hosted payloads and supplemental GP sets do.
+      const labelOnly = f.path === 'catalog/operators.json' && !/^(rule|hosted|sup):/.test(id);
       if (!labelOnly && !httpsSources(entry)) {
         errors.push(`${f.path}: entry "${id}" needs at least one https source`);
       }

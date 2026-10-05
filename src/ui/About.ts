@@ -16,6 +16,10 @@ const DATA_CREDITS: readonly Credit[] = [
   },
   { name: 'NASA Black Marble 2016', url: 'https://earthobservatory.nasa.gov/features/NightLights' },
   { name: 'CelesTrak (T.S. Kelso) / 18th & 19th SDS via Space-Track', url: 'https://celestrak.org' },
+  {
+    name: 'CelesTrak supplemental GP (fits to operator ephemerides: SpaceX, SES, Intelsat, NASA, GPS, GLONASS…)',
+    url: 'https://celestrak.org/NORAD/elements/supplemental/',
+  },
   { name: 'NASA/JPL-Caltech Horizons', url: 'https://ssd.jpl.nasa.gov/horizons/' },
   { name: 'NASA SVS CGI Moon Kit', url: 'https://svs.gsfc.nasa.gov/4720' },
   { name: 'LROC (Lunar Reconnaissance Orbiter Camera, ASU)', url: 'https://lroc.im-ldi.com' },

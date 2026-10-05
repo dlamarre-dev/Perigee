@@ -41,7 +41,8 @@ await publishDatasets(dataDir, [
     source: 'fixture',
     fetchedAt,
     count: omms.length,
-    payload: omms,
+    // The ISS as merged from CelesTrak's supplemental "iss" set (operator fit), the others as plain GP.
+    payload: omms.map((o) => (o.NORAD_CAT_ID === 25544 ? { ...o, SOURCE: 'iss', RMS: 0.2 } : o)),
   },
   {
     key: 'earth.satcat',

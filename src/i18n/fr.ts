@@ -194,6 +194,10 @@ export const fr: Messages = {
   'info.stale': 'Éléments périmés (plus de 14 jours) : position peu fiable',
   'info.invalid': 'Erreur SGP4 (objet désintégré ou éléments invalides) : position indisponible',
   'info.ageDays': 'il y a {n} j',
+  'info.inDays': 'dans {n} j (prédiction de l’opérateur)',
+  'info.elementsSource': 'Éléments issus de',
+  'info.source.gp': 'Suivi de l’US Space Force (CelesTrak GP)',
+  'info.source.supgp': 'Ajustement ({set}, CelesTrak SupGP)',
   'info.noMetadata': 'Aucune métadonnée de catalogue disponible.',
 
   'moon.loading': 'Chargement des éphémérides lunaires…',

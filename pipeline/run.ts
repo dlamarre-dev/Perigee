@@ -13,7 +13,8 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { gunzipSync } from 'node:zlib';
+import { gunzipSync, gzipSync } from 'node:zlib';
+import { z } from 'zod';
 import { LATEST_LEAP_SECOND } from '../src/astro/leapSeconds';
 import {
   LandingSitesSchema,
@@ -24,11 +25,14 @@ import {
   MoonsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
+  SupGpRecordSchema,
   type Groups,
 } from '../src/data/schemas';
 import {
   candidateItems,
   checkCelestrakGroups,
+  checkSupGpSets,
+  parseSupGpFiles,
   checkEphemerisCoverage,
   checkLaunchSiteCodes,
   checkLeapSeconds,
@@ -45,9 +49,19 @@ import {
 } from './audit';
 import { politeGet } from './http';
 import { readManifest } from './publish';
-import { NotUpdatedError, SATCAT_URL, fetchGp, fetchSatcatActive, gpUrl } from './celestrak';
+import {
+  NotUpdatedError,
+  SATCAT_URL,
+  SUPGP_INDEX_URL,
+  fetchGp,
+  fetchSatcatActive,
+  fetchSupGp,
+  gpUrl,
+  supGpUrl,
+} from './celestrak';
 import { CENTER_CODES, fetchMissionVectors, float64LittleEndian } from './horizons';
-import { publishDatasets, publishEphemerides, type EphemerisToWrite } from './publish';
+import { publishDatasets, publishEphemerides, writeSupplementalInfo, type EphemerisToWrite } from './publish';
+import { mergeSupplemental } from './supgp';
 import { fetchRoverPositions } from './rovers';
 
 const LOCAL_MIN_INTERVAL_MS = 2 * 3600_000;
@@ -93,23 +107,87 @@ async function loadOperators() {
   return OperatorsCatalogSchema.parse(JSON.parse(await readFile(resolve('catalog/operators.json'), 'utf8')));
 }
 
+/** Last downloaded records of each SupGP set (data branch), reused when CelesTrak reports no update. */
+const SUPGP_SETS_PATH = 'earth/supgp-sets.json.gz';
+const SupGpSetsSchema = z.record(
+  z.string(),
+  z.object({ fetchedAt: z.string(), records: z.array(SupGpRecordSchema) }),
+);
+type SupGpSets = z.infer<typeof SupGpSetsSchema>;
+
+async function readSupGpSets(dataDir: string): Promise<SupGpSets> {
+  const file = join(dataDir, SUPGP_SETS_PATH);
+  if (!existsSync(file)) return {};
+  const parsed = SupGpSetsSchema.safeParse(JSON.parse(gunzipSync(await readFile(file)).toString('utf8')));
+  return parsed.success ? parsed.data : {};
+}
+
+/**
+ * GP "active" elements, improved by the CelesTrak supplemental GP sets listed in catalog/operators.json
+ * (`supplemental`): one request per resource, sequentially. A set reported as not updated keeps its previous
+ * records; any other failure stops further requests (CelesTrak policy), still publishes the GP data with what
+ * was gathered, then fails the run so an issue is opened.
+ */
 async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
+  const operators = await loadOperators();
+  const supFiles = Object.keys(operators.supplemental);
   const url = gpUrl('active');
-  guard.assertAllowed([url]);
+  guard.assertAllowed([url, ...supFiles.map(supGpUrl)]);
   const fetchedAt = new Date();
   await guard.mark(url);
   const { records: omm, rejected } = await fetchGp('active');
   if (rejected > 0) console.warn(`GP: ${rejected} malformed records dropped`);
+
+  const previous = await readSupGpSets(dataDir);
+  const sets: SupGpSets = {};
+  let failure: unknown;
+  for (const file of supFiles) {
+    const prev = previous[file];
+    if (failure === undefined) {
+      try {
+        await guard.mark(supGpUrl(file));
+        const result = await fetchSupGp(file);
+        if (result.rejected > 0) console.warn(`SupGP ${file}: ${result.rejected} malformed records dropped`);
+        sets[file] = { fetchedAt: new Date().toISOString(), records: result.records };
+        continue;
+      } catch (err) {
+        if (!(err instanceof NotUpdatedError)) failure = err;
+      }
+    }
+    if (prev) sets[file] = prev;
+  }
+  const merged = mergeSupplemental(
+    omm,
+    new Map(Object.entries(sets).map(([file, s]) => [file, s.records])),
+    fetchedAt.getTime(),
+  );
   await publishDatasets(dataDir, [
     {
       key: 'earth.gp',
       path: 'earth/gp-active.json.gz',
       source: url,
       fetchedAt,
-      count: omm.length,
-      payload: omm,
+      count: merged.omm.length,
+      payload: merged.omm,
     },
   ]);
+  await mkdir(dirname(join(dataDir, SUPGP_SETS_PATH)), { recursive: true });
+  await writeFile(join(dataDir, SUPGP_SETS_PATH), gzipSync(JSON.stringify(sets), { level: 9 }));
+  await writeSupplementalInfo(
+    dataDir,
+    Object.fromEntries(
+      Object.entries(sets).map(([file, s]) => [
+        file,
+        { fetchedAt: s.fetchedAt, count: s.records.length, used: merged.used[file] ?? 0 },
+      ]),
+    ),
+  );
+  console.log(
+    `SupGP: ${Object.entries(merged.used)
+      .map(([file, n]) => `${file} ${n}/${sets[file]?.records.length ?? 0}`)
+      .join(', ')}`,
+  );
+  if (failure !== undefined) throw failure;
 }
 
 async function readPublishedGroups(dataDir: string): Promise<Groups> {
@@ -272,10 +350,12 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   // Upstream lists: one request each (CelesTrak ones go through the local 2 h guard too).
   const years =
     now.getUTCMonth() === 0 ? [now.getUTCFullYear() - 1, now.getUTCFullYear()] : [now.getUTCFullYear()];
-  const celestrakUrls = [CELESTRAK_INDEX_URL, ...years.map(satcatLaunchesUrl)];
+  const celestrakUrls = [CELESTRAK_INDEX_URL, SUPGP_INDEX_URL, ...years.map(satcatLaunchesUrl)];
   guard.assertAllowed(celestrakUrls);
   await guard.mark(CELESTRAK_INDEX_URL);
   const indexGroups = parseCelestrakGroups(await politeGet(CELESTRAK_INDEX_URL, { accept: 'text/html' }));
+  await guard.mark(SUPGP_INDEX_URL);
+  const supGpFiles = parseSupGpFiles(await politeGet(SUPGP_INDEX_URL, { accept: 'text/html' }));
   const launches: SatcatLaunchRow[] = [];
   for (const year of years) {
     const url = satcatLaunchesUrl(year);
@@ -307,6 +387,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ...checkLaunchSiteCodes(satcat, launchSites),
     ...checkOwnerCodes(satcat, operators),
     ...checkCelestrakGroups(indexGroups, operators),
+    ...checkSupGpSets(supGpFiles, operators),
     ...candidateItems(candidates, matches),
     ...checkEphemerisCoverage(manifest, missions, now),
     ...checkStaleVerification(

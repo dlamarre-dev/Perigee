@@ -187,6 +187,10 @@ export const en = {
   'info.stale': 'Stale elements (older than 14 days): position unreliable',
   'info.invalid': 'SGP4 error (decayed or invalid elements): position unavailable',
   'info.ageDays': '{n} d old',
+  'info.inDays': 'in {n} d (operator prediction)',
+  'info.elementsSource': 'Elements from',
+  'info.source.gp': 'US Space Force tracking (CelesTrak GP)',
+  'info.source.supgp': 'Fit to {set} (CelesTrak SupGP)',
   'info.noMetadata': 'No catalogue metadata available.',
 
   'moon.loading': 'Loading lunar ephemerides…',

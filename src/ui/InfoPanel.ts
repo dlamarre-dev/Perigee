@@ -155,9 +155,22 @@ export class InfoPanel {
     rows.push(['info.period', `${num(obj.periodMin, 1)} min`]);
     rows.push(['info.inclination', `${num(obj.inclinationRad * RAD_TO_DEG, 2)}°`]);
     const ageDays = elementAgeDays(obj, this.simNowMs);
+    // Operator fits (SupGP) may be dated a few days ahead: they fit the operator's predictions.
+    const age =
+      ageDays < 0
+        ? this.i18n.format('info.inDays', { n: num(-ageDays, 1) })
+        : this.i18n.format('info.ageDays', { n: num(ageDays, 1) });
+    rows.push(['info.epoch', `${formatUtcDate(new Date(obj.epochMs))} · ${age}`]);
+    // Where the elements come from: the Space Force catalogue (GP) or a CelesTrak fit to the operator's own
+    // ephemerides (supplemental GP), usually far more accurate.
+    const supSet = obj.omm.SOURCE;
     rows.push([
-      'info.epoch',
-      `${formatUtcDate(new Date(obj.epochMs))} · ${this.i18n.format('info.ageDays', { n: num(ageDays, 1) })}`,
+      'info.elementsSource',
+      supSet
+        ? this.i18n.format('info.source.supgp', {
+            set: this.operators.supplemental[supSet]?.[this.i18n.lang] ?? supSet,
+          })
+        : t('info.source.gp'),
     ]);
     if (obj.groups.length) {
       rows.push([
