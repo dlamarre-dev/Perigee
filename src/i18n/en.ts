@@ -21,6 +21,13 @@ export const en = {
   'toolbar.frame.fixed.mars': 'Mars-fixed',
   'toolbar.language': 'Language',
   'toolbar.about': 'About',
+  'toolbar.quality': 'Quality',
+  'toolbar.quality.hint':
+    'Rendering quality. Auto adapts to this device (detected: {tier}); the page reloads to apply a change.',
+  'quality.auto': 'Auto',
+  'quality.high': 'High',
+  'quality.medium': 'Medium',
+  'quality.low': 'Saver',
   'toolbar.report': 'Report',
   'report.title': 'Report a problem',
   'report.intro':

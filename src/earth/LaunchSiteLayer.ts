@@ -34,14 +34,11 @@ export class LaunchSiteLayer {
   private visibleValue = true;
   private readonly v = new Vector3();
 
-  constructor(
-    readonly sites: readonly LaunchSite[],
-    pixelRatio: number,
-  ) {
+  constructor(readonly sites: readonly LaunchSite[]) {
     this.bodyKm = sites.map((s) => scale(latLonToUnit(s.latDeg * DEG_TO_RAD, s.lonDeg * DEG_TO_RAD), R + 2));
-    this.markers = new MarkerPoints(Math.max(1, sites.length), 9 * pixelRatio, { depthTest: false });
+    this.markers = new MarkerPoints(Math.max(1, sites.length), 9, { depthTest: false });
     sites.forEach((s, i) => this.markers.setColor(i, s.active ? ACTIVE_COLOR : INACTIVE_COLOR));
-    this.ring = new SelectionMarker(pixelRatio, { surface: true });
+    this.ring = new SelectionMarker({ surface: true });
     this.group.add(this.markers.points, this.ring.points);
     this.group.name = 'launch-sites';
   }

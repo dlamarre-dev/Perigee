@@ -29,12 +29,21 @@ import { createStarfield } from '../render/starfield';
 import { configureKtx2 } from '../render/textures';
 import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
-import { ReportDialog } from '../ui/ReportDialog';
+import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
+import { setPreviewFrameRate } from '../ui/ModelPreview';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { Toolbar } from '../ui/Toolbar';
 import { h, setSheetGrabLabel } from '../ui/dom';
 import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
+import {
+  readDeviceSignals,
+  resolveQuality,
+  setQuality,
+  storedPixelRatio,
+  storeChoice,
+  storePixelRatio,
+} from '../render/quality';
 import {
   UpdateWatcher,
   claimAutoReload,
@@ -134,9 +143,32 @@ function main(): void {
   const viewport = app.querySelector<HTMLElement>('#viewport');
   if (!viewport) throw new Error('#viewport not found');
 
+  // Quality tier (src/app/quality.ts): decided before the renderer, which it configures.
+  const qualityState = resolveQuality(startParams.get('quality'), readDeviceSignals());
+  setQuality(qualityState);
+  const q = qualityState.settings;
+  document.documentElement.dataset['quality'] = q.tier;
+  setPreviewFrameRate(q.previewFps);
+  // Idle: clock paused, camera still, no input for a moment (the low tier then draws fewer frames).
+  let lastInputMs = performance.now();
+  for (const type of ['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart']) {
+    window.addEventListener(type, () => (lastInputMs = performance.now()), { passive: true, capture: true });
+  }
+  let isIdle = (): boolean => false;
+
   let renderer: Renderer;
   try {
-    renderer = new Renderer(viewport, { logarithmicDepthBuffer: true });
+    renderer = new Renderer(viewport, {
+      logarithmicDepthBuffer: true,
+      antialias: q.msaa,
+      maxPixelRatio: q.maxPixelRatio,
+      minPixelRatio: q.minPixelRatio,
+      startPixelRatio: storedPixelRatio(q.tier),
+      maxFps: q.maxFps,
+      idleFps: q.idleFps,
+      isIdle: () => isIdle(),
+      onPixelRatio: (ratio) => storePixelRatio(q.tier, ratio),
+    });
     configureKtx2(renderer.renderer, import.meta.env.BASE_URL);
     renderer.canvas.setAttribute('aria-label', i18n.t('app.canvasLabel'));
   } catch (err) {
@@ -152,17 +184,17 @@ function main(): void {
   clock.setRate(url.rate);
 
   // Real sky (NASA SVS star map); the procedural starfield shows until it has loaded.
-  const stars = createStarfield(4000, renderer.renderer.getPixelRatio());
+  const stars = createStarfield(4000, renderer.pixelRatio);
   const sky = new SkyMesh({
     baseUrl: import.meta.env.BASE_URL,
     maxTextureSize: renderer.maxTextureSize,
     anisotropy: renderer.renderer.capabilities.getMaxAnisotropy(),
     onReady: () => {
       stars.visible = false;
-      // The 8k level (~25 MB) only pays off on large high-density screens, once the page has settled.
+      // The 8k level (~25 MB) only pays off on large high-density screens of the high tier, once the page has
+      // settled.
       const px = Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio;
-      const saveData = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData === true;
-      if (px >= 2500 && !saveData && renderer.maxTextureSize >= 8192)
+      if (q.textures8k && px >= 2500 && renderer.maxTextureSize >= 8192)
         window.setTimeout(() => sky.requestDetail(), 8000);
     },
   });
@@ -173,6 +205,7 @@ function main(): void {
     limits: { minDistanceKm: 1, maxDistanceKm: 1e7 },
     home: placeholderHome,
   });
+  isIdle = () => clock.paused && !controls.moving && performance.now() - lastInputMs > 1500;
 
   let view: View | undefined;
   let viewDom: HTMLElement[] = [];
@@ -358,42 +391,54 @@ function main(): void {
   }
   phone.addEventListener('change', updateBottomInset);
   window.addEventListener('resize', updateBottomInset);
-  const toolbar = new Toolbar(i18n, viewId, frame, {
-    onViewChange: (id) => void switchView(id),
-    // `music` is created below; the menu can only be used once the page is running.
-    onSoundtrack: () => music.toggleOpen(),
-    onRecenter: () => {
-      follow.stop();
-      controls.reset();
+  const toolbar = new Toolbar(
+    i18n,
+    viewId,
+    frame,
+    {
+      onViewChange: (id) => void switchView(id),
+      // `music` is created below; the menu can only be used once the page is running.
+      onSoundtrack: () => music.toggleOpen(),
+      onRecenter: () => {
+        follow.stop();
+        controls.reset();
+      },
+      onFrameChange: (mode) => {
+        const date = clock.nowUtc();
+        if (view) {
+          // Re-express the camera in the other frame so the view does not jump.
+          const bodyQ = view.bodyOrientation(date);
+          const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
+          const s = controls.state;
+          controls.setState({
+            targetKm: quatRotate(q, s.targetKm),
+            distanceKm: s.distanceKm,
+            orientation: quatNormalize(quatMultiply(q, s.orientation)),
+          });
+        }
+        frame = mode;
+        controls.setHome(homeState(date));
+        syncUrl();
+      },
+      onLangChange: (lang) => {
+        explicitLang = lang;
+        i18n.setLang(lang);
+        syncUrl();
+      },
+      onAbout: () => about.open(),
+      onReport: () => report.open(),
+      onQualityChange: (choice) => {
+        storeChoice(choice);
+        // Applied from startup (MSAA, textures and models are chosen once): reload in place, view and camera kept.
+        reloadKeepingView();
+      },
+      onTogglePanel: () => {
+        if (panelToggle) toolbar.setPanelOpen(panelToggle());
+      },
     },
-    onFrameChange: (mode) => {
-      const date = clock.nowUtc();
-      if (view) {
-        // Re-express the camera in the other frame so the view does not jump.
-        const bodyQ = view.bodyOrientation(date);
-        const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
-        const s = controls.state;
-        controls.setState({
-          targetKm: quatRotate(q, s.targetKm),
-          distanceKm: s.distanceKm,
-          orientation: quatNormalize(quatMultiply(q, s.orientation)),
-        });
-      }
-      frame = mode;
-      controls.setHome(homeState(date));
-      syncUrl();
-    },
-    onLangChange: (lang) => {
-      explicitLang = lang;
-      i18n.setLang(lang);
-      syncUrl();
-    },
-    onAbout: () => about.open(),
-    onReport: () => report.open(),
-    onTogglePanel: () => {
-      if (panelToggle) toolbar.setPanelOpen(panelToggle());
-    },
-  });
+    qualityState.choice,
+    qualityState.detected.tier,
+  );
   const music = new MusicPanel(i18n);
   app.append(
     toolbar.element,
@@ -548,10 +593,32 @@ function main(): void {
   renderer.canvas.addEventListener('click', (e) => handleClick(e, false));
   renderer.canvas.addEventListener('dblclick', (e) => handleClick(e, true));
 
+  // ?debug=perf: tier, reasons, GPU, frame rate and render scale (maintenance only, not translated).
+  let framesDrawn = 0;
+  if (startParams.get('debug') === 'perf') {
+    const overlay = h('pre', { class: 'perf-overlay', 'aria-hidden': 'true' });
+    app.append(overlay);
+    let last = performance.now();
+    window.setInterval(() => {
+      const now = performance.now();
+      const fps = (framesDrawn * 1000) / (now - last);
+      framesDrawn = 0;
+      last = now;
+      overlay.textContent = `${qualitySummary()}
+${
+  q.tier === qualityState.detected.tier
+    ? ''
+    : `detected ${qualityState.detected.tier} (${qualityState.detected.reasons.join(', ')})
+`
+}${fps.toFixed(0)} fps · DPR ${window.devicePixelRatio} · max texture ${qualityState.signals.maxTextureSize} · MSAA ${qualityState.signals.maxSamples} · ${qualityState.signals.deviceMemoryGb ?? '?'} GB · ${qualityState.signals.cores ?? '?'} cores`;
+    }, 500);
+  }
+
   // Frame loop
   let uiTimerS = 0;
   let wasFollowing = false;
   renderer.start((dtS) => {
+    framesDrawn++;
     const nowMs = clock.nowMs();
     const date = new Date(nowMs);
     const v = view;

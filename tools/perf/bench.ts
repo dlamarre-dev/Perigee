@@ -1,7 +1,7 @@
 /**
  * Performance bench: main-thread cost per view on the production build with the published data.
  *
- *   npm run data:pull && npm run build && npx tsx tools/perf/bench.ts [--throttle 4] [--seconds 10]
+ *   npm run data:pull && npm run build && npx tsx tools/perf/bench.ts [--throttle 4] [--seconds 10] [--quality low]
  *
  * Serves dist/ with `vite preview`, opens each scenario in headless Chromium (software WebGL, so GPU numbers are
  * not meaningful; main-thread numbers are) and reports, over a fixed window after loading: script and task time
@@ -19,6 +19,11 @@ const flag = (name: string, fallback: number): number => {
 const THROTTLE = flag('throttle', 1);
 const SECONDS = flag('seconds', 10);
 const PORT = 4321;
+/** Optional quality tier forced on every scenario (`--quality low`). */
+const QUALITY = ((): string => {
+  const i = args.indexOf('--quality');
+  return i >= 0 ? `&quality=${args[i + 1]}` : '';
+})();
 const BASE = `http://localhost:${PORT}/Perigee/`;
 
 interface Scenario {
@@ -99,7 +104,7 @@ async function run(): Promise<void> {
       await cdp.send('Performance.enable');
       await cdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
       const t0 = Date.now();
-      await page.goto(`${BASE}?${s.query}`);
+      await page.goto(`${BASE}?${s.query}${QUALITY}`);
       await page.getByText(s.ready).first().waitFor({ timeout: 120_000 });
       const readyMs = Date.now() - t0;
       await page.waitForTimeout(3000);

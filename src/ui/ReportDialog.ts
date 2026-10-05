@@ -5,6 +5,8 @@
  * Nothing is sent until the visitor submits; the attached context is shown before sending.
  */
 import type { I18n, MessageKey } from '../i18n';
+import { pixelRatio } from '../render/pixelRatio';
+import { qualityState } from '../render/quality';
 import { h } from './dom';
 
 export const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
@@ -21,6 +23,8 @@ export interface ReportContext {
   readonly build: string;
   readonly lang: string;
   readonly viewport: string;
+  /** Quality tier in effect, how it was chosen, and the GPU (helps with device-specific problems). */
+  readonly quality: string;
 }
 
 /** Web3Forms JSON payload (pure, tested). An empty e-mail is left out; `botcheck` is the anti-spam honeypot. */
@@ -45,8 +49,17 @@ export function buildReport(
     build: context.build,
     lang: context.lang,
     viewport: context.viewport,
+    quality: context.quality,
     botcheck: botcheck !== '',
   };
+}
+
+/** E.g. "quality medium (auto: touch device), render ×1.75, GPU PowerVR D-Series DXT-48-1536". */
+export function qualitySummary(): string {
+  const q = qualityState();
+  if (!q) return 'quality unknown';
+  const how = q.choice === 'auto' ? `auto: ${q.detected.reasons.join(', ')}` : 'chosen';
+  return `quality ${q.settings.tier} (${how}), render ×${pixelRatio()}, GPU ${q.signals.gpu ?? 'unknown'}`;
 }
 
 export class ReportDialog {
@@ -141,12 +154,15 @@ export class ReportDialog {
       build: `${build.commit} (${build.date})`,
       lang: this.i18n.lang,
       viewport: `${window.innerWidth}×${window.innerHeight} @${window.devicePixelRatio}x`,
+      quality: qualitySummary(),
     };
   }
 
   private renderContext(): void {
     const c = this.context();
-    this.contextList.replaceChildren(...[c.url, c.build, c.lang, c.viewport].map((v) => h('li', {}, [v])));
+    this.contextList.replaceChildren(
+      ...[c.url, c.build, c.lang, c.viewport, c.quality].map((v) => h('li', {}, [v])),
+    );
   }
 
   private selectedType(): ReportType {

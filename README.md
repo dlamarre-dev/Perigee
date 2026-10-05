@@ -33,6 +33,8 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   launch site, plus text search by name, NORAD number or COSPAR ID.
 - **Install**: your browser can install Perigee as an app; after a first visit it opens offline with the data
   it last downloaded (a badge tells you when you are offline).
+- **Quality**: the site picks a rendering quality for your device and adapts its resolution as it runs; the
+  gear in the top bar (or _Quality_ in the phone menu) lets you choose High, Medium or Saver instead.
 - **Updates**: a tab left open learns about new data and new versions of the site within 15 minutes and offers
   to refresh (or refreshes by itself when you come back to it), keeping your view, selection and camera.
 

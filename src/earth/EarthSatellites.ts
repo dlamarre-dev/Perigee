@@ -75,9 +75,8 @@ export class EarthSatellites {
     renderer: WebGLRenderer,
   ) {
     const n = catalog.objects.length;
-    const pixelRatio = renderer.getPixelRatio();
-    this.points = new SatellitePoints(n, pixelRatio);
-    this.marker = new SelectionMarker(pixelRatio);
+    this.points = new SatellitePoints(n);
+    this.marker = new SelectionMarker();
     this.picker = new GpuPicker(renderer);
     this.pool = new PropagatorPool(catalog.objects.map((o) => o.omm));
     this.states = new Float32Array(n);

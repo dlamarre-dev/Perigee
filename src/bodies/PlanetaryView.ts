@@ -242,11 +242,10 @@ export class PlanetaryView implements View {
     renderer.scene.add(this.body.mesh, this.missionGroup);
     if (this.earth) renderer.scene.add(this.earth.mesh);
 
-    const pixelRatio = renderer.renderer.getPixelRatio();
     const drawable = this.missions.filter((m) => m.ephemeris === 'horizons');
     // No GPU depth test: a screen-sized sprite has a single depth and would be half-buried in the curved
     // surface when seen from afar. Occlusion by the body is computed on the CPU instead (placeOrigin).
-    this.missionMarkers = new MarkerPoints(Math.max(1, drawable.length), 11 * pixelRatio, {
+    this.missionMarkers = new MarkerPoints(Math.max(1, drawable.length), 11, {
       depthTest: false,
     });
     this.missionGroup.add(this.missionMarkers.points);
@@ -293,12 +292,12 @@ export class PlanetaryView implements View {
         scene: undefined,
       });
     });
-    this.missionRing = new SelectionMarker(pixelRatio);
+    this.missionRing = new SelectionMarker();
     this.missionGroup.add(this.missionRing.points);
 
-    this.siteMarkers = new MarkerPoints(Math.max(1, this.sites.length), 8 * pixelRatio, { depthTest: false });
+    this.siteMarkers = new MarkerPoints(Math.max(1, this.sites.length), 8, { depthTest: false });
     this.sites.forEach((s, i) => this.siteMarkers.setColor(i, SITE_COLORS[s.type]));
-    this.siteRing = new SelectionMarker(pixelRatio, { surface: true });
+    this.siteRing = new SelectionMarker({ surface: true });
     this.siteGroup.add(this.siteMarkers.points, this.siteRing.points);
     this.body.mesh.add(this.siteGroup);
 

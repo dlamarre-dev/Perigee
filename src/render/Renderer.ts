@@ -1,9 +1,23 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { AdaptiveResolution } from './adaptiveResolution';
+import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 import { applyViewInset, bottomInsetPx, setBottomInset } from './viewInset';
 
 export interface RendererOptions {
-  /** Needed for view D (solar system) where depth spans many orders of magnitude. */
+  /** Depth precision from metres to the Sun (all views, CLAUDE.md §5.4). */
   readonly logarithmicDepthBuffer?: boolean;
+  /** Multisampling (quality tier). */
+  readonly antialias?: boolean;
+  /** Pixel ratio cap, floor of the adaptive resolution, and the level to start from (remembered). */
+  readonly maxPixelRatio?: number;
+  readonly minPixelRatio?: number;
+  readonly startPixelRatio?: number | undefined;
+  /** Frame-rate cap (undefined: the display's rate), and the rate while `isIdle()` holds. */
+  readonly maxFps?: number | undefined;
+  readonly idleFps?: number | undefined;
+  readonly isIdle?: () => boolean;
+  /** Called when the adaptive resolution changes the pixel ratio (to remember it). */
+  readonly onPixelRatio?: (ratio: number) => void;
 }
 
 export class WebGLUnavailableError extends Error {
@@ -20,19 +34,26 @@ export class Renderer {
   private readonly resizeObserver: ResizeObserver;
   private frameCallback: ((dtS: number) => void) | undefined;
   private lastTimeMs: number | undefined;
+  private readonly adaptive: AdaptiveResolution;
+  /** Container size, kept by the resize observer (reading it every frame could force a layout). */
+  private widthPx = 0;
+  private heightPx = 0;
 
   constructor(
     private readonly container: HTMLElement,
-    options: RendererOptions = {},
+    private readonly options: RendererOptions = {},
   ) {
     const canvas = document.createElement('canvas');
     if (!canvas.getContext('webgl2')) throw new WebGLUnavailableError();
     this.renderer = new WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: options.antialias ?? true,
       logarithmicDepthBuffer: options.logarithmicDepthBuffer ?? false,
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const max = Math.min(window.devicePixelRatio, options.maxPixelRatio ?? 2);
+    const min = Math.min(max, options.minPixelRatio ?? max);
+    this.adaptive = new AdaptiveResolution(options.startPixelRatio ?? max, min, max);
+    this.applyPixelRatio(this.adaptive.pixelRatio);
     this.camera.matrixAutoUpdate = true;
     canvas.tabIndex = 0;
     // The 3D scene is an image for assistive technologies; the side panels carry the same content as text.
@@ -57,17 +78,41 @@ export class Renderer {
     if (this.camera.near === nearKm && this.camera.far === farKm) return;
     this.camera.near = nearKm;
     this.camera.far = farKm;
-    applyViewInset(this.camera, this.container.clientWidth, this.container.clientHeight);
+    applyViewInset(this.camera, this.widthPx, this.heightPx);
+  }
+
+  get pixelRatio(): number {
+    return this.adaptive.pixelRatio;
   }
 
   start(onFrame: (dtS: number) => void): void {
     this.frameCallback = onFrame;
+    const { maxFps, idleFps, isIdle } = this.options;
     this.renderer.setAnimationLoop((timeMs: number) => {
-      const dtS = this.lastTimeMs === undefined ? 0 : Math.min(0.1, (timeMs - this.lastTimeMs) / 1000);
+      const idle = idleFps !== undefined && (isIdle?.() ?? false);
+      const fps = idle ? idleFps : maxFps;
+      // Frame cap: skip display frames that come too early (2 ms of slack for timer jitter).
+      if (fps !== undefined && this.lastTimeMs !== undefined && timeMs - this.lastTimeMs < 1000 / fps - 2)
+        return;
+      const intervalMs = this.lastTimeMs === undefined ? 0 : timeMs - this.lastTimeMs;
       this.lastTimeMs = timeMs;
-      this.frameCallback?.(dtS);
+      // Idle frames are slow on purpose: they say nothing about what the device can sustain.
+      if (!idle) {
+        const ratio = this.adaptive.record(intervalMs);
+        if (ratio !== undefined) {
+          this.applyPixelRatio(ratio);
+          this.resize();
+          this.options.onPixelRatio?.(ratio);
+        }
+      }
+      this.frameCallback?.(Math.min(0.1, intervalMs / 1000));
       this.renderer.render(this.scene, this.camera);
     });
+  }
+
+  private applyPixelRatio(ratio: number): void {
+    this.renderer.setPixelRatio(ratio);
+    PIXEL_RATIO_UNIFORM.value = ratio;
   }
 
   dispose(): void {
@@ -79,6 +124,8 @@ export class Renderer {
   private resize(): void {
     const { clientWidth: w, clientHeight: h } = this.container;
     if (w === 0 || h === 0) return;
+    this.widthPx = w;
+    this.heightPx = h;
     this.renderer.setSize(w, h, false);
     applyViewInset(this.camera, w, h);
   }

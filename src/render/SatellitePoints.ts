@@ -10,6 +10,7 @@
 import { BufferAttribute, BufferGeometry, Points, ShaderMaterial, Vector3, type IUniform } from 'three';
 import { GM_KM3_S2 } from '../astro/kepler';
 import { BLEND_END, BLEND_START, SERIES_LIMIT } from '../astro/lagrangeSeries';
+import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 import type { Interpolation } from '../earth/SampleTimeline';
 
 const glslFloat = (x: number): string => (Number.isInteger(x) ? x.toFixed(1) : String(x));
@@ -38,6 +39,7 @@ const vertexShader = /* glsl */ `
   uniform float uDtA;
   uniform float uDtB;
   uniform float uSize;
+  uniform float uPixelRatio;
   varying vec3 vColor;
 
   // Mirror of src/astro/lagrangeSeries.ts (tested there): offset (f − 1)·r + g·v from a TEME state after dt.
@@ -89,7 +91,7 @@ const vertexShader = /* glsl */ `
     #else
       // Visual honesty: stale elements are drawn smaller and dimmer.
       vColor = stale ? color * 0.4 : color;
-      gl_PointSize = stale ? uSize * 0.8 : uSize;
+      gl_PointSize = (stale ? uSize * 0.8 : uSize) * uPixelRatio;
     #endif
   }
 `;
@@ -116,6 +118,7 @@ interface SatUniforms {
   uDtA: IUniform<number>;
   uDtB: IUniform<number>;
   uSize: IUniform<number>;
+  uPixelRatio: IUniform<number>;
 }
 
 export function encodePickId(index: number, out: Uint8Array, offset: number): void {
@@ -141,11 +144,12 @@ export class SatellitePoints {
     uDtA: { value: 0 },
     uDtB: { value: 0 },
     uSize: { value: 3 },
+    uPixelRatio: PIXEL_RATIO_UNIFORM,
     uCamHigh: { value: new Vector3() },
     uCamLow: { value: new Vector3() },
   };
 
-  constructor(count: number, pixelRatio: number) {
+  constructor(count: number) {
     this.count = count;
     const vec3Attr = (): BufferAttribute => new BufferAttribute(new Float32Array(count * 3), 3);
     const posB = vec3Attr();
@@ -164,7 +168,8 @@ export class SatellitePoints {
     for (let i = 0; i < count; i++) encodePickId(i, pick, i * 3);
     this.geometry.setAttribute('pickColor', new BufferAttribute(pick, 3, true));
 
-    this.uniforms.uSize.value = 3 * pixelRatio;
+    // CSS pixels, scaled by the shared pixel ratio in the shader.
+    this.uniforms.uSize.value = 3;
     this.points = new Points(
       this.geometry,
       new ShaderMaterial({ uniforms: this.uniforms, vertexShader, fragmentShader }),

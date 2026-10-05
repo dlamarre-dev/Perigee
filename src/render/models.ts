@@ -23,6 +23,7 @@ import {
   type Scene,
   type WebGLRenderer,
 } from 'three';
+import { quality } from './quality';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
@@ -106,24 +107,35 @@ export async function loadModel(baseUrl: string, id: string): Promise<Object3D |
           for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
             mat.side = DoubleSide;
             // glTF BLEND parts (the ISS arrays and truss) are cut-outs in practice; drawn as transparent, three
-            // disables their depth writes and they overlap in storage order. Alpha test + alpha to coverage
-            // keeps the soft edges with correct depth.
+            // disables their depth writes and they overlap in storage order. Alpha test keeps correct depth;
+            // alpha to coverage (high tier, with MSAA) also keeps the soft edges.
             if (mat.transparent) {
               mat.transparent = false;
               mat.depthWrite = true;
               mat.alphaTest = 0.5;
-              mat.alphaToCoverage = true;
+              mat.alphaToCoverage = quality().alphaToCoverage;
             }
             // Two-sided lighting from the stored normal, not the winding: in some models the two triangles of
             // a quad are wound differently, and three's winding-based flip shaded them differently.
             mat.onBeforeCompile = (shader) => {
-              shader.fragmentShader = shader.fragmentShader.replace(
-                '#include <normal_fragment_begin>',
-                ShaderChunk.normal_fragment_begin.replace(
-                  'float faceDirection = gl_FrontFacing ? 1.0 : - 1.0;',
-                  'float faceDirection = dot( normalize( vNormal ), vViewPosition ) >= 0.0 ? 1.0 : - 1.0;',
-                ),
-              );
+              shader.fragmentShader = shader.fragmentShader
+                // three's alpha-to-coverage edge is smoothstep(a, a + fwidth(alpha), alpha): undefined in GLSL
+                // where the alpha is flat across a pixel quad (fwidth = 0), which some mobile drivers turn into
+                // holes. A minimum width keeps it a clean step there.
+                .replace(
+                  '#include <alphatest_fragment>',
+                  ShaderChunk.alphatest_fragment.replace(
+                    'alphaTest + fwidth( diffuseColor.a )',
+                    'alphaTest + max( fwidth( diffuseColor.a ), 1e-4 )',
+                  ),
+                )
+                .replace(
+                  '#include <normal_fragment_begin>',
+                  ShaderChunk.normal_fragment_begin.replace(
+                    'float faceDirection = gl_FrontFacing ? 1.0 : - 1.0;',
+                    'float faceDirection = dot( normalize( vNormal ), vViewPosition ) >= 0.0 ? 1.0 : - 1.0;',
+                  ),
+                );
             };
           }
         });
@@ -190,13 +202,17 @@ export function ensureEnvironment(renderer: WebGLRenderer, scene: Scene, intensi
 /** The model must stay this long above its full-quality threshold before the heavy variant is fetched. */
 const HIGH_DWELL_MS = 500;
 /**
- * Full-quality variants are tens of megabytes: only on large high-density screens (where the light model shows
- * its limits) and without the data-saver preference.
+ * Full-quality variants are tens of megabytes and hundreds of MB of GPU textures: high quality tier only (a
+ * desktop-class GPU; phones flickered with the 2-million-triangle ISS), on large high-density screens where the
+ * light model shows its limits.
  */
-const HIGH_ALLOWED =
-  typeof window !== 'undefined' &&
-  Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio >= 2500 &&
-  (navigator as { connection?: { saveData?: boolean } }).connection?.saveData !== true;
+function highAllowed(): boolean {
+  return (
+    quality().highModels &&
+    typeof window !== 'undefined' &&
+    Math.max(window.screen.width, window.screen.height) * window.devicePixelRatio >= 2500
+  );
+}
 
 /** Below this apparent size (CSS px) the marker stays; above it the model replaces it. */
 const MODEL_MIN_PX = 4;
@@ -275,7 +291,7 @@ export class SceneModel {
    */
   private updateHigh(entry: ModelEntry | undefined, sizePx: number): void {
     const high = entry?.high;
-    if (!entry || !high || !HIGH_ALLOWED) return;
+    if (!entry || !high || !highAllowed()) return;
     const now = performance.now();
     if (sizePx >= high.minPx) this.largeSinceMs ??= now;
     else this.largeSinceMs = undefined;

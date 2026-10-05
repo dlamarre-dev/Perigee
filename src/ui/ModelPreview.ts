@@ -24,6 +24,7 @@ import {
 import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { ensureEnvironment, loadModel } from '../render/models';
+import { quality } from '../render/quality';
 import { h } from './dom';
 
 const SPIN_RAD_PER_S = 0.35;
@@ -53,7 +54,7 @@ function getShared(): Shared | undefined {
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+    renderer.setPixelRatio(Math.min(quality().maxPixelRatio, window.devicePixelRatio));
     const scene = new Scene();
     const sun = new DirectionalLight(0xffffff, 3);
     sun.position.set(3, 2, 4);

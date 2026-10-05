@@ -11,6 +11,7 @@ import {
 } from 'three';
 import type { Vec3 } from '../astro/vec3';
 import { setLinePositions } from './lineBuffers';
+import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 
 /** Orbit trace of the selected object, in the inertial (TEME) group. */
 export class OrbitLine {
@@ -52,12 +53,13 @@ const markerVertex = /* glsl */ `
   #include <common>
   #include <logdepthbuf_pars_vertex>
   uniform float uSize;
+  uniform float uPixelRatio;
   uniform float uTime;
   void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     #include <logdepthbuf_vertex>
     // Gentle pulse so the selection stands out.
-    gl_PointSize = uSize * (1.0 + 0.22 * sin(uTime * 5.0));
+    gl_PointSize = uSize * uPixelRatio * (1.0 + 0.22 * sin(uTime * 5.0));
   }
 `;
 
@@ -93,14 +95,15 @@ export class SelectionMarker {
   private placed = false;
   private occluded = false;
 
-  constructor(pixelRatio: number, options: { surface?: boolean } = {}) {
+  constructor(options: { surface?: boolean } = {}) {
     this.geometry.setAttribute('position', new BufferAttribute(this.position, 3));
     const ring = (opacity: number, depthTest: boolean, renderOrder: number): Points => {
       const p = new Points(
         this.geometry,
         new ShaderMaterial({
           uniforms: {
-            uSize: { value: 20 * pixelRatio },
+            uSize: { value: 20 },
+            uPixelRatio: PIXEL_RATIO_UNIFORM,
             uTime: PULSE_TIME,
             uColor: { value: new Color(1, 0.82, 0.3) },
             uOpacity: { value: opacity },

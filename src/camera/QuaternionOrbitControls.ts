@@ -167,6 +167,18 @@ export class QuaternionOrbitControls {
     return this.follow !== undefined;
   }
 
+  /** The camera is being dragged, gliding, zooming, following or coasting on inertia. */
+  get moving(): boolean {
+    const w = this.angularVelocity;
+    return (
+      this.pointers.size > 0 ||
+      this.fly !== undefined ||
+      this.follow !== undefined ||
+      this.zoomTargetKm !== undefined ||
+      Math.hypot(w[0], w[1], w[2]) > MIN_INERTIA_RAD_PER_S
+    );
+  }
+
   /** Advances inertia, follow and fly-to animations. Call once per frame. */
   update(dtS: number): void {
     const followed = this.follow?.();

@@ -17,6 +17,7 @@ import {
 } from 'three';
 import type { Quat } from '../astro/quat';
 import type { Vec3 } from '../astro/vec3';
+import { quality } from './quality';
 import { PICK_LAYER } from './SatellitePoints';
 
 const vertexShader = /* glsl */ `
@@ -163,8 +164,12 @@ export class BodyMesh {
     this.detailRequests.push(handler);
   }
 
-  /** The camera is close: load the high-detail texture levels, if any (idempotent). */
+  /**
+   * The camera is close: load the high-detail texture levels, if any (idempotent). The 8k levels (7–29 MB each)
+   * are for the high quality tier only.
+   */
   requestDetail(): void {
+    if (!quality().textures8k) return;
     for (const handler of this.detailRequests.splice(0)) handler();
   }
 

@@ -136,7 +136,8 @@ No single API provides "active probes + landing sites". We maintain:
   WebP is the fallback; the Basis transcoder is copied from three.js by a Vite plugin. Encoding uses the official
   `basisu` CLI in its WASI build, run by Node (`tools/textures/basisu.ts`, pinned commit); the browser WASM
   wrappers cap images at ~12 Mpixel. 8k levels (Earth day/night, Moon, Mars) are KTX2-only and load on demand
-  when the camera is within one radius of the surface (`BodyMesh.requestDetail()` / `ProgressiveTexture`).
+  when the camera is within one radius of the surface (`BodyMesh.requestDetail()` / `ProgressiveTexture`), on the
+  high quality tier only (§7).
 - Irregular moons (Amalthea, Proteus, Hyperion, Phoebe): PDS shape models resampled to radius grids
   (`tools/shapes/fetch-shapes.ts` → `public/shapes/<id>.json`, `moons.json` `shape: "grid"`), displacing the body
   sphere (`src/render/shapeGeometry.ts`); UVs unchanged, so the equirectangular maps still apply.
@@ -148,9 +149,10 @@ No single API provides "active probes + landing sites". We maintain:
   (`src/ui/ModelPreview.ts`). Following such an object lets the camera come to twice its size. Phobos and Deimos
   (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. Entries with `high` (the
   ISS) also get a full-quality variant (`--high`: every part, no simplification beyond 1e-3 of the extent, KTX2
-  textures) loaded only on large screens while the model covers ≥ `minPx`, and released (GPU memory freed) when it
-  shrinks; the light model stays for the panel preview. glTF BLEND materials are drawn as cut-outs (alpha test +
-  alpha to coverage) so overlapping parts keep their depth order. ESA models (SCIFLEET) are
+  textures) loaded only on the high quality tier and large screens while the model covers ≥ `minPx` (a Pixel 10
+  flickered with its 2 M triangles and ~215 MB of textures), and released (GPU memory freed) when it
+  shrinks; the light model stays for the panel preview. glTF BLEND materials are drawn as cut-outs (alpha test,
+  plus alpha to coverage on the high tier, with a minimum edge width) so overlapping parts keep their depth order. ESA models (SCIFLEET) are
   under a non-commercial licence: not used (permission requested).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.
@@ -175,7 +177,8 @@ No single API provides "active probes + landing sites". We maintain:
   at ≥ 10 Hz (measured: ~17 ms for 16.6k objects on one thread). The vertex shader moves each object along its
   orbit from the two samples with the **two-body Lagrange f and g series** (to dt⁵, each sample covering its side,
   blended over the middle of the span; `src/astro/lagrangeSeries.ts`, tested against Kepler), also past the last
-  sample when a propagation is late. Samples are 10–25 min apart at ×10 000: a cubic Hermite was off by 60–280 km
+  sample when a propagation is late. A sample is requested only when "now" nears the last one, at least 2 min of
+  simulated time ahead (`MIN_SPAN_MS`): ~1 propagation every 2 min at ×1. Samples are 10–25 min apart at ×10 000: a cubic Hermite was off by 60–280 km
   in LEO there, and the former straight-line extrapolation made low orbits jump outward (`src/earth/SampleTimeline.ts`,
   `src/render/SatellitePoints.ts`).
 - Objects with SGP4 errors (`satrec.error != 0`, decay): hidden and counted in an "invalid" counter.
@@ -254,6 +257,17 @@ the "up" vector and causes gimbal lock at the poles).
   (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar. The same holds for
   their selection ring (`SelectionMarker` surface mode). In the solar view the Sun, planets and small bodies hide
   the markers and labels behind them (`occludedBySphereAt`); in the Moon view the Earth does too.
+- **Quality tiers** (`src/render/quality.ts`): high (desktop-class GPU), medium (touch devices, < 8 GB, no MSAA),
+  low (≤ 4 GB, ≤ 4 cores, max texture < 8192, software GPU, data saver), decided at startup from cheap signals
+  (WebGL caps and GPU name from a throwaway context, `deviceMemory`, cores, pointer, saveData). The tier sets the
+  pixel-ratio cap and floor, MSAA, 8k textures, HD models, model alpha-to-coverage, panel blur, frame cap (60 fps
+  below high; 30 fps when idle on low) and the preview rate. Adaptive resolution (`src/render/adaptiveResolution.ts`)
+  steps the pixel ratio down by 0.25 while the median frame is slow and back up when it keeps the display's pace
+  (5 s warm-up, ceiling after an up/down bounce); screen-sized points are given in CSS px and scaled by the shared
+  `PIXEL_RATIO_UNIFORM`. The visitor can force a tier in the top bar (gear on large screens, "Quality" in the
+  phone menu; remembered, reload in place); `?quality=` overrides for tests; `?debug=perf` shows the tier,
+  reasons, GPU and frame rate; problem reports carry the tier. `tools/perf/bench.ts` measures main-thread cost
+  per view (`--throttle 4` to approach a phone).
 - Phone layout (`styles.css`, ≤ 640 px wide; landscape ≤ 500 px tall): top bar with a "☰" menu and view tabs,
   compact time bar docked at the bottom (speed `<select>`, date popover), panels as collapsible bottom sheets
   above it, one at a time. The shell publishes `--timebar-h` and moves the camera's projection centre above an

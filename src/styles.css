@@ -111,6 +111,14 @@ body,
   );
 }
 
+/* Low quality tier: re-blurring the live canvas behind every panel each frame is costly on weak GPUs; the
+   panels are 90 % opaque anyway, so they become fully opaque instead. */
+:root[data-quality='low'] .panel {
+  --panel-top: rgb(12 22 34);
+  --panel-bottom: rgb(5 11 19);
+  backdrop-filter: none;
+}
+
 /* Corner brackets on the two square corners. */
 .panel::before,
 .panel::after {
@@ -860,6 +868,70 @@ input[type='checkbox'] {
 
 .toolbar-menu {
   display: contents;
+}
+
+.perf-overlay {
+  position: absolute;
+  z-index: 5;
+  left: 8px;
+  bottom: 8px;
+  max-width: calc(100vw - 16px);
+  margin: 0;
+  padding: 4px 8px;
+  background: rgb(0 0 0 / 75%);
+  color: #9fe7ff;
+  font: 11px/1.4 monospace;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
+
+/* Mid-size screens: the frame label goes (kept for screen readers) so the top bar stays on one row; the two
+   frame buttons name themselves. */
+@media (min-width: 641px) and (max-width: 1360px) and (min-height: 501px) {
+  .toolbar .toolbar-group > .group-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* The quality label shows in the phone menu only; elsewhere the select names itself (label kept for screen
+   readers). */
+@media (min-width: 641px) and (min-height: 501px) {
+  .quality-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* A gear in the top bar (room is short); the open list shows the choices in full. */
+  .quality-select {
+    width: 34px;
+    appearance: none;
+    color: transparent;
+    background: rgb(0 0 0 / 40%)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.8'%3E%3Ccircle cx='12' cy='12' r='3.2'/%3E%3Cpath d='M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1'/%3E%3C/svg%3E")
+      center / 18px no-repeat;
+    cursor: pointer;
+  }
+
+  .quality-select option {
+    background: #08121d;
+    color: var(--text);
+  }
+}
+
+.quality-select {
+  min-height: 28px;
+  padding: 2px 2px 2px 4px;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 @media (prefers-reduced-motion: reduce) {

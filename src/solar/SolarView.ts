@@ -147,6 +147,8 @@ interface LazyLoad {
 }
 
 /** A moon is drawn once its orbit spans at least this many pixels (it separates from its planet's marker). */
+/** A free-flying probe's near line is rebuilt after it covers this fraction of the ephemeris interval. */
+const NEAR_REBUILD_FRACTION = 1 / 2000;
 const MOON_MIN_ORBIT_PX = 14;
 const MOON_PRIORITY = 55;
 
@@ -240,6 +242,12 @@ interface ProbeObject extends LazyLoad {
   captured: Uint8Array | undefined;
   /** Heliocentric EQJ positions of the capturing planet at the trajectory substeps (cached per table). */
   capturedPlanetKm: Map<number, Vec3> | undefined;
+  /**
+   * Near line built at this TDB date around this (mapped EQJ) position; undefined while it follows a planet
+   * (rebuilt every frame).
+   */
+  nearBuiltJd: number;
+  nearAnchor: Vec3 | undefined;
   /** Host planet's states at the ends of the current ephemeris interval (near line of a captured probe). */
   nearPlanet:
     | {
@@ -308,13 +316,12 @@ class SolarView implements View {
     this.logScale = host.initialParams.get('log') === '1';
     this.missions = MissionsCatalogSchema.parse(missionsJson).missions.filter((m) => m.centralBody === 'sun');
     const renderer = host.renderer;
-    const pixelRatio = renderer.renderer.getPixelRatio();
 
     this.glow = createSunGlow(0.05);
     renderer.scene.add(this.sun.mesh, this.glow, this.lineGroup);
 
-    this.planetMarkers = new MarkerPoints(PLANETS.length, 10 * pixelRatio, { depthTest: false });
-    this.probeMarkers = new MarkerPoints(Math.max(1, this.missions.length), 9 * pixelRatio, {
+    this.planetMarkers = new MarkerPoints(PLANETS.length, 10, { depthTest: false });
+    this.probeMarkers = new MarkerPoints(Math.max(1, this.missions.length), 9, {
       depthTest: false,
     });
     renderer.scene.add(this.planetMarkers.points, this.probeMarkers.points);
@@ -366,7 +373,7 @@ class SolarView implements View {
     const moonCatalog = MoonsCatalogSchema.parse(moonsJson).moons.filter((m) =>
       this.planets.some((p) => p.info.id === m.planet),
     );
-    this.moonMarkers = new MarkerPoints(Math.max(1, moonCatalog.length), 7 * pixelRatio, {
+    this.moonMarkers = new MarkerPoints(Math.max(1, moonCatalog.length), 7, {
       depthTest: false,
     });
     renderer.scene.add(this.moonMarkers.points);
@@ -480,6 +487,8 @@ class SolarView implements View {
         captured: undefined,
         capturedPlanetKm: undefined,
         nearPlanet: undefined,
+        nearBuiltJd: Number.NaN,
+        nearAnchor: undefined,
         capturedLine,
         capturedPlanet: undefined,
         capturedExtentKm: 0,
@@ -522,7 +531,7 @@ class SolarView implements View {
       this.hiddenMissions,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
-    this.ring = new SelectionMarker(pixelRatio);
+    this.ring = new SelectionMarker();
     renderer.scene.add(this.ring.points);
     this.detail = new DetailPanel(host.i18n, {
       onClose: () => this.select(undefined),
@@ -666,7 +675,8 @@ class SolarView implements View {
         t.line.quaternion.set(q.x, q.y, q.z, q.w);
       }
       if (t.scene) {
-        const r = rel(t.scene);
+        // Placed where it was built (free flight), or at the probe (following a planet).
+        const r = rel(t.nearAnchor ? quatRotate(q, t.nearAnchor) : t.scene);
         t.near.position.set(r[0], r[1], r[2]);
         t.near.quaternion.set(q.x, q.y, q.z, q.w);
       }
@@ -932,6 +942,7 @@ class SolarView implements View {
 
   /** Whole ephemeris window; solid while interpolated, dashed when extrapolated, grey when too old. */
   private refreshTrajectory(t: ProbeObject, map: (p: Vec3) => Vec3): void {
+    t.nearBuiltJd = Number.NaN;
     const table = t.track.table;
     const kind = t.sample.kind;
     // Small bodies show their osculating orbit instead (their ephemeris window covers only a small arc).
@@ -1063,7 +1074,14 @@ class SolarView implements View {
       code && t.captured?.[i + 1] === code && !this.logScale ? this.planets[code - 1] : undefined;
     t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined;
     if (!t.near.visible || !table || !now) return;
+    // A free-flying probe moves along its own curve: the line (relative to where it was built) is rebuilt after
+    // NEAR_REBUILD_FRACTION of the interval (43 s for a one-day step; every frame at high rates), the probe then
+    // being at most metres from it. Following a planet, it is rebuilt every frame.
+    const span = table.time(i + 1) - table.time(i);
+    if (!planet && Math.abs(this.tdbJd - t.nearBuiltJd) < span * NEAR_REBUILD_FRACTION) return;
     const centre = map(now.posKm);
+    t.nearBuiltJd = this.tdbJd;
+    t.nearAnchor = planet ? undefined : centre;
     // Captured: follow the planet's motion, so the near line continues the planet-relative captured line. The
     // planet is interpolated over the interval from its states at both ends (Hermite, ~0.03 km over a day)
     // instead of evaluating the planetary theory at every sample, every frame.

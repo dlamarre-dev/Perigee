@@ -6,6 +6,7 @@ const ctx = {
   build: 'abc (2026-10-03)',
   lang: 'fr',
   viewport: '1400×850 @1x',
+  quality: 'quality high (auto: desktop-class GPU), render ×1, GPU test',
 };
 
 describe('report payload', () => {

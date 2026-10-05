@@ -115,7 +115,7 @@ class EarthView implements View {
     const sites = LaunchSitesSchema.parse(launchSitesJson);
     this.launchSites = sites.sites;
     this.launchVerified = sites.verified;
-    this.launch = new LaunchSiteLayer(this.launchSites, host.renderer.renderer.getPixelRatio());
+    this.launch = new LaunchSiteLayer(this.launchSites);
     this.earth.mesh.add(this.launch.group);
     this.launch.setLanguage(host.i18n.lang);
     host.i18n.onChange((lang) => {

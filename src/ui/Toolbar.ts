@@ -1,5 +1,6 @@
 import { VIEW_IDS, type FrameMode, type ViewId } from '../app/urlState';
 import { LANGS, type I18n, type Lang, type MessageKey } from '../i18n';
+import { QUALITY_CHOICES, type QualityChoice, type QualityTier } from '../render/quality';
 import { h } from './dom';
 
 export interface ToolbarCallbacks {
@@ -9,6 +10,8 @@ export interface ToolbarCallbacks {
   readonly onLangChange: (lang: Lang) => void;
   readonly onAbout: () => void;
   readonly onReport: () => void;
+  /** Quality setting chosen in the menu (the page reloads to apply it). */
+  readonly onQualityChange: (choice: QualityChoice) => void;
   readonly onTogglePanel: () => void;
   /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
   readonly onSoundtrack: () => void;
@@ -57,6 +60,8 @@ export class Toolbar {
   };
   private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons: HTMLButtonElement[];
+  private readonly qualityLabel = h('label', { class: 'group-label quality-label', for: 'quality-select' });
+  private readonly qualitySelect = h('select', { class: 'input quality-select', id: 'quality-select' });
   private readonly about = h('button', { type: 'button', class: 'btn' });
   private readonly report = h('button', { type: 'button', class: 'btn' });
   private readonly soundtrack = h('button', { type: 'button', class: 'btn mobile-only' });
@@ -76,6 +81,9 @@ export class Toolbar {
     initialView: ViewId,
     initialFrame: FrameMode,
     callbacks: ToolbarCallbacks,
+    qualityChoice: QualityChoice = 'auto',
+    /** Tier detected for this device, shown next to "Auto". */
+    private readonly detectedTier: QualityTier = 'high',
   ) {
     this.frame = initialFrame;
     this.view = initialView;
@@ -112,12 +120,19 @@ export class Toolbar {
     });
     this.langGroup.append(...this.langButtons);
 
+    this.qualitySelect.append(...QUALITY_CHOICES.map((c) => h('option', { value: c })));
+    this.qualitySelect.value = qualityChoice;
+    this.qualitySelect.addEventListener('change', () =>
+      callbacks.onQualityChange(this.qualitySelect.value as QualityChoice),
+    );
+
     this.soundtrack.addEventListener('click', callbacks.onSoundtrack);
     this.menu.append(
       this.panel,
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
+      h('div', { class: 'toolbar-group' }, [this.qualityLabel, this.qualitySelect]),
       this.soundtrack,
       this.about,
       this.report,
@@ -176,6 +191,13 @@ export class Toolbar {
   private renderLabels(): void {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t('app.brand');
+    this.qualityLabel.textContent = t('toolbar.quality');
+    const detected = t(`quality.${this.detectedTier}`);
+    this.qualitySelect.title = this.i18n.format('toolbar.quality.hint', { tier: detected });
+    for (const option of this.qualitySelect.options) {
+      const c = option.value as QualityChoice;
+      option.textContent = t(`quality.${c}`);
+    }
     this.viewGroup.setAttribute('aria-label', t('toolbar.view'));
     for (const id of VIEW_IDS) {
       // Short label on phones (CSS picks one), full one elsewhere and for assistive technologies.

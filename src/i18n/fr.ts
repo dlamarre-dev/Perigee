@@ -24,6 +24,13 @@ export const fr: Messages = {
   'toolbar.frame.fixed.mars': 'Martien fixe',
   'toolbar.language': 'Langue',
   'toolbar.about': 'À propos',
+  'toolbar.quality': 'Qualité',
+  'toolbar.quality.hint':
+    'Qualité du rendu. Auto s’adapte à cet appareil (détectée : {tier}) ; la page se recharge pour appliquer un changement.',
+  'quality.auto': 'Auto',
+  'quality.high': 'Élevée',
+  'quality.medium': 'Moyenne',
+  'quality.low': 'Économie',
   'toolbar.report': 'Signaler',
   'report.title': 'Signaler un problème',
   'report.intro':
