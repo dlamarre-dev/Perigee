@@ -5,8 +5,9 @@ const PORT = 4173;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
-  // Each page runs software WebGL plus SGP4 workers; more parallel pages starve the CPU.
-  workers: 2,
+  // Each page runs software WebGL (multi-threaded SwiftShader) plus SGP4 workers: on the 4-vCPU CI runner two
+  // parallel pages starve each other (timeouts in random tests), so CI runs one at a time.
+  workers: process.env['CI'] ? 1 : 2,
   forbidOnly: !!process.env['CI'],
   retries: 0,
   reporter: process.env['CI'] ? 'github' : 'list',

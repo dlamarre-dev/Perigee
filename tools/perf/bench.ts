@@ -9,6 +9,7 @@
  * the first satellites. Compare runs before and after a change on the same machine.
  */
 import { spawn } from 'node:child_process';
+import { join } from 'node:path';
 import { chromium, type CDPSession } from 'playwright';
 
 const args = process.argv.slice(2);
@@ -80,8 +81,9 @@ async function metrics(cdp: CDPSession): Promise<Record<string, number>> {
 }
 
 async function run(): Promise<void> {
-  const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
-    shell: true,
+  // Vite run directly (no shell), so kill() really stops it; dist/ of the current directory is served.
+  const vite = join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
+  const server = spawn(process.execPath, [vite, 'preview', '--port', String(PORT), '--strictPort'], {
     stdio: 'ignore',
   });
   await new Promise((r) => setTimeout(r, 4000));
