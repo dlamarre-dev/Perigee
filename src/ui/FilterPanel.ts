@@ -163,6 +163,21 @@ export class FilterPanel {
     const next = on ? [...current, value] : current.filter((v) => v !== value);
     this.update({ ...this.filters, [facet]: next });
     this.renderSummary(facet);
+    this.refreshSelectAll(facet);
+  }
+
+  /** Keeps a facet's "Select all" box in step with its entries (checked, half-checked or clear). */
+  private refreshSelectAll(facet: FacetKey): void {
+    const box = this.facetsBox.querySelector<HTMLInputElement>(`#f-${facet}-all`);
+    if (!box) return;
+    const entries = [
+      ...this.facetsBox.querySelectorAll<HTMLInputElement>(
+        `details[data-facet="${facet}"] li:not(.select-all) input`,
+      ),
+    ];
+    const checked = entries.filter((e) => e.checked).length;
+    box.checked = checked === entries.length && checked > 0;
+    box.indeterminate = checked > 0 && checked < entries.length;
   }
 
   private renderSummary(facet: FacetKey): void {
@@ -217,16 +232,18 @@ export class FilterPanel {
       const isOpen = open.has(facet) || selected.size > 0 || (science && !this.facetsRendered);
       return h('details', { 'data-facet': facet, open: isOpen }, [
         summary,
-        ...(science
-          ? [
-              this.bulkButtons(
-                facet,
-                counts.map(([value]) => value),
-                selected,
-              ),
-            ]
-          : []),
-        h('ul', { class: 'facet-list' }, items),
+        h('ul', { class: 'facet-list' }, [
+          ...(science
+            ? [
+                this.selectAllItem(
+                  facet,
+                  counts.map(([value]) => value),
+                  selected,
+                ),
+              ]
+            : []),
+          ...items,
+        ]),
       ]);
     });
     this.facetsBox.replaceChildren(...sections);
@@ -234,24 +251,27 @@ export class FilterPanel {
     for (const facet of FACET_KEYS) this.renderSummary(facet);
   }
 
-  /** "Show all" / "Hide all" above a facet's list: select every value at once, or none. */
-  private bulkButtons(
+  /**
+   * "Select all" at the head of a facet's list: checked when every value is selected, half-checked when some are;
+   * ticking it selects them all, unticking it none.
+   */
+  private selectAllItem(
     facet: FacetKey,
     values: readonly string[],
     selected: ReadonlySet<string>,
   ): HTMLElement {
-    const t = this.i18n.t.bind(this.i18n);
-    const set = (next: readonly string[]): void => {
-      this.update({ ...this.filters, [facet]: next });
+    const id = `f-${facet}-all`;
+    const all = values.every((v) => selected.has(v));
+    const box = h('input', { type: 'checkbox', id, checked: all });
+    box.indeterminate = !all && selected.size > 0;
+    box.addEventListener('change', () => {
+      this.update({ ...this.filters, [facet]: box.checked ? [...values] : [] });
       this.renderFacets();
-    };
-    const all = h('button', { type: 'button', class: 'btn small' }, [t('missions.showAll')]);
-    const none = h('button', { type: 'button', class: 'btn small' }, [t('missions.showNone')]);
-    all.disabled = values.every((v) => selected.has(v));
-    none.disabled = selected.size === 0;
-    all.addEventListener('click', () => set(values));
-    none.addEventListener('click', () => set([]));
-    return h('p', { class: 'mission-toggles' }, [all, none]);
+    });
+    return h('li', { class: 'select-all' }, [
+      box,
+      h('label', { for: id }, [this.i18n.t('filters.selectAll')]),
+    ]);
   }
 
   private valueLabel(facet: FacetKey, value: string): string {

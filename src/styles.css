@@ -914,6 +914,14 @@ input[type='checkbox'] {
   }
 
   /* A gauge icon in the top bar (room is short); the open list shows the choices in full. */
+  /* "Select all" heads the list, set apart from the entries below it. */
+  .facet-list .select-all {
+    margin-bottom: 2px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-muted);
+  }
+
   .quality-select {
     width: 34px;
     appearance: none;

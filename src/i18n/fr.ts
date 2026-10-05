@@ -92,6 +92,7 @@ export const fr: Messages = {
   'panel.collapse': 'Replier ou déplier le panneau',
   'solar.moonCount': '{n} lunes',
   'missions.showAll': 'Tout afficher',
+  'filters.selectAll': 'Tout sélectionner',
   'missions.showNone': 'Tout masquer',
   'missions.toggle': 'Afficher {name} en 3D',
   'solar.moonCountOne': '1 lune',

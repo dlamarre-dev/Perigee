@@ -85,6 +85,7 @@ export const en = {
   'panel.collapse': 'Collapse or expand the panel',
   'solar.moonCount': '{n} moons',
   'missions.showAll': 'Show all',
+  'filters.selectAll': 'Select all',
   'missions.showNone': 'Hide all',
   'missions.toggle': 'Show {name} in 3D',
   'solar.moonCountOne': '1 moon',

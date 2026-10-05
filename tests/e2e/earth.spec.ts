@@ -101,21 +101,22 @@ test('space and Earth science satellites come first, with their known names, sta
   await expect(info.locator('.sources a').first()).toBeVisible();
 });
 
-test('the science section shows or hides all its satellites in one click', async ({ page }) => {
+test('the science section selects or deselects all its satellites in one click', async ({ page }) => {
   await page.goto(`./?lang=en&${FROZEN}`);
   await waitForSatellites(page);
   const section = page.locator('#side-panel details[data-facet="science"]');
-  const boxes = section.locator('input[type="checkbox"]');
-  const showAll = section.getByRole('button', { name: 'Show all' });
-  const hideAll = section.getByRole('button', { name: 'Hide all' });
-  await expect(hideAll).toBeDisabled();
-  await showAll.click();
+  const all = section.getByLabel('Select all');
+  const iss = section.getByLabel('International Space Station (ISS)');
+  await expect(all).not.toBeChecked();
+  await iss.check();
+  // Some selected: half-checked.
+  await expect(section.getByLabel('Select all')).toHaveJSProperty('indeterminate', true);
+  await section.getByLabel('Select all').check();
   // Fixture: two science satellites (ISS, HST); ELECTRON R/B is filtered out.
   await expect(page.locator('.stats')).toContainText('2 shown of 3');
-  for (const box of await boxes.all()) await expect(box).toBeChecked();
-  await expect(section.getByRole('button', { name: 'Show all' })).toBeDisabled();
-  await section.getByRole('button', { name: 'Hide all' }).click();
+  await expect(section.getByLabel('Hubble Space Telescope (HST)')).toBeChecked();
+  await section.getByLabel('Select all').uncheck();
   await expect(page.locator('.stats')).toContainText('3 shown of 3');
-  for (const box of await boxes.all()) await expect(box).not.toBeChecked();
+  await expect(section.getByLabel('International Space Station (ISS)')).not.toBeChecked();
   await expect(page).toHaveTitle('Perigee - objects in orbit, in real time');
 });
