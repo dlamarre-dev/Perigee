@@ -235,8 +235,12 @@ function main(): void {
       },
       (p) => {
         view?.writeUrl(p);
-        // Test hooks survive the URL rewrites (and update reloads).
+        // Test hooks, a forced quality tier and the perf overlay survive the URL rewrites (and update reloads).
         if (startParams.has('e2e')) p.set('e2e', '');
+        for (const key of ['quality', 'debug']) {
+          const value = startParams.get(key);
+          if (value) p.set(key, value);
+        }
       },
     );
     history.replaceState(null, '', `${window.location.pathname}${search}${window.location.hash}`);

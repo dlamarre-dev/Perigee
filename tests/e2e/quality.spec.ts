@@ -26,6 +26,15 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'low');
 });
 
+test('a forced tier and the perf overlay stay in the URL after user actions', async ({ page }) => {
+  await page.goto('./?lang=en&quality=medium&debug=perf');
+  await expect(page.locator('.perf-overlay')).toContainText('quality medium');
+  await page.getByRole('button', { name: '×100', exact: true }).click();
+  await expect(page).toHaveURL(/rate=100/);
+  await expect(page).toHaveURL(/quality=medium/);
+  await expect(page).toHaveURL(/debug=perf/);
+});
+
 for (const view of ['earth', 'moon', 'mars', 'solar']) {
   test(`?quality=low renders the ${view} view`, async ({ page }) => {
     const errors: string[] = [];

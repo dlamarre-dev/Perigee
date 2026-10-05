@@ -50,30 +50,48 @@ let decoder: Worker | undefined | null;
 let nextId = 0;
 const pending = new Map<number, { resolve: (data: unknown) => void; reject: (err: Error) => void }>();
 
-/** The shared decode worker, or undefined where module workers are unavailable. */
+/** The decode worker itself failed (not the data): the caller decodes on the main thread instead. */
+class DecodeWorkerError extends Error {}
+
+/**
+ * The shared decode worker, or undefined where module workers are unavailable or the worker has failed (its
+ * chunk missing after a deployment, module workers unsupported): it is then never used again.
+ */
 function decodeWorker(): Worker | undefined {
   if (decoder !== undefined) return decoder ?? undefined;
   try {
-    decoder = new Worker(new URL('./decode.worker.ts', import.meta.url), { type: 'module', name: 'decode' });
-    decoder.onmessage = (e: MessageEvent<{ id: number; data?: unknown; error?: string }>) => {
+    const worker = new Worker(new URL('./decode.worker.ts', import.meta.url), {
+      type: 'module',
+      name: 'decode',
+    });
+    worker.onmessage = (e: MessageEvent<{ id: number; data?: unknown; error?: string }>) => {
       const p = pending.get(e.data.id);
       pending.delete(e.data.id);
       if (e.data.error !== undefined) p?.reject(new DataUnavailableError(e.data.error));
       else p?.resolve(e.data.data);
     };
-    decoder.onerror = () => {
-      for (const p of pending.values()) p.reject(new DataUnavailableError('decode worker failed'));
+    // A load failure usually fires before any request is pending: forget the worker so later calls (and the
+    // one waiting for its download) decode on the main thread rather than wait for an answer that never comes.
+    worker.onerror = () => {
+      if (decoder === worker) decoder = null;
+      for (const p of pending.values()) p.reject(new DecodeWorkerError('decode worker failed'));
       pending.clear();
     };
+    decoder = worker;
   } catch {
     decoder = null;
   }
   return decoder ?? undefined;
 }
 
+async function decodeOnMainThread<S extends z.ZodType>(bytes: ArrayBuffer, schema: S): Promise<z.infer<S>> {
+  return schema.parse(await gunzipJson(new Uint8Array(bytes)));
+}
+
 /**
  * Like loadDataset for the large Earth datasets: gunzip, JSON and validation run in a worker (same schema), the
- * main thread only receives the result. Falls back to the main thread without module workers.
+ * main thread only receives the result. Falls back to the main thread without a working worker; invalid data
+ * still fail (DataUnavailableError).
  */
 export async function loadBulkDataset<N extends BulkSchemaName>(
   baseUrl: string,
@@ -81,10 +99,12 @@ export async function loadBulkDataset<N extends BulkSchemaName>(
   key: DatasetKey,
   schemaName: N,
 ): Promise<{ entry: DatasetEntry; data: z.infer<(typeof BULK_SCHEMAS)[N]> }> {
+  type Data = z.infer<(typeof BULK_SCHEMAS)[N]>;
+  const schema = BULK_SCHEMAS[schemaName];
   const worker = decodeWorker();
   if (!worker) {
-    const r = await loadDataset(baseUrl, manifest, key, BULK_SCHEMAS[schemaName]);
-    return { entry: r.entry, data: r.data as z.infer<(typeof BULK_SCHEMAS)[N]> };
+    const r = await loadDataset(baseUrl, manifest, key, schema);
+    return { entry: r.entry, data: r.data as Data };
   }
   const entry = manifest.datasets[key];
   if (!entry) throw new DataUnavailableError(`Dataset ${key} is not published`);
@@ -92,12 +112,21 @@ export async function loadBulkDataset<N extends BulkSchemaName>(
   const res = await fetch(url);
   if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
   const bytes = await res.arrayBuffer();
+  // The worker failed while downloading: the bytes are still here.
+  if (decoder !== worker) return { entry, data: (await decodeOnMainThread(bytes, schema)) as Data };
   const id = nextId++;
-  const data = await new Promise<unknown>((resolve, reject) => {
-    pending.set(id, { resolve, reject });
-    worker.postMessage({ id, bytes, schema: schemaName }, [bytes]);
-  });
-  return { entry, data: data as z.infer<(typeof BULK_SCHEMAS)[N]> };
+  try {
+    const data = await new Promise<unknown>((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      worker.postMessage({ id, bytes, schema: schemaName }, [bytes]);
+    });
+    return { entry, data: data as Data };
+  } catch (err) {
+    if (!(err instanceof DecodeWorkerError)) throw err;
+    // The bytes went to the dead worker: fetch again (from the HTTP cache) and decode here.
+    const r = await loadDataset(baseUrl, manifest, key, schema);
+    return { entry: r.entry, data: r.data as Data };
+  }
 }
 
 /** Loads a mission's state-vector table (rows of 7 little-endian Float64). */

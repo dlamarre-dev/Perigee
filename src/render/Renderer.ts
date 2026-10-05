@@ -1,5 +1,6 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { AdaptiveResolution } from './adaptiveResolution';
+import { DisplayInterval, shouldDrawFrame } from './frameCap';
 import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 import { applyViewInset, bottomInsetPx, setBottomInset } from './viewInset';
 
@@ -35,6 +36,7 @@ export class Renderer {
   private frameCallback: ((dtS: number) => void) | undefined;
   private lastTimeMs: number | undefined;
   private readonly adaptive: AdaptiveResolution;
+  private readonly display = new DisplayInterval();
   /** Container size, kept by the resize observer (reading it every frame could force a layout). */
   private widthPx = 0;
   private heightPx = 0;
@@ -91,8 +93,8 @@ export class Renderer {
     this.renderer.setAnimationLoop((timeMs: number) => {
       const idle = idleFps !== undefined && (isIdle?.() ?? false);
       const fps = idle ? idleFps : maxFps;
-      // Frame cap: skip display frames that come too early (2 ms of slack for timer jitter).
-      if (fps !== undefined && this.lastTimeMs !== undefined && timeMs - this.lastTimeMs < 1000 / fps - 2)
+      this.display.record(timeMs);
+      if (this.lastTimeMs !== undefined && !shouldDrawFrame(timeMs - this.lastTimeMs, fps, this.display.ms))
         return;
       const intervalMs = this.lastTimeMs === undefined ? 0 : timeMs - this.lastTimeMs;
       this.lastTimeMs = timeMs;
