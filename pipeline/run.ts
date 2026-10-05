@@ -31,6 +31,7 @@ import {
 import {
   candidateItems,
   checkCelestrakGroups,
+  checkSupGpFreshness,
   checkSupGpSets,
   parseSupGpFiles,
   checkEphemerisCoverage,
@@ -124,9 +125,10 @@ async function readSupGpSets(dataDir: string): Promise<SupGpSets> {
 
 /**
  * GP "active" elements, improved by the CelesTrak supplemental GP sets listed in catalog/operators.json
- * (`supplemental`): one request per resource, sequentially. A set reported as not updated keeps its previous
- * records; any other failure stops further requests (CelesTrak policy), still publishes the GP data with what
- * was gathered, then fails the run so an issue is opened.
+ * (`supplemental`): one request per resource, sequentially. SupGP is an enhancement, so its failures do not fail
+ * the run: a set reported as not updated keeps its previous records; any other failure (CelesTrak answered 503
+ * to the pipeline on 2026-10-05) stops the remaining SupGP requests of this run (CelesTrak policy) and keeps the
+ * last records of every set, with a warning. A set left without update for days is flagged by the weekly audit.
  */
 async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
   const operators = await loadOperators();
@@ -151,7 +153,12 @@ async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
         sets[file] = { fetchedAt: new Date().toISOString(), records: result.records };
         continue;
       } catch (err) {
-        if (!(err instanceof NotUpdatedError)) failure = err;
+        if (!(err instanceof NotUpdatedError)) {
+          failure = err;
+          console.warn(
+            `::warning::SupGP ${file}: ${err instanceof Error ? err.message : String(err)}; remaining sets skipped this run`,
+          );
+        }
       }
     }
     if (prev) sets[file] = prev;
@@ -187,7 +194,6 @@ async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
       .map(([file, n]) => `${file} ${n}/${sets[file]?.records.length ?? 0}`)
       .join(', ')}`,
   );
-  if (failure !== undefined) throw failure;
 }
 
 async function readPublishedGroups(dataDir: string): Promise<Groups> {
@@ -388,6 +394,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ...checkOwnerCodes(satcat, operators),
     ...checkCelestrakGroups(indexGroups, operators),
     ...checkSupGpSets(supGpFiles, operators),
+    ...checkSupGpFreshness(manifest, operators, now),
     ...candidateItems(candidates, matches),
     ...checkEphemerisCoverage(manifest, missions, now),
     ...checkStaleVerification(

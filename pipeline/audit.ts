@@ -21,6 +21,7 @@ export type AuditKind =
   | 'owner-code'
   | 'celestrak-group'
   | 'celestrak-supgp'
+  | 'supgp-stale'
   | 'deep-space-candidate'
   | 'ephemeris-ending'
   | 'ephemeris-ended-active'
@@ -138,6 +139,30 @@ export function checkSupGpSets(indexFiles: readonly string[], operators: Operato
       summary: `New CelesTrak supplemental GP set "${f}": add it to operators.json supplemental or ignoredSupplemental`,
       details: { url: `https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=${f}&FORMAT=JSON` },
     }));
+}
+
+/** A SupGP set the pipeline has not refreshed for this long is flagged (its failures do not fail the run). */
+export const SUPGP_STALE_DAYS = 2;
+
+/** SupGP sets listed in the catalog but not downloaded successfully for SUPGP_STALE_DAYS (or never). */
+export function checkSupGpFreshness(manifest: Manifest, operators: OperatorsCatalog, now: Date): AuditItem[] {
+  return Object.keys(operators.supplemental).flatMap((file) => {
+    const info = manifest.supplemental?.[file];
+    const ageDays = info ? (now.getTime() - Date.parse(info.fetchedAt)) / DAY_MS : Infinity;
+    if (ageDays <= SUPGP_STALE_DAYS) return [];
+    return [
+      {
+        kind: 'supgp-stale' as const,
+        key: file,
+        summary: info
+          ? `SupGP set "${file}" last downloaded ${info.fetchedAt.slice(0, 10)} (${Math.floor(ageDays)} d ago)`
+          : `SupGP set "${file}" never downloaded`,
+        details: {
+          url: `https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=${file}&FORMAT=JSON`,
+        },
+      },
+    ];
+  });
 }
 
 /** Raw SATCAT row as returned by records.php (more fields than SatcatRecord). */
@@ -357,6 +382,7 @@ const TITLES: Record<AuditKind, string> = {
   'owner-code': 'SATCAT owner codes without a label',
   'celestrak-group': 'New CelesTrak groups',
   'celestrak-supgp': 'New CelesTrak supplemental GP sets',
+  'supgp-stale': 'Supplemental GP sets not refreshed',
   'deep-space-candidate': 'Deep-space payloads not in catalog/missions.json',
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',
   'ephemeris-ending': 'Public ephemerides ending within 30 days',

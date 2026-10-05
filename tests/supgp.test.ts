@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { checkSupGpSets, parseSupGpFiles } from '../pipeline/audit';
+import { checkSupGpFreshness, checkSupGpSets, parseSupGpFiles } from '../pipeline/audit';
 import { checkChanges } from '../pipeline/catalog-guard';
 import { mergeSupplemental } from '../pipeline/supgp';
-import { OperatorsCatalogSchema, type Omm, type SupGpRecord } from '../src/data/schemas';
+import { OperatorsCatalogSchema, type Manifest, type Omm, type SupGpRecord } from '../src/data/schemas';
 
 const NOW = Date.parse('2026-10-05T12:00:00Z');
 
@@ -94,6 +94,20 @@ describe('supplemental GP catalog and audit', () => {
     const files = parseSupGpFiles(html);
     expect(files).toEqual(['cpf', 'starlink', 'transporter-19']);
     expect(checkSupGpSets(files, operators).map((i) => i.key)).toEqual(['transporter-19']);
+  });
+
+  it('flags sets not refreshed for two days, or never downloaded (their failures only warn)', () => {
+    const now = new Date('2026-10-10T12:00:00Z');
+    const entry = (fetchedAt: string) => ({ fetchedAt, count: 10, used: 5 });
+    const supplemental: Record<string, ReturnType<typeof entry>> = {};
+    for (const file of Object.keys(operators.supplemental))
+      supplemental[file] = entry('2026-10-10T08:00:00Z');
+    supplemental['ses'] = entry('2026-10-07T08:00:00Z');
+    delete supplemental['gps'];
+    const manifest = { version: 1, generatedAt: '', datasets: {}, ephemerides: {}, supplemental } as Manifest;
+    const items = checkSupGpFreshness(manifest, operators, now);
+    expect(items.map((i) => i.key).sort()).toEqual(['gps', 'ses']);
+    expect(items.find((i) => i.key === 'gps')?.summary).toContain('never downloaded');
   });
 
   it('guards the supplemental sets like other sourced entries', () => {

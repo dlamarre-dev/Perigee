@@ -37,6 +37,10 @@ to do anything unless you explicitly ask for help.
      operator's data page) when it covers operational satellites of the GP "active" group, or to
      `ignoredSupplemental` with a reason (laser-ranging predictions, a launch's temporary post-deployment set
      once its satellites are in the regular sets).
+   - `supgp-stale`: a SupGP set the pipeline could not refresh for days (its errors only warn). Check the
+     set's page on CelesTrak: if it was discontinued or renamed, move it to `ignoredSupplemental` (or rename the
+     key) with the source; if CelesTrak still lists it, do not change the catalog and mention it to the
+     maintainer in the report (the pipeline may be refused by CelesTrak).
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:

@@ -320,9 +320,11 @@ Weekly maintenance (hands-off):
 Rules:
 - Scripts in `pipeline/` (Node 20+ + TS, run with `tsx`). No server dependency.
 - **One call per resource per run**, `User-Agent` identifying the project and the repo URL, stop on any non-200
-  response, no retry loops (at most 1 retry, after 10 min). A failing SupGP set stops the remaining SupGP
-  requests but the validated `active` data are still published (merged with the sets already gathered or kept
-  from the last run, `data/earth/supgp-sets.json.gz`), then the run fails and opens an issue.
+  response, no retry loops (at most 1 retry, after 10 min). SupGP is an enhancement: a failing set stops the
+  remaining SupGP requests of the run and only warns; the `active` data are published, merged with the sets
+  gathered or kept from the last run (`data/earth/supgp-sets.json.gz`). The weekly audit flags a set not refreshed
+  for 2 days (`supgp-stale`). CelesTrak answered 503 to the pipeline's SupGP requests from a residential IP on
+  2026-10-05 (cause unknown).
 - Schema validation (zod) before publication: an invalid or near-empty file (< 50 % of the previous one) does
   **not** overwrite the previous version; the action fails and opens an issue.
 - Output: `data/earth/gp-active.json.gz`, `data/earth/satcat.json.gz`, `data/ephem/<mission>.bin`
