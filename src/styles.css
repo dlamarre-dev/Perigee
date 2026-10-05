@@ -1021,11 +1021,6 @@ input[type='checkbox'] {
   display: none;
 }
 
-/* Open, the menu drops over the side panels. */
-.toolbar.menu-open {
-  z-index: 4;
-}
-
 .toolbar[data-fit^='menu'].menu-open .toolbar-menu {
   display: flex;
   grid-column: 1 / -1;

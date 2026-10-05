@@ -374,8 +374,8 @@ function main(): void {
   const phone = window.matchMedia(PHONE_QUERY);
   // Run before the UI tick writes to the DOM, so these reads use the layout the browser already has.
   // The bars' real extent feeds the CSS, so panels and notices sit between them whatever their layout
-  // (--toolbar-bottom: from the top of the window to the top bar's bottom edge, measured with its menu closed;
-  // --timebar-space: from the bottom bar's top edge to the bottom of the window).
+  // (--toolbar-bottom: from the top of the window to the top bar's bottom edge, its open menu included, so the
+  // panels make room for it; --timebar-space: from the bottom bar's top edge to the bottom of the window).
   const cssPx = new Map<string, string>();
   const setCssPx = (name: string, px: number): void => {
     const value = `${Math.ceil(px)}px`;
@@ -387,9 +387,7 @@ function main(): void {
     const timeRect = timeControl.element.getBoundingClientRect();
     setCssPx('--timebar-h', timeRect.height);
     setCssPx('--timebar-space', window.innerHeight - timeRect.top);
-    if (!toolbar.element.classList.contains('menu-open')) {
-      setCssPx('--toolbar-bottom', toolbar.element.getBoundingClientRect().bottom);
-    }
+    setCssPx('--toolbar-bottom', toolbar.element.getBoundingClientRect().bottom);
     if (!phone.matches) {
       renderer.setBottomInset(0);
       return;
@@ -453,6 +451,10 @@ function main(): void {
     qualityState.choice,
     qualityState.detected.tier,
   );
+  // The panels follow a bar as soon as it changes size (menu opened, date row, new layout level).
+  const barObserver = new ResizeObserver(() => updateBottomInset());
+  barObserver.observe(toolbar.element);
+  barObserver.observe(timeControl.element);
   const music = new MusicPanel(i18n);
   app.append(
     toolbar.element,
