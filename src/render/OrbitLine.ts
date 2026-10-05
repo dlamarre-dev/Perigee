@@ -10,6 +10,7 @@ import {
   ShaderMaterial,
 } from 'three';
 import type { Vec3 } from '../astro/vec3';
+import { setLinePositions } from './lineBuffers';
 
 /** Orbit trace of the selected object, in the inertial (TEME) group. */
 export class OrbitLine {
@@ -37,8 +38,7 @@ export class OrbitLine {
       this.line.visible = false;
       return;
     }
-    this.line.geometry.setAttribute('position', new BufferAttribute(positionsKm, 3));
-    this.line.geometry.computeBoundingSphere();
+    setLinePositions(this.line, positionsKm);
     this.line.visible = true;
   }
 

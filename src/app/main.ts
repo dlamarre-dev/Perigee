@@ -335,12 +335,14 @@ function main(): void {
   // Phones: the time bar and bottom sheets cover the lower part of the canvas. Their height feeds the CSS
   // (sheets sit above the time bar) and the camera, whose projection centre moves to the visible part.
   const phone = window.matchMedia(PHONE_QUERY);
+  // Run before the UI tick writes to the DOM, so these reads use the layout the browser already has.
+  let timebarH = '';
   function updateBottomInset(): void {
-    const root = document.documentElement;
-    root.style.setProperty(
-      '--timebar-h',
-      `${Math.ceil(timeControl.element.getBoundingClientRect().height)}px`,
-    );
+    const h = `${Math.ceil(timeControl.element.getBoundingClientRect().height)}px`;
+    if (h !== timebarH) {
+      timebarH = h;
+      document.documentElement.style.setProperty('--timebar-h', h);
+    }
     if (!phone.matches) {
       renderer.setBottomInset(0);
       return;
@@ -596,13 +598,13 @@ function main(): void {
     uiTimerS += dtS;
     if (uiTimerS >= UI_REFRESH_S) {
       uiTimerS = 0;
+      updateBottomInset();
       timeControl.update();
       v?.uiTick(nowMs);
       if (resumeFollowUntilMs > 0) {
         if (follow.active || Date.now() > resumeFollowUntilMs) resumeFollowUntilMs = 0;
         else v?.toggleFollow();
       }
-      updateBottomInset();
     }
   });
 }

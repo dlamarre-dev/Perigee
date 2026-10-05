@@ -5,7 +5,7 @@ import { displayName, elementAgeDays, isStale, type SatObject } from '../earth/c
 import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
-import { h, sidePanel } from './dom';
+import { h, setText, sidePanel, syncRows } from './dom';
 import { modelFor } from '../render/models';
 import { ModelPreview } from './ModelPreview';
 import { countryName } from './countries';
@@ -166,15 +166,18 @@ export class InfoPanel {
       ]);
     }
 
-    this.fields.replaceChildren(...rows.flatMap(([k, v]) => [h('dt', {}, [t(k)]), h('dd', {}, [v])]));
+    syncRows(
+      this.fields,
+      rows.map(([k, v]) => [t(k), v]),
+    );
     if (!sc && !curated) this.fields.append(h('p', { class: 'muted small' }, [t('info.noMetadata')]));
 
     const notes = curated?.notes?.[lang];
     this.notes.hidden = !notes;
-    this.notes.textContent = notes ?? '';
+    setText(this.notes, notes ?? '');
     const urls = curated?.sources ?? [];
     this.sourcesTitle.hidden = urls.length === 0;
-    this.sourcesTitle.textContent = t('info.sources');
+    setText(this.sourcesTitle, t('info.sources'));
     // Rebuild the links only when they change, so keyboard focus survives live updates.
     const key = urls.join('|');
     if (key !== this.lastSourcesKey) {
@@ -185,6 +188,6 @@ export class InfoPanel {
         ),
       );
     }
-    this.footnote.textContent = curated ? this.i18n.format('info.verified', { date: curated.verified }) : '';
+    setText(this.footnote, curated ? this.i18n.format('info.verified', { date: curated.verified }) : '');
   }
 }

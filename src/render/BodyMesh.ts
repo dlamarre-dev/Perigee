@@ -5,11 +5,13 @@
  */
 import {
   Mesh,
+  PerspectiveCamera,
   MeshBasicMaterial,
   Quaternion,
   ShaderMaterial,
   SphereGeometry,
   type BufferGeometry,
+  Vector2,
   Vector3,
   type Texture,
 } from 'three';
@@ -77,6 +79,22 @@ export interface BodyMeshOptions {
   readonly atmosphereStrength?: number;
 }
 
+const LIGHT_BELOW_PX = 40;
+const FULL_ABOVE_PX = 56;
+const viewSize = new Vector2();
+
+/** Full-resolution body sphere, e.g. to displace into an irregular shape and pass to `setGeometry`. */
+export function bodySphere(radiusKm: number): BufferGeometry {
+  return sphere(radiusKm, 192, 96);
+}
+
+/** UV sphere with the pole on +Z (three's sphere is Y-up with u = 0.5 on +X; +90° about X puts 90°E on +Y). */
+function sphere(radiusKm: number, widthSegments: number, heightSegments: number): BufferGeometry {
+  const geometry = new SphereGeometry(radiusKm, widthSegments, heightSegments);
+  geometry.rotateX(Math.PI / 2);
+  return geometry;
+}
+
 export class BodyMesh {
   readonly mesh: Mesh<BufferGeometry, ShaderMaterial>;
   private readonly occluder: Mesh<BufferGeometry, MeshBasicMaterial>;
@@ -84,12 +102,14 @@ export class BodyMesh {
   private readonly sunDirection = new Vector3(1, 0, 0);
   private readonly detailRequests: (() => void)[] = [];
   private disposed = false;
+  /** Full sphere, and a light one for when the body is small on screen (both undefined once a shape is set). */
+  private full: BufferGeometry | undefined;
+  private light: BufferGeometry | undefined;
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
-    const geometry = new SphereGeometry(o.radiusKm, 192, 96);
-    // Three's sphere is Y-up with u = 0.5 on +X; rotating +90° about X puts the pole on +Z and 90°E on +Y.
-    geometry.rotateX(Math.PI / 2);
+    const geometry = sphere(o.radiusKm, 192, 96);
+    this.full = geometry;
     const material = new ShaderMaterial({
       uniforms: {
         dayMap: { value: o.dayMap },
@@ -109,6 +129,33 @@ export class BodyMesh {
     this.occluder = new Mesh(geometry, new MeshBasicMaterial({ color: 0x000000 }));
     this.occluder.layers.set(PICK_LAYER);
     this.mesh.add(this.occluder);
+    // A body a few pixels wide does not need 37k triangles (dozens of them in the solar view): switch to a
+    // light sphere below LIGHT_BELOW_PX of screen radius, back above FULL_ABOVE_PX. Takes effect next frame.
+    this.mesh.onBeforeRender = (renderer, _scene, camera) => {
+      if (!this.full || !(camera instanceof PerspectiveCamera)) return;
+      const e = this.mesh.matrixWorld.elements;
+      const c = camera.matrixWorld.elements;
+      const distance = Math.hypot(
+        (e[12] ?? 0) - (c[12] ?? 0),
+        (e[13] ?? 0) - (c[13] ?? 0),
+        (e[14] ?? 0) - (c[14] ?? 0),
+      );
+      const heightPx = renderer.getSize(viewSize).y;
+      const radiusPx =
+        (this.radiusKm / Math.max(distance, 1e-9)) * (heightPx / 2 / Math.tan((camera.fov * Math.PI) / 360));
+      const usingLight = this.mesh.geometry === this.light;
+      if (!usingLight && radiusPx < LIGHT_BELOW_PX) {
+        this.light ??= sphere(this.radiusKm, 48, 24);
+        this.useGeometry(this.light);
+      } else if (usingLight && radiusPx > FULL_ABOVE_PX) {
+        this.useGeometry(this.full);
+      }
+    };
+  }
+
+  private useGeometry(geometry: BufferGeometry): void {
+    this.mesh.geometry = geometry;
+    this.occluder.geometry = geometry;
   }
 
   /** Registers what to load when high detail is wanted (see `requestDetail`). */
@@ -123,10 +170,11 @@ export class BodyMesh {
 
   /** Replaces the sphere by a body-frame shape (km), e.g. a NASA model of an irregular moon. */
   setGeometry(geometry: BufferGeometry): void {
-    const old = this.mesh.geometry;
-    this.mesh.geometry = geometry;
-    this.occluder.geometry = geometry;
-    old.dispose();
+    this.full?.dispose();
+    this.light?.dispose();
+    this.full = undefined;
+    this.light = undefined;
+    this.useGeometry(geometry);
   }
 
   setDayMap(texture: Texture): void {
@@ -151,6 +199,8 @@ export class BodyMesh {
   dispose(): void {
     this.disposed = true;
     this.mesh.geometry.dispose();
+    this.full?.dispose();
+    this.light?.dispose();
     for (const name of ['dayMap', 'nightMap'] as const) {
       (this.mesh.material.uniforms[name]?.value as Texture | null | undefined)?.dispose();
     }

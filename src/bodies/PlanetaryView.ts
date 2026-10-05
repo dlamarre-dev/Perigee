@@ -6,7 +6,6 @@
  */
 import {
   BufferGeometry,
-  Float32BufferAttribute,
   Group,
   Line,
   LineBasicMaterial,
@@ -66,6 +65,7 @@ import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
 import { formatUtcDate } from '../ui/labels';
+import { setLinePositions } from '../render/lineBuffers';
 
 export interface PlanetaryConfig {
   readonly id: 'moon' | 'mars';
@@ -728,7 +728,7 @@ export class PlanetaryView implements View {
         rel[i + 2] = (pts[i + 2] ?? 0) - c[2];
       }
       t.line.position.set(c[0], c[1], c[2]);
-      t.line.geometry.setAttribute('position', new Float32BufferAttribute(rel, 3));
+      setLinePositions(t.line, rel);
       const selected = this.selection?.kind === 'mission' && this.selection.mission.id === t.mission.id;
       this.styleLine(t, selected);
     }

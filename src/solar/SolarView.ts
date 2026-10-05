@@ -10,7 +10,6 @@
  */
 import {
   BufferGeometry,
-  Float32BufferAttribute,
   Group,
   Line,
   LineBasicMaterial,
@@ -72,9 +71,9 @@ import {
   type Moon,
 } from '../data/schemas';
 import { moonState } from '../astro/moons';
-import type { StateVector } from '../astro/hermite';
+import { hermite, type StateVector } from '../astro/hermite';
 import type { MessageKey } from '../i18n';
-import { BodyMesh } from '../render/BodyMesh';
+import { BodyMesh, bodySphere } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
@@ -89,6 +88,7 @@ import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPa
 import { formatUtcDate } from '../ui/labels';
 import { SolarPanel } from '../ui/SolarPanel';
 import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
+import { setLinePositions } from '../render/lineBuffers';
 
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
 const PICK_RADIUS_PX = 14;
@@ -165,6 +165,8 @@ interface MoonObject extends LazyLoad {
   scene: Vec3 | undefined;
   /** Far enough from the planet on screen to be told apart (updated in placeOrigin). */
   shown: boolean;
+  /** Orbit size from the last computed state, for moons without mean elements. */
+  lastAKm: number | undefined;
 }
 
 /** Selection key used by the panel and the URL. */
@@ -238,6 +240,16 @@ interface ProbeObject extends LazyLoad {
   captured: Uint8Array | undefined;
   /** Heliocentric EQJ positions of the capturing planet at the trajectory substeps (cached per table). */
   capturedPlanetKm: Map<number, Vec3> | undefined;
+  /** Host planet's states at the ends of the current ephemeris interval (near line of a captured probe). */
+  nearPlanet:
+    | {
+        readonly key: string;
+        readonly t0: number;
+        readonly s0: StateVector;
+        readonly t1: number;
+        readonly s1: StateVector;
+      }
+    | undefined;
   track: EphemerisTrack;
   entry: EphemerisEntry | undefined;
   sample: TrackSample;
@@ -390,6 +402,7 @@ class SolarView implements View {
         state: undefined,
         scene: undefined,
         shown: false,
+        lastAKm: undefined,
         load: () => {
           const body = modelFor(`moon:${moon.id}`);
           // A NASA shape model brings its own map; otherwise the equirectangular texture.
@@ -403,7 +416,10 @@ class SolarView implements View {
           }
           if (moon.shape === 'grid') {
             void loadShape(this.host.baseUrl, moon.id).then((grid) => {
-              if (grid && !this.disposed) applyShape(mesh.mesh.geometry, grid);
+              if (!grid || this.disposed) return;
+              const shaped = bodySphere(mesh.radiusKm);
+              applyShape(shaped, grid);
+              mesh.setGeometry(shaped);
             });
           }
         },
@@ -463,6 +479,7 @@ class SolarView implements View {
         orbit,
         captured: undefined,
         capturedPlanetKm: undefined,
+        nearPlanet: undefined,
         capturedLine,
         capturedPlanet: undefined,
         capturedExtentKm: 0,
@@ -950,7 +967,7 @@ class SolarView implements View {
         prev = next;
       }
     }
-    t.line.geometry.setAttribute('position', new Float32BufferAttribute(segments, 3));
+    setLinePositions(t.line, segments);
     this.buildCapturedLine(t, table, interval);
     const color = this.colors.get(t.mission.id) ?? DEFAULT_PROBE_COLOR;
     const dashed = kind === 'extrapolated';
@@ -984,7 +1001,7 @@ class SolarView implements View {
     const planet = code ? this.planets[code - 1] : undefined;
     t.capturedPlanet = planet;
     if (!captured || !code || !planet) {
-      t.capturedLine.geometry.setAttribute('position', new Float32BufferAttribute([], 3));
+      setLinePositions(t.capturedLine, []);
       return;
     }
     t.capturedPlanetKm ??= new Map();
@@ -1023,7 +1040,7 @@ class SolarView implements View {
       }
     }
     t.capturedExtentKm = extent;
-    t.capturedLine.geometry.setAttribute('position', new Float32BufferAttribute(segments, 3));
+    setLinePositions(t.capturedLine, segments);
   }
 
   /** Interval of the ephemeris containing the current time, or −1 outside the window. */
@@ -1047,13 +1064,32 @@ class SolarView implements View {
     t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined;
     if (!t.near.visible || !table || !now) return;
     const centre = map(now.posKm);
-    // Captured: follow the planet's motion, so the near line continues the planet-relative captured line.
-    const planetNow = planet ? heliocentricKm(planet.info.body, tdbJdToDate(this.tdbJd)) : undefined;
+    // Captured: follow the planet's motion, so the near line continues the planet-relative captured line. The
+    // planet is interpolated over the interval from its states at both ends (Hermite, ~0.03 km over a day)
+    // instead of evaluating the planetary theory at every sample, every frame.
+    let planetAt: ((tJd: number) => Vec3) | undefined;
+    if (planet) {
+      const key = `${planet.info.id}:${table.time(i)}:${table.time(i + 1)}`;
+      if (t.nearPlanet?.key !== key) {
+        const t0 = table.time(i);
+        const t1 = table.time(i + 1);
+        t.nearPlanet = {
+          key,
+          t0,
+          s0: heliocentricState(planet.info.body, tdbJdToDate(t0)),
+          t1,
+          s1: heliocentricState(planet.info.body, tdbJdToDate(t1)),
+        };
+      }
+      const np = t.nearPlanet;
+      planetAt = (tJd) => hermite(np.t0, np.s0, np.t1, np.s1, tJd).posKm;
+    }
+    const planetNow = planetAt?.(this.tdbJd);
     const points: number[] = [];
     for (const time of nearSampleTimes(table.time(i), table.time(i + 1), this.tdbJd, NEAR_SAMPLES_PER_SIDE)) {
       const p = time === this.tdbJd ? now.posKm : (table.interpolate(time)?.posKm ?? now.posKm);
       if (planet && planetNow) {
-        const pl = time === this.tdbJd ? planetNow : heliocentricKm(planet.info.body, tdbJdToDate(time));
+        const pl = time === this.tdbJd || !planetAt ? planetNow : planetAt(time);
         points.push(
           p[0] - pl[0] - (now.posKm[0] - planetNow[0]),
           p[1] - pl[1] - (now.posKm[1] - planetNow[1]),
@@ -1064,14 +1100,7 @@ class SolarView implements View {
       const m = map(p);
       points.push(m[0] - centre[0], m[1] - centre[1], m[2] - centre[2]);
     }
-    const geometry = t.near.geometry;
-    const attr = geometry.getAttribute('position');
-    if (attr && attr.array.length === points.length) {
-      (attr.array as Float32Array).set(points);
-      attr.needsUpdate = true;
-    } else {
-      geometry.setAttribute('position', new Float32BufferAttribute(points, 3));
-    }
+    setLinePositions(t.near, points);
   }
 
   /** Probe trajectory style: grey when the position is hidden, opaque when selected. */
@@ -1165,7 +1194,7 @@ class SolarView implements View {
       out[i + 1] = p[1] - anchor[1];
       out[i + 2] = p[2] - anchor[2];
     }
-    orbit.line.geometry.setAttribute('position', new Float32BufferAttribute(out, 3));
+    setLinePositions(orbit.line, out);
     orbit.anchorEqj = state.posKm;
     orbit.builtMs = nowMs;
     orbit.periodMs = periodS * 1000;
@@ -1424,8 +1453,23 @@ class SolarView implements View {
 
   /** Moon states, meshes (lit, tidally locked) and planet-relative orbits; nothing is drawn in log scale. */
   private updateMoons(date: Date, nowMs: number, orbitsKey: string): void {
+    const focalPx = this.focalPx();
+    const sel = this.selection;
     for (const m of this.moons) {
+      // Moons too close to their planet on screen to be shown (placeMoons) are not computed at all; the margin
+      // covers the camera moving between this frame and the last one.
+      const selected = sel?.kind === 'moon' && sel.moon.id === m.moon.id;
+      const aKm = m.moon.elements?.aKm ?? m.lastAKm;
+      if (!selected && aKm !== undefined && this.originKm && !this.logScale) {
+        const toPlanet = Math.max(1, length(sub(m.planet.scene, this.originKm)));
+        if ((aKm / toPlanet) * focalPx < MOON_MIN_ORBIT_PX * 0.5) {
+          m.state = undefined;
+          m.scene = undefined;
+          continue;
+        }
+      }
       m.state = this.logScale ? undefined : moonState(m.moon, date, this.tdbJd, this.jupiterCache);
+      if (m.state) m.lastAKm = length(m.state.posKm);
       const s = m.state;
       m.scene = s ? add(m.planet.scene, quatRotate(this.sceneQ, s.posKm)) : undefined;
       if (!s || !m.scene) continue;
@@ -1447,7 +1491,7 @@ class SolarView implements View {
             pts[i + 1] = s.posKm[1] + (offsets[i + 1] ?? 0);
             pts[i + 2] = s.posKm[2] + (offsets[i + 2] ?? 0);
           }
-          m.orbit.geometry.setAttribute('position', new Float32BufferAttribute(pts, 3));
+          setLinePositions(m.orbit, pts);
         }
         m.orbitBuiltMs = nowMs;
         m.orbitKey = orbitsKey;
@@ -1481,9 +1525,14 @@ class SolarView implements View {
   }
 
   /** Shows a moon once its orbit is wide enough on screen, and hides what bodies cover. */
-  private placeMoons(rel: (p: Vec3) => Vec3): void {
+  /** Focal length in CSS pixels (screen size of an object = size / distance × focal). */
+  private focalPx(): number {
     const camera = this.host.renderer.camera;
-    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * DEG_TO_RAD) / 2);
+    return this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * DEG_TO_RAD) / 2);
+  }
+
+  private placeMoons(rel: (p: Vec3) => Vec3): void {
+    const focalPx = this.focalPx();
     const sel = this.selection;
     for (const m of this.moons) {
       const selected = sel?.kind === 'moon' && sel.moon.id === m.moon.id;

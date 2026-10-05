@@ -25,6 +25,8 @@ const REGIME_COLORS: Record<SatObject['regime'], string> = {
 };
 const ORBIT_SAMPLES = 360;
 /** Re-evaluate staleness (depends on simulated time) at most this often. */
+/** The selected orbit's trace is rebuilt after the object covers this fraction of its period (0.5°). */
+const ORBIT_REBUILD_FRACTION = 1 / 720;
 const STATE_REFRESH_MS = 1000;
 
 export interface SatStats {
@@ -59,6 +61,12 @@ export class EarthSatellites {
   private selected: { object: SatObject; satrec: SatRec | undefined } | undefined;
   private selectedState: TemeState | undefined;
   private lastOk: Uint8Array | undefined;
+  /** Selection and simulated time the marker state was last computed for. */
+  private selectedFor: unknown;
+  private selectedMs = Number.NaN;
+  /** Selection and simulated time the orbit trace was last built for. */
+  private orbitBuiltFor: unknown;
+  private orbitBuiltMs = Number.NaN;
   private statsValue: SatStats;
   private disposed = false;
 
@@ -191,8 +199,9 @@ export class EarthSatellites {
         if (this.timeline.accept(sample, epoch, performance.now() - started)) {
           const { a, b } = this.timeline;
           if (a && b) this.points.setSamples(a, b);
+          // Statuses only change when an object starts or stops propagating (decay, bad elements).
+          if (!sameBytes(this.lastOk, sample.ok)) this.statesDirty = true;
           this.lastOk = sample.ok;
-          this.statesDirty = true;
         }
       })
       .catch((err: unknown) => {
@@ -226,19 +235,34 @@ export class EarthSatellites {
   private updateSelection(simNowMs: number): void {
     const sel = this.selected;
     if (!sel) return;
+    // Paused: same time, same object, nothing to recompute.
+    if (sel === this.selectedFor && simNowMs === this.selectedMs) return;
+    this.selectedFor = sel;
+    this.selectedMs = simNowMs;
     this.selectedState = sel.satrec ? propagateTeme(sel.satrec, new Date(simNowMs)) : undefined;
     this.marker.set(this.selectedState?.posKm);
 
-    // Rebuilt every frame around the object (relative to it, densified near it): exact through the marker
-    // and free of Float32 jitter when the camera follows it closely.
+    // The trace (≈ 400 SGP4 calls) is rebuilt around the object, densified near it, each time it has moved
+    // ORBIT_REBUILD_FRACTION of its period (every frame at high rates): its vertices are relative to where it
+    // was then, so it stays free of Float32 jitter when the camera follows it closely, and the object stays in
+    // the densely sampled stretch, a few metres at most from the line.
     const periodMs = sel.object.periodMin * 60_000;
     const centre = this.selectedState?.posKm;
-    if (sel.satrec && centre) {
-      this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs, centre));
-      this.orbit.line.position.set(centre[0], centre[1], centre[2]);
-    } else {
+    if (!sel.satrec || !centre) {
       this.orbit.set(undefined);
+      this.orbitBuiltFor = undefined;
+      return;
     }
+    if (
+      sel === this.orbitBuiltFor &&
+      Math.abs(simNowMs - this.orbitBuiltMs) < periodMs * ORBIT_REBUILD_FRACTION
+    ) {
+      return;
+    }
+    this.orbitBuiltFor = sel;
+    this.orbitBuiltMs = simNowMs;
+    this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs, centre));
+    this.orbit.line.position.set(centre[0], centre[1], centre[2]);
   }
 
   private buildColors(): Float32Array {
@@ -275,4 +299,10 @@ export function orbitTrace(
     written++;
   }
   return written > 1 ? out.subarray(0, written * 3) : undefined;
+}
+
+function sameBytes(a: Uint8Array | undefined, b: Uint8Array): boolean {
+  if (!a || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
 }

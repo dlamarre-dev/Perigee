@@ -4,6 +4,7 @@
  */
 import type { z } from 'zod';
 import { EphemerisTable } from '../astro/hermite';
+import { BULK_SCHEMAS, gunzipJson, type BulkSchemaName } from './decode';
 import {
   ManifestSchema,
   type DatasetEntry,
@@ -30,15 +31,6 @@ export async function loadManifest(baseUrl: string): Promise<Manifest> {
   return ManifestSchema.parse(await res.json());
 }
 
-async function gunzipJson(res: Response): Promise<unknown> {
-  if (!res.body) throw new DataUnavailableError('Empty response body');
-  // Servers may already have decoded a gzip Content-Encoding; detect the magic bytes.
-  const bytes = new Uint8Array(await res.arrayBuffer());
-  if (bytes[0] !== 0x1f || bytes[1] !== 0x8b) return JSON.parse(new TextDecoder().decode(bytes));
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return JSON.parse(await new Response(stream).text());
-}
-
 export async function loadDataset<S extends z.ZodType>(
   baseUrl: string,
   manifest: Manifest,
@@ -51,7 +43,61 @@ export async function loadDataset<S extends z.ZodType>(
   const url = `${dataRoot(baseUrl)}${entry.path}?v=${entry.sha256.slice(0, 12)}`;
   const res = await fetch(url);
   if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
-  return { entry, data: schema.parse(await gunzipJson(res)) };
+  return { entry, data: schema.parse(await gunzipJson(new Uint8Array(await res.arrayBuffer()))) };
+}
+
+let decoder: Worker | undefined | null;
+let nextId = 0;
+const pending = new Map<number, { resolve: (data: unknown) => void; reject: (err: Error) => void }>();
+
+/** The shared decode worker, or undefined where module workers are unavailable. */
+function decodeWorker(): Worker | undefined {
+  if (decoder !== undefined) return decoder ?? undefined;
+  try {
+    decoder = new Worker(new URL('./decode.worker.ts', import.meta.url), { type: 'module', name: 'decode' });
+    decoder.onmessage = (e: MessageEvent<{ id: number; data?: unknown; error?: string }>) => {
+      const p = pending.get(e.data.id);
+      pending.delete(e.data.id);
+      if (e.data.error !== undefined) p?.reject(new DataUnavailableError(e.data.error));
+      else p?.resolve(e.data.data);
+    };
+    decoder.onerror = () => {
+      for (const p of pending.values()) p.reject(new DataUnavailableError('decode worker failed'));
+      pending.clear();
+    };
+  } catch {
+    decoder = null;
+  }
+  return decoder ?? undefined;
+}
+
+/**
+ * Like loadDataset for the large Earth datasets: gunzip, JSON and validation run in a worker (same schema), the
+ * main thread only receives the result. Falls back to the main thread without module workers.
+ */
+export async function loadBulkDataset<N extends BulkSchemaName>(
+  baseUrl: string,
+  manifest: Manifest,
+  key: DatasetKey,
+  schemaName: N,
+): Promise<{ entry: DatasetEntry; data: z.infer<(typeof BULK_SCHEMAS)[N]> }> {
+  const worker = decodeWorker();
+  if (!worker) {
+    const r = await loadDataset(baseUrl, manifest, key, BULK_SCHEMAS[schemaName]);
+    return { entry: r.entry, data: r.data as z.infer<(typeof BULK_SCHEMAS)[N]> };
+  }
+  const entry = manifest.datasets[key];
+  if (!entry) throw new DataUnavailableError(`Dataset ${key} is not published`);
+  const url = `${dataRoot(baseUrl)}${entry.path}?v=${entry.sha256.slice(0, 12)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
+  const bytes = await res.arrayBuffer();
+  const id = nextId++;
+  const data = await new Promise<unknown>((resolve, reject) => {
+    pending.set(id, { resolve, reject });
+    worker.postMessage({ id, bytes, schema: schemaName }, [bytes]);
+  });
+  return { entry, data: data as z.infer<(typeof BULK_SCHEMAS)[N]> };
 }
 
 /** Loads a mission's state-vector table (rows of 7 little-endian Float64). */

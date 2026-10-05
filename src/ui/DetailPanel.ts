@@ -1,6 +1,6 @@
 import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
-import { h, sidePanel } from './dom';
+import { h, setText, sidePanel, syncRows } from './dom';
 import { ModelPreview } from './ModelPreview';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
@@ -88,16 +88,16 @@ export class DetailPanel {
     this.element.hidden = false;
     // Opening (not the periodic refresh) shows the whole sheet on phones.
     if (wasHidden) this.element.classList.remove('collapsed');
-    this.title.textContent = content.title;
+    setText(this.title, content.title);
     this.preview.show(content.model);
     this.badge.hidden = !content.badge;
     if (content.badge) {
-      this.badge.textContent = content.badge.text;
+      setText(this.badge, content.badge.text);
       this.badge.dataset['state'] = content.badge.state;
     }
-    this.fields.replaceChildren(...content.rows.flatMap(([k, v]) => [h('dt', {}, [k]), h('dd', {}, [v])]));
+    syncRows(this.fields, content.rows);
     this.notes.hidden = !content.notes;
-    this.notes.textContent = content.notes ?? '';
+    setText(this.notes, content.notes ?? '');
     // Rebuild the links only when they change, so keyboard focus survives live updates.
     const key = (content.sources ?? []).join('|');
     if (key !== this.lastSourcesKey) {
@@ -109,10 +109,10 @@ export class DetailPanel {
       );
     }
     this.sourcesTitle.hidden = !content.sources?.length;
-    this.footnote.textContent = content.footnote ?? '';
+    setText(this.footnote, content.footnote ?? '');
     this.follow.hidden = !content.followable;
     this.action.hidden = !content.action;
-    this.action.textContent = content.action?.label ?? '';
+    setText(this.action, content.action?.label ?? '');
     this.actionRun = content.action?.run;
     if (focus && wasHidden) this.title.focus();
   }

@@ -48,6 +48,8 @@ export class TimeControl {
   private resumeRate = 1;
   private maxRate: number = Math.max(...RATES);
   private maxRateHint = '';
+  /** Clock state the buttons were last rendered for. */
+  private stateKey = '';
 
   constructor(
     private readonly clock: SimClock,
@@ -133,8 +135,10 @@ export class TimeControl {
 
   /** Refreshes the clock readout; call a few times per second. */
   update(): void {
-    this.timeText.value = formatUtc(this.clock.nowUtc());
-    this.renderState();
+    const text = formatUtc(this.clock.nowUtc());
+    if (this.timeText.value !== text) this.timeText.value = text;
+    // The buttons only change with the clock's state (an action, a view's speed limit, the language).
+    if (this.signature() !== this.stateKey) this.renderState();
   }
 
   private changed(): void {
@@ -162,7 +166,13 @@ export class TimeControl {
     this.renderState();
   }
 
+  private signature(): string {
+    const c = this.clock;
+    return `${c.paused}|${c.rate}|${c.isLive()}|${this.maxRate}|${this.maxRateHint}|${this.i18n.lang}`;
+  }
+
   private renderState(): void {
+    this.stateKey = this.signature();
     const t = (k: Parameters<I18n['t']>[0]): string => this.i18n.t(k);
     const paused = this.clock.paused;
     this.pauseButton.textContent = paused ? `▶ ${t('time.play')}` : `❚❚ ${t('time.pause')}`;

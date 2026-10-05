@@ -67,10 +67,15 @@ const fragmentShader = /* glsl */ `
     float pixel = length(fwidth(vObject));
     // Granulation (~700 cells per solar radius), mesogranulation (~150) and supergranulation (~25), slowly
     // evolving; each scale fades once its cells get smaller than a pixel.
+    // Octaves whose weight is zero are skipped (8 hashes each): seen from afar only the coarse ones remain.
     float t = uTime * 0.02;
-    float gran = (noise(vObject * 700.0 + vec3(t)) - 0.5) * visible(700.0, pixel);
-    gran += 0.5 * (noise(vObject * 1400.0 - vec3(t)) - 0.5) * visible(1400.0, pixel);
-    float meso = (noise(vObject * 150.0 - vec3(t * 0.2)) - 0.5) * visible(150.0, pixel);
+    float w700 = visible(700.0, pixel);
+    float w1400 = visible(1400.0, pixel);
+    float w150 = visible(150.0, pixel);
+    float gran = 0.0;
+    if (w700 > 0.0) gran += (noise(vObject * 700.0 + vec3(t)) - 0.5) * w700;
+    if (w1400 > 0.0) gran += 0.5 * (noise(vObject * 1400.0 - vec3(t)) - 0.5) * w1400;
+    float meso = w150 > 0.0 ? (noise(vObject * 150.0 - vec3(t * 0.2)) - 0.5) * w150 : 0.0;
     float mottle = (noise(vObject * 25.0 + vec3(t * 0.05)) - 0.5) * visible(25.0, pixel);
     float intensity = limb * (1.0 + 0.16 * gran + 0.10 * meso + 0.08 * mottle);
     // Warmer towards the limb, where one sees higher, cooler layers (linear RGB; about sRGB #FFCE7C at the centre).

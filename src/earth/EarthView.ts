@@ -14,14 +14,12 @@ import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { orbitStateLookingFrom } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { datasetKey } from '../app/updates';
-import { loadDataset, loadManifest, loadOptionalDataset } from '../data/loader';
+import { loadBulkDataset, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   GroupsSchema,
   EarthScienceCatalogSchema,
   LaunchSitesSchema,
-  OmmListSchema,
   OperatorsCatalogSchema,
-  SatcatListSchema,
   type LaunchSite,
 } from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
@@ -378,8 +376,12 @@ class EarthView implements View {
     try {
       const manifest = await loadManifest(host.baseUrl);
       const [gp, satcat, groups] = await Promise.all([
-        loadDataset(host.baseUrl, manifest, 'earth.gp', OmmListSchema),
-        loadOptionalDataset(host.baseUrl, manifest, 'earth.satcat', SatcatListSchema),
+        loadBulkDataset(host.baseUrl, manifest, 'earth.gp', 'omm'),
+        // Optional metadata: the satellites show without it.
+        loadBulkDataset(host.baseUrl, manifest, 'earth.satcat', 'satcat').catch((err: unknown) => {
+          console.warn('Optional dataset earth.satcat unavailable:', err);
+          return undefined;
+        }),
         loadOptionalDataset(host.baseUrl, manifest, 'earth.groups', GroupsSchema),
       ]);
       if (this.disposed) return;

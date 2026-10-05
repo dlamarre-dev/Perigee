@@ -58,3 +58,30 @@ export function markCurrent(
   }
   if (scroll && first) first.scrollIntoView({ block: 'nearest' });
 }
+
+/**
+ * Shows label/value rows in a <dl>, refreshed several times a second: the existing <dt>/<dd> nodes are reused
+ * and only changed texts are written (no node churn, no style work for unchanged rows). Rebuilt when the
+ * number of rows changes.
+ */
+export function syncRows(dl: HTMLElement, rows: readonly (readonly [string, string])[]): void {
+  const nodes = dl.children;
+  const reusable =
+    nodes.length === rows.length * 2 &&
+    rows.every((_, i) => nodes[2 * i]?.tagName === 'DT' && nodes[2 * i + 1]?.tagName === 'DD');
+  if (!reusable) {
+    dl.replaceChildren(...rows.flatMap(([k, v]) => [h('dt', {}, [k]), h('dd', {}, [v])]));
+    return;
+  }
+  rows.forEach(([k, v], i) => {
+    const dt = nodes[2 * i];
+    const dd = nodes[2 * i + 1];
+    if (dt && dt.textContent !== k) dt.textContent = k;
+    if (dd && dd.textContent !== v) dd.textContent = v;
+  });
+}
+
+/** Writes an element's text only when it changed (periodic refreshes then cost no DOM mutation). */
+export function setText(el: HTMLElement, text: string): void {
+  if (el.textContent !== text) el.textContent = text;
+}

@@ -8,7 +8,7 @@ import { apsides, orbitRegime, periodMin } from '../src/astro/orbit';
 import { OmmListSchema, OperatorsCatalogSchema, type SatcatRecord } from '../src/data/schemas';
 import { buildCatalog, isStale, parseOmmEpochMs } from '../src/earth/catalog';
 import { EMPTY_FILTERS, facetCounts, matchesFilters, NONE } from '../src/earth/filters';
-import { SampleTimeline } from '../src/earth/SampleTimeline';
+import { MIN_SPAN_MS, SampleTimeline } from '../src/earth/SampleTimeline';
 import { makeSatrec, propagateTeme } from '../src/earth/sgp4';
 import { nearestId } from '../src/render/GpuPicker';
 import { decodePickId, encodePickId } from '../src/render/SatellitePoints';
@@ -151,7 +151,7 @@ describe('operators catalogue', () => {
 describe('SampleTimeline', () => {
   const s = (timeMs: number) => ({ timeMs });
 
-  it('requests now, then ahead of now by rate × latency', () => {
+  it('requests now, then ahead of now by at least rate × latency', () => {
     const tl = new SampleTimeline<{ timeMs: number }>();
     expect(tl.nextRequest(1000, 1, 0)).toBe(1000);
     const epoch = tl.begin();
@@ -179,6 +179,30 @@ describe('SampleTimeline', () => {
     tl.nextRequest(0, 1, 1); // jump
     expect(tl.accept(s(0), epoch, 50)).toBe(false);
     expect(tl.interpolation(0)).toBeUndefined();
+  });
+
+  it('at low rates propagates once per MIN_SPAN_MS of simulated time, not continuously', () => {
+    const tl = new SampleTimeline<{ timeMs: number }>();
+    tl.accept(s(tl.nextRequest(0, 1, 0) ?? 0), tl.begin(), 80);
+    const target = tl.nextRequest(0, 1, 0);
+    expect(target).toBe(MIN_SPAN_MS);
+    tl.accept(s(target ?? 0), tl.begin(), 80);
+    // One minute later (×1) B is still far ahead: nothing to do.
+    expect(tl.nextRequest(60_000, 1, 0)).toBeUndefined();
+    // Just before reaching B: the next sample, another span ahead.
+    expect(tl.nextRequest(MIN_SPAN_MS - 100, 1, 0)).toBe(2 * MIN_SPAN_MS - 100);
+  });
+
+  it('at ×10 000 keeps requesting ahead by rate × latency, also backwards in time', () => {
+    const tl = new SampleTimeline<{ timeMs: number }>();
+    tl.accept(s(tl.nextRequest(0, 10_000, 0) ?? 0), tl.begin(), 80);
+    tl.accept(s(tl.nextRequest(0, 10_000, 0) ?? 0), tl.begin(), 80);
+    const lead = 10_000 * tl.latencyMs * 1.5;
+    expect(tl.b?.timeMs).toBeGreaterThan(MIN_SPAN_MS);
+    expect(tl.nextRequest(1000, 10_000, 0)).toBeCloseTo(1000 + lead);
+    const back = new SampleTimeline<{ timeMs: number }>();
+    back.accept(s(back.nextRequest(0, -1, 0) ?? 0), back.begin(), 80);
+    expect(back.nextRequest(0, -1, 0)).toBe(-MIN_SPAN_MS);
   });
 
   it('stops requesting when paused on the latest sample', () => {

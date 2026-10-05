@@ -1,8 +1,9 @@
 /**
  * Schedules bulk propagations and tells the renderer how to interpolate between the two latest samples.
  *
- * Samples A and B bracket the current simulation time: the next request is placed ahead of "now" by
- * rate × measured latency, so B lands in the future by the time it arrives. Rendering moves each object along
+ * Samples A and B bracket the current simulation time. A request is made only when "now" comes within twice the
+ * latency of B, and is placed ahead by the larger of rate × measured latency (so it lands in the future) and
+ * MIN_SPAN_MS (so slow rates do not re-propagate the whole catalogue continuously). Rendering moves each object along
  * its orbit from the samples (two-body Lagrange series, src/astro/lagrangeSeries.ts: exact endpoints, C¹), which
  * stays accurate when samples are 10–25 minutes apart at ×10 000, and past B when a sample is late (a straight
  * line would leave a low orbit by tens of kilometres within two minutes). A clock jump (new epoch) discards
@@ -25,6 +26,12 @@ export interface Interpolation {
 
 const LEAD_SAFETY = 1.5;
 const LATENCY_SMOOTHING = 0.3;
+/**
+ * Shortest stretch of simulated time a sample is placed ahead (ms). The shader's two-body series stays within
+ * 0.1 km of SGP4 over two minutes (src/astro/lagrangeSeries.ts), so at low rates one propagation of the whole
+ * catalogue every two minutes is enough; high rates are bound by the latency instead.
+ */
+export const MIN_SPAN_MS = 120_000;
 
 export class SampleTimeline<S extends TimedSample> {
   a: S | undefined;
@@ -44,7 +51,12 @@ export class SampleTimeline<S extends TimedSample> {
     if (this.inFlight) return undefined;
     if (!this.b) return simNowMs;
     if (rate === 0) return this.b.timeMs === simNowMs ? undefined : simNowMs;
-    return simNowMs + rate * this.latencyMs * LEAD_SAFETY;
+    // Simulated time a propagation takes to come back, and how far B still is ahead.
+    const leadMs = Math.abs(rate) * this.latencyMs * LEAD_SAFETY;
+    const direction = Math.sign(rate);
+    const aheadMs = (this.b.timeMs - simNowMs) * direction;
+    if (aheadMs > 2 * leadMs) return undefined;
+    return simNowMs + direction * Math.max(leadMs, MIN_SPAN_MS);
   }
 
   /** Marks a request as sent; returns the epoch it belongs to. */
