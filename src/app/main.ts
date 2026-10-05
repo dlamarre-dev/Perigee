@@ -373,12 +373,22 @@ function main(): void {
   // (sheets sit above the time bar) and the camera, whose projection centre moves to the visible part.
   const phone = window.matchMedia(PHONE_QUERY);
   // Run before the UI tick writes to the DOM, so these reads use the layout the browser already has.
-  let timebarH = '';
+  // The bars' real extent feeds the CSS, so panels and notices sit between them whatever their layout
+  // (--toolbar-bottom: from the top of the window to the top bar's bottom edge, measured with its menu closed;
+  // --timebar-space: from the bottom bar's top edge to the bottom of the window).
+  const cssPx = new Map<string, string>();
+  const setCssPx = (name: string, px: number): void => {
+    const value = `${Math.ceil(px)}px`;
+    if (cssPx.get(name) === value) return;
+    cssPx.set(name, value);
+    document.documentElement.style.setProperty(name, value);
+  };
   function updateBottomInset(): void {
-    const h = `${Math.ceil(timeControl.element.getBoundingClientRect().height)}px`;
-    if (h !== timebarH) {
-      timebarH = h;
-      document.documentElement.style.setProperty('--timebar-h', h);
+    const timeRect = timeControl.element.getBoundingClientRect();
+    setCssPx('--timebar-h', timeRect.height);
+    setCssPx('--timebar-space', window.innerHeight - timeRect.top);
+    if (!toolbar.element.classList.contains('menu-open')) {
+      setCssPx('--toolbar-bottom', toolbar.element.getBoundingClientRect().bottom);
     }
     if (!phone.matches) {
       renderer.setBottomInset(0);

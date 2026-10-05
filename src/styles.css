@@ -473,9 +473,10 @@ input[type='checkbox'] {
 
 /* ---------------------------------------------------------------- side panels */
 
+/* Between the bars, whatever their height (measured by src/app/main.ts). */
 .side-panel {
-  top: 84px;
-  bottom: 120px;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
+  bottom: calc(var(--timebar-space, 112px) + var(--gutter));
   width: min(320px, calc(100% - 2 * var(--gutter)));
   overflow-y: auto;
   padding: 14px;
@@ -493,7 +494,7 @@ input[type='checkbox'] {
   width: min(360px, calc(100% - 2 * var(--gutter)));
   right: var(--gutter);
   bottom: auto;
-  max-height: calc(100% - 200px);
+  max-height: calc(100% - var(--toolbar-bottom, 76px) - var(--timebar-space, 112px) - 2 * var(--gutter));
 }
 
 .panel-header {
@@ -681,7 +682,7 @@ input[type='checkbox'] {
 .notice {
   position: absolute;
   z-index: 2;
-  top: 84px;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -702,7 +703,7 @@ input[type='checkbox'] {
 .update-notice {
   position: absolute;
   z-index: 3;
-  top: 84px;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
   left: 50%;
   display: flex;
   align-items: center;
@@ -724,7 +725,7 @@ input[type='checkbox'] {
 .offline-badge {
   position: absolute;
   z-index: 2;
-  top: 84px;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
   right: 16px;
   margin: 0;
   padding: 4px 10px;
@@ -900,14 +901,11 @@ input[type='checkbox'] {
   display: none;
 }
 
-/* Opened, the date form takes a row of its own. */
+/* Opened, the date form takes a row of its own, centred, the field at its natural width. */
 .time-control:not([data-fit='full']).jump-open .time-jump {
   display: flex;
+  justify-content: center;
   width: 100%;
-}
-
-.time-control.jump-open .time-jump .input {
-  flex: 1;
 }
 
 .time-control[data-fit='select'] .time-buttons .segmented,
@@ -1305,7 +1303,9 @@ input[type='checkbox'] {
 
 /* Keep the detail panel clear of the open player. */
 body.music-open .info {
-  max-height: calc(100% - 200px - 380px);
+  max-height: calc(
+    100% - var(--toolbar-bottom, 76px) - var(--timebar-space, 112px) - 2 * var(--gutter) - 380px
+  );
 }
 
 /* ---------------------------------------------------------------- phone layout
@@ -1316,6 +1316,11 @@ body.music-open .info {
 @media (max-width: 640px), (max-height: 500px) {
   :root {
     --gutter: 8px;
+  }
+
+  /* The soundtrack opens from the menu here: no room to keep for its floating button. */
+  .time-control {
+    --music-reserve: 0px;
   }
 
   .toolbar {
@@ -1372,11 +1377,11 @@ body.music-open .info {
 
   .music.is-open {
     right: var(--gutter);
-    bottom: calc(var(--timebar-h, 96px) + 2 * var(--gutter));
+    bottom: calc(var(--timebar-space, 104px) + var(--gutter));
     left: var(--gutter);
     width: auto;
     /* Never over the top bar. The frame stays put; the player's body scrolls. */
-    max-height: calc(100dvh - var(--timebar-h, 96px) - 140px);
+    max-height: calc(100dvh - var(--toolbar-bottom, 70px) - var(--timebar-space, 104px) - 2 * var(--gutter));
     overflow: hidden;
   }
 
@@ -1384,12 +1389,6 @@ body.music-open .info {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-  }
-
-  .notice,
-  .update-notice,
-  .offline-badge {
-    top: 112px;
   }
 
   .update-notice {
@@ -1415,13 +1414,12 @@ body.music-open .info {
   }
 
   .side-panel {
-    top: 60px;
-    bottom: calc(var(--timebar-h, 60px) + 2 * var(--gutter));
     width: min(300px, 42%);
   }
 
   .music.is-open {
-    top: 60px;
+    top: calc(var(--toolbar-bottom, 60px) + var(--gutter));
+    bottom: calc(var(--timebar-space, 60px) + var(--gutter));
     left: auto;
     width: min(340px, 45%);
     max-height: none;
@@ -1439,15 +1437,21 @@ body.music-open .info {
   .info {
     top: auto;
     right: var(--gutter);
-    bottom: calc(var(--timebar-h, 96px) + 2 * var(--gutter));
+    bottom: calc(var(--timebar-space, 104px) + var(--gutter));
     left: var(--gutter);
     width: auto;
-    max-height: 45dvh;
+    max-height: min(
+      45dvh,
+      calc(100dvh - var(--toolbar-bottom, 70px) - var(--timebar-space, 104px) - 2 * var(--gutter))
+    );
     padding: 0 12px 10px;
   }
 
   body.music-open .info {
-    max-height: 45dvh;
+    max-height: min(
+      45dvh,
+      calc(100dvh - var(--toolbar-bottom, 70px) - var(--timebar-space, 104px) - 2 * var(--gutter))
+    );
   }
 
   .sheet-grab {
