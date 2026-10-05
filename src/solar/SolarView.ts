@@ -1355,7 +1355,13 @@ class SolarView implements View {
   private scenePositionOf(sel: Selection): Vec3 | undefined {
     if (sel?.kind === 'planet') return this.planets.find((p) => p.info.id === sel.planet.id)?.scene;
     if (sel?.kind === 'mission') return this.probes.find((t) => t.mission.id === sel.mission.id)?.scene;
-    if (sel?.kind === 'moon') return this.moons.find((m) => m.moon.id === sel.moon.id)?.scene;
+    if (sel?.kind === 'moon') {
+      // A moon too small to show is not computed every frame: solve it now when it is asked for (selection,
+      // follow, framing), not only at the next frame.
+      const m = this.moons.find((x) => x.moon.id === sel.moon.id);
+      if (m && !m.scene) this.solveMoon(m);
+      return m?.scene;
+    }
     return undefined;
   }
 
@@ -1470,7 +1476,19 @@ class SolarView implements View {
   }
 
   /** Moon states, meshes (lit, tidally locked) and planet-relative orbits; nothing is drawn in log scale. */
+  /** Date of the last moon update, to solve a skipped moon on demand (see `solveMoon`). */
+  private moonDate: Date | undefined;
+
+  /** Planet-relative state and scene position of one moon at the last update's date. */
+  private solveMoon(m: MoonObject): void {
+    const date = this.moonDate;
+    m.state = date && !this.logScale ? moonState(m.moon, date, this.tdbJd, this.jupiterCache) : undefined;
+    if (m.state) m.lastAKm = length(m.state.posKm);
+    m.scene = m.state ? add(m.planet.scene, quatRotate(this.sceneQ, m.state.posKm)) : undefined;
+  }
+
   private updateMoons(date: Date, nowMs: number, orbitsKey: string): void {
+    this.moonDate = date;
     const focalPx = this.focalPx();
     const sel = this.selection;
     for (const m of this.moons) {
@@ -1486,10 +1504,8 @@ class SolarView implements View {
           continue;
         }
       }
-      m.state = this.logScale ? undefined : moonState(m.moon, date, this.tdbJd, this.jupiterCache);
-      if (m.state) m.lastAKm = length(m.state.posKm);
+      this.solveMoon(m);
       const s = m.state;
-      m.scene = s ? add(m.planet.scene, quatRotate(this.sceneQ, s.posKm)) : undefined;
       if (!s || !m.scene) continue;
       m.mesh.setSunDirection(normalize(scale(m.scene, -1)));
       m.mesh.setOrientation(quatMultiply(this.sceneQ, this.moonOrientation(m, s, date)));

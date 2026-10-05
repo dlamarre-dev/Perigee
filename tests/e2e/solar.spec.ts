@@ -92,3 +92,22 @@ test('moons unfold under the selected planet, fold again, and F toggles follow',
   await expect(moons).toBeHidden();
   await expect(panel.locator('ul.moon-list[data-planet="saturn"]')).toBeVisible();
 });
+
+test('F follows a moon selected a moment ago, even before the next frame (slow devices)', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  const panel = page.locator('#side-panel');
+  await panel.locator('button[data-planet="jupiter"]').click();
+  await expect(panel.locator('[data-moon="callisto"]')).toBeVisible();
+  // Selection and key in one task, so no frame runs in between (what a slow device does): Callisto, too small
+  // to show from here, has not been solved yet.
+  await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-moon="callisto"]')?.click();
+    const canvas = document.querySelector('#viewport canvas');
+    canvas?.dispatchEvent(new KeyboardEvent('keydown', { key: 'f', bubbles: true }));
+  });
+  await expect(
+    page.locator('aside.info:visible').getByRole('button', { name: 'Stop following' }),
+  ).toBeVisible();
+});
