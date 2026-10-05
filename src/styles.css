@@ -489,7 +489,8 @@ input[type='checkbox'] {
   gap: 8px;
 }
 
-.panel-header + .freshness {
+/* General sibling: the hidden model preview may sit between the header and the badge. */
+.panel-header ~ .freshness {
   margin-top: 12px;
 }
 
