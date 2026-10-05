@@ -96,3 +96,36 @@ test('report form shows an error when the service fails', async ({ page }) => {
   await dialog.getByRole('button', { name: 'Envoyer' }).click();
   await expect(dialog.locator('.report-status')).toHaveAttribute('data-state', 'error');
 });
+
+test('the top and bottom bars shrink step by step instead of wrapping', async ({ page }) => {
+  await page.goto('./?lang=fr');
+  await expect(page.getByRole('button', { name: 'Recentrer' })).toBeVisible();
+  const fit = (sel: string) => page.locator(sel).getAttribute('data-fit');
+  const height = async (sel: string) => (await page.locator(sel).boundingBox())?.height ?? 0;
+  const seen = { toolbar: new Set<string | null>(), time: new Set<string | null>() };
+  for (const width of [1600, 1250, 1100, 950, 760]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.waitForTimeout(300);
+    seen.toolbar.add(await fit('.toolbar'));
+    seen.time.add(await fit('.time-control'));
+    // One row of buttons for the top bar; one row for the bottom bar until the phone layout.
+    expect(await height('.toolbar'), `top bar at ${width}px`).toBeLessThan(70);
+    if ((await fit('.time-control')) !== 'phone') {
+      expect(await height('.time-control'), `bottom bar at ${width}px`).toBeLessThan(70);
+    }
+  }
+  expect([...seen.toolbar]).toEqual(expect.arrayContaining(['full', 'short', 'menu']));
+  expect([...seen.time]).toEqual(expect.arrayContaining(['full', 'calendar', 'select', 'phone']));
+});
+
+test('a long dialog scrolls its body, its frame stays put', async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 500 });
+  await page.goto('./?lang=en');
+  await page.locator('.toolbar button[aria-label="About"]').click();
+  const dialog = page.locator('dialog.about:not(.report)');
+  const body = dialog.locator('.dialog-body');
+  await expect(body).toBeVisible();
+  const scrolls = await body.evaluate((e) => e.scrollHeight > e.clientHeight);
+  expect(scrolls).toBe(true);
+  expect(await dialog.evaluate((e) => getComputedStyle(e).overflow)).toBe('hidden');
+});

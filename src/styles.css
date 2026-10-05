@@ -328,8 +328,22 @@ input[type='checkbox'] {
 .about {
   position: fixed;
   max-width: min(560px, calc(100% - 2 * var(--gutter)));
-  padding: 18px 22px;
+  padding: 0;
   color: var(--text);
+}
+
+/* The frame (border, corner brackets) stays put; only the body scrolls (src/ui/dom.ts scrollingDialog). */
+.about[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.about > .dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 22px;
 }
 
 .about::backdrop {
@@ -874,6 +888,170 @@ input[type='checkbox'] {
   display: contents;
 }
 
+/* Bottom bar levels, measured by src/ui/TimeControl.ts (data-fit): full → the date form behind a calendar
+   button → the speed as a list → the phone layout (clock row, then buttons). */
+.time-control:not([data-fit='full']) .jump-toggle {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.time-control:not([data-fit='full']) .time-jump {
+  display: none;
+}
+
+/* Opened, the date form takes a row of its own. */
+.time-control:not([data-fit='full']).jump-open .time-jump {
+  display: flex;
+  width: 100%;
+}
+
+.time-control.jump-open .time-jump .input {
+  flex: 1;
+}
+
+.time-control[data-fit='select'] .time-buttons .segmented,
+.time-control[data-fit='phone'] .time-buttons .segmented {
+  display: none;
+}
+
+.time-control[data-fit='select'] .rate-select,
+.time-control[data-fit='phone'] .rate-select {
+  display: block;
+}
+
+.time-control[data-fit='phone'] {
+  gap: 6px;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 6px 8px;
+}
+
+.time-control[data-fit='phone'] .time-readout {
+  width: 100%;
+}
+
+.time-control[data-fit='phone'] .time-value {
+  min-width: 0;
+  flex: 1;
+  font-size: 14px;
+}
+
+.time-control[data-fit='phone'] .time-buttons {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+}
+
+.time-control[data-fit='phone'] .time-buttons > * {
+  flex: 1;
+}
+
+.time-control[data-fit='phone'] .pause-toggle {
+  min-width: 0;
+}
+
+/* Calendar icon (drawn in the interface colour, not an emoji). */
+.btn.icon-calendar {
+  background: rgb(0 0 0 / 40%)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.7' stroke-linecap='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='1.5'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3Cpath d='M7.5 13.5h2M11 13.5h2M14.5 13.5h2M7.5 17h2M11 17h2' stroke-width='2'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+/* Top bar levels, measured by src/ui/Toolbar.ts (data-fit): full → short labels → "☰" menu (view tabs on the
+   title's row) → menu with the tabs on a second row. */
+.toolbar[data-fit='short'] .label-long {
+  display: none;
+}
+
+.toolbar[data-fit='short'] .label-short {
+  display: inline;
+}
+
+.toolbar[data-fit^='menu'] {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  width: auto;
+  max-width: none;
+}
+
+.toolbar[data-fit^='menu'] .brand {
+  grid-row: 1;
+  grid-column: 1;
+  align-self: center;
+}
+
+.toolbar[data-fit^='menu'] .view-tabs {
+  display: grid;
+  grid-row: 1;
+  grid-column: 2;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.toolbar[data-fit^='menu'] .menu-toggle {
+  display: inline-flex;
+  grid-row: 1;
+  grid-column: 3;
+  justify-content: center;
+  min-width: 44px;
+  font-size: 18px;
+}
+
+.toolbar[data-fit='menu-stacked'] {
+  grid-template-columns: 1fr auto;
+}
+
+.toolbar[data-fit='menu-stacked'] .menu-toggle {
+  grid-column: 2;
+}
+
+.toolbar[data-fit='menu-stacked'] .view-tabs {
+  grid-row: 2;
+  grid-column: 1 / -1;
+}
+
+.toolbar[data-fit^='menu'] .view-tabs .label-long {
+  display: none;
+}
+
+.toolbar[data-fit^='menu'] .view-tabs .label-short {
+  display: inline;
+}
+
+.toolbar[data-fit^='menu'] .toolbar-menu {
+  display: none;
+}
+
+/* Open, the menu drops over the side panels. */
+.toolbar.menu-open {
+  z-index: 4;
+}
+
+.toolbar[data-fit^='menu'].menu-open .toolbar-menu {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-flow: row wrap;
+  align-items: stretch;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.toolbar[data-fit^='menu'] .toolbar-menu .segmented {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+.toolbar[data-fit^='menu'] .toolbar-menu .toolbar-group {
+  flex-wrap: wrap;
+}
+
+.toolbar[data-fit^='menu'] .toolbar-menu .toolbar-group .segmented {
+  flex: 1;
+}
+
 .perf-overlay {
   position: absolute;
   z-index: 5;
@@ -1144,67 +1322,21 @@ body.music-open .info {
     top: max(var(--gutter), env(safe-area-inset-top));
     left: max(var(--gutter), env(safe-area-inset-left));
     right: max(var(--gutter), env(safe-area-inset-right));
-    display: grid;
-    grid-template-columns: 1fr auto;
     gap: 6px;
-    width: auto;
-    max-width: none;
     padding: 6px 8px;
   }
 
   .brand {
-    align-self: center;
     margin: 0;
     font-size: 15px;
+    letter-spacing: 0.18em;
   }
 
-  .menu-toggle {
-    display: inline-flex;
-    justify-content: center;
-    min-width: 44px;
-    font-size: 18px;
-  }
-
-  .view-tabs {
-    display: grid;
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .label-long {
-    display: none;
-  }
-
-  .label-short {
-    display: inline;
-  }
-
-  .toolbar-menu {
-    display: none;
-  }
-
-  .toolbar.menu-open .toolbar-menu {
-    display: flex;
-    grid-column: 1 / -1;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--line);
-  }
-
-  .toolbar-menu .segmented {
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-auto-flow: column;
-  }
-
-  .toolbar-menu .toolbar-group {
-    flex-wrap: wrap;
-  }
-
-  .toolbar-menu .toolbar-group .segmented {
-    flex: 1;
+  /* Phones: the view tabs share the title's row (src/ui/Toolbar.ts falls back to a second row if needed). */
+  .view-tabs .btn {
+    padding-inline: 6px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
   }
 
   .mobile-only {
@@ -1216,68 +1348,21 @@ body.music-open .info {
     min-height: 40px;
   }
 
-  /* Time bar: one compact block docked at the bottom. */
+  /* Time bar: docked at the bottom, full width (the soundtrack opens from the menu here). */
   .time-control {
     right: max(var(--gutter), env(safe-area-inset-right));
     bottom: max(var(--gutter), env(safe-area-inset-bottom));
     left: max(var(--gutter), env(safe-area-inset-left));
     gap: 6px;
-    width: auto;
-    max-width: none;
-    margin: 0;
     padding: 6px 8px;
   }
 
-  .time-readout {
-    width: 100%;
-  }
-
-  .time-value {
-    min-width: 0;
-    flex: 1;
-    font-size: 14px;
-  }
-
-  .time-buttons {
-    display: flex;
-    width: 100%;
-    gap: 6px;
-  }
-
-  .time-buttons > * {
-    flex: 1;
-  }
-
-  .time-buttons .segmented {
-    display: none;
-  }
-
   .rate-select {
-    display: block;
     min-height: 40px;
   }
 
-  .pause-toggle {
-    min-width: 0;
-  }
-
   .jump-toggle {
-    display: inline-flex;
-    justify-content: center;
     min-width: 44px;
-  }
-
-  .time-jump {
-    display: none;
-  }
-
-  .time-control.jump-open .time-jump {
-    display: flex;
-    width: 100%;
-  }
-
-  .time-control.jump-open .time-jump .input {
-    flex: 1;
   }
 
   /* The soundtrack opens from the menu; its floating button is hidden. */
@@ -1290,8 +1375,14 @@ body.music-open .info {
     bottom: calc(var(--timebar-h, 96px) + 2 * var(--gutter));
     left: var(--gutter);
     width: auto;
-    /* Never over the top bar. */
+    /* Never over the top bar. The frame stays put; the player's body scrolls. */
     max-height: calc(100dvh - var(--timebar-h, 96px) - 140px);
+    overflow: hidden;
+  }
+
+  .music.is-open .music-body {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
   }
 
@@ -1313,35 +1404,11 @@ body.music-open .info {
     inset: var(--gutter);
     max-width: none;
     max-height: calc(100dvh - 2 * var(--gutter));
-    overflow-y: auto;
   }
 }
 
 @media (max-height: 500px) and (min-width: 641px) {
-  /* Landscape phone: brand, view tabs and menu on one row; one-row time bar. */
-  .toolbar {
-    grid-template-columns: auto 1fr auto;
-  }
-
-  .brand {
-    grid-row: 1;
-    grid-column: 1;
-  }
-
-  .view-tabs {
-    grid-row: 1;
-    grid-column: 2;
-  }
-
-  .menu-toggle {
-    grid-row: 1;
-    grid-column: 3;
-  }
-
-  .toolbar.menu-open .toolbar-menu {
-    flex-flow: row wrap;
-  }
-
+  /* Landscape phone: the bars pick their own levels (src/ui/fit.ts); smaller controls. */
   .btn,
   .rate-select {
     min-height: 32px;
@@ -1353,17 +1420,6 @@ body.music-open .info {
     width: min(300px, 42%);
   }
 
-  .time-control {
-    left: auto;
-    flex-wrap: nowrap;
-    width: auto;
-  }
-
-  .time-readout,
-  .time-buttons {
-    width: auto;
-  }
-
   .music.is-open {
     top: 60px;
     left: auto;
@@ -1373,6 +1429,11 @@ body.music-open .info {
 }
 
 @media (max-width: 640px) {
+  /* The menu opens as a column of full-width controls. */
+  .toolbar[data-fit^='menu'].menu-open .toolbar-menu {
+    flex-direction: column;
+  }
+
   /* Panels become bottom sheets above the time bar. */
   .side-panel,
   .info {

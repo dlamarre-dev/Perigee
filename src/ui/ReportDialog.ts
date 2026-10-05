@@ -7,7 +7,7 @@
 import type { I18n, MessageKey } from '../i18n';
 import { pixelRatio } from '../render/pixelRatio';
 import { qualityState } from '../render/quality';
-import { h } from './dom';
+import { h, scrollingDialog } from './dom';
 
 export const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const WEB3FORMS_ACCESS_KEY = 'a2aa504d-8bd4-4c69-b920-bdeaa147da0c';
@@ -128,11 +128,13 @@ export class ReportDialog {
       void this.submit();
     });
     this.close.addEventListener('click', () => this.element.close());
-    this.element = h('dialog', { class: 'panel about report', 'aria-labelledby': 'report-title' }, [
-      this.title,
-      this.intro,
-      this.form,
-    ]);
+    this.element = scrollingDialog(
+      h('dialog', { class: 'panel about report', 'aria-labelledby': 'report-title' }, [
+        this.title,
+        this.intro,
+        this.form,
+      ]),
+    );
     this.element.addEventListener('click', (e) => {
       if (e.target === this.element) this.element.close();
     });

@@ -1,6 +1,7 @@
 import type { SimClock } from '../astro/time';
 import type { I18n } from '../i18n';
 import { h } from './dom';
+import { fitLevels, onOneRow, watchFit } from './fit';
 
 export const RATES = [1, 10, 100, 1_000, 10_000, 100_000] as const;
 
@@ -15,7 +16,9 @@ function formatRate(rate: number, lang: string): string {
 
 /**
  * Time bar: UTC clock, live/paused status, pause, speed, back to now, jump to a date.
- * On phones (CSS) the speed buttons give way to a native select and the date form opens from a toggle.
+ * When room runs short it degrades step by step to stay on one row (`data-fit`, src/ui/fit.ts): the date form
+ * moves behind a calendar button, then the speed buttons give way to a list, then the phone layout (two rows).
+ * Phones start at the phone layout.
  */
 export class TimeControl {
   readonly element: HTMLElement;
@@ -45,7 +48,7 @@ export class TimeControl {
   private readonly rateSelect = h('select', { class: 'input rate-select' });
   private readonly jumpToggle = h('button', {
     type: 'button',
-    class: 'btn jump-toggle',
+    class: 'btn jump-toggle icon-calendar',
     'aria-expanded': 'false',
     'aria-controls': 'time-jump-form',
   });
@@ -75,7 +78,6 @@ export class TimeControl {
       this.clock.setRate(Number(this.rateSelect.value));
       this.changed();
     });
-    this.jumpToggle.textContent = '📅';
     this.jumpToggle.addEventListener('click', () => {
       const open = !this.element.classList.contains('jump-open');
       this.element.classList.toggle('jump-open', open);
@@ -124,6 +126,29 @@ export class TimeControl {
     i18n.onChange(() => this.renderLabels());
     this.renderLabels();
     this.update();
+    this.refit = watchFit(() => this.fit());
+    this.phone.addEventListener('change', this.refit);
+  }
+
+  private readonly phone = matchMedia('(max-width: 640px)');
+  private readonly refit: () => void;
+
+  /** Fullest presentation on one row; the date form, once behind its button, opens on a row of its own. */
+  private fit(): void {
+    const el = this.element;
+    const levels = this.phone.matches ? ['phone'] : ['full', 'calendar', 'select', 'phone'];
+    const level = fitLevels(
+      el,
+      levels,
+      (l) =>
+        l === 'phone' ||
+        (onOneRow(el, (item) => l !== 'full' && item === this.jumpForm) &&
+          el.scrollWidth <= el.clientWidth + 1),
+    );
+    if (level === 'full' && el.classList.contains('jump-open')) {
+      el.classList.remove('jump-open');
+      this.jumpToggle.setAttribute('aria-expanded', 'false');
+    }
   }
 
   /**
@@ -154,6 +179,8 @@ export class TimeControl {
 
   private renderLabels(): void {
     const t = (k: Parameters<I18n['t']>[0]): string => this.i18n.t(k);
+    // Labels change width with the language.
+    this.refit?.();
     this.element.setAttribute('aria-label', t('time.label'));
     this.rateGroup.setAttribute('aria-label', t('time.rate'));
     this.nowButton.textContent = t('time.now');

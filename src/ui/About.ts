@@ -1,7 +1,7 @@
 import { loadManifest } from '../data/loader';
 import type { Manifest } from '../data/schemas';
 import type { I18n } from '../i18n';
-import { h } from './dom';
+import { h, scrollingDialog } from './dom';
 
 interface Credit {
   readonly name: string;
@@ -118,6 +118,7 @@ export class About {
       this.reports,
       h('div', { class: 'dialog-actions' }, [this.close]),
     ]);
+    scrollingDialog(this.element);
     // Close when clicking the backdrop.
     this.element.addEventListener('click', (e) => {
       if (e.target === this.element) this.element.close();

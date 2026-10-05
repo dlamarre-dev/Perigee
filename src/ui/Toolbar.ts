@@ -2,6 +2,7 @@ import { VIEW_IDS, type FrameMode, type ViewId } from '../app/urlState';
 import { LANGS, type I18n, type Lang, type MessageKey } from '../i18n';
 import { QUALITY_CHOICES, type QualityChoice, type QualityTier } from '../render/quality';
 import { h } from './dom';
+import { fitLevels, onOneRow, watchFit } from './fit';
 
 export interface ToolbarCallbacks {
   readonly onViewChange: (view: ViewId) => void;
@@ -37,8 +38,10 @@ const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
 };
 
 /**
- * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, about.
- * On phones (CSS, ≤ 640 px) everything but the title and the view tabs folds into a "☰" menu.
+ * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, quality, about, report.
+ * When room runs short it degrades step by step instead of wrapping (`data-fit`, src/ui/fit.ts): short labels
+ * ("Solar", "?", "@"), then everything but the title and the view tabs folds into a "☰" menu, the tabs on the
+ * title's row, or below it when even that does not fit. Phones start at the menu.
  */
 export class Toolbar {
   readonly element: HTMLElement;
@@ -75,6 +78,8 @@ export class Toolbar {
   private frame: FrameMode;
   private view: ViewId;
   private panelLabel: MessageKey | undefined;
+  private readonly phone = matchMedia('(max-width: 640px)');
+  private readonly refit: () => void;
 
   constructor(
     private readonly i18n: I18n,
@@ -160,9 +165,26 @@ export class Toolbar {
 
     i18n.onChange(() => this.renderLabels());
     this.renderLabels();
+    this.refit = watchFit(() => this.fit());
+    this.phone.addEventListener('change', this.refit);
   }
 
   private menuOpen = false;
+
+  /** Fullest presentation that keeps the bar on one row (the menu's own dropdown row does not count). */
+  private fit(): void {
+    const levels = this.phone.matches ? ['menu', 'menu-stacked'] : ['full', 'short', 'menu', 'menu-stacked'];
+    const el = this.element;
+    // One row, and nothing pushed past the edge (the menu layout is a grid: it overflows instead of wrapping).
+    const level = fitLevels(
+      el,
+      levels,
+      () =>
+        onOneRow(el, (item) => item.classList.contains('toolbar-menu')) &&
+        el.scrollWidth <= el.clientWidth + 1,
+    );
+    if (!level.startsWith('menu') && this.menuOpen) this.setMenuOpen(false);
+  }
 
   private setMenuOpen(open: boolean): void {
     this.menuOpen = open;
@@ -220,9 +242,21 @@ export class Toolbar {
     this.frameButtons.fixed.textContent = t(FIXED_FRAME_LABELS[this.view]);
     this.frameButtons.inertial.textContent = t('toolbar.frame.inertial');
     this.langGroup.setAttribute('aria-label', t('toolbar.language'));
-    this.about.textContent = t('toolbar.about');
-    this.report.textContent = t('toolbar.report');
+    // Short forms ("?", "@") when room is short; the full name stays for assistive technologies and tooltips.
+    for (const [button, key, short] of [
+      [this.about, 'toolbar.about', '?'],
+      [this.report, 'toolbar.report', '@'],
+    ] as const) {
+      button.setAttribute('aria-label', t(key));
+      button.title = t(key);
+      button.replaceChildren(
+        h('span', { class: 'label-long' }, [t(key)]),
+        h('span', { class: 'label-short', 'aria-hidden': 'true' }, [short]),
+      );
+    }
     this.renderState();
+    // Labels change width with the language, the view and the panel button.
+    this.refit?.();
   }
 
   private renderState(): void {

@@ -85,3 +85,14 @@ export function syncRows(dl: HTMLElement, rows: readonly (readonly [string, stri
 export function setText(el: HTMLElement, text: string): void {
   if (el.textContent !== text) el.textContent = text;
 }
+
+/**
+ * Moves a dialog's content into a scrolling body: the dialog itself (its border and corner brackets) stays put
+ * and only the body scrolls, so the bottom-right bracket stays at the window's corner.
+ */
+export function scrollingDialog(dialog: HTMLDialogElement): HTMLDialogElement {
+  const body = h('div', { class: 'dialog-body' });
+  body.append(...dialog.childNodes);
+  dialog.append(body);
+  return dialog;
+}
