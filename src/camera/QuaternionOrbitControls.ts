@@ -48,7 +48,7 @@ const ZOOM_SMOOTH_S = 0.12;
 /** Pinch follows the fingers more closely. */
 const PINCH_SMOOTH_S = 0.05;
 /** Touch screens: a finger moves farther than a mouse for the same intent. */
-const TOUCH_ROTATE_GAIN = 0.5;
+const TOUCH_ROTATE_GAIN = 0.75;
 const TOUCH_PINCH_GAIN = 0.75;
 /** Two-finger twist: no roll until the fingers turned this much, then a reduced gain. */
 const TOUCH_TWIST_DEAD_RAD = (6 * Math.PI) / 180;
