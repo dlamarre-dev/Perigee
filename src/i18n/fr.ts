@@ -2,7 +2,7 @@ import type { Messages } from './en';
 
 export const fr: Messages = {
   'app.brand': 'Périgée',
-  'app.title': 'Périgée — les objets en orbite, en temps réel',
+  'app.title': 'Périgée - les objets en orbite, en temps réel',
   'app.loading': 'Chargement…',
   'app.webglUnavailable': 'WebGL 2 n’est pas disponible dans ce navigateur.',
 

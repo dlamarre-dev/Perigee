@@ -217,12 +217,41 @@ export class FilterPanel {
       const isOpen = open.has(facet) || selected.size > 0 || (science && !this.facetsRendered);
       return h('details', { 'data-facet': facet, open: isOpen }, [
         summary,
+        ...(science
+          ? [
+              this.bulkButtons(
+                facet,
+                counts.map(([value]) => value),
+                selected,
+              ),
+            ]
+          : []),
         h('ul', { class: 'facet-list' }, items),
       ]);
     });
     this.facetsBox.replaceChildren(...sections);
     this.facetsRendered = true;
     for (const facet of FACET_KEYS) this.renderSummary(facet);
+  }
+
+  /** "Show all" / "Hide all" above a facet's list: select every value at once, or none. */
+  private bulkButtons(
+    facet: FacetKey,
+    values: readonly string[],
+    selected: ReadonlySet<string>,
+  ): HTMLElement {
+    const t = this.i18n.t.bind(this.i18n);
+    const set = (next: readonly string[]): void => {
+      this.update({ ...this.filters, [facet]: next });
+      this.renderFacets();
+    };
+    const all = h('button', { type: 'button', class: 'btn small' }, [t('missions.showAll')]);
+    const none = h('button', { type: 'button', class: 'btn small' }, [t('missions.showNone')]);
+    all.disabled = values.every((v) => selected.has(v));
+    none.disabled = selected.size === 0;
+    all.addEventListener('click', () => set(values));
+    none.addEventListener('click', () => set([]));
+    return h('p', { class: 'mission-toggles' }, [all, none]);
   }
 
   private valueLabel(facet: FacetKey, value: string): string {

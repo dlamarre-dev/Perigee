@@ -1,6 +1,6 @@
 export const en = {
   'app.brand': 'Perigee',
-  'app.title': 'Perigee — objects in orbit, in real time',
+  'app.title': 'Perigee - objects in orbit, in real time',
   'app.loading': 'Loading…',
   'app.webglUnavailable': 'WebGL 2 is not available in this browser.',
 
