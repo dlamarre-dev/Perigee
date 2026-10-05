@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { setRate } from './helpers';
 
 // Quality tiers (src/render/quality.ts). Headless Chromium renders with SwiftShader, a software GPU: "auto"
 // detects the low tier here.
@@ -29,7 +30,7 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
 test('a forced tier and the perf overlay stay in the URL after user actions', async ({ page }) => {
   await page.goto('./?lang=en&quality=medium&debug=perf');
   await expect(page.locator('.perf-overlay')).toContainText('quality medium');
-  await page.getByRole('button', { name: '×100', exact: true }).click();
+  await setRate(page, 100);
   await expect(page).toHaveURL(/rate=100/);
   await expect(page).toHaveURL(/quality=medium/);
   await expect(page).toHaveURL(/debug=perf/);
