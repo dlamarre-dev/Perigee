@@ -19,7 +19,12 @@ function formatRate(rate: number, lang: string): string {
  */
 export class TimeControl {
   readonly element: HTMLElement;
-  private readonly timeText = h('output', { class: 'time-value', 'aria-live': 'off' });
+  /** Date and time, then "UTC" pinned to the right of a fixed box (Rajdhani's digits are proportional). */
+  private readonly timeDigits = h('span', { class: 'time-digits' });
+  private readonly timeText = h('output', { class: 'time-value', 'aria-live': 'off' }, [
+    this.timeDigits,
+    h('span', { class: 'time-zone' }, ['UTC']),
+  ]);
   private readonly statusBadge = h('span', { class: 'badge' });
   private readonly pauseButton = h('button', {
     type: 'button',
@@ -135,8 +140,8 @@ export class TimeControl {
 
   /** Refreshes the clock readout; call a few times per second. */
   update(): void {
-    const text = formatUtc(this.clock.nowUtc());
-    if (this.timeText.value !== text) this.timeText.value = text;
+    const text = formatUtc(this.clock.nowUtc()).replace(/ UTC$/, '');
+    if (this.timeDigits.textContent !== text) this.timeDigits.textContent = text;
     // The buttons only change with the clock's state (an action, a view's speed limit, the language).
     if (this.signature() !== this.stateKey) this.renderState();
   }

@@ -272,9 +272,12 @@ input[type='checkbox'] {
 }
 
 .time-value {
-  /* Fixed box: Rajdhani's digits are proportional, so the ticking clock would resize the whole bar. */
-  display: inline-block;
-  min-width: 24ch;
+  /* Fixed box: Rajdhani's digits are proportional, so the ticking clock would resize the whole bar. "UTC" stays
+     at its right edge, at least half an em from the digits. */
+  display: inline-flex;
+  justify-content: space-between;
+  column-gap: 0.5em;
+  min-width: 25ch;
   font-size: 16px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
