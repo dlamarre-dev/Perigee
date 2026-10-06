@@ -73,3 +73,20 @@ test('panels are bottom sheets above the time bar, one at a time', async ({ page
   await info.locator('.sheet-grab').click();
   await expect.poll(async () => (await info.boundingBox())?.height ?? 0).toBeLessThan(before);
 });
+
+test('a tapped button does not stay highlighted, and the bars are not selectable text', async ({ page }) => {
+  await page.goto('./?lang=en');
+  const now = page.getByRole('button', { name: 'Now' });
+  await expect(now).toBeVisible();
+  const background = () => now.evaluate((e) => getComputedStyle(e).backgroundColor);
+  const before = await background();
+  await now.tap();
+  await page.waitForTimeout(300);
+  // Touch screens keep :hover on the last element touched: hover styles apply only with a real pointer.
+  expect(await background()).toBe(before);
+  for (const bar of ['.toolbar', '.time-control']) {
+    expect(await page.locator(bar).evaluate((e) => getComputedStyle(e).userSelect)).toBe('none');
+  }
+  // The date field stays editable.
+  expect(await page.locator('#time-jump').evaluate((e) => getComputedStyle(e).userSelect)).not.toBe('none');
+});

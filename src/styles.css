@@ -202,10 +202,49 @@ body,
     color 120ms;
 }
 
-.btn:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-strong);
+/* Hover only where there is a real pointer: on touch screens the browser keeps :hover on the last button
+   touched, which then looks stuck. */
+@media (hover: hover) {
+  .btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .facets summary:hover {
+    color: var(--accent-strong);
+  }
+
+  .result:hover {
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .music-credit a:hover {
+    color: var(--accent-strong);
+  }
+}
+
+/* Bars and buttons are controls, not text: no stray selection highlight from a drag or a long press, no tap
+   flash. Text elsewhere (panels, dialogs) stays selectable, and so does the date field. */
+.toolbar,
+.time-control,
+.btn,
+.result,
+summary,
+.sheet-grab,
+.report-type label {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toolbar input,
+.time-control input {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .btn:disabled {
@@ -568,10 +607,6 @@ input[type='checkbox'] {
   padding: 2px 0;
 }
 
-.facets summary:hover {
-  color: var(--accent-strong);
-}
-
 .facet-list {
   list-style: none;
   margin: 6px 0 0;
@@ -626,7 +661,6 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 
-.result:hover,
 .result:focus-visible {
   border-left-color: var(--accent);
   background: var(--accent-soft);
@@ -1290,10 +1324,6 @@ input[type='checkbox'] {
 .music-credit a {
   color: var(--text-muted);
   text-decoration: none;
-}
-
-.music-credit a:hover {
-  color: var(--accent-strong);
 }
 
 /* Keep the detail panel clear of the open player. */
