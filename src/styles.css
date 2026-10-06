@@ -393,6 +393,11 @@ input[type='checkbox'] {
   margin-top: 0;
 }
 
+/* Titles focused by script (dialog or panel opening) are not controls: no focus ring. */
+h2[tabindex='-1']:focus {
+  outline: none;
+}
+
 .about h3 {
   margin-bottom: 4px;
 }

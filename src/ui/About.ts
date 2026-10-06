@@ -77,7 +77,7 @@ function creditList(credits: readonly Credit[]): HTMLUListElement {
 /** "About" dialog: purpose, disclaimer, attributions, license. */
 export class About {
   readonly element: HTMLDialogElement;
-  private readonly title = h('h2', { id: 'about-title' });
+  private readonly title = h('h2', { id: 'about-title', tabindex: -1 });
   private readonly intro = h('p');
   private readonly authorLabel = h('span');
   private readonly sourceLink = h('a', { href: REPOSITORY, target: '_blank', rel: 'noopener' });
@@ -129,6 +129,11 @@ export class About {
 
   open(): void {
     this.element.showModal();
+    // showModal focuses the first focusable element, which can scroll a tall dialog's body away from its top:
+    // start at the title instead, scrolled to the top.
+    this.title.focus({ preventScroll: true });
+    const body = this.element.querySelector('.dialog-body');
+    if (body) body.scrollTop = 0;
     // Fresh on every opening: the data branch is republished several times a day.
     loadManifest(this.baseUrl)
       .then((m) => {

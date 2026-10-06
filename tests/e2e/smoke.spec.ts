@@ -130,5 +130,7 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   await expect(body).toBeVisible();
   const scrolls = await body.evaluate((e) => e.scrollHeight > e.clientHeight);
   expect(scrolls).toBe(true);
+  // Opens at the top (showModal would focus, and scroll to, a control further down).
+  expect(await body.evaluate((e) => e.scrollTop)).toBe(0);
   expect(await dialog.evaluate((e) => getComputedStyle(e).overflow)).toBe('hidden');
 });
