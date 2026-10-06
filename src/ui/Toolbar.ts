@@ -75,6 +75,12 @@ export class Toolbar {
     'aria-controls': 'toolbar-menu',
   });
   private readonly menu = h('div', { class: 'toolbar-menu', id: 'toolbar-menu' });
+  /**
+   * Long and short label spans of the view tabs, About and Report, created once: re-creating them on every
+   * label refresh removed the node under the pointer, and Chrome then left the old button stuck in :hover
+   * (seen when switching views quickly while one was loading).
+   */
+  private readonly labelSpans = new Map<HTMLElement, { long: HTMLElement; short: HTMLElement }>();
   private frame: FrameMode;
   private view: ViewId;
   private panelLabel: MessageKey | undefined;
@@ -225,10 +231,7 @@ export class Toolbar {
       // Short label on phones (CSS picks one), full one elsewhere and for assistive technologies.
       const b = this.viewButtons[id];
       b.setAttribute('aria-label', t(VIEW_LABELS[id]));
-      b.replaceChildren(
-        h('span', { class: 'label-long' }, [t(VIEW_LABELS[id])]),
-        h('span', { class: 'label-short', 'aria-hidden': 'true' }, [t(SHORT_VIEW_LABELS[id])]),
-      );
+      this.setLabels(b, t(VIEW_LABELS[id]), t(SHORT_VIEW_LABELS[id]));
     }
     this.menuButton.textContent = '☰';
     this.menuButton.setAttribute('aria-label', t('toolbar.menu'));
@@ -249,14 +252,26 @@ export class Toolbar {
     ] as const) {
       button.setAttribute('aria-label', t(key));
       button.title = t(key);
-      button.replaceChildren(
-        h('span', { class: 'label-long' }, [t(key)]),
-        h('span', { class: 'label-short', 'aria-hidden': 'true' }, [short]),
-      );
+      this.setLabels(button, t(key), short);
     }
     this.renderState();
     // Labels change width with the language, the view and the panel button.
     this.refit?.();
+  }
+
+  /** Long and short labels of a button, written into spans created once (see `labelSpans`). */
+  private setLabels(button: HTMLElement, long: string, short: string): void {
+    let spans = this.labelSpans.get(button);
+    if (!spans) {
+      spans = {
+        long: h('span', { class: 'label-long' }),
+        short: h('span', { class: 'label-short', 'aria-hidden': 'true' }),
+      };
+      button.replaceChildren(spans.long, spans.short);
+      this.labelSpans.set(button, spans);
+    }
+    if (spans.long.textContent !== long) spans.long.textContent = long;
+    if (spans.short.textContent !== short) spans.short.textContent = short;
   }
 
   private renderState(): void {

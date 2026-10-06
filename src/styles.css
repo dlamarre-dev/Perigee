@@ -205,7 +205,7 @@ body,
 /* Hover only where there is a real pointer: on touch screens the browser keeps :hover on the last button
    touched, which then looks stuck. */
 @media (hover: hover) {
-  .btn:hover:not(:disabled) {
+  .btn:hover:not(:disabled, [aria-pressed='true']) {
     border-color: var(--accent);
     background: var(--accent-soft);
     color: var(--accent-strong);
