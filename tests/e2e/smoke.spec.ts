@@ -106,14 +106,16 @@ test('the top and bottom bars shrink step by step instead of wrapping', async ({
   const seen = { toolbar: new Set<string | null>(), time: new Set<string | null>() };
   for (const width of [1600, 1250, 1100, 950, 760]) {
     await page.setViewportSize({ width, height: 800 });
-    await page.waitForTimeout(300);
+    // The bars re-fit on the next frame after a resize (slow on software WebGL): wait for it.
+    // One row of buttons for the top bar; one row for the bottom bar until the phone layout.
+    await expect.poll(() => height('.toolbar'), { message: `top bar at ${width}px` }).toBeLessThan(70);
+    await expect
+      .poll(async () => ((await fit('.time-control')) === 'phone' ? 0 : height('.time-control')), {
+        message: `bottom bar at ${width}px`,
+      })
+      .toBeLessThan(70);
     seen.toolbar.add(await fit('.toolbar'));
     seen.time.add(await fit('.time-control'));
-    // One row of buttons for the top bar; one row for the bottom bar until the phone layout.
-    expect(await height('.toolbar'), `top bar at ${width}px`).toBeLessThan(70);
-    if ((await fit('.time-control')) !== 'phone') {
-      expect(await height('.time-control'), `bottom bar at ${width}px`).toBeLessThan(70);
-    }
   }
   expect([...seen.toolbar]).toEqual(expect.arrayContaining(['full', 'short', 'menu']));
   expect([...seen.time]).toEqual(expect.arrayContaining(['full', 'calendar', 'select', 'phone']));
