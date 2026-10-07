@@ -134,3 +134,32 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   expect(await body.evaluate((e) => e.scrollTop)).toBe(0);
   expect(await dialog.evaluate((e) => getComputedStyle(e).overflow)).toBe('hidden');
 });
+
+test.describe('time zone', () => {
+  test.use({ timezoneId: 'America/Toronto' });
+
+  test('dates follow the computer’s zone by default; the zone list changes them everywhere', async ({
+    page,
+  }) => {
+    await page.goto('./?lang=fr&t=2026-09-26T12:00:00Z&rate=0');
+    const clock = page.locator('.time-value');
+    await expect(clock).toContainText('2026-09-26 08:00:00');
+    await expect(page.locator('.time-zone-name')).toHaveText('HAE');
+    await expect(page.locator('.filters')).toContainText('2026-09-26 08:00 HAE');
+    const zones = page.getByRole('combobox', { name: 'Fuseau horaire des dates affichées' });
+    await zones.focus();
+    await zones.selectOption('UTC');
+    await expect(clock).toContainText('2026-09-26 12:00:00');
+    await expect(page.locator('.time-zone-name')).toHaveText('UTC');
+    await expect(page.locator('.filters')).toContainText('2026-09-26 12:00 UTC');
+    // Remembered, and Paris (no French abbreviation) shows its offset.
+    await page.reload();
+    await expect(page.locator('.time-zone-name')).toHaveText('UTC');
+    await zones.focus();
+    await zones.selectOption('Europe/Paris');
+    await expect(clock).toContainText('2026-09-26 14:00:00');
+    await expect(page.locator('.time-zone-name')).toHaveText('UTC+2');
+    // The URL keeps UTC.
+    await expect(page).toHaveURL(/t=2026-09-26T12%3A00%3A00Z|t=2026-09-26T12:00:00Z/);
+  });
+});

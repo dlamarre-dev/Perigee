@@ -1,5 +1,6 @@
 import { en, type MessageKey, type Messages } from './en';
 import { fr } from './fr';
+import { AUTO_ZONE, formatWallClock, resolveZone, zoneAbbreviation, type TimeZoneSetting } from './timeZone';
 
 export type Lang = 'en' | 'fr';
 export const LANGS: readonly Lang[] = ['en', 'fr'];
@@ -19,13 +20,48 @@ export function detectLang(urlLang: string | null, navigatorLanguages: readonly 
 
 type Listener = (lang: Lang) => void;
 
-/** Current language and translation lookup. UI components subscribe to re-render on change. */
+/**
+ * Current language, display time zone and translation lookup. UI components subscribe to re-render on change
+ * (of either: dates and times are formatted here too).
+ */
 export class I18n {
   private langValue: Lang;
+  private zoneSettingValue: TimeZoneSetting;
+  private zoneValue: string;
   private readonly listeners = new Set<Listener>();
 
-  constructor(lang: Lang) {
+  constructor(lang: Lang, zoneSetting: TimeZoneSetting = AUTO_ZONE) {
     this.langValue = lang;
+    this.zoneSettingValue = zoneSetting;
+    this.zoneValue = resolveZone(zoneSetting);
+  }
+
+  /** "auto", "UTC" or an IANA id, as chosen. */
+  get timeZoneSetting(): TimeZoneSetting {
+    return this.zoneSettingValue;
+  }
+
+  /** IANA id (or "UTC") of the zone dates are shown in. */
+  get timeZone(): string {
+    return this.zoneValue;
+  }
+
+  setTimeZone(setting: TimeZoneSetting): void {
+    const zone = resolveZone(setting);
+    if (setting === this.zoneSettingValue && zone === this.zoneValue) return;
+    this.zoneSettingValue = setting;
+    this.zoneValue = zone;
+    for (const l of this.listeners) l(this.langValue);
+  }
+
+  /** "2026-10-07 09:35 HAE": an instant in the display zone, with the zone's name at that date. */
+  dateTime(date: Date, seconds = false): string {
+    return `${formatWallClock(date, this.zoneValue, seconds)} ${this.zoneAbbreviation(date)}`;
+  }
+
+  /** Short name of the display zone at that date ("EDT"/"HAE", "UTC", "UTC+05:30"). */
+  zoneAbbreviation(date: Date): string {
+    return zoneAbbreviation(date, this.zoneValue, this.locale);
   }
 
   get lang(): Lang {

@@ -195,15 +195,15 @@ export class About {
       this.dataLine.textContent = this.manifestError ? t('about.dataUnavailable') : '';
       return;
     }
-    const utc = (iso: string | undefined): string | undefined =>
-      iso ? `${iso.slice(0, 16).replace('T', ' ')} UTC` : undefined;
+    const when = (iso: string | undefined): string | undefined =>
+      iso ? this.i18n.dateTime(new Date(iso)) : undefined;
     const latest = (isos: readonly string[]): string | undefined => [...isos].sort().at(-1);
     const parts: string[] = [];
-    const gp = utc(m.datasets['earth.gp']?.fetchedAt);
+    const gp = when(m.datasets['earth.gp']?.fetchedAt);
     if (gp) parts.push(`${t('about.data.satellites')} ${gp}`);
-    const satcat = utc(m.datasets['earth.satcat']?.fetchedAt);
+    const satcat = when(m.datasets['earth.satcat']?.fetchedAt);
     if (satcat) parts.push(`${t('about.data.satcat')} ${satcat}`);
-    const ephem = utc(latest(Object.values(m.ephemerides).map((e) => e.fetchedAt)));
+    const ephem = when(latest(Object.values(m.ephemerides).map((e) => e.fetchedAt)));
     if (ephem) parts.push(`${t('about.data.ephemerides')} ${ephem}`);
     this.dataLine.textContent = `${t('about.dataRefreshed')} ${parts.join(' · ')}`;
   }

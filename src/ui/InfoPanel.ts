@@ -9,7 +9,7 @@ import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from 
 import { modelFor } from '../render/models';
 import { ModelPreview } from './ModelPreview';
 import { countryName } from './countries';
-import { facetLabel, formatUtcDate } from './labels';
+import { facetLabel } from './labels';
 
 export interface InfoPanelCallbacks {
   readonly onClose: () => void;
@@ -163,7 +163,7 @@ export class InfoPanel {
       ageDays < 0
         ? this.i18n.format('info.inDays', { n: num(-ageDays, 1) })
         : this.i18n.format('info.ageDays', { n: num(ageDays, 1) });
-    rows.push(['info.epoch', `${formatUtcDate(new Date(obj.epochMs))} · ${age}`]);
+    rows.push(['info.epoch', `${this.i18n.dateTime(new Date(obj.epochMs))} · ${age}`]);
     // Where the elements come from: the Space Force catalogue (GP) or a CelesTrak fit to the operator's own
     // ephemerides (supplemental GP), usually far more accurate.
     const supSet = obj.omm.SOURCE;

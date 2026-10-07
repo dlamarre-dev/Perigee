@@ -33,6 +33,7 @@ import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setPreviewFrameRate } from '../ui/ModelPreview';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
+import { loadZoneSetting } from '../i18n/timeZone';
 import { Altimeter } from '../ui/Altimeter';
 import { Toolbar } from '../ui/Toolbar';
 import { h, setSheetGrabLabel } from '../ui/dom';
@@ -129,7 +130,8 @@ function main(): void {
 
   const startParams = new URLSearchParams(window.location.search);
   const url = parseUrlState(window.location.search);
-  const i18n = new I18n(detectLang(url.lang ?? null, navigator.languages));
+  // Dates are shown in the computer's time zone unless the visitor picked another one (time bar).
+  const i18n = new I18n(detectLang(url.lang ?? null, navigator.languages), loadZoneSetting());
   let explicitLang: Lang | undefined = url.lang;
   let frame: FrameMode = url.frame;
   let viewId: ViewId = url.view;

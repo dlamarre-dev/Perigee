@@ -10,7 +10,7 @@ import {
 import type { SatStats } from '../earth/EarthSatellites';
 import type { I18n, MessageKey } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
-import { facetLabel, formatUtcDate } from './labels';
+import { facetLabel } from './labels';
 
 const FACET_TITLES: Record<FacetKey, MessageKey> = {
   science: 'filters.science',
@@ -196,7 +196,7 @@ export class FilterPanel {
     this.clear.disabled = isEmptyFilter(this.filters);
     this.resultsTitle.textContent = t('filters.results');
     this.fetched.textContent = this.fetchedAt
-      ? this.i18n.format('stats.fetched', { date: formatUtcDate(this.fetchedAt) })
+      ? this.i18n.format('stats.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
       : '';
     this.renderFacets();
     this.renderStats();

@@ -64,7 +64,6 @@ import { BodyPanel } from '../ui/BodyPanel';
 import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
-import { formatUtcDate } from '../ui/labels';
 import { setLinePositions } from '../render/lineBuffers';
 
 export interface PlanetaryConfig {
@@ -1036,7 +1035,7 @@ export class PlanetaryView implements View {
     if (entry) {
       rows.push([
         t('info.window'),
-        `${formatUtcDate(tdbJdToDate(entry.startTdbJd))} → ${formatUtcDate(tdbJdToDate(entry.endTdbJd))}`,
+        `${i18n.dateTime(tdbJdToDate(entry.startTdbJd))} → ${i18n.dateTime(tdbJdToDate(entry.endTdbJd))}`,
       ]);
     }
     return {

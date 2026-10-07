@@ -27,6 +27,9 @@ Cross-cutting features:
   launch date, status, orbit (altitude, period, inclination), data age.
 - Filters by organisation / country / constellation / orbit type (LEO, MEO, GEO, HEO), mostly in view A.
 - Time control: real time by default, acceleration (×1 to ×10,000), pause, jump to a date.
+- Dates and times are shown in the computer's time zone (daylight saving included) by default; the zone name in
+  the time bar opens a list of zones (UTC and every IANA zone, remembered per browser). Everything internal, the URL
+  included, stays UTC (`src/i18n/timeZone.ts`, `I18n.dateTime`). Calendar dates (launch, verified) are not converted.
 - Freshness indicator: every object knows whether its position is *propagated from recent elements*,
   *interpolated from ephemerides*, or *extrapolated/modelled* (shown visually).
 

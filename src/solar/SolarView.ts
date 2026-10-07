@@ -85,7 +85,6 @@ import { textureLevels } from '../render/textureLevels';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
-import { formatUtcDate } from '../ui/labels';
 import { SolarPanel } from '../ui/SolarPanel';
 import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { setLinePositions } from '../render/lineBuffers';
@@ -1722,7 +1721,7 @@ class SolarView implements View {
     if (probe?.entry) {
       rows.push([
         t('info.window'),
-        `${formatUtcDate(tdbJdToDate(probe.entry.startTdbJd))} → ${formatUtcDate(tdbJdToDate(probe.entry.endTdbJd))}`,
+        `${i18n.dateTime(tdbJdToDate(probe.entry.startTdbJd))} → ${i18n.dateTime(tdbJdToDate(probe.entry.endTdbJd))}`,
       ]);
     }
     const notes = [m.notes?.[i18n.lang], this.logScale ? t('solar.logWarning') : undefined]

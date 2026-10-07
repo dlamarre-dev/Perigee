@@ -6,7 +6,6 @@ import type { PlanetInfo } from '../astro/planets';
 import type { Mission, Moon } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
-import { formatUtcDate } from './labels';
 import { MissionToggles } from './missionToggles';
 
 export interface SolarPanelCallbacks {
@@ -129,7 +128,7 @@ export class SolarPanel {
     const lang = this.i18n.lang;
     this.title.textContent = t('solar.panel');
     this.fetched.textContent = this.fetchedAt
-      ? this.i18n.format('moon.fetched', { date: formatUtcDate(this.fetchedAt) })
+      ? this.i18n.format('moon.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
       : '';
     this.logLabel.textContent = t('solar.logScale');
     this.planetsTitle.textContent = t('solar.planets');

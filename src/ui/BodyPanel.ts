@@ -5,7 +5,6 @@
 import type { LandingSite, LandingSiteType, Mission } from '../data/schemas';
 import type { I18n, MessageKey } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
-import { formatUtcDate } from './labels';
 import { MissionToggles } from './missionToggles';
 
 export interface BodyPanelCallbacks {
@@ -100,7 +99,7 @@ export class BodyPanel {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t(this.keys.panel);
     this.fetched.textContent = this.fetchedAt
-      ? this.i18n.format('moon.fetched', { date: formatUtcDate(this.fetchedAt) })
+      ? this.i18n.format('moon.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
       : '';
     this.missionsTitle.textContent = t('moon.missions');
     this.toggles.renderLabels();

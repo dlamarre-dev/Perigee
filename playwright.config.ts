@@ -14,6 +14,8 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}/Perigee/`,
     trace: 'retain-on-failure',
+    // Dates are shown in the computer's zone: fix it so runs match on any machine (tests may override).
+    timezoneId: 'UTC',
   },
   projects: [
     {
