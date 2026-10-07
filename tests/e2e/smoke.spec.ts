@@ -152,13 +152,16 @@ test.describe('time zone', () => {
     await expect(clock).toContainText('2026-09-26 12:00:00');
     await expect(page.locator('.time-zone-name')).toHaveText('UTC');
     await expect(page.locator('.filters')).toContainText('2026-09-26 12:00 UTC');
-    // Remembered, and Paris (no French abbreviation) shows its offset.
+    // Remembered; Paris gets the usual English abbreviation, Montréal its own entry.
     await page.reload();
     await expect(page.locator('.time-zone-name')).toHaveText('UTC');
     await zones.focus();
     await zones.selectOption('Europe/Paris');
     await expect(clock).toContainText('2026-09-26 14:00:00');
-    await expect(page.locator('.time-zone-name')).toHaveText('UTC+2');
+    await expect(page.locator('.time-zone-name')).toHaveText('CEST');
+    await zones.selectOption('America/Montreal');
+    await expect(clock).toContainText('2026-09-26 08:00:00');
+    await expect(page.locator('.time-zone-name')).toHaveText('HAE');
     // The URL keeps UTC.
     await expect(page).toHaveURL(/t=2026-09-26T12%3A00%3A00Z|t=2026-09-26T12:00:00Z/);
   });

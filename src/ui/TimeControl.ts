@@ -248,7 +248,6 @@ export class TimeControl {
     // Refilled in the (possibly new) zone on next focus.
     this.jumpInput.value = '';
     this.zoneSelect.setAttribute('aria-label', t('time.zone'));
-    this.zoneSelect.title = t('time.zone');
     if (this.zoneListKey) this.buildZoneList();
     else
       this.zoneSelect.replaceChildren(

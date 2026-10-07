@@ -27,7 +27,12 @@ describe('time zone display', () => {
     expect(zoneAbbreviation(summer, 'America/Toronto', 'fr-CA')).toBe('HAE');
     expect(zoneAbbreviation(winter, 'America/Toronto', 'fr-CA')).toBe('HNE');
     expect(zoneAbbreviation(summer, 'UTC', 'fr-CA')).toBe('UTC');
-    expect(zoneAbbreviation(summer, 'Asia/Calcutta', 'en-CA')).toBe('UTC+5:30');
+    // Other zones get the usual English abbreviation, or their offset when there is none.
+    expect(zoneAbbreviation(summer, 'Europe/Paris', 'fr-CA')).toBe('CEST');
+    expect(zoneAbbreviation(winter, 'Europe/Paris', 'fr-CA')).toBe('CET');
+    expect(zoneAbbreviation(summer, 'Asia/Tokyo', 'fr-CA')).toBe('JST');
+    expect(zoneAbbreviation(summer, 'Europe/Moscow', 'en-CA')).toBe('MSK');
+    expect(zoneAbbreviation(summer, 'Asia/Tbilisi', 'fr-CA')).toBe('UTC+4');
     expect(formatOffset(-4 * 3_600_000)).toBe('UTC−04:00');
   });
 
@@ -64,5 +69,8 @@ describe('time zone display', () => {
       'Toronto — Eastern Time (UTC−04:00)',
     );
     expect(fr.length).toBeGreaterThan(100);
+    // Montréal has its own entry (same rules as Toronto).
+    expect(fr.find((o) => o.id === 'America/Montreal')?.label).toBe('Montréal — heure de l’Est (UTC−04:00)');
+    expect(zoneAbbreviation(summer, 'America/Montreal', 'fr-CA')).toBe('HAE');
   });
 });

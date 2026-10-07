@@ -158,25 +158,96 @@ export function formatOffset(offsetMs: number, compact = false): string {
 }
 
 /**
- * Short name of `zone` at that instant, daylight saving included: "EDT"/"HAE" for Toronto in summer, "UTC";
- * zones without a common abbreviation in that language get their offset ("UTC+2", "UTC+5:30").
+ * English-speaking locales whose short zone names (CLDR) cover the rest of the world: "CEST" and "BST" come from
+ * en-GB, "AEDT" from en-AU, "IST" from en-IN, "SAST" from en-ZA, "JST" from ja-JP.
+ */
+const ABBREVIATION_LOCALES = ['en-CA', 'en-US', 'en-GB', 'en-AU', 'en-NZ', 'en-IN', 'en-ZA', 'ja-JP'];
+
+/**
+ * Widely used abbreviations that CLDR does not provide, with the UTC offset (minutes) they stand for: used only
+ * while the zone keeps that offset, so a change of rules falls back to "UTC±h" instead of a wrong name.
+ */
+const COMMON_ABBREVIATIONS: Readonly<Record<string, readonly [string, number]>> = {
+  'Asia/Shanghai': ['CST', 480],
+  'Asia/Hong_Kong': ['HKT', 480],
+  'Asia/Singapore': ['SGT', 480],
+  'Asia/Manila': ['PHT', 480],
+  'Asia/Seoul': ['KST', 540],
+  'Asia/Jakarta': ['WIB', 420],
+  'Asia/Bangkok': ['ICT', 420],
+  'Asia/Saigon': ['ICT', 420],
+  'Asia/Ho_Chi_Minh': ['ICT', 420],
+  'Asia/Karachi': ['PKT', 300],
+  'Asia/Kathmandu': ['NPT', 345],
+  'Asia/Katmandu': ['NPT', 345],
+  'Asia/Tehran': ['IRST', 210],
+  'Europe/Moscow': ['MSK', 180],
+  'Europe/Istanbul': ['TRT', 180],
+  'America/Sao_Paulo': ['BRT', -180],
+  'America/Buenos_Aires': ['ART', -180],
+  'America/Argentina/Buenos_Aires': ['ART', -180],
+  'America/Bogota': ['COT', -300],
+  'America/Lima': ['PET', -300],
+  'Africa/Lagos': ['WAT', 60],
+  'Africa/Nairobi': ['EAT', 180],
+};
+
+const shortNameFormatters = new Map<string, Intl.DateTimeFormat>();
+
+function shortName(date: Date, zone: string, locale: string): string | undefined {
+  const key = `${locale}|${zone}`;
+  let f = shortNameFormatters.get(key);
+  if (!f) {
+    f = new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: 'short' });
+    shortNameFormatters.set(key, f);
+  }
+  return f.formatToParts(date).find((p) => p.type === 'timeZoneName')?.value;
+}
+
+const abbreviations = new Map<string, string>();
+
+/**
+ * Short name of `zone` at that instant, daylight saving included: the language's own when it has one ("HAE" for
+ * Toronto in French), else the usual English one ("CEST", "JST", "AEDT", "MSK"…), else the offset ("UTC+4").
  */
 export function zoneAbbreviation(date: Date, zone: string, locale: string): string {
   if (zone === 'UTC' || zone === 'Etc/UTC') return 'UTC';
+  const offsetMs = zoneOffsetMs(date, zone);
+  const key = `${zone}|${locale}|${offsetMs}`;
+  const known = abbreviations.get(key);
+  if (known) return known;
+  let name: string | undefined;
   try {
-    const name = new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: 'short' })
-      .formatToParts(date)
-      .find((p) => p.type === 'timeZoneName')?.value;
-    if (name && !/^(GMT|UTC)/.test(name)) return name;
+    const own = shortName(date, zone, locale);
+    if (own && !/^(GMT|UTC)/.test(own)) name = own;
+    for (const l of ABBREVIATION_LOCALES) {
+      if (name) break;
+      const n = shortName(date, zone, l);
+      // Other locales only lend Latin capitals ("JST"), never their own wording.
+      if (n && /^[A-Z]{2,5}$/.test(n)) name = n;
+    }
   } catch {
-    // Fall through to the offset.
+    // Fall through.
   }
-  return formatOffset(zoneOffsetMs(date, zone), true);
+  const common = COMMON_ABBREVIATIONS[zone];
+  if (!name && common && common[1] * 60_000 === offsetMs) name = common[0];
+  name ??= formatOffset(offsetMs, true);
+  abbreviations.set(key, name);
+  return name;
 }
+
+/**
+ * Zones listed besides the browser's canonical ones, for the people using the site: Montréal follows Toronto's
+ * rules (IANA alias), but a child in Montréal looks for Montréal.
+ */
+const EXTRA_ZONES = ['America/Montreal'];
+
+/** City names spelled as their inhabitants do, where the IANA id cannot (no accents). */
+const CITY_NAMES: Readonly<Record<string, string>> = { 'America/Montreal': 'Montréal' };
 
 /** "Buenos Aires" from "America/Argentina/Buenos_Aires". */
 export function zoneCity(zone: string): string {
-  return (zone.split('/').pop() ?? zone).replace(/_/g, ' ');
+  return CITY_NAMES[zone] ?? (zone.split('/').pop() ?? zone).replace(/_/g, ' ');
 }
 
 /** Region of the IANA id, used to group the list: "America", "Europe"… */
@@ -218,7 +289,9 @@ export function knownZones(): string[] {
         'Asia/Tokyo',
         'Australia/Sydney',
       ];
-  return list.filter((z) => (ZONE_REGIONS as readonly string[]).includes(zoneRegion(z)));
+  const zones = list.filter((z) => (ZONE_REGIONS as readonly string[]).includes(zoneRegion(z)));
+  for (const z of EXTRA_ZONES) if (!zones.includes(z) && isValidZone(z)) zones.push(z);
+  return zones;
 }
 
 export interface ZoneOption {
