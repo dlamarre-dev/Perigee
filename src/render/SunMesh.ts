@@ -4,6 +4,7 @@
  * over larger supergranulation mottling. No sunspots: a fixed map of them would be wrong on any given day.
  * Fine noise octaves fade with their screen-space frequency, so the disc does not shimmer when seen from afar.
  */
+import { keepInPhoto } from './photo';
 import {
   AdditiveBlending,
   CanvasTexture,
@@ -139,6 +140,8 @@ export function createSunGlow(screenFraction = 0.05): Sprite {
   );
   glow.scale.set(screenFraction, screenFraction, 1);
   glow.name = 'sun-glow';
+  // Part of the Sun's look: kept in the photo without markers.
+  keepInPhoto(glow);
   return glow;
 }
 

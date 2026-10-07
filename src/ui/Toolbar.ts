@@ -11,6 +11,7 @@ export interface ToolbarCallbacks {
   readonly onLangChange: (lang: Lang) => void;
   readonly onAbout: () => void;
   readonly onReport: () => void;
+  readonly onPhoto: () => void;
   /** Quality setting chosen in the menu (the page reloads to apply it). */
   readonly onQualityChange: (choice: QualityChoice) => void;
   readonly onTogglePanel: () => void;
@@ -18,7 +19,7 @@ export interface ToolbarCallbacks {
   readonly onSoundtrack: () => void;
 }
 
-const VIEW_LABELS: Record<ViewId, MessageKey> = {
+export const VIEW_LABELS: Record<ViewId, MessageKey> = {
   earth: 'view.earth',
   moon: 'view.moon',
   mars: 'view.mars',
@@ -67,6 +68,12 @@ export class Toolbar {
   private readonly qualitySelect = h('select', { class: 'input quality-select', id: 'quality-select' });
   private readonly about = h('button', { type: 'button', class: 'btn' });
   private readonly report = h('button', { type: 'button', class: 'btn' });
+  /** Camera icon on large screens, "Photo" in the phone menu. */
+  private readonly photoText = h('span', { class: 'photo-text' });
+  private readonly photo = h('button', { type: 'button', class: 'btn photo-button' }, [
+    h('span', { class: 'photo-icon', 'aria-hidden': 'true' }),
+    this.photoText,
+  ]);
   private readonly soundtrack = h('button', { type: 'button', class: 'btn mobile-only' });
   private readonly menuButton = h('button', {
     type: 'button',
@@ -113,6 +120,7 @@ export class Toolbar {
     this.recenter.addEventListener('click', callbacks.onRecenter);
     this.about.addEventListener('click', callbacks.onAbout);
     this.report.addEventListener('click', callbacks.onReport);
+    this.photo.addEventListener('click', callbacks.onPhoto);
     this.panel.addEventListener('click', callbacks.onTogglePanel);
     for (const mode of ['fixed', 'inertial'] as const) {
       this.frameButtons[mode].addEventListener('click', () => {
@@ -144,6 +152,7 @@ export class Toolbar {
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
       h('div', { class: 'toolbar-group' }, [this.qualityLabel, this.qualitySelect]),
+      this.photo,
       this.soundtrack,
       this.about,
       this.report,
@@ -220,6 +229,9 @@ export class Toolbar {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t('app.brand');
     this.qualityLabel.textContent = t('toolbar.quality');
+    this.photoText.textContent = t('toolbar.photo');
+    this.photo.title = t('toolbar.photo.hint');
+    this.photo.setAttribute('aria-label', t('toolbar.photo.hint'));
     const detected = t(`quality.${this.detectedTier}`);
     this.qualitySelect.title = this.i18n.format('toolbar.quality.hint', { tier: detected });
     for (const option of this.qualitySelect.options) {

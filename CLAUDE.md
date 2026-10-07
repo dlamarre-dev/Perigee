@@ -266,6 +266,10 @@ the "up" vector and causes gimbal lock at the poles).
 - Filters: AND/OR combination of facets (operator, country, group, orbit regime, object type); filter state,
   view, selected object and time are reflected in the URL (link sharing).
 - Lighting: Sun positioned with astronomy-engine; real day/night terminator.
+- Photo mode (camera button in the top bar, `src/render/photo.ts`): downloads two PNGs of the 3D view, as shown
+  (object labels painted from their computed style, no panels or bars) and objects only (every point, line and
+  sprite hidden except the starfield and the Sun's halo, `keepInPhoto`). Title (file name and PNG iTXt `Title`):
+  brand, followed object (else the view's body), displayed date and time in the display zone. A toast confirms (3 s).
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
 - Bilingual **EN/FR** interface (see §0), strings in `src/i18n/`. Brand: "Perigee" in English, "Périgée" in French.
 - Visual style: sci-fi HUD inspired by recent Halo games (chamfered translucent panels, corner brackets, cyan

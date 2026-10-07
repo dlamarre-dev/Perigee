@@ -166,3 +166,19 @@ test.describe('time zone', () => {
     await expect(page).toHaveURL(/t=2026-09-26T12%3A00%3A00Z|t=2026-09-26T12:00:00Z/);
   });
 });
+
+test('the photo button downloads the view and the objects only, then confirms', async ({ page }) => {
+  await page.goto('./?lang=fr&view=moon&t=2026-09-26T12:00:00Z&rate=0');
+  await expect(page.locator('.notice')).toBeHidden({ timeout: 20_000 });
+  const names: string[] = [];
+  page.on('download', (d) => names.push(d.suggestedFilename()));
+  await page.getByRole('button', { name: /^Photo/ }).click();
+  const toast = page.locator('.toast');
+  await expect(toast).toHaveText('Deux images téléchargées : la vue et les objets seulement');
+  await expect.poll(() => names.length).toBe(2);
+  expect(names).toEqual([
+    'Périgée — Lune — 2026-09-26 12-00-00 UTC.png',
+    'Périgée — Lune — 2026-09-26 12-00-00 UTC (objets seulement).png',
+  ]);
+  await expect(toast).toBeHidden({ timeout: 5_000 });
+});

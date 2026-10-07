@@ -112,6 +112,11 @@ export class Renderer {
     });
   }
 
+  /** Draws the scene now (photo mode reads the canvas right after, before the browser clears it). */
+  renderNow(): void {
+    this.renderer.render(this.scene, this.camera);
+  }
+
   private applyPixelRatio(ratio: number): void {
     this.renderer.setPixelRatio(ratio);
     PIXEL_RATIO_UNIFORM.value = ratio;

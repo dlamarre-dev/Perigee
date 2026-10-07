@@ -35,8 +35,9 @@ import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
 import { loadZoneSetting } from '../i18n/timeZone';
 import { Altimeter } from '../ui/Altimeter';
-import { Toolbar } from '../ui/Toolbar';
+import { Toolbar, VIEW_LABELS } from '../ui/Toolbar';
 import { h, setSheetGrabLabel } from '../ui/dom';
+import { copyCanvas, downloadPng, drawLabels, hideOverlays } from '../render/photo';
 import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
 import {
   readDeviceSignals,
@@ -252,6 +253,15 @@ function main(): void {
   };
 
   const notice = h('p', { class: 'notice', role: 'status', hidden: true });
+  // Short confirmations (photo saved): shown for 3 s.
+  const toast = h('p', { class: 'toast', role: 'status', hidden: true });
+  let toastTimer = 0;
+  const showToast = (text: string): void => {
+    toast.textContent = text;
+    toast.hidden = false;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => (toast.hidden = true), 3000);
+  };
   const offline = h('p', { class: 'offline-badge', role: 'status', hidden: true });
   const renderOffline = (): void => {
     offline.hidden = navigator.onLine;
@@ -447,6 +457,7 @@ function main(): void {
       },
       onAbout: () => about.open(),
       onReport: () => report.open(),
+      onPhoto: () => void takePhoto(),
       onQualityChange: (choice) => {
         storeChoice(choice);
         // Applied from startup (MSAA, textures and models are chosen once): reload in place, view and camera kept.
@@ -476,6 +487,7 @@ function main(): void {
     updateNotice,
     offline,
     about.element,
+    toast,
     report.element,
   );
   app.querySelector('.loading')?.remove();
@@ -640,6 +652,43 @@ ${
 `
 }${fps.toFixed(0)} fps · DPR ${window.devicePixelRatio} · max texture ${qualityState.signals.maxTextureSize} · MSAA ${qualityState.signals.maxSamples} · ${qualityState.signals.deviceMemoryGb ?? '?'} GB · ${qualityState.signals.cores ?? '?'} cores`;
     }, 500);
+  }
+
+  // Photo mode: the 3D view as shown (labels included, panels and bars left out), then the same frame with
+  // the bodies and models only. Named after the followed object (else the view's body) and the displayed
+  // date, in the display time zone.
+  let photoBusy = false;
+  async function takePhoto(): Promise<void> {
+    if (photoBusy || !view) return;
+    photoBusy = true;
+    try {
+      const followed = follow.active
+        ? app.querySelector('.info:not([hidden]) .panel-title')?.textContent?.trim()
+        : undefined;
+      const title = i18n.format('photo.title', {
+        brand: i18n.t('app.brand'),
+        subject: followed || i18n.t(VIEW_LABELS[viewId]),
+        date: i18n.dateTime(clock.nowUtc(), true),
+      });
+      renderer.renderNow();
+      const shown = copyCanvas(renderer.canvas);
+      drawLabels(shown, app, renderer.canvas.getBoundingClientRect());
+      const restore = hideOverlays(renderer.scene);
+      try {
+        renderer.renderNow();
+      } finally {
+        restore();
+      }
+      const objects = copyCanvas(renderer.canvas);
+      await downloadPng(shown, title);
+      await downloadPng(objects, `${title} ${i18n.t('photo.objectsOnly')}`);
+      showToast(i18n.t('photo.saved'));
+    } catch (err) {
+      console.error(err);
+      showToast(i18n.t('photo.failed'));
+    } finally {
+      photoBusy = false;
+    }
   }
 
   // Frame loop

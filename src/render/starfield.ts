@@ -1,3 +1,4 @@
+import { keepInPhoto } from './photo';
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Points, ShaderMaterial } from 'three';
 
 const vertexShader = /* glsl */ `
@@ -69,5 +70,6 @@ export function createStarfield(count = 4000, pixelRatio = 1): Points {
   points.name = 'starfield';
   points.frustumCulled = false;
   points.renderOrder = -1;
+  keepInPhoto(points);
   return points;
 }

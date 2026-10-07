@@ -812,6 +812,72 @@ h2[tabindex='-1']:focus {
   border-left-style: solid;
 }
 
+.toast {
+  position: absolute;
+  z-index: 6;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
+  left: 50%;
+  max-width: calc(100% - 2 * var(--gutter));
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--live);
+  background: var(--panel-bottom);
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: var(--accent-glow);
+  transform: translateX(-50%);
+  animation: toast-in 160ms ease-out;
+}
+
+.toast[hidden] {
+  display: none;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
+
+/* Photo button: a camera icon in the top bar, "Photo" written out in the phone menu. */
+.photo-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.photo-icon {
+  width: 20px;
+  height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M3 8.5h4l1.6-2.5h6.8L17 8.5h4V19H3z'/%3E%3Ccircle cx='12' cy='13.3' r='3.6'/%3E%3Ccircle cx='18.2' cy='11' r='0.6' fill='%239fe7ff'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+@media (min-width: 641px) and (min-height: 501px) {
+  .photo-button {
+    padding: 0 6px;
+  }
+
+  .photo-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 .notice {
   position: absolute;
   z-index: 2;
