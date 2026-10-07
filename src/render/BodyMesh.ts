@@ -12,6 +12,7 @@ import {
   SphereGeometry,
   BufferGeometry,
   DoubleSide,
+  Float32BufferAttribute,
   Raycaster,
   Vector2,
   Vector3,
@@ -25,11 +26,14 @@ import { PICK_LAYER } from './SatellitePoints';
 const vertexShader = /* glsl */ `
   #include <common>
   #include <logdepthbuf_pars_vertex>
+  uniform vec3 patchOffset;
   varying vec2 vUv;
   varying vec3 vNormalW;
   varying vec3 vPositionW;
+  varying vec3 vBody;
   void main() {
     vUv = uv;
+    vBody = position + patchOffset;
     vNormalW = normalize(mat3(modelMatrix) * normal);
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
     vPositionW = worldPosition.xyz;
@@ -47,10 +51,16 @@ const fragmentShader = /* glsl */ `
   uniform vec3 atmosphereColor;
   uniform float atmosphereStrength;
   uniform vec3 sunDirection;
+  uniform vec3 patchDir;
+  uniform float patchCos;
+  uniform float patchSide;
   varying vec2 vUv;
   varying vec3 vNormalW;
   varying vec3 vPositionW;
+  varying vec3 vBody;
   void main() {
+    // Local patch (see BodyMesh.setLocalPatch): the sphere leaves the cap to the patch, the patch draws only it.
+    if (patchSide != 0.0 && (dot(normalize(vBody), patchDir) > patchCos) == (patchSide > 0.0)) discard;
     #include <logdepthbuf_fragment>
     vec3 n = normalize(vNormalW);
     float cosSun = dot(n, sunDirection);
@@ -88,6 +98,11 @@ const surfaceDir = new Vector3();
 /** Untransformed mesh used to cast rays against a body's geometry in its own frame. */
 const surfaceProbe = new Mesh(new BufferGeometry(), new MeshBasicMaterial({ side: DoubleSide }));
 
+/** Cap drawn by the local patch (0.01 rad: 34 km on Mars, beyond the horizon from a rover's height). */
+const PATCH_CAP_RAD = 0.01;
+/** Facets whose centre lies this far beyond the cap are included, so the patch covers the whole cap. */
+const PATCH_MARGIN_RAD = 0.05;
+
 const LIGHT_BELOW_PX = 40;
 const FULL_ABOVE_PX = 56;
 const viewSize = new Vector2();
@@ -114,6 +129,9 @@ export class BodyMesh {
   /** Full sphere, and a light one for when the body is small on screen (both undefined once a shape is set). */
   private full: BufferGeometry | undefined;
   private light: BufferGeometry | undefined;
+  /** Facets around a surface point, drawn relative to it (see setLocalPatch). */
+  private patch: Mesh<BufferGeometry, ShaderMaterial> | undefined;
+  private patchKey = '';
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
@@ -128,6 +146,10 @@ export class BodyMesh {
         atmosphereColor: { value: new Vector3(...(o.atmosphereColor ?? [0, 0, 0])) },
         atmosphereStrength: { value: o.atmosphereStrength ?? 0 },
         sunDirection: { value: this.sunDirection },
+        patchOffset: { value: new Vector3() },
+        patchDir: { value: new Vector3(1, 0, 0) },
+        patchCos: { value: 1 },
+        patchSide: { value: 0 },
       },
       vertexShader,
       fragmentShader,
@@ -175,6 +197,80 @@ export class BodyMesh {
     return hit ? hit.distance : this.radiusKm;
   }
 
+  /**
+   * Draws the surface around `dirBody` (body-frame unit direction) at full precision, or stops (undefined).
+   *
+   * The sphere's vertices sit ~R from its centre, and the GPU adds the camera-relative translation (also ~R) in
+   * Float32: the sum loses ~R·6e-8 (20 cm on Mars) and wobbles as the view turns, so a rover standing on the
+   * ground flickers through it. The patch holds the facets around the point with vertices relative to that point
+   * (subtracted in Float64 on the CPU): a vertex 100 km away keeps ~6 mm, and the large translation stays in the
+   * Float64 matrices, so the GPU never sums two large numbers there. The sphere
+   * discards the cap the patch covers, and the patch everything outside it, so the two never overlap.
+   */
+  setLocalPatch(dirBody: Vec3 | undefined): void {
+    const full = this.full;
+    const key = dirBody && full ? dirBody.map((v) => v.toFixed(9)).join(',') : '';
+    if (key === this.patchKey) return;
+    this.patchKey = key;
+    const uniforms = this.mesh.material.uniforms;
+    if (this.patch) {
+      this.mesh.remove(this.patch);
+      this.patch.geometry.dispose();
+      this.patch.material.dispose();
+      this.patch = undefined;
+    }
+    (uniforms['patchSide'] as { value: number }).value = 0;
+    if (!dirBody || !full) return;
+
+    const n = Math.hypot(dirBody[0], dirBody[1], dirBody[2]);
+    const dir: Vec3 = [dirBody[0] / n, dirBody[1] / n, dirBody[2] / n];
+    const origin: Vec3 = [dir[0] * this.radiusKm, dir[1] * this.radiusKm, dir[2] * this.radiusKm];
+    const pos = full.getAttribute('position');
+    const nor = full.getAttribute('normal');
+    const uv = full.getAttribute('uv');
+    const index = full.getIndex();
+    const count = index ? index.count : pos.count;
+    const vertex = (k: number): number => (index ? index.getX(k) : k);
+    const cosSelect = Math.cos(PATCH_CAP_RAD + PATCH_MARGIN_RAD);
+    const positions: number[] = [];
+    const normals: number[] = [];
+    const uvs: number[] = [];
+    for (let k = 0; k < count; k += 3) {
+      const a = vertex(k);
+      const b = vertex(k + 1);
+      const c = vertex(k + 2);
+      const cx = pos.getX(a) + pos.getX(b) + pos.getX(c);
+      const cy = pos.getY(a) + pos.getY(b) + pos.getY(c);
+      const cz = pos.getZ(a) + pos.getZ(b) + pos.getZ(c);
+      if ((cx * dir[0] + cy * dir[1] + cz * dir[2]) / Math.hypot(cx, cy, cz) < cosSelect) continue;
+      for (const v of [a, b, c]) {
+        positions.push(pos.getX(v) - origin[0], pos.getY(v) - origin[1], pos.getZ(v) - origin[2]);
+        normals.push(nor.getX(v), nor.getY(v), nor.getZ(v));
+        uvs.push(uv.getX(v), uv.getY(v));
+      }
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('normal', new Float32BufferAttribute(normals, 3));
+    geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+    // Same textures and lighting (shared uniform objects), its own offset and side.
+    const material = new ShaderMaterial({
+      uniforms: {
+        ...uniforms,
+        patchOffset: { value: new Vector3(origin[0], origin[1], origin[2]) },
+        patchSide: { value: -1 },
+      },
+      vertexShader,
+      fragmentShader,
+    });
+    this.patch = new Mesh(geometry, material);
+    this.patch.position.set(origin[0], origin[1], origin[2]);
+    this.mesh.add(this.patch);
+    (uniforms['patchDir'] as { value: Vector3 }).value.set(dir[0], dir[1], dir[2]);
+    (uniforms['patchCos'] as { value: number }).value = Math.cos(PATCH_CAP_RAD);
+    (uniforms['patchSide'] as { value: number }).value = 1;
+  }
+
   private useGeometry(geometry: BufferGeometry): void {
     this.mesh.geometry = geometry;
     this.occluder.geometry = geometry;
@@ -196,6 +292,7 @@ export class BodyMesh {
 
   /** Replaces the sphere by a body-frame shape (km), e.g. a NASA model of an irregular moon. */
   setGeometry(geometry: BufferGeometry): void {
+    this.setLocalPatch(undefined);
     this.full?.dispose();
     this.light?.dispose();
     this.full = undefined;
@@ -230,6 +327,7 @@ export class BodyMesh {
     for (const name of ['dayMap', 'nightMap'] as const) {
       (this.mesh.material.uniforms[name]?.value as Texture | null | undefined)?.dispose();
     }
+    this.setLocalPatch(undefined);
     this.mesh.material.dispose();
     this.occluder.material.dispose();
   }

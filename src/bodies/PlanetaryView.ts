@@ -477,6 +477,8 @@ export class PlanetaryView implements View {
    */
   private placeModel(originKm: Vec3): void {
     const sel = this.selection;
+    // Around a selected site, the ground is drawn at full precision (a rover would flicker through the sphere).
+    this.body.setLocalPatch(sel?.kind === 'site' ? this.siteBodyKm[this.sites.indexOf(sel.site)] : undefined);
     const camera = this.host.renderer.camera;
     const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * Math.PI) / 360);
     let entry: ModelEntry | undefined;

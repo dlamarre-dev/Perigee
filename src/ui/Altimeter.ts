@@ -153,7 +153,8 @@ export class Altimeter {
     this.caret.style.transform = `translateY(${y.toFixed(1)}px)`;
     const t = this.i18n.t.bind(this.i18n);
     const kind = t(r.kind === 'altitude' ? 'altimeter.altitude' : 'altimeter.distance');
-    const text = r.toScale ? this.format(r.valueKm) : '—';
+    // Kilometres are the tape's unit, written in its header: the box only names the other units.
+    const text = r.toScale ? this.format(r.valueKm, false) : '—';
     if (kind !== this.shownKind) {
       this.shownKind = kind;
       this.kindLabel.textContent = kind;
@@ -162,15 +163,15 @@ export class Altimeter {
     if (text !== this.shownText) {
       this.shownText = text;
       this.value.textContent = text;
-      this.element.setAttribute('aria-valuetext', text);
+      this.element.setAttribute('aria-valuetext', r.toScale ? this.format(r.valueKm, true) : text);
     }
   }
 
-  /** Distance with its unit: metres, kilometres, then astronomical units. */
-  private format(km: number): string {
+  /** Distance in metres, kilometres (unit written only if `kmUnit`), then astronomical units. */
+  private format(km: number, kmUnit: boolean): string {
     const t = this.i18n.t.bind(this.i18n);
     if (km < 1) return `${this.i18n.number(km * 1000)} m`;
-    if (km < AU_FROM_KM) return `${this.i18n.number(km, km < 10 ? 1 : 0)} km`;
+    if (km < AU_FROM_KM) return `${this.i18n.number(km, km < 10 ? 1 : 0)}${kmUnit ? ' km' : ''}`;
     const au = km / AU_KM;
     return `${this.i18n.number(au, au < 10 ? 2 : 1)} ${t('altimeter.au')}`;
   }
