@@ -296,8 +296,8 @@ export const LandingSitesSchema = z.object({
       type: LandingSiteTypeSchema,
       latDeg: z.number().min(-90).max(90),
       lonDeg: z.number().min(-180).max(180),
-      /** Precision caveats or source discrepancies (English, shown in the info panel). */
-      note: z.string().optional(),
+      /** Precision caveats or source discrepancies (shown in the info panel, so in both languages). */
+      note: localized.optional(),
       /** Live position feed (NASA MMGIS current waypoint, GeoJSON), refreshed daily by the pipeline. */
       feed: z.object({ url: z.url(), solZeroDate: isoDate }).optional(),
       sources: z.array(z.url()).min(1),
@@ -334,7 +334,7 @@ export const LaunchSitesSchema = z.object({
       lonDeg: z.number().min(-180).max(180),
       firstOrbitalLaunch: isoDate.optional(),
       active: z.boolean(),
-      note: z.string().optional(),
+      note: localized.optional(),
       sources: z.array(z.url()).min(1),
     }),
   ),

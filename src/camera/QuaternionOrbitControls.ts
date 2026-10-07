@@ -218,7 +218,13 @@ export class QuaternionOrbitControls {
     this.abort.abort();
   }
 
-  /** Rotation speed shrinks near the surface so the ground does not fly past. */
+  /** Requests a camera distance (HUD altimeter), eased like a pinch. */
+  zoomTo(distanceKm: number): void {
+    this.fly = undefined;
+    this.zoomTargetKm = clampDistance(distanceKm, this.limitsValue);
+    this.zoomSmoothS = PINCH_SMOOTH_S;
+  }
+
   /** Requests a zoom by exp(kDelta), eased over a few frames from the current request. */
   private zoomBy(kDelta: number, smoothS: number): void {
     this.fly = undefined;
@@ -227,6 +233,7 @@ export class QuaternionOrbitControls {
     this.zoomSmoothS = smoothS;
   }
 
+  /** Rotation speed shrinks near the surface so the ground does not fly past. */
   private radPerPx(): number {
     // Following an object, the camera turns around it, not around the body: no surface slowdown (it made the
     // view crawl when zoomed in on a spacecraft, the follow limits being far below the body radius).

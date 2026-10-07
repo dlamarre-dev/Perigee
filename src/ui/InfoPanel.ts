@@ -5,7 +5,7 @@ import { displayName, elementAgeDays, isStale, type SatObject } from '../earth/c
 import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
-import { h, setText, sidePanel, syncRows } from './dom';
+import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
 import { modelFor } from '../render/models';
 import { ModelPreview } from './ModelPreview';
 import { countryName } from './countries';
@@ -51,7 +51,10 @@ export class InfoPanel {
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'info-title', hidden: true },
       [
-        h('div', { class: 'panel-header' }, [this.title, this.close]),
+        h('div', { class: 'panel-header' }, [
+          this.title,
+          h('div', { class: 'panel-actions' }, [panelToggle('btn panel-minimize'), this.close]),
+        ]),
         this.preview.element,
         this.freshness,
         this.fields,
@@ -70,7 +73,7 @@ export class InfoPanel {
 
   show(object: SatObject | undefined, focus = false): void {
     // A newly selected object opens the sheet fully (phones).
-    if (object !== this.object) this.element.classList.remove('collapsed');
+    if (object !== this.object) setPanelCollapsed(this.element, false);
     this.object = object;
     this.element.hidden = !object;
     this.preview.show(object ? modelFor(`norad:${object.noradId}`) : undefined);

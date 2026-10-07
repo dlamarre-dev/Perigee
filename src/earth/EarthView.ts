@@ -355,7 +355,7 @@ class EarthView implements View {
         state: site.active ? 'fresh' : 'stale',
       },
       rows,
-      ...(site.note ? { notes: site.note } : {}),
+      ...(site.note ? { notes: site.note[i18n.lang] } : {}),
       sources: site.sources,
       footnote: i18n.format('info.verified', { date: this.launchVerified }),
       followable: true,

@@ -14,7 +14,10 @@
       "type": "soft",
       "latDeg": 22.27,
       "lonDeg": -47.95,
-      "note": "NSSDCA explicitly: 22.27 N, 312.05 E planetocentric; 312.05 E -> -47.95. VL1 longitude is the IAU prime-meridian tie (47.95137 W, Kuchynka et al. 2014).",
+      "note": {
+        "en": "NSSDCA explicitly: 22.27 N, 312.05 E planetocentric; 312.05 E -> -47.95. VL1 longitude is the IAU prime-meridian tie (47.95137 W, Kuchynka et al. 2014).",
+        "fr": "NSSDCA explicitement : 22,27° N, 312,05° E planétocentrique; 312,05° E → −47,95. La longitude de VL1 est le point de rattachement du méridien origine de l’UAI (47,95137° O, Kuchynka et al. 2014)."
+      },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-075C",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -33,7 +36,10 @@
       "type": "soft",
       "latDeg": 47.6673,
       "lonDeg": 134.2809,
-      "note": "NSSDCA value (frame not stated); corroborated by HiRISE PSP_001501_2280 (lander located in image; image centre 47.673 N, 134.300 E planetocentric). Mars24 gives 48.27 N, 134.28 E, inconsistent with both, not used.",
+      "note": {
+        "en": "NSSDCA value (frame not stated); corroborated by HiRISE PSP_001501_2280 (lander located in image; image centre 47.673 N, 134.300 E planetocentric). Mars24 gives 48.27 N, 134.28 E, inconsistent with both, not used.",
+        "fr": "Valeur NSSDCA (repère non précisé); corroborée par HiRISE PSP_001501_2280 (atterrisseur repéré sur l’image; centre de l’image 47,673° N, 134,300° E planétocentrique). Mars24 donne 48,27° N, 134,28° E, incompatible avec les deux, non retenu."
+      },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-083C",
         "https://www.uahirise.org/PSP_001501_2280",
@@ -53,7 +59,10 @@
       "type": "soft",
       "latDeg": 19.0972,
       "lonDeg": -33.2539,
-      "note": "Wikipedia 19.09722 N, 33.25389 W (citation unclear); corroborated by HiRISE PSP_001890_1995 image centre 19.086 N, 326.763 E (planetocentric) and PIA09105 (19.1 N, 326.8 E). NSSDCA 19.33 N 33.55 W and Mars24 19.47 N 326.75 E are older/inconsistent. Sojourner stayed within ~10 m of the lander.",
+      "note": {
+        "en": "Wikipedia 19.09722 N, 33.25389 W (citation unclear); corroborated by HiRISE PSP_001890_1995 image centre 19.086 N, 326.763 E (planetocentric) and PIA09105 (19.1 N, 326.8 E). NSSDCA 19.33 N 33.55 W and Mars24 19.47 N 326.75 E are older/inconsistent. Sojourner stayed within ~10 m of the lander.",
+        "fr": "Wikipédia 19,09722° N, 33,25389° O (référence peu claire); corroboré par le centre de l’image HiRISE PSP_001890_1995, 19,086° N, 326,763° E (planétocentrique), et par PIA09105 (19,1° N, 326,8° E). NSSDCA 19,33° N 33,55° O et Mars24 19,47° N 326,75° E sont plus anciens ou incohérents. Sojourner est resté à moins de ~10 m de l’atterrisseur."
+      },
       "sources": [
         "https://en.wikipedia.org/wiki/Mars_Pathfinder",
         "https://www.uahirise.org/PSP_001890_1995",
@@ -73,7 +82,10 @@
       "type": "soft",
       "latDeg": -14.572,
       "lonDeg": 175.478,
-      "note": "NSSDCA 14.572 S, 175.478 E; Mars24 175.48 E, -14.57 (from Li et al.).",
+      "note": {
+        "en": "NSSDCA 14.572 S, 175.478 E; Mars24 175.48 E, -14.57 (from Li et al.).",
+        "fr": "NSSDCA 14,572° S, 175,478° E; Mars24 175,48° E, −14,57 (d’après Li et al.)."
+      },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2003-027A",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -92,7 +104,10 @@
       "type": "rover-last-known",
       "latDeg": -14.6,
       "lonDeg": 175.5,
-      "note": "Rounded to 0.1 deg (~6 km) in JPL caption of HiRISE image of 2009-06-13; Spirit was stuck at Troy from May 2009. Date = last communication (Mars24).",
+      "note": {
+        "en": "Rounded to 0.1 deg (~6 km) in JPL caption of HiRISE image of 2009-06-13; Spirit was stuck at Troy from May 2009. Date = last communication (Mars24).",
+        "fr": "Arrondi à 0,1° (~6 km) dans la légende JPL de l’image HiRISE du 2009-06-13; Spirit était enlisé à Troy depuis mai 2009. Date = dernière communication (Mars24)."
+      },
       "sources": [
         "https://www.jpl.nasa.gov/images/pia12205-orbital-view-of-spirit-at-troy/",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -111,7 +126,10 @@
       "type": "soft",
       "latDeg": -1.946,
       "lonDeg": -5.527,
-      "note": "NSSDCA 1.946 S, 354.473 E (IAU 2000 body-centred); 354.473 E -> -5.527. Last position (Perseverance Valley) unverified, see unverified list.",
+      "note": {
+        "en": "NSSDCA 1.946 S, 354.473 E (IAU 2000 body-centred); 354.473 E -> -5.527. Last position (Perseverance Valley) unverified, see unverified list.",
+        "fr": "NSSDCA 1,946° S, 354,473° E (UAI 2000, centré sur le corps); 354,473° E → −5,527. Dernière position (Perseverance Valley) non vérifiée, voir la liste des non vérifiés."
+      },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2003-032A",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -130,7 +148,10 @@
       "type": "soft",
       "latDeg": 68.22,
       "lonDeg": -125.75,
-      "note": "Mars24 234.25 E, 68.22 N (provided by D. Bass); 234.25 E -> -125.75. NSSDCA 'nominally 68.15 N, 125.9 W' is a pre-landing/older value.",
+      "note": {
+        "en": "Mars24 234.25 E, 68.22 N (provided by D. Bass); 234.25 E -> -125.75. NSSDCA 'nominally 68.15 N, 125.9 W' is a pre-landing/older value.",
+        "fr": "Mars24 234,25° E, 68,22° N (fourni par D. Bass); 234,25° E → −125,75. La valeur NSSDCA « nominally 68.15 N, 125.9 W » est antérieure à l’atterrissage ou plus ancienne."
+      },
       "sources": [
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html",
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2007-034A"
@@ -149,7 +170,10 @@
       "type": "soft",
       "latDeg": -4.5895,
       "lonDeg": 137.4416,
-      "note": "First localized waypoint in NASA MMGIS feed (sol 3, before first drive): 137.441633 E, -4.589467. Mars24: 137.44 E, 4.59 S.",
+      "note": {
+        "en": "First localized waypoint in NASA MMGIS feed (sol 3, before first drive): 137.441633 E, -4.589467. Mars24: 137.44 E, 4.59 S.",
+        "fr": "Premier point de passage localisé dans le flux NASA MMGIS (sol 3, avant le premier déplacement) : 137,441633° E, −4,589467. Mars24 : 137,44° E, 4,59° S."
+      },
       "sources": [
         "https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -168,7 +192,10 @@
       "type": "rover-last-known",
       "latDeg": -4.82514,
       "lonDeg": 137.38885,
-      "note": "NASA MMGIS current waypoint fetched 2026-09-27: sol 5021, site 125 drive 558, 137.3888471 E, -4.82513971. Date computed from sol number (approx +/-1 d). Changes as the rover drives; refresh from feed.",
+      "note": {
+        "en": "NASA MMGIS current waypoint fetched 2026-09-27: sol 5021, site 125 drive 558, 137.3888471 E, -4.82513971. Date computed from sol number (approx +/-1 d). Changes as the rover drives; refresh from feed.",
+        "fr": "Point de passage actuel NASA MMGIS récupéré le 2026-09-27 : sol 5021, site 125, trajet 558, 137,3888471° E, −4,82513971. Date calculée à partir du numéro de sol (±1 j environ). Change à mesure que le rover se déplace; mise à jour depuis le flux."
+      },
       "sources": ["https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints_current.json"],
       "feed": {
         "url": "https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints_current.json",
@@ -188,7 +215,10 @@
       "type": "soft",
       "latDeg": 4.5,
       "lonDeg": 135.62,
-      "note": "Mars24 135.62 E, 4.50 N (planetocentric). Golombek et al. 2020 (Earth Space Sci., doi:10.1029/2020EA001248) reports 4.502384 N, 135.623447 E, but that page could not be opened (HTTP 403).",
+      "note": {
+        "en": "Mars24 135.62 E, 4.50 N (planetocentric). Golombek et al. 2020 (Earth Space Sci., doi:10.1029/2020EA001248) reports 4.502384 N, 135.623447 E, but that page could not be opened (HTTP 403).",
+        "fr": "Mars24 135,62° E, 4,50° N (planétocentrique). Golombek et al. 2020 (Earth Space Sci., doi:10.1029/2020EA001248) donnent 4,502384° N, 135,623447° E, mais cette page n’a pas pu être ouverte (HTTP 403)."
+      },
       "sources": ["https://www.giss.nasa.gov/tools/mars24/help/landers.html"]
     },
     {
@@ -204,7 +234,10 @@
       "type": "soft",
       "latDeg": 18.4446,
       "lonDeg": 77.4509,
-      "note": "First MMGIS waypoint (sol 13, before first drive): 77.45088572 E, 18.44462715 N. Mars24: 77.45 E, 18.44 N.",
+      "note": {
+        "en": "First MMGIS waypoint (sol 13, before first drive): 77.45088572 E, 18.44462715 N. Mars24: 77.45 E, 18.44 N.",
+        "fr": "Premier point de passage MMGIS (sol 13, avant le premier déplacement) : 77,45088572° E, 18,44462715° N. Mars24 : 77,45° E, 18,44° N."
+      },
       "sources": [
         "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -223,7 +256,10 @@
       "type": "rover-last-known",
       "latDeg": 18.43687,
       "lonDeg": 77.23205,
-      "note": "NASA MMGIS current waypoint fetched 2026-09-27: sol 1980, end-of-drive localization, 77.23205444 E, 18.43687407 N. Date computed from sol number (approx +/-1 d); refresh from feed.",
+      "note": {
+        "en": "NASA MMGIS current waypoint fetched 2026-09-27: sol 1980, end-of-drive localization, 77.23205444 E, 18.43687407 N. Date computed from sol number (approx +/-1 d); refresh from feed.",
+        "fr": "Point de passage actuel NASA MMGIS récupéré le 2026-09-27 : sol 1980, localisation en fin de trajet, 77,23205444° E, 18,43687407° N. Date calculée à partir du numéro de sol (±1 j environ); mise à jour depuis le flux."
+      },
       "sources": ["https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints_current.json"],
       "feed": {
         "url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints_current.json",
@@ -243,7 +279,10 @@
       "type": "soft",
       "latDeg": 18.49727,
       "lonDeg": 77.32253,
-      "note": "NASA MMGIS helicopter waypoint for flight 72 (sol 1036, 'Jan. 18, 2024'): 77.32253449 E, 18.49726866 N. Name 'Valinor Hills' per JPL PIA26237. Rotor blades damaged on this landing; final position.",
+      "note": {
+        "en": "NASA MMGIS helicopter waypoint for flight 72 (sol 1036, 'Jan. 18, 2024'): 77.32253449 E, 18.49726866 N. Name 'Valinor Hills' per JPL PIA26237. Rotor blades damaged on this landing; final position.",
+        "fr": "Point de passage NASA MMGIS de l’hélicoptère pour le vol 72 (sol 1036, « Jan. 18, 2024 ») : 77,32253449° E, 18,49726866° N. Nom « Valinor Hills » selon le JPL, PIA26237. Pales du rotor endommagées à cet atterrissage; position finale."
+      },
       "sources": [
         "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/m20_heli_waypoints.json",
         "https://www.jpl.nasa.gov/images/pia26237-ingenuity-at-valinor-hills/"
@@ -262,7 +301,10 @@
       "type": "soft",
       "latDeg": 25.066,
       "lonDeg": 109.925,
-      "note": "109.925 E, 25.066 N per EurekAlert (CAS) release / Liu et al. 2022; Mars24 109.93 E, 25.07 N. Touchdown late 14 May UTC (15 May Beijing time). Zhurong last-known position (~1.9 km south) unverified.",
+      "note": {
+        "en": "109.925 E, 25.066 N per EurekAlert (CAS) release / Liu et al. 2022; Mars24 109.93 E, 25.07 N. Touchdown late 14 May UTC (15 May Beijing time). Zhurong last-known position (~1.9 km south) unverified.",
+        "fr": "109,925° E, 25,066° N selon le communiqué EurekAlert (CAS) et Liu et al. 2022; Mars24 109,93° E, 25,07° N. Contact avec le sol tard le 14 mai UTC (15 mai heure de Pékin). Dernière position connue de Zhurong (~1,9 km au sud) non vérifiée."
+      },
       "sources": [
         "https://www.eurekalert.org/news-releases/987713",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -281,7 +323,10 @@
       "type": "soft",
       "latDeg": -45,
       "lonDeg": -158,
-      "note": "APPROXIMATE: predicted landing site 45 S, 202 E (-> -158). Candidate hardware identified in HiRISE ESP_031036_1345 (2013) but no coordinates published in sources opened. Soft landing, silent after ~20 s.",
+      "note": {
+        "en": "APPROXIMATE: predicted landing site 45 S, 202 E (-> -158). Candidate hardware identified in HiRISE ESP_031036_1345 (2013) but no coordinates published in sources opened. Soft landing, silent after ~20 s.",
+        "fr": "APPROXIMATIF : site d’atterrissage prévu 45° S, 202° E (→ −158). Matériel candidat repéré sur HiRISE ESP_031036_1345 (2013), mais aucune coordonnée publiée dans les sources consultées. Atterrissage en douceur, silence après ~20 s."
+      },
       "sources": [
         "https://www.jpl.nasa.gov/images/pia16920-could-this-be-the-mars-soviet-3-lander/",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -300,7 +345,10 @@
       "type": "hard",
       "latDeg": -45,
       "lonDeg": 47,
-      "note": "APPROXIMATE: Mars24 'impacted at about 47 E -45 N' (Hellas). Never imaged/located. First human-made object on Mars (crash).",
+      "note": {
+        "en": "APPROXIMATE: Mars24 'impacted at about 47 E -45 N' (Hellas). Never imaged/located. First human-made object on Mars (crash).",
+        "fr": "APPROXIMATIF : Mars24 « impacted at about 47 E -45 N » (Hellas). Jamais photographié ni localisé. Premier objet humain sur Mars (écrasement)."
+      },
       "sources": ["https://www.giss.nasa.gov/tools/mars24/help/landers.html"]
     },
     {
@@ -316,7 +364,10 @@
       "type": "hard",
       "latDeg": -23.9,
       "lonDeg": -19.42,
-      "note": "APPROXIMATE: Mars24 'impacted at about 19.42 W -23.90 N' near Samara Valles. Not located in orbital imagery.",
+      "note": {
+        "en": "APPROXIMATE: Mars24 'impacted at about 19.42 W -23.90 N' near Samara Valles. Not located in orbital imagery.",
+        "fr": "APPROXIMATIF : Mars24 « impacted at about 19.42 W -23.90 N » près de Samara Valles. Non localisé sur les images orbitales."
+      },
       "sources": ["https://www.giss.nasa.gov/tools/mars24/help/landers.html"]
     },
     {
@@ -332,7 +383,10 @@
       "type": "soft",
       "latDeg": 11.52879,
       "lonDeg": 90.43139,
-      "note": "Bridges et al. 2017 (R. Soc. Open Sci. 4:170785): 'more exactly 90.43139 E, 11.52879 N' from HiRISE-CTX-HRSC co-registration. Landed intact, only partially deployed.",
+      "note": {
+        "en": "Bridges et al. 2017 (R. Soc. Open Sci. 4:170785): 'more exactly 90.43139 E, 11.52879 N' from HiRISE-CTX-HRSC co-registration. Landed intact, only partially deployed.",
+        "fr": "Bridges et al. 2017 (R. Soc. Open Sci. 4:170785) : « more exactly 90.43139 E, 11.52879 N » d’après le recalage HiRISE-CTX-HRSC. Posé intact, seulement partiellement déployé."
+      },
       "sources": [
         "https://discovery.ucl.ac.uk/id/eprint/10026075/1/Identification%20of%20the%20Beagle.pdf",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"
@@ -351,7 +405,10 @@
       "type": "hard",
       "latDeg": -2.07,
       "lonDeg": -6.21,
-      "note": "ESA: 353.79 E, 2.07 S (dark impact mark, HiRISE/CTX); 353.79 E -> -6.21. Crashed ~5.4 km west of target.",
+      "note": {
+        "en": "ESA: 353.79 E, 2.07 S (dark impact mark, HiRISE/CTX); 353.79 E -> -6.21. Crashed ~5.4 km west of target.",
+        "fr": "ESA : 353,79° E, 2,07° S (tache sombre d’impact, HiRISE/CTX); 353,79° E → −6,21. Écrasé à ~5,4 km à l’ouest de la cible."
+      },
       "sources": [
         "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Exploration/ExoMars/Mars_Reconnaissance_Orbiter_views_Schiaparelli_landing_site",
         "https://www.giss.nasa.gov/tools/mars24/help/landers.html"

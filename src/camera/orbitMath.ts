@@ -148,6 +148,14 @@ export function twistRollRad(accumulatedRad: number, deadRad: number, gain: numb
 export const BODY_FOLLOW_RADII = 10;
 
 /** Follow distance and closest approach for a celestial body of the given radius. */
-export function bodyFollow(radiusKm: number): { distanceKm: number; minDistanceKm: number } {
-  return { distanceKm: radiusKm * BODY_FOLLOW_RADII, minDistanceKm: radiusKm * 1.05 };
+export function bodyFollow(radiusKm: number): {
+  distanceKm: number;
+  minDistanceKm: number;
+  surfaceRadiusKm: number;
+} {
+  return {
+    distanceKm: radiusKm * BODY_FOLLOW_RADII,
+    minDistanceKm: radiusKm * 1.05,
+    surfaceRadiusKm: radiusKm,
+  };
 }

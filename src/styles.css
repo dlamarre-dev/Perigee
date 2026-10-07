@@ -548,6 +548,47 @@ h2[tabindex='-1']:focus {
   gap: 8px;
 }
 
+.panel-actions {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+/* Collapse toggle of the details panel: a chevron, up while open, down once collapsed to its header. */
+.btn.panel-minimize {
+  position: relative;
+  width: 32px;
+  padding: 0;
+}
+
+.btn.panel-minimize::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid currentcolor;
+  border-left: 2px solid currentcolor;
+  transform: translate(-50%, -25%) rotate(45deg);
+}
+
+.btn.panel-minimize[aria-expanded='false']::before {
+  transform: translate(-50%, -75%) rotate(225deg);
+}
+
+/* Larger screens: a collapsed panel keeps only its header (title, toggle, close), so it no longer covers the
+   view but the selection stays in sight. Phones collapse their sheets with the grab bar instead. */
+@media (min-width: 641px) {
+  .side-panel.collapsed > .panel-body > :not(.panel-header) {
+    display: none;
+  }
+
+  .side-panel.collapsed .panel-title {
+    margin-bottom: 0;
+  }
+}
+
 /* General sibling: the hidden model preview may sit between the header and the badge. */
 .panel-header ~ .freshness {
   margin-top: 12px;
@@ -1338,6 +1379,172 @@ body.music-open .info {
   );
 }
 
+/* ---------------------------------------------------------------- altimeter
+   HUD tape on the right edge, between the bars (src/ui/Altimeter.ts): a logarithmic scale of the height above
+   the surface (or the distance to the followed object), the readout box riding on it. Drag, wheel or arrow keys
+   zoom. Larger screens only: phones have pinch and little room. */
+.altimeter {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
+  bottom: calc(var(--timebar-space, 112px) + var(--gutter));
+  right: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  width: 60px;
+  cursor: ns-resize;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.altimeter[hidden] {
+  display: none;
+}
+
+.altimeter:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.altimeter-head {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 0 0 10px 2px;
+  text-shadow: 0 0 4px rgb(0 0 0 / 90%);
+}
+
+/* Unit of the tick labels. */
+.altimeter-unit {
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.altimeter-kind {
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.altimeter-scale {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* End caps of the spine, like the panels' corner brackets. */
+.altimeter-scale::before,
+.altimeter-scale::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 14px;
+  height: 0;
+  border-top: 2px solid var(--accent);
+}
+
+.altimeter-scale::before {
+  top: -1px;
+}
+
+.altimeter-scale::after {
+  bottom: -1px;
+}
+
+.altimeter svg {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 90%));
+}
+
+.altimeter .spine {
+  stroke: var(--line-strong);
+  stroke-width: 2;
+}
+
+.altimeter .major {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.altimeter .minor {
+  stroke: var(--line-strong);
+}
+
+.altimeter text {
+  fill: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  dominant-baseline: middle;
+}
+
+/* Readout box riding the tape, a notch pointing at the spine. */
+.altimeter-caret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.altimeter-value {
+  position: absolute;
+  right: 0;
+  top: -11px;
+  height: 22px;
+  min-width: calc(100% - 8px);
+  padding: 0 6px 0 8px;
+  border: 1px solid var(--accent);
+  background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: right;
+  white-space: nowrap;
+  box-shadow: var(--accent-glow);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-btn)), calc(100% - var(--cut-btn)) 100%, 0 100%);
+}
+
+.altimeter-caret::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -6px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid var(--accent);
+}
+
+/* Room for the altimeter: the details panel sits to its left. */
+@media (min-width: 641px) and (min-height: 501px) {
+  body:has(.altimeter:not([hidden])) .info {
+    right: calc(var(--gutter) + 60px + var(--gap));
+  }
+}
+
+body.music-open .altimeter {
+  bottom: calc(var(--timebar-space, 112px) + var(--gutter) + 380px);
+}
+
+@media (max-width: 640px), (max-height: 500px) {
+  .altimeter {
+    display: none;
+  }
+}
+
 /* ---------------------------------------------------------------- phone layout
    Portrait (≤ 640 px wide): compact top bar with a menu, time bar docked at the bottom, panels as bottom sheets
    above it (one at a time). Landscape phones (≤ 500 px tall) keep side panels but get the compact bars.
@@ -1493,6 +1700,10 @@ body.music-open .info {
     border: 0;
     background: none;
     cursor: pointer;
+  }
+
+  .panel-minimize {
+    display: none;
   }
 
   .sheet-grab::before {

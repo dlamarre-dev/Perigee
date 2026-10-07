@@ -128,6 +128,8 @@ No single API provides "active probes + landing sites". We maintain:
 - `catalog/landing-sites/moon.json`, `catalog/landing-sites/mars.json`: planetocentric lat/lon, date, mission,
   type (`soft|hard|impact|crewed|rover-last-known`), source.
 - Every entry must cite at least one source (NASA, ESA, JAXA, CNSA, ISRO, KARI, LROC, Wikipedia as last resort).
+- Every catalog text shown to visitors (names, notes, orbits, purposes…) is a `{ en, fr }` object, enforced by the
+  zod schemas: a plain string fails validation, so updates cannot add English-only text.
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models

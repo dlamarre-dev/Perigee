@@ -22,22 +22,46 @@ export function h<K extends keyof HTMLElementTagNameMap>(
  */
 export function sidePanel(attrs: Attrs, children: readonly Child[]): HTMLElement {
   // Grab bar, shown on phones only (CSS): collapses the bottom sheet to its first lines and back.
-  const grab = h('button', { type: 'button', class: 'sheet-grab', 'aria-expanded': 'true' });
-  grab.setAttribute('aria-label', sheetGrabLabel);
-  const panel = h('aside', attrs, [grab, h('div', { class: 'panel-body' }, children)]);
-  grab.addEventListener('click', () => {
-    const collapsed = panel.classList.toggle('collapsed');
-    grab.setAttribute('aria-expanded', String(!collapsed));
-  });
-  return panel;
+  const grab = panelToggle('sheet-grab');
+  return h('aside', attrs, [grab, h('div', { class: 'panel-body' }, children)]);
 }
 
-let sheetGrabLabel = '';
+/**
+ * Button collapsing its side panel to its header (larger screens; phones keep the first lines of the sheet) and
+ * back. The panel, its selection and its scroll position are kept.
+ */
+export function panelToggle(className: string): HTMLButtonElement {
+  const button = h('button', {
+    type: 'button',
+    class: className,
+    'data-panel-toggle': true,
+    'aria-expanded': 'true',
+  });
+  button.setAttribute('aria-label', panelToggleLabel);
+  button.title = panelToggleLabel;
+  button.addEventListener('click', () => {
+    const panel = button.closest<HTMLElement>('.side-panel');
+    if (panel) setPanelCollapsed(panel, !panel.classList.contains('collapsed'));
+  });
+  return button;
+}
 
-/** Localised label of every panel's grab bar (set by the shell, updated on language change). */
+/** Collapses or expands `panel`, keeping its toggles' state in step. */
+export function setPanelCollapsed(panel: HTMLElement, collapsed: boolean): void {
+  panel.classList.toggle('collapsed', collapsed);
+  for (const b of panel.querySelectorAll('[data-panel-toggle]'))
+    b.setAttribute('aria-expanded', String(!collapsed));
+}
+
+let panelToggleLabel = '';
+
+/** Localised label of every panel's collapse toggle (set by the shell, updated on language change). */
 export function setSheetGrabLabel(label: string): void {
-  sheetGrabLabel = label;
-  for (const b of document.querySelectorAll('.sheet-grab')) b.setAttribute('aria-label', label);
+  panelToggleLabel = label;
+  for (const b of document.querySelectorAll<HTMLElement>('[data-panel-toggle]')) {
+    b.setAttribute('aria-label', label);
+    b.title = label;
+  }
 }
 
 /**

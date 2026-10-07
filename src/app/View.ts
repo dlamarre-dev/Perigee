@@ -38,7 +38,12 @@ export interface FollowApi {
     scenePosition: () => Vec3 | undefined,
     distanceKm: number,
     onEnd: () => void,
-    options?: { readonly viewFrom?: Vec3; readonly minDistanceKm?: number },
+    options?: {
+      readonly viewFrom?: Vec3;
+      readonly minDistanceKm?: number;
+      /** Radius of a followed celestial body: the altimeter then reads the height above its surface. */
+      readonly surfaceRadiusKm?: number;
+    },
   ): boolean;
   stop(): void;
   readonly active: boolean;
@@ -97,6 +102,8 @@ export interface View {
   readonly farKm: number;
   /** Distance from the camera to the nearest surface other than the central body (km), for the near plane. */
   nearestSurfaceKm?(originKm: Vec3): number;
+  /** False while scene distances are not to scale (solar view's logarithmic mode); default true. */
+  distancesToScale?(): boolean;
   bodyOrientation(date: Date): Quat;
   /** Per-frame logic (positions, orientations, sampling), before the camera moves. */
   update(frame: ViewFrame): void;

@@ -1,6 +1,6 @@
 import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
-import { h, setText, sidePanel, syncRows } from './dom';
+import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
 import { ModelPreview } from './ModelPreview';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
@@ -54,7 +54,10 @@ export class DetailPanel {
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'detail-title', hidden: true },
       [
-        h('div', { class: 'panel-header' }, [this.title, this.close]),
+        h('div', { class: 'panel-header' }, [
+          this.title,
+          h('div', { class: 'panel-actions' }, [panelToggle('btn panel-minimize'), this.close]),
+        ]),
         this.preview.element,
         this.badge,
         this.fields,
@@ -87,7 +90,7 @@ export class DetailPanel {
     const wasHidden = this.element.hidden;
     this.element.hidden = false;
     // Opening (not the periodic refresh) shows the whole sheet on phones.
-    if (wasHidden) this.element.classList.remove('collapsed');
+    if (wasHidden) setPanelCollapsed(this.element, false);
     setText(this.title, content.title);
     this.preview.show(content.model);
     this.badge.hidden = !content.badge;

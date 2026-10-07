@@ -133,3 +133,65 @@ test('switching views quickly leaves exactly one view', async ({ page }) => {
   await expect(page.locator('#side-panel')).toHaveCount(1);
   await expect(page.locator('aside.side-panel')).toHaveCount(2);
 });
+
+test('site notes follow the interface language', async ({ page }) => {
+  await page.goto(`./?lang=fr&view=moon&${FROZEN}&sel=site:apollo-11`);
+  const info = page.locator('aside.info');
+  await expect(info).toContainText('Étage de descente du module lunaire');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(info).toContainText('Lunar Module descent stage');
+});
+
+test('the details panel collapses to its header and back, keeping the selection', async ({ page }) => {
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&sel=site:apollo-11`);
+  const info = page.locator('aside.info');
+  const sources = info.locator('.sources');
+  await expect(sources).toBeVisible();
+  const toggle = info.locator('.panel-minimize');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(sources).toBeHidden();
+  await expect(info.locator('.panel-title')).toHaveText('Apollo 11');
+  await expect(page).toHaveURL(/sel=site%3Aapollo-11|sel=site:apollo-11/);
+  await toggle.click();
+  await expect(sources).toBeVisible();
+});
+
+test('dragging the altimeter zooms the camera', async ({ page }) => {
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
+  const altimeter = page.getByRole('slider');
+  await expect(altimeter).toBeVisible();
+  await expect(altimeter).toHaveAttribute('aria-valuetext', /km$/);
+  const distance = (): Promise<number> =>
+    page.evaluate(
+      () =>
+        (
+          window as unknown as { __perigeeShell: { camera(): { distanceKm: number } } }
+        ).__perigeeShell.camera().distanceKm,
+    );
+  const before = await distance();
+  const box = await page.locator('.altimeter-scale').boundingBox();
+  if (!box) throw new Error('no altimeter');
+  await page.mouse.move(box.x + 20, box.y + box.height * 0.3);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 20, box.y + box.height * 0.95, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(distance).toBeLessThan(before * 0.5);
+  // Let the eased zoom settle before measuring.
+  let zoomed = 0;
+  await expect
+    .poll(async () => {
+      const a = await distance();
+      await page.waitForTimeout(300);
+      zoomed = await distance();
+      return Math.abs(zoomed / a - 1);
+    })
+    .toBeLessThan(1e-3);
+  // Arrow keys on the focused altimeter zoom out again.
+  await altimeter.focus();
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowUp');
+  // The altimeter scales the height above the surface (mean lunar radius 1737.4 km).
+  const altitude = async (): Promise<number> => (await distance()) - 1737.4;
+  await expect.poll(altitude).toBeGreaterThan((zoomed - 1737.4) * 1.2);
+});

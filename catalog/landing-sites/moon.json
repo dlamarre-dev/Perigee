@@ -14,7 +14,7 @@
       "type": "crewed",
       "latDeg": 0.67416,
       "lonDeg": 23.47314,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -33,7 +33,7 @@
       "type": "crewed",
       "latDeg": -3.0128,
       "lonDeg": -23.4219,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -52,7 +52,7 @@
       "type": "crewed",
       "latDeg": -3.64589,
       "lonDeg": -17.47194,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -71,7 +71,7 @@
       "type": "crewed",
       "latDeg": 26.13239,
       "lonDeg": 3.6333,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -90,7 +90,7 @@
       "type": "crewed",
       "latDeg": -8.9734,
       "lonDeg": 15.5011,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -109,7 +109,7 @@
       "type": "crewed",
       "latDeg": 20.1911,
       "lonDeg": 30.7723,
-      "note": "Lunar Module descent stage",
+      "note": { "en": "Lunar Module descent stage", "fr": "Étage de descente du module lunaire" },
       "sources": [
         "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
         "https://lroc.im-ldi.com/images/938"
@@ -128,7 +128,10 @@
       "type": "soft",
       "latDeg": 7.08,
       "lonDeg": -64.37,
-      "note": "Historical tracking estimate (Oceanus Procellarum); lander never positively identified in LROC images, uncertainty up to tens of km",
+      "note": {
+        "en": "Historical tracking estimate (Oceanus Procellarum); lander never positively identified in LROC images, uncertainty up to tens of km",
+        "fr": "Estimation historique d’après la poursuite (Oceanus Procellarum); atterrisseur jamais formellement identifié sur les images LROC, incertitude pouvant atteindre des dizaines de km"
+      },
       "sources": ["https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"]
     },
     {
@@ -144,7 +147,10 @@
       "type": "soft",
       "latDeg": 18.87,
       "lonDeg": -62.05,
-      "note": "Historical tracking estimate; lander never positively identified in LROC images",
+      "note": {
+        "en": "Historical tracking estimate; lander never positively identified in LROC images",
+        "fr": "Estimation historique d’après la poursuite; atterrisseur jamais formellement identifié sur les images LROC"
+      },
       "sources": ["https://nssdc.gsfc.nasa.gov/planetary/lunar/lunarussr.html"]
     },
     {
@@ -196,7 +202,10 @@
       "type": "rover-last-known",
       "latDeg": 38.315,
       "lonDeg": -35.0081,
-      "note": "Final rover position; date is last contact",
+      "note": {
+        "en": "Final rover position; date is last contact",
+        "fr": "Dernière position du rover; la date est celle du dernier contact"
+      },
       "sources": ["https://lroc.im-ldi.com/images/938"]
     },
     {
@@ -248,7 +257,10 @@
       "type": "rover-last-known",
       "latDeg": 25.8323,
       "lonDeg": 30.9222,
-      "note": "Final rover position; date is end of operations",
+      "note": {
+        "en": "Final rover position; date is end of operations",
+        "fr": "Dernière position du rover; la date est celle de la fin des opérations"
+      },
       "sources": ["https://lroc.im-ldi.com/images/938"]
     },
     {
@@ -387,7 +399,10 @@
       "type": "rover-last-known",
       "latDeg": 44.1208,
       "lonDeg": -19.5122,
-      "note": "Rover immobile since early 2014; date is end of mission",
+      "note": {
+        "en": "Rover immobile since early 2014; date is end of mission",
+        "fr": "Rover immobile depuis le début de 2014; la date est celle de la fin de mission"
+      },
       "sources": ["https://lroc.im-ldi.com/images/938"]
     },
     {
@@ -403,7 +418,10 @@
       "type": "soft",
       "latDeg": -45.4562,
       "lonDeg": 177.5885,
-      "note": "LROC refined value (Dec 2020, +/-13 m); LROC Jan 2019 gave 45.457S 177.589E",
+      "note": {
+        "en": "LROC refined value (Dec 2020, +/-13 m); LROC Jan 2019 gave 45.457S 177.589E",
+        "fr": "Valeur affinée par LROC (déc. 2020, ±13 m); LROC donnait en janv. 2019 45,457° S 177,589° E"
+      },
       "sources": ["https://lroc.im-ldi.com/images/1168", "https://lroc.im-ldi.com/images/1087"]
     },
     {
@@ -479,7 +497,10 @@
       "type": "impact",
       "latDeg": -89.55,
       "lonDeg": -122.93,
-      "note": "Refined estimate (Stooke et al., LPSC 2021); crater not identified; earlier published estimates 89.76S 39.40W and 89.54S 44.71W",
+      "note": {
+        "en": "Refined estimate (Stooke et al., LPSC 2021); crater not identified; earlier published estimates 89.76S 39.40W and 89.54S 44.71W",
+        "fr": "Estimation affinée (Stooke et al., LPSC 2021); cratère non identifié; estimations publiées auparavant : 89,76° S 39,40° O et 89,54° S 44,71° O"
+      },
       "sources": ["https://www.hou.usra.edu/meetings/lpsc2021/pdf/1013.pdf"]
     },
     {
@@ -510,7 +531,7 @@
       "type": "soft",
       "latDeg": -80.13,
       "lonDeg": 1.44,
-      "note": "Came to rest tipped over",
+      "note": { "en": "Came to rest tipped over", "fr": "Immobilisé renversé" },
       "sources": ["https://lroc.im-ldi.com/images/1360"]
     },
     {
@@ -526,7 +547,10 @@
       "type": "soft",
       "latDeg": -84.7906,
       "lonDeg": 29.1957,
-      "note": "Came to rest on its side in a crater near Mons Mouton",
+      "note": {
+        "en": "Came to rest on its side in a crater near Mons Mouton",
+        "fr": "Immobilisé sur le flanc dans un cratère près de Mons Mouton"
+      },
       "sources": ["https://lroc.im-ldi.com/images/1408"]
     },
     {
@@ -602,7 +626,10 @@
       "type": "hard",
       "latDeg": 60.4445,
       "lonDeg": -4.588,
-      "note": "Impact 2025-06-05 18:13 UTC (2025-06-06 JST)",
+      "note": {
+        "en": "Impact 2025-06-05 18:13 UTC (2025-06-06 JST)",
+        "fr": "Impact le 2025-06-05 à 18 h 13 UTC (2025-06-06 heure du Japon)"
+      },
       "sources": ["https://lroc.im-ldi.com/images/1456"]
     },
     {
@@ -693,7 +720,10 @@
       "type": "impact",
       "latDeg": -34.4,
       "lonDeg": -46.2,
-      "note": "Approximate impact point published by ESA",
+      "note": {
+        "en": "Approximate impact point published by ESA",
+        "fr": "Point d’impact approximatif publié par l’ESA"
+      },
       "sources": ["https://sci.esa.int/web/smart-1-lunar-impact/"]
     },
     {

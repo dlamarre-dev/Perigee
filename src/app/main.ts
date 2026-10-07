@@ -33,6 +33,7 @@ import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setPreviewFrameRate } from '../ui/ModelPreview';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
+import { Altimeter } from '../ui/Altimeter';
 import { Toolbar } from '../ui/Toolbar';
 import { h, setSheetGrabLabel } from '../ui/dom';
 import { MAX_ABS_RATE, parseUrlState, serializeUrlState, type FrameMode, type ViewId } from './urlState';
@@ -326,6 +327,8 @@ function main(): void {
 
   // Follow mode, shared by all views.
   let followEnd: (() => void) | undefined;
+  /** Surface radius of the followed object (0 for a spacecraft), for the altimeter. */
+  let followSurfaceKm = 0;
   const endFollow = (): void => {
     const cb = followEnd;
     followEnd = undefined;
@@ -338,6 +341,7 @@ function main(): void {
       if (!pos || !view) return false;
       if (controls.following) follow.stop();
       followEnd = onEnd;
+      followSurfaceKm = options.surfaceRadiusKm ?? 0;
       controls.setLimits({
         minDistanceKm: options.minDistanceKm ?? FOLLOW_MIN_DISTANCE_KM,
         maxDistanceKm: view.limits.maxDistanceKm,
@@ -456,9 +460,13 @@ function main(): void {
   barObserver.observe(toolbar.element);
   barObserver.observe(timeControl.element);
   const music = new MusicPanel(i18n);
+  // The altimeter reads (and sets) the height above the surface: the camera distance minus that radius.
+  const altimeterRefKm = (): number => (controls.following ? followSurfaceKm : (view?.bodyRadiusKm ?? 0));
+  const altimeter = new Altimeter(i18n, (valueKm) => controls.zoomTo(valueKm + altimeterRefKm()));
   app.append(
     toolbar.element,
     timeControl.element,
+    altimeter.element,
     music.element,
     notice,
     updateNotice,
@@ -676,6 +684,14 @@ ${
         ),
         length(originKm) + v.farKm,
       );
+      const refKm = altimeterRefKm();
+      altimeter.update({
+        valueKm: Math.max(1e-6, controls.state.distanceKm - refKm),
+        minKm: controls.limits.minDistanceKm - refKm,
+        maxKm: controls.limits.maxDistanceKm - refKm,
+        kind: controls.following && refKm === 0 ? 'distance' : 'altitude',
+        toScale: v.distancesToScale?.() ?? true,
+      });
     }
 
     uiTimerS += dtS;

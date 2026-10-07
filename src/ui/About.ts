@@ -1,14 +1,17 @@
 import { loadManifest } from '../data/loader';
 import type { Manifest } from '../data/schemas';
-import type { I18n } from '../i18n';
+import type { I18n, Lang } from '../i18n';
 import { h, scrollingDialog } from './dom';
 
 interface Credit {
+  /** Proper name, identical in every language. */
   readonly name: string;
+  /** What the credit covers, when the name does not say it. */
+  readonly detail?: { readonly en: string; readonly fr: string };
   readonly url: string;
 }
 
-/** Credits are proper names, identical in every language (CLAUDE.md §9). */
+/** Credits (CLAUDE.md §9): proper names, plus a translated description where needed. */
 const DATA_CREDITS: readonly Credit[] = [
   {
     name: 'NASA Blue Marble Next Generation',
@@ -17,7 +20,11 @@ const DATA_CREDITS: readonly Credit[] = [
   { name: 'NASA Black Marble 2016', url: 'https://earthobservatory.nasa.gov/features/NightLights' },
   { name: 'CelesTrak (T.S. Kelso) / 18th & 19th SDS via Space-Track', url: 'https://celestrak.org' },
   {
-    name: 'CelesTrak supplemental GP (fits to operator ephemerides: SpaceX, SES, Intelsat, NASA, GPS, GLONASS…)',
+    name: 'CelesTrak supplemental GP',
+    detail: {
+      en: 'fits to operator ephemerides: SpaceX, SES, Intelsat, NASA, GPS, GLONASS…',
+      fr: 'ajustements aux éphémérides des opérateurs : SpaceX, SES, Intelsat, NASA, GPS, GLONASS…',
+    },
     url: 'https://celestrak.org/NORAD/elements/supplemental/',
   },
   { name: 'NASA/JPL-Caltech Horizons', url: 'https://ssd.jpl.nasa.gov/horizons/' },
@@ -29,27 +36,56 @@ const DATA_CREDITS: readonly Credit[] = [
     name: 'NASA Photojournal (MESSENGER, Cassini, New Horizons)',
     url: 'https://science.nasa.gov/photojournal/',
   },
-  { name: 'NASA PDS Ring-Moon Systems Node (Voyager ring profiles)', url: 'https://pds-rings.seti.org' },
   {
-    name: 'P. Stooke — small-body maps (NASA PDS Small Bodies Node)',
+    name: 'NASA PDS Ring-Moon Systems Node',
+    detail: { en: 'Voyager ring profiles', fr: 'profils des anneaux de Voyager' },
+    url: 'https://pds-rings.seti.org',
+  },
+  {
+    name: 'P. Stooke',
+    detail: {
+      en: 'small-body maps (NASA PDS Small Bodies Node)',
+      fr: 'cartes de petits corps (NASA PDS Small Bodies Node)',
+    },
     url: 'https://sbnarchive.psi.edu/pds4/non_mission/small_bodies.stooke.maps/',
   },
   {
-    name: 'P. Thomas, R. Gaskell — shape models of Hyperion and Phoebe (NASA PDS Small Bodies Node)',
+    name: 'P. Thomas, R. Gaskell',
+    detail: {
+      en: 'shape models of Hyperion and Phoebe (NASA PDS Small Bodies Node)',
+      fr: 'modèles de forme d’Hypérion et de Phœbé (NASA PDS Small Bodies Node)',
+    },
     url: 'https://sbn.psi.edu/pds/shape-models/',
   },
-  { name: 'NASA/JPL SSD — planetary satellite mean elements', url: 'https://ssd.jpl.nasa.gov/sats/elem/' },
   {
-    name: 'NASA 3D Resources (spacecraft, rover and moon models)',
+    name: 'NASA/JPL SSD',
+    detail: { en: 'planetary satellite mean elements', fr: 'éléments moyens des satellites planétaires' },
+    url: 'https://ssd.jpl.nasa.gov/sats/elem/',
+  },
+  {
+    name: 'NASA 3D Resources',
+    detail: { en: 'spacecraft, rover and moon models', fr: 'modèles de sondes, de rovers et de lunes' },
     url: 'https://science.nasa.gov/3d-resources/',
   },
   {
-    name: 'NASA/Goddard Space Flight Center Scientific Visualization Studio — Deep Star Maps 2020 (Gaia DR2: ESA/Gaia/DPAC)',
+    name: 'NASA/Goddard Space Flight Center Scientific Visualization Studio',
+    detail: {
+      en: 'Deep Star Maps 2020 (Gaia DR2: ESA/Gaia/DPAC)',
+      fr: 'Deep Star Maps 2020 (Gaia DR2 : ESA/Gaia/DPAC)',
+    },
     url: 'https://svs.gsfc.nasa.gov/4851',
   },
-  { name: 'NASA MMGIS (Mars rover traverses)', url: 'https://mars.nasa.gov/maps/' },
   {
-    name: 'Solar System Scope (INOVE) — Venus, Saturn, Uranus, Neptune maps, CC BY 4.0, resampled',
+    name: 'NASA MMGIS',
+    detail: { en: 'Mars rover traverses', fr: 'trajets des rovers martiens' },
+    url: 'https://mars.nasa.gov/maps/',
+  },
+  {
+    name: 'Solar System Scope (INOVE)',
+    detail: {
+      en: 'Venus, Saturn, Uranus, Neptune maps, CC BY 4.0, resampled',
+      fr: 'cartes de Vénus, Saturne, Uranus et Neptune, CC BY 4.0, rééchantillonnées',
+    },
     url: 'https://www.solarsystemscope.com/textures/',
   },
 ];
@@ -66,11 +102,15 @@ const SOFTWARE_CREDITS: readonly Credit[] = [
   { name: 'Saira — Omnibus-Type (OFL-1.1)', url: 'https://github.com/Omnibus-Type/Saira' },
 ];
 
-function creditList(credits: readonly Credit[]): HTMLUListElement {
-  return h(
-    'ul',
-    {},
-    credits.map((c) => h('li', {}, [h('a', { href: c.url, target: '_blank', rel: 'noopener' }, [c.name])])),
+/** Fills `list` with `credits` in `lang` (re-run on a language change). */
+function renderCredits(list: HTMLUListElement, credits: readonly Credit[], lang: Lang): void {
+  list.replaceChildren(
+    ...credits.map((c) =>
+      h('li', {}, [
+        h('a', { href: c.url, target: '_blank', rel: 'noopener' }, [c.name]),
+        ...(c.detail ? [` — ${c.detail[lang]}`] : []),
+      ]),
+    ),
   );
 }
 
@@ -88,6 +128,8 @@ export class About {
   private readonly disclaimer = h('p', { class: 'disclaimer' });
   private readonly sourcesTitle = h('h3');
   private readonly softwareTitle = h('h3');
+  private readonly dataCredits = h('ul');
+  private readonly softwareCredits = h('ul');
   private readonly license = h('p');
   private readonly reports = h('p', { class: 'small' });
   private readonly close = h('button', { type: 'button', class: 'btn', autofocus: true });
@@ -111,9 +153,9 @@ export class About {
       this.dataLine,
       this.disclaimer,
       this.sourcesTitle,
-      creditList(DATA_CREDITS),
+      this.dataCredits,
       this.softwareTitle,
-      creditList(SOFTWARE_CREDITS),
+      this.softwareCredits,
       this.license,
       this.reports,
       h('div', { class: 'dialog-actions' }, [this.close]),
@@ -187,6 +229,8 @@ export class About {
     this.disclaimer.textContent = t('about.disclaimer');
     this.sourcesTitle.textContent = t('about.sources');
     this.softwareTitle.textContent = t('about.software');
+    renderCredits(this.dataCredits, DATA_CREDITS, this.i18n.lang);
+    renderCredits(this.softwareCredits, SOFTWARE_CREDITS, this.i18n.lang);
     this.license.textContent = t('about.license');
     this.reports.textContent = t('about.reports');
     this.close.textContent = t('about.close');

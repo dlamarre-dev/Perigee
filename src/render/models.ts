@@ -7,6 +7,7 @@
  * directional light) and a dim neutral environment for the specular reflections.
  */
 import {
+  Box3,
   AmbientLight,
   BufferGeometry as BufferGeometryClass,
   Float32BufferAttribute,
@@ -229,6 +230,19 @@ export class SceneModel {
   private highLoading = false;
   private largeSinceMs: number | undefined;
   private disposed = false;
+  /** Bounds of the loaded model in its own frame (metres). */
+  private bounds: Box3 | undefined;
+
+  /**
+   * How far the loaded model reaches from its origin along a model-frame unit axis (metres), e.g. the wheels
+   * below a rover's origin along its nadir axis; undefined until loaded.
+   */
+  extentAlongM(axis: Vec3): number | undefined {
+    const b = this.bounds;
+    if (!b || !this.object) return undefined;
+    const pick = (i: 0 | 1 | 2, key: 'x' | 'y' | 'z'): number => (axis[i] >= 0 ? b.max[key] : b.min[key]);
+    return axis[0] * pick(0, 'x') + axis[1] * pick(1, 'y') + axis[2] * pick(2, 'z');
+  }
 
   constructor(
     private readonly scene: Scene,
@@ -258,6 +272,7 @@ export class SceneModel {
     if (entry?.id !== this.entry?.id) {
       if (this.object) this.group.remove(this.object);
       this.object = undefined;
+      this.bounds = undefined;
       this.dropHigh();
       this.entry = entry;
     }
@@ -269,6 +284,8 @@ export class SceneModel {
         if (this.loading === entry.id) this.loading = '';
         if (!obj || this.entry?.id !== entry.id) return;
         this.object = obj;
+        // Model-frame bounds (metres), before it joins the scaled group.
+        this.bounds = new Box3().setFromObject(obj, true);
         this.group.add(obj);
       });
     }

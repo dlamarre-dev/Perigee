@@ -71,7 +71,10 @@
         "https://en.wikipedia.org/wiki/List_of_Starship_launches",
         "https://www.npr.org/2026/09/28/nx-s1-5983418/spacex-starship-first-orbital-flight-14-nasa"
       ],
-      "note": "First orbital launch (Starship Flight 14, 2026-09-28) deployed 26 Starlink V3 satellites, giving Starbase its own SATCAT launch-site code (STARB)."
+      "note": {
+        "en": "First orbital launch (Starship Flight 14, 2026-09-28) deployed 26 Starlink V3 satellites, giving Starbase its own SATCAT launch-site code (STARB).",
+        "fr": "Le premier lancement orbital (vol 14 de Starship, 2026-09-28) a déployé 26 satellites Starlink V3, ce qui a donné à Starbase son propre code de site de lancement SATCAT (STARB)."
+      }
     },
     {
       "id": "kodiak",

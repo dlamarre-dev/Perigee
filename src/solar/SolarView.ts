@@ -558,6 +558,10 @@ class SolarView implements View {
   }
 
   /** The "body-fixed" frame of this view is the J2000 ecliptic. */
+  distancesToScale(): boolean {
+    return !this.logScale;
+  }
+
   bodyOrientation(): Quat {
     return ECLIPTIC_Q;
   }
@@ -1401,7 +1405,7 @@ class SolarView implements View {
       {
         viewFrom,
         ...(body
-          ? { minDistanceKm: body.minDistanceKm }
+          ? { minDistanceKm: body.minDistanceKm, surfaceRadiusKm: body.surfaceRadiusKm }
           : modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '')),
       },
     );

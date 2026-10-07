@@ -10,7 +10,9 @@ import {
   Quaternion,
   ShaderMaterial,
   SphereGeometry,
-  type BufferGeometry,
+  BufferGeometry,
+  DoubleSide,
+  Raycaster,
   Vector2,
   Vector3,
   type Texture,
@@ -79,6 +81,12 @@ export interface BodyMeshOptions {
   readonly atmosphereColor?: readonly [number, number, number];
   readonly atmosphereStrength?: number;
 }
+
+const surfaceRay = new Raycaster();
+const surfaceOrigin = new Vector3();
+const surfaceDir = new Vector3();
+/** Untransformed mesh used to cast rays against a body's geometry in its own frame. */
+const surfaceProbe = new Mesh(new BufferGeometry(), new MeshBasicMaterial({ side: DoubleSide }));
 
 const LIGHT_BELOW_PX = 40;
 const FULL_ABOVE_PX = 56;
@@ -152,6 +160,19 @@ export class BodyMesh {
         this.useGeometry(this.full);
       }
     };
+  }
+
+  /**
+   * Distance (km) from the centre to the surface actually drawn, along a body-frame unit direction: the sphere's
+   * flat facets sit up to R·(1 − cos(π/96)) ≈ 1.3·10⁻⁴ R inside its radius (450 m on Mars), so objects resting on
+   * the ground (rovers) are placed on the facet, not on the ideal sphere.
+   */
+  surfaceDistanceKm(dir: Vec3): number {
+    const geometry = this.full ?? this.mesh.geometry;
+    surfaceProbe.geometry = geometry;
+    surfaceRay.set(surfaceOrigin, surfaceDir.set(dir[0], dir[1], dir[2]).normalize());
+    const hit = surfaceRay.intersectObject(surfaceProbe, false)[0];
+    return hit ? hit.distance : this.radiusKm;
   }
 
   private useGeometry(geometry: BufferGeometry): void {

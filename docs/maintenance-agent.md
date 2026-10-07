@@ -90,6 +90,8 @@ to do anything unless you explicitly ask for help.
   under "Needs a human".
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
 - Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
-  typography: a non-breaking space before `:`).
+  typography: a non-breaking space before `:`). Every text a visitor reads (names, `note`, `notes`, `orbit`,
+  `purpose`…) has both an `en` and an `fr` value, including source notes on landing sites; translate when
+  adding or editing one.
 - Budget: stop after about 25 researched items (re-verifications included); carry the rest over to next week in
   the report.

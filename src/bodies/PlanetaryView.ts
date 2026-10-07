@@ -508,7 +508,7 @@ export class PlanetaryView implements View {
     } else if (sel?.kind === 'site') {
       const i = this.sites.indexOf(sel.site);
       entry = modelFor(`site:${sel.site.id}`);
-      scene = this.siteScene[i];
+      scene = entry ? this.siteModelScene(i, entry) : undefined;
       if (scene && entry) {
         const north = quatRotate(this.bodyScene, [0, 0, 1]);
         q = alignAxes(
@@ -706,6 +706,32 @@ export class PlanetaryView implements View {
     });
   }
 
+  /**
+   * Where a site's model stands (scene frame): on the surface actually drawn, its lowest point (a rover's wheels)
+   * on the ground. The marker floats slightly above to stay visible; the model, the follow camera and the
+   * framing use this point.
+   */
+  private siteModelScene(i: number, entry: ModelEntry): Vec3 | undefined {
+    const body = this.siteBodyKm[i];
+    if (!body) return undefined;
+    const up = normalize(body);
+    const below = this.sceneModel.extentAlongM(axisVector(entry.nadirAxis ?? '-y')) ?? 0;
+    return quatRotate(this.bodyScene, scale(up, this.groundDistanceKm(up) + below / 1000));
+  }
+
+  /** Drawn-surface distance along body-frame directions, cached (sites and rovers rarely move). */
+  private readonly groundCache = new Map<string, number>();
+
+  private groundDistanceKm(up: Vec3): number {
+    const key = `${up[0].toFixed(9)},${up[1].toFixed(9)},${up[2].toFixed(9)}`;
+    let d = this.groundCache.get(key);
+    if (d === undefined) {
+      d = this.body.surfaceDistanceKm(up);
+      this.groundCache.set(key, d);
+    }
+    return d;
+  }
+
   private siteSurfaceKm(latDeg: number, lonDeg: number): Vec3 {
     return scale(latLonToUnit(latDeg * DEG_TO_RAD, lonDeg * DEG_TO_RAD), this.R * (1 + 3e-4));
   }
@@ -874,7 +900,11 @@ export class PlanetaryView implements View {
 
   private scenePositionOf(sel: Selection): Vec3 | undefined {
     if (sel?.kind === 'mission') return this.trackedFor(sel.mission.id)?.scene;
-    if (sel?.kind === 'site') return this.siteScene[this.sites.indexOf(sel.site)];
+    if (sel?.kind === 'site') {
+      const i = this.sites.indexOf(sel.site);
+      const entry = modelFor(`site:${sel.site.id}`);
+      return (entry && this.siteModelScene(i, entry)) || this.siteScene[i];
+    }
     return undefined;
   }
 
@@ -905,7 +935,11 @@ export class PlanetaryView implements View {
       distanceKm,
       () => (this.detail.following = false),
       body
-        ? { minDistanceKm: body.minDistanceKm, viewFrom: this.litViewFrom(pos) }
+        ? {
+            minDistanceKm: body.minDistanceKm,
+            surfaceRadiusKm: body.surfaceRadiusKm,
+            viewFrom: this.litViewFrom(pos),
+          }
         : modelMinDistance(target),
     );
   }
@@ -1020,7 +1054,7 @@ export class PlanetaryView implements View {
       title: site.name[i18n.lang],
       ...(live ? { badge: { text: t('info.liveFeed'), state: 'fresh' as const } } : {}),
       rows,
-      ...(site.note && !live ? { notes: site.note } : {}),
+      ...(site.note && !live ? { notes: site.note[i18n.lang] } : {}),
       sources: live ? [live.source, ...site.sources.filter((u) => u !== live.source)] : site.sources,
       footnote: i18n.format('info.verified', { date: this.config.sites.verified }),
       followable: true,
