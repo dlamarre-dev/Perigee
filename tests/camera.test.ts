@@ -5,7 +5,9 @@ import {
   arcballRotationVector,
   cameraPositionKm,
   easeDistanceKm,
+  heightAboveKm,
   interpolateOrbit,
+  keepOutside,
   orbitStateLookingFrom,
   quatAngleBetween,
   quatFromAxisAngle,
@@ -155,5 +157,37 @@ describe('smooth zoom and touch twist', () => {
     expect(twistRollRad(-dead * 0.9, dead, 0.6)).toBe(0);
     expect(twistRollRad(dead + 0.1, dead, 0.6)).toBeCloseTo(0.06, 12);
     expect(twistRollRad(-(dead + 0.1), dead, 0.6)).toBeCloseTo(-0.06, 12);
+  });
+});
+
+describe('keepOutside', () => {
+  const mars = 3389.5;
+  const ground = { centreKm: [0, 0, 0] as Vec3, radiusKm: mars };
+  // Following a rover on the +X surface, 8 m away.
+  const rover: Vec3 = [mars + 0.001, 0, 0];
+
+  it('leaves a camera above the ground untouched', () => {
+    const s = orbitStateLookingFrom(rover, [1, 0, 0], [0, 0, 1], 0.008);
+    expect(keepOutside(s, [ground], 0.002)).toBe(s);
+  });
+
+  it('lifts a camera that went under the ground back onto it, keeping the target', () => {
+    // Looking up at the rover from below the surface.
+    const s = orbitStateLookingFrom(rover, normalize([-1, 0.3, 0]), [0, 0, 1], 0.008);
+    expect(heightAboveKm(cameraPositionKm(s), ground)).toBeLessThan(0);
+    const out = keepOutside(s, [ground], 0.002);
+    expect(out.targetKm).toEqual(rover);
+    expect(heightAboveKm(cameraPositionKm(out), ground)).toBeCloseTo(0.002, 9);
+    expect(quatNorm(out.orientation)).toBeCloseTo(1, 12);
+  });
+
+  it('uses the drawn surface when given, and every obstacle', () => {
+    const lowGround = { ...ground, surfaceKm: () => mars - 0.4 };
+    const moon = { centreKm: [0, 5000, 0] as Vec3, radiusKm: 100 };
+    const s = orbitStateLookingFrom([0, 4950, 0], [0, 1, 0], [0, 0, 1], 60);
+    const out = keepOutside(s, [lowGround, moon], 0.002);
+    expect(length(sub(cameraPositionKm(out), moon.centreKm))).toBeCloseTo(100.002, 6);
+    const under = orbitStateLookingFrom([mars - 0.3, 0, 0], [1, 0, 0], [0, 0, 1], 0.05);
+    expect(keepOutside(under, [lowGround], 0)).toBe(under);
   });
 });

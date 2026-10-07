@@ -59,7 +59,7 @@ import {
 } from '../render/models';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
-import { bodyFollow, orbitStateLookingFrom } from '../camera/orbitMath';
+import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
 import { ephemerisKey } from '../app/updates';
 import { assetUrl } from '../render/assetUrl';
 import { loadEphemeris, loadManifest } from '../data/loader';
@@ -558,6 +558,11 @@ class SolarView implements View {
   }
 
   /** The "body-fixed" frame of this view is the J2000 ecliptic. */
+  /** The Sun, planets, moons and small bodies drawn at true scale (the same set that hides markers). */
+  cameraObstacles(): readonly CameraObstacle[] {
+    return this.occluders.map((o) => ({ centreKm: o.sceneKm, radiusKm: o.radiusKm }));
+  }
+
   distancesToScale(): boolean {
     return !this.logScale;
   }
@@ -700,7 +705,11 @@ class SolarView implements View {
         this.occluders.push({ id: p.info.id, sceneKm: p.scene, radiusKm: p.info.radiusKm });
       for (const t of this.probes) {
         if (t.mesh && t.scene && t.mission.radiusKm)
-          this.occluders.push({ id: t.mission.id, sceneKm: t.scene, radiusKm: t.mission.radiusKm });
+          this.occluders.push({
+            id: t.mission.id,
+            sceneKm: t.scene,
+            radiusKm: Math.max(t.mission.radiusKm, t.mesh.boundingRadiusKm),
+          });
       }
     }
     this.placeMoons(rel);
@@ -1592,7 +1601,12 @@ class SolarView implements View {
       const p = rel(m.planet.scene);
       m.orbit.position.set(p[0], p[1], p[2]);
       m.orbit.quaternion.set(this.sceneQ.x, this.sceneQ.y, this.sceneQ.z, this.sceneQ.w);
-      this.occluders.push({ id: m.moon.id, sceneKm: m.scene, radiusKm: m.moon.radiusKm });
+      // Irregular moons reach beyond their mean radius.
+      this.occluders.push({
+        id: m.moon.id,
+        sceneKm: m.scene,
+        radiusKm: Math.max(m.moon.radiusKm, m.mesh.boundingRadiusKm),
+      });
       this.maybeLoad(m, r, m.moon.radiusKm);
     }
     for (const m of this.moons) {

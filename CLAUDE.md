@@ -248,6 +248,9 @@ the "up" vector and causes gimbal lock at the poles).
   frames it at 10 radii in every view, from its day side, and keeps the camera outside it (`bodyFollow` in
   `src/camera/orbitMath.ts`); spacecraft with a 3D model are framed by the model's size.
 - Keyboard: arrows (rotation), Q/E (roll), +/− (zoom), R (reset).
+- The camera never enters a body: views list `cameraObstacles()` (central body, with the exact ground of the local
+  patch around a selected site; moons, Earth/Moon, the Sun and planets), and the shell moves a camera that ends up
+  inside back above the surface (`keepOutside`, 2 m clearance), so it slides along the ground.
 - Renormalise the quaternion every frame. Unit tests: no drift after 10⁶ small rotations, rotation around the
   poles without singularity.
 

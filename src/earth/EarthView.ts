@@ -4,14 +4,14 @@ import earthScienceJson from '../../catalog/earth-science.json';
 import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
-import { earthOrientation, geoSunKm } from '../astro/bodies';
+import { earthOrientation, geoSunKm, MOON_RADIUS_KM } from '../astro/bodies';
 import { alignAxes, axisVector } from '../astro/attitude';
 import { QUAT_IDENTITY, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { sunDirectionEci } from '../astro/sun';
 import { SUN_RADIUS_KM } from '../astro/planets';
 import { gmstRad } from '../astro/time';
 import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
-import { orbitStateLookingFrom } from '../camera/orbitMath';
+import { orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { datasetKey } from '../app/updates';
 import { loadBulkDataset, loadManifest, loadOptionalDataset } from '../data/loader';
@@ -136,6 +136,13 @@ class EarthView implements View {
   /** Closest surface other than the Earth (the Moon), for the near clipping plane. */
   nearestSurfaceKm(originKm: Vec3): number {
     return this.moon.surfaceDistanceKm(originKm);
+  }
+
+  cameraObstacles(): readonly CameraObstacle[] {
+    return [
+      { centreKm: [0, 0, 0], radiusKm: this.earth.radiusKm },
+      { centreKm: this.moon.sceneKm, radiusKm: MOON_RADIUS_KM },
+    ];
   }
 
   bodyOrientation(date: Date): Quat {

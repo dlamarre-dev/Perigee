@@ -10,7 +10,7 @@ import type { Quat } from '../astro/quat';
 import type { SimClock } from '../astro/time';
 import type { Vec3 } from '../astro/vec3';
 import type { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
-import type { OrbitLimits } from '../camera/orbitMath';
+import type { CameraObstacle, OrbitLimits } from '../camera/orbitMath';
 import type { I18n, MessageKey } from '../i18n';
 import type { Renderer } from '../render/Renderer';
 import type { FrameMode, ViewId } from './urlState';
@@ -102,6 +102,8 @@ export interface View {
   readonly farKm: number;
   /** Distance from the camera to the nearest surface other than the central body (km), for the near plane. */
   nearestSurfaceKm?(originKm: Vec3): number;
+  /** Bodies the camera must not enter (scene frame); the shell keeps it above their surface. */
+  cameraObstacles?(): readonly CameraObstacle[];
   /** False while scene distances are not to scale (solar view's logarithmic mode); default true. */
   distancesToScale?(): boolean;
   bodyOrientation(date: Date): Quat;

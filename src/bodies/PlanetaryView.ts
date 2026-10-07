@@ -30,7 +30,7 @@ import {
   type TrackSample,
 } from '../astro/track';
 import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
-import { bodyFollow, orbitStateLookingFrom } from '../camera/orbitMath';
+import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
 import { datasetKey, ephemerisKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
@@ -351,6 +351,23 @@ export class PlanetaryView implements View {
     this.restoreFromUrl(host.initialParams);
     void this.loadEphemerides();
     if (host.e2e) this.installTestHook();
+  }
+
+  cameraObstacles(): readonly CameraObstacle[] {
+    const toBody = quatConjugate(this.bodyScene);
+    const list: CameraObstacle[] = [
+      {
+        centreKm: [0, 0, 0],
+        radiusKm: this.body.boundingRadiusKm,
+        surfaceKm: (dir) => this.body.surfaceUnderKm(quatRotate(toBody, dir)),
+      },
+    ];
+    for (const t of this.tracked) {
+      if (t.mesh && t.scene && t.mesh.mesh.visible)
+        list.push({ centreKm: t.scene, radiusKm: t.mesh.boundingRadiusKm });
+    }
+    if (this.earth) list.push({ centreKm: this.earthScene, radiusKm: this.earth.radiusKm });
+    return list;
   }
 
   bodyOrientation(date: Date): Quat {

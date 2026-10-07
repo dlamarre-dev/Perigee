@@ -132,9 +132,11 @@ export class BodyMesh {
   /** Facets around a surface point, drawn relative to it (see setLocalPatch). */
   private patch: Mesh<BufferGeometry, ShaderMaterial> | undefined;
   private patchKey = '';
+  private boundingKm: number;
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
+    this.boundingKm = o.radiusKm;
     const geometry = sphere(o.radiusKm, 192, 96);
     this.full = geometry;
     const material = new ShaderMaterial({
@@ -192,7 +194,7 @@ export class BodyMesh {
   surfaceDistanceKm(dir: Vec3): number {
     const geometry = this.full ?? this.mesh.geometry;
     surfaceProbe.geometry = geometry;
-    surfaceRay.set(surfaceOrigin, surfaceDir.set(dir[0], dir[1], dir[2]).normalize());
+    surfaceRay.set(surfaceOrigin.set(0, 0, 0), surfaceDir.set(dir[0], dir[1], dir[2]).normalize());
     const hit = surfaceRay.intersectObject(surfaceProbe, false)[0];
     return hit ? hit.distance : this.radiusKm;
   }
@@ -271,6 +273,32 @@ export class BodyMesh {
     (uniforms['patchSide'] as { value: number }).value = 1;
   }
 
+  /** Largest distance from the centre to the drawn surface (the radius, or a shape's farthest vertex). */
+  get boundingRadiusKm(): number {
+    return this.boundingKm;
+  }
+
+  /**
+   * Drawn-surface distance from the centre along a body-frame unit direction, cheap enough for every frame:
+   * exact on the local patch, `boundingRadiusKm` elsewhere (a camera kept above it never goes under the ground).
+   */
+  surfaceUnderKm(dirBody: Vec3): number {
+    const patch = this.patch;
+    const u = this.mesh.material.uniforms;
+    if (!patch) return this.boundingKm;
+    const pd = (u['patchDir'] as { value: Vector3 }).value;
+    if (dirBody[0] * pd.x + dirBody[1] * pd.y + dirBody[2] * pd.z < Math.cos(PATCH_CAP_RAD))
+      return this.boundingKm;
+    // Ray from the centre, in the patch's frame (vertices relative to patch.position).
+    surfaceProbe.geometry = patch.geometry;
+    surfaceRay.set(
+      surfaceOrigin.copy(patch.position).negate(),
+      surfaceDir.set(dirBody[0], dirBody[1], dirBody[2]).normalize(),
+    );
+    const hit = surfaceRay.intersectObject(surfaceProbe, false)[0];
+    return hit ? hit.distance : this.boundingKm;
+  }
+
   private useGeometry(geometry: BufferGeometry): void {
     this.mesh.geometry = geometry;
     this.occluder.geometry = geometry;
@@ -293,6 +321,11 @@ export class BodyMesh {
   /** Replaces the sphere by a body-frame shape (km), e.g. a NASA model of an irregular moon. */
   setGeometry(geometry: BufferGeometry): void {
     this.setLocalPatch(undefined);
+    const pos = geometry.getAttribute('position');
+    let max = 0;
+    for (let i = 0; i < pos.count; i++)
+      max = Math.max(max, Math.hypot(pos.getX(i), pos.getY(i), pos.getZ(i)));
+    this.boundingKm = max;
     this.full?.dispose();
     this.light?.dispose();
     this.full = undefined;

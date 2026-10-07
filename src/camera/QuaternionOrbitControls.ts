@@ -139,6 +139,11 @@ export class QuaternionOrbitControls {
     this.stateValue = state;
   }
 
+  /** Corrects the current state (e.g. out of a body) without cancelling animations, zoom or inertia. */
+  constrain(state: OrbitState): void {
+    this.stateValue = state;
+  }
+
   /** Smoothly moves to a new state (target lerp, distance log-lerp, orientation slerp). */
   flyTo(to: OrbitState, durationS = 0.8): void {
     this.angularVelocity = [0, 0, 0];

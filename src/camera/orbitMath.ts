@@ -5,7 +5,7 @@
  * local −Z towards the target, local +Y is screen up, local +X is screen right — the same convention as
  * a Three.js camera, so `orientation` can be copied straight into `camera.quaternion`.
  */
-import { add, cross, lerp, normalize, scale, type Vec3 } from '../astro/vec3';
+import { add, cross, dot, length, lerp, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import {
   QUAT_IDENTITY,
   quatAngleBetween,
@@ -158,4 +158,66 @@ export function bodyFollow(radiusKm: number): {
     minDistanceKm: radiusKm * 1.05,
     surfaceRadiusKm: radiusKm,
   };
+}
+
+/** A body the camera must stay out of (scene frame, km). */
+export interface CameraObstacle {
+  readonly centreKm: Vec3;
+  /** Largest extent from the centre (a quick rejection bound). */
+  readonly radiusKm: number;
+  /** Drawn surface distance from the centre along a scene-frame unit direction (default: `radiusKm`). */
+  readonly surfaceKm?: (dir: Vec3) => number;
+}
+
+/** Height of the camera above the obstacle's surface (km; negative inside). */
+export function heightAboveKm(cameraKm: Vec3, o: CameraObstacle): number {
+  const rel = sub(cameraKm, o.centreKm);
+  const r = length(rel);
+  if (r === 0) return -o.radiusKm;
+  return r - (o.surfaceKm?.(scale(rel, 1 / r)) ?? o.radiusKm);
+}
+
+/**
+ * Keeps the camera at least `clearanceKm` above every obstacle: a camera inside one is moved radially out to its
+ * surface, and the orbit state (target unchanged) re-expressed from there, its orientation turned by the
+ * smallest rotation so the roll is kept. Rotating towards the ground thus slides the camera along it.
+ */
+export function keepOutside(
+  state: OrbitState,
+  obstacles: readonly CameraObstacle[],
+  clearanceKm: number,
+): OrbitState {
+  let s = state;
+  for (const o of obstacles) {
+    const cam = cameraPositionKm(s);
+    const rel = sub(cam, o.centreKm);
+    const r = length(rel);
+    if (r >= o.radiusKm + clearanceKm || r === 0) continue;
+    const dir = scale(rel, 1 / r);
+    const floorKm = (o.surfaceKm?.(dir) ?? o.radiusKm) + clearanceKm;
+    if (r >= floorKm) continue;
+    const offset = sub(add(o.centreKm, scale(dir, floorKm)), s.targetKm);
+    const distanceKm = length(offset);
+    if (distanceKm === 0) continue;
+    const from = quatRotate(s.orientation, [0, 0, 1]);
+    const to = scale(offset, 1 / distanceKm);
+    s = {
+      targetKm: s.targetKm,
+      distanceKm,
+      orientation: quatNormalize(quatMultiply(rotationBetween(from, to), s.orientation)),
+    };
+  }
+  return s;
+}
+
+/** Smallest rotation taking unit vector `a` to unit vector `b`. */
+function rotationBetween(a: Vec3, b: Vec3): Quat {
+  const c = dot(a, b);
+  if (c < -0.999999) {
+    // Opposite: half a turn about any perpendicular axis.
+    const axis = normalize(Math.abs(a[0]) < 0.9 ? cross(a, [1, 0, 0]) : cross(a, [0, 1, 0]));
+    return { x: axis[0], y: axis[1], z: axis[2], w: 0 };
+  }
+  const v = cross(a, b);
+  return quatNormalize({ x: v[0], y: v[1], z: v[2], w: 1 + c });
 }

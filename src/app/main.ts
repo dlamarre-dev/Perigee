@@ -21,7 +21,7 @@ import {
 import { SimClock } from '../astro/time';
 import { add, cross, dot, length, normalize, scale, type Vec3 } from '../astro/vec3';
 import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
-import { orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
+import { heightAboveKm, keepOutside, orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { SkyMesh } from '../render/SkyMesh';
@@ -59,6 +59,8 @@ const UI_REFRESH_S = 0.25;
 /** A pointer that moved less than this between down and up is a click, not a drag. */
 const CLICK_TOLERANCE_PX = 5;
 const FOLLOW_MIN_DISTANCE_KM = 10;
+/** The camera stays this far above any body's surface (2 m: below a rover's mast). */
+const CAMERA_CLEARANCE_KM = 0.002;
 
 const VIEW_LOADERS: Record<ViewId, () => Promise<ViewFactory>> = {
   earth: () => import('../earth/EarthView').then((m) => m.createEarthView),
@@ -668,10 +670,16 @@ ${
       // The R key resets the controls directly; restore the view limits when following ends that way.
       if (wasFollowing && !controls.following) endFollow();
       wasFollowing = controls.following;
+      // Never inside a planet, moon or the Sun: the camera slides along the surface instead.
+      const obstacles = v.cameraObstacles?.() ?? [];
+      if (obstacles.length) controls.constrain(keepOutside(controls.state, obstacles, CAMERA_CLEARANCE_KM));
       controls.applyTo(renderer.camera);
       const originKm: Vec3 = controls.cameraPositionKm;
       v.placeOrigin(originKm);
-      const altitudeKm = length(originKm) - v.bodyRadiusKm;
+      // Height above the nearest drawn surface, for the near clipping plane.
+      const altitudeKm = obstacles.length
+        ? Math.min(...obstacles.map((o) => heightAboveKm(originKm, o)))
+        : length(originKm) - v.bodyRadiusKm;
       const otherSurfaceKm = v.nearestSurfaceKm?.(originKm) ?? Infinity;
       renderer.setClipPlanes(
         Math.max(
