@@ -1,7 +1,8 @@
 /**
- * HUD altimeter on the right edge, between the bars: a logarithmic scale of the distance from the camera to the
- * surface of the central body (or to the followed object), with a caret on the current value. Dragging along it,
- * clicking it, the wheel over it and the arrow keys zoom: on a basic trackpad, one drag replaces many pinches.
+ * HUD altimeter on the right edge, between the bars: a logarithmic tape of the distance from the camera to the
+ * surface of the central body (or to the followed object), a caret on its left marking the current value, and the
+ * reading in a fixed box below it (a moving readout distracted from the view). Dragging along the tape, clicking
+ * it, the wheel over the altimeter and the arrow keys zoom: on a basic trackpad, one drag replaces many pinches.
  *
  * Ticks are rebuilt only when the range or the height changes; the per-frame update moves the caret and rewrites
  * the readout only when its text changes.
@@ -19,7 +20,7 @@ const LABEL_MIN_GAP_PX = 22;
 const MINOR_MIN_DECADE_PX = 48;
 const WHEEL_K = 0.0015;
 /** Width of the scale (px); must match `.altimeter` in styles.css. */
-const SCALE_WIDTH_PX = 60;
+const SCALE_WIDTH_PX = 58;
 const KEY_STEP = 0.15;
 
 export interface AltimeterReading {
@@ -64,7 +65,7 @@ export class Altimeter {
     /** Requests a new reading value (km, same meaning as `valueKm`), eased by the camera. */
     private readonly onZoom: (valueKm: number) => void,
   ) {
-    this.caret.append(this.value);
+    const scale = h('div', { class: 'altimeter-scale' }, [this.svg, this.caret]);
     this.element = h(
       'div',
       { class: 'altimeter', role: 'slider', tabindex: 0, 'aria-orientation': 'vertical', hidden: true },
@@ -73,26 +74,29 @@ export class Altimeter {
           this.kindLabel,
           h('span', { class: 'altimeter-unit' }, ['km']),
         ]),
-        h('div', { class: 'altimeter-scale' }, [this.svg, this.caret]),
+        scale,
+        this.value,
       ],
     );
     this.svg.setAttribute('aria-hidden', 'true');
     const el = this.element;
-    el.addEventListener('pointerdown', (e) => {
+    // Dragging works on the tape only: a click on the readout below it must not jump to the bottom of the scale.
+    scale.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      el.setPointerCapture(e.pointerId);
+      scale.setPointerCapture(e.pointerId);
       this.dragging = e.pointerId;
       this.zoomToY(e.clientY);
       e.preventDefault();
+      el.focus({ preventScroll: true });
     });
-    el.addEventListener('pointermove', (e) => {
+    scale.addEventListener('pointermove', (e) => {
       if (this.dragging === e.pointerId) this.zoomToY(e.clientY);
     });
     const end = (e: PointerEvent): void => {
       if (this.dragging === e.pointerId) this.dragging = undefined;
     };
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
+    scale.addEventListener('pointerup', end);
+    scale.addEventListener('pointercancel', end);
     el.addEventListener(
       'wheel',
       (e) => {

@@ -138,11 +138,10 @@ function tdbJdToDate(tdbJd: number): Date {
   return new Date((tdbJd - J2000_JD) * MS_PER_DAY + Date.UTC(2000, 0, 1, 12) - 69_184);
 }
 
-export function formatLatLon(latDeg: number, lonDeg: number): string {
-  const lat = `${Math.abs(latDeg).toFixed(3)}° ${latDeg >= 0 ? 'N' : 'S'}`;
-  const lon = `${Math.abs(lonDeg).toFixed(3)}° ${lonDeg >= 0 ? 'E' : 'W'}`;
-  return `${lat}, ${lon}`;
-}
+/** Site markers float 1 m above the drawn surface (screen-sized, not depth-tested: occlusion is on the CPU). */
+const SITE_MARKER_LIFT_KM = 0.001;
+/** Gap under a site's model (5 cm): see siteModelScene. */
+const SITE_MODEL_CLEARANCE_KM = 5e-5;
 
 export class PlanetaryView implements View {
   readonly id: 'moon' | 'mars';
@@ -212,9 +211,6 @@ export class PlanetaryView implements View {
     this.farKm = Math.max(config.farKm, config.sunMaxDistanceKm);
     this.missions = config.missions;
     this.sites = config.sites.sites;
-    this.siteBodyKm = this.sites.map((s) =>
-      scale(latLonToUnit(s.latDeg * DEG_TO_RAD, s.lonDeg * DEG_TO_RAD), R + R * 3e-4),
-    );
 
     const renderer = host.renderer;
     const anisotropy = renderer.renderer.capabilities.getMaxAnisotropy();
@@ -238,6 +234,7 @@ export class PlanetaryView implements View {
         ? { atmosphereColor: config.atmosphere.color, atmosphereStrength: config.atmosphere.strength }
         : {}),
     });
+    this.siteBodyKm = this.sites.map((site) => this.siteSurfaceKm(site.latDeg, site.lonDeg));
     this.earth = config.earthFromBodyKm ? createEarthMesh(renderer, host.baseUrl) : undefined;
     renderer.scene.add(this.body.mesh, this.missionGroup);
     if (this.earth) renderer.scene.add(this.earth.mesh);
@@ -708,15 +705,19 @@ export class PlanetaryView implements View {
 
   /**
    * Where a site's model stands (scene frame): on the surface actually drawn, its lowest point (a rover's wheels)
-   * on the ground. The marker floats slightly above to stay visible; the model, the follow camera and the
-   * framing use this point.
+   * on the ground, raised by a few centimetres: the model stands upright along the radial while the facet under
+   * it tilts by up to π/192, so without it a wheel dips into the ground and flickers as the view turns. The
+   * model, the follow camera and the framing use this point.
    */
   private siteModelScene(i: number, entry: ModelEntry): Vec3 | undefined {
     const body = this.siteBodyKm[i];
     if (!body) return undefined;
     const up = normalize(body);
     const below = this.sceneModel.extentAlongM(axisVector(entry.nadirAxis ?? '-y')) ?? 0;
-    return quatRotate(this.bodyScene, scale(up, this.groundDistanceKm(up) + below / 1000));
+    return quatRotate(
+      this.bodyScene,
+      scale(up, this.groundDistanceKm(up) + below / 1000 + SITE_MODEL_CLEARANCE_KM),
+    );
   }
 
   /** Drawn-surface distance along body-frame directions, cached (sites and rovers rarely move). */
@@ -732,8 +733,10 @@ export class PlanetaryView implements View {
     return d;
   }
 
+  /** Marker position of a site (body frame): just above the surface actually drawn. */
   private siteSurfaceKm(latDeg: number, lonDeg: number): Vec3 {
-    return scale(latLonToUnit(latDeg * DEG_TO_RAD, lonDeg * DEG_TO_RAD), this.R * (1 + 3e-4));
+    const up = latLonToUnit(latDeg * DEG_TO_RAD, lonDeg * DEG_TO_RAD);
+    return scale(up, this.groundDistanceKm(up) + SITE_MARKER_LIFT_KM);
   }
 
   private refreshTrajectories(selectedOnly = false): void {
@@ -1046,10 +1049,7 @@ export class PlanetaryView implements View {
     }
     rows.push([t('info.agency'), site.agency]);
     if (site.country) rows.push([t('info.country'), countryName(i18n, site.country)]);
-    rows.push([
-      t('info.coordinates'),
-      formatLatLon(live?.latDeg ?? site.latDeg, live?.lonDeg ?? site.lonDeg),
-    ]);
+    rows.push([t('info.coordinates'), i18n.latLon(live?.latDeg ?? site.latDeg, live?.lonDeg ?? site.lonDeg)]);
     return {
       title: site.name[i18n.lang],
       ...(live ? { badge: { text: t('info.liveFeed'), state: 'fresh' as const } } : {}),

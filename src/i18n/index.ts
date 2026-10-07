@@ -58,6 +58,18 @@ export class I18n {
     return value.toLocaleString(this.locale, { maximumFractionDigits });
   }
 
+  /**
+   * Planetocentric or geodetic coordinates, 3 decimals: "0.674° N, 23.473° W" in English, "0,674° N; 23,473° O"
+   * in French (decimal comma, so the two values are separated by a semicolon).
+   */
+  latLon(latDeg: number, lonDeg: number): string {
+    const deg = (v: number): string =>
+      `${Math.abs(v).toLocaleString(this.locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })}°`;
+    const lat = `${deg(latDeg)} ${this.t(latDeg >= 0 ? 'coord.north' : 'coord.south')}`;
+    const lon = `${deg(lonDeg)} ${this.t(lonDeg >= 0 ? 'coord.east' : 'coord.west')}`;
+    return this.langValue === 'fr' ? `${lat}; ${lon}` : `${lat}, ${lon}`;
+  }
+
   setLang(lang: Lang): void {
     if (lang === this.langValue) return;
     this.langValue = lang;

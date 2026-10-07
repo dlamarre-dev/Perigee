@@ -138,6 +138,7 @@ test('site notes follow the interface language', async ({ page }) => {
   await page.goto(`./?lang=fr&view=moon&${FROZEN}&sel=site:apollo-11`);
   const info = page.locator('aside.info');
   await expect(info).toContainText('Étage de descente du module lunaire');
+  await expect(info).toContainText('0,674° N; 23,473° E');
   await page.getByRole('button', { name: 'EN', exact: true }).click();
   await expect(info).toContainText('Lunar Module descent stage');
 });

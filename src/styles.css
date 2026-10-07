@@ -1381,19 +1381,21 @@ body.music-open .info {
 
 /* ---------------------------------------------------------------- altimeter
    HUD tape on the right edge, between the bars (src/ui/Altimeter.ts): a logarithmic scale of the height above
-   the surface (or the distance to the followed object), the readout box riding on it. Drag, wheel or arrow keys
-   zoom. Larger screens only: phones have pinch and little room. */
+   the surface (or the distance to the followed object), a caret on its left, the reading in a fixed box below.
+   Drag, wheel or arrow keys zoom. Larger screens only: phones have pinch and little room. */
 .altimeter {
+  --altimeter-w: 68px;
+  /* Room left of the spine for the caret. */
+  --altimeter-caret: 10px;
+
   position: absolute;
   z-index: 2;
   top: calc(var(--toolbar-bottom, 76px) + var(--gutter));
   bottom: calc(var(--timebar-space, 112px) + var(--gutter));
-  right: var(--gutter);
+  right: 6px;
   display: flex;
   flex-direction: column;
-  width: 60px;
-  cursor: ns-resize;
-  touch-action: none;
+  width: var(--altimeter-w);
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -1413,7 +1415,7 @@ body.music-open .info {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  padding: 0 0 10px 2px;
+  padding: 0 0 10px var(--altimeter-caret);
   text-shadow: 0 0 4px rgb(0 0 0 / 90%);
 }
 
@@ -1438,6 +1440,9 @@ body.music-open .info {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
+  padding-left: var(--altimeter-caret);
+  cursor: ns-resize;
+  touch-action: none;
 }
 
 /* End caps of the spine, like the panels' corner brackets. */
@@ -1445,7 +1450,7 @@ body.music-open .info {
 .altimeter-scale::after {
   content: '';
   position: absolute;
-  left: 0;
+  left: var(--altimeter-caret);
   width: 14px;
   height: 0;
   border-top: 2px solid var(--accent);
@@ -1487,35 +1492,14 @@ body.music-open .info {
   dominant-baseline: middle;
 }
 
-/* Readout box riding the tape, a notch pointing at the spine. */
+/* Caret left of the tape, its tip on the spine. */
 .altimeter-caret {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
   height: 0;
   will-change: transform;
   pointer-events: none;
-}
-
-.altimeter-value {
-  position: absolute;
-  right: 0;
-  top: -11px;
-  height: 22px;
-  min-width: calc(100% - 8px);
-  padding: 0 6px 0 8px;
-  border: 1px solid var(--accent);
-  background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
-  color: var(--accent-strong);
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: right;
-  white-space: nowrap;
-  box-shadow: var(--accent-glow);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-btn)), calc(100% - var(--cut-btn)) 100%, 0 100%);
 }
 
 .altimeter-caret::before {
@@ -1525,13 +1509,37 @@ body.music-open .info {
   top: -6px;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
-  border-left: 8px solid var(--accent);
+  border-left: 10px solid var(--accent);
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 90%));
+}
+
+/* Reading, in a fixed box under the tape. */
+.altimeter-value {
+  flex: none;
+  box-sizing: border-box;
+  width: 100%;
+  height: 24px;
+  margin-top: 10px;
+  padding: 0 6px;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+  background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 22px;
+  text-align: right;
+  white-space: nowrap;
+  box-shadow: var(--accent-glow);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-btn)), calc(100% - var(--cut-btn)) 100%, 0 100%);
 }
 
 /* Room for the altimeter: the details panel sits to its left. */
 @media (min-width: 641px) and (min-height: 501px) {
   body:has(.altimeter:not([hidden])) .info {
-    right: calc(var(--gutter) + 60px + var(--gap));
+    right: calc(6px + 68px + var(--gap));
   }
 }
 

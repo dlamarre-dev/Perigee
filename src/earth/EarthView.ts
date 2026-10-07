@@ -45,12 +45,6 @@ const SITE_FOLLOW_DISTANCE_KM = 2500;
 /** A launch site this close to the pointer wins over satellites (they are dense near the Earth). */
 const SITE_PRIORITY_PX = 8;
 
-function formatLatLon(latDeg: number, lonDeg: number): string {
-  const lat = `${Math.abs(latDeg).toFixed(3)}° ${latDeg >= 0 ? 'N' : 'S'}`;
-  const lon = `${Math.abs(lonDeg).toFixed(3)}° ${lonDeg >= 0 ? 'E' : 'W'}`;
-  return `${lat}, ${lon}`;
-}
-
 class EarthView implements View {
   readonly id = 'earth' as const;
   /** Far enough to frame the Earth and the Moon together. */
@@ -344,7 +338,7 @@ class EarthView implements View {
     );
     const rows: [string, string][] = [[t('launch.operator'), site.operator]];
     if (site.country) rows.push([t('info.country'), countryName(i18n, site.country)]);
-    rows.push([t('info.coordinates'), formatLatLon(site.latDeg, site.lonDeg)]);
+    rows.push([t('info.coordinates'), i18n.latLon(site.latDeg, site.lonDeg)]);
     if (site.firstOrbitalLaunch) rows.push([t('launch.first'), site.firstOrbitalLaunch]);
     if (site.satcatCodes.length) rows.push([t('launch.codes'), site.satcatCodes.join(', ')]);
     if (launched) rows.push([t('launch.satellites'), i18n.number(launched.length)]);
