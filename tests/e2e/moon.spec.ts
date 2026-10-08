@@ -178,21 +178,28 @@ test('dragging the altimeter zooms the camera', async ({ page }) => {
   await page.mouse.move(box.x + 20, box.y + box.height * 0.95, { steps: 8 });
   await page.mouse.up();
   await expect.poll(distance).toBeLessThan(before * 0.5);
-  // Let the eased zoom settle before measuring.
-  let zoomed = 0;
-  await expect
-    .poll(async () => {
-      const a = await distance();
-      await page.waitForTimeout(300);
-      zoomed = await distance();
-      return Math.abs(zoomed / a - 1);
-    })
-    .toBeLessThan(1e-3);
-  // Arrow keys on the focused altimeter zoom out again.
+});
+
+test('the arrow keys on the altimeter zoom too', async ({ page }) => {
+  await page.goto(`./?lang=en&view=moon&${FROZEN}&e2e`);
+  const altimeter = page.getByRole('slider');
+  await expect(altimeter).toBeVisible();
+  // The altimeter scales the height above the surface (mean lunar radius 1737.4 km). The camera rests at its
+  // home distance after loading: no easing in flight to race with (software WebGL draws few frames on CI).
+  const altitude = (): Promise<number> =>
+    page.evaluate(
+      () =>
+        (
+          window as unknown as { __perigeeShell: { camera(): { distanceKm: number } } }
+        ).__perigeeShell.camera().distanceKm - 1737.4,
+    );
+  const before = await altitude();
   await altimeter.focus();
-  await page.keyboard.press('ArrowUp');
-  await page.keyboard.press('ArrowUp');
-  // The altimeter scales the height above the surface (mean lunar radius 1737.4 km).
-  const altitude = async (): Promise<number> => (await distance()) - 1737.4;
-  await expect.poll(altitude).toBeGreaterThan((zoomed - 1737.4) * 1.2);
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  // Two steps of exp(-0.15): about ×0.74.
+  await expect.poll(altitude).toBeLessThan(before * 0.85);
+  const lower = await altitude();
+  await page.keyboard.press('PageUp');
+  await expect.poll(altitude).toBeGreaterThan(lower * 1.5);
 });

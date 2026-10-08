@@ -129,13 +129,17 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   const about = page.locator('.toolbar button[aria-label="About"]');
   const menu = page.locator('.toolbar .menu-toggle');
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  const dialog = page.locator('dialog.about:not(.report)');
+  const isOpen = (): Promise<boolean> => dialog.evaluate((d) => (d as HTMLDialogElement).open);
   await expect(async () => {
+    // A click that landed on an earlier try opened it: another one would close it (backdrop click).
+    if (await isOpen()) return;
     if (!(await about.isVisible()) && (await menu.isVisible())) {
       if ((await menu.getAttribute('aria-expanded')) !== 'true') await menu.click();
     }
     await about.click({ timeout: 1_000 });
+    expect(await isOpen()).toBe(true);
   }).toPass({ timeout: 15_000 });
-  const dialog = page.locator('dialog.about:not(.report)');
   const body = dialog.locator('.dialog-body');
   await expect(body).toBeVisible();
   const scrolls = await body.evaluate((e) => e.scrollHeight > e.clientHeight);
