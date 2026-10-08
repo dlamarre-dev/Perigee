@@ -11,6 +11,9 @@ test('shows planets with distances and light time', async ({ page }) => {
   await expect(info.locator('.panel-title')).toHaveText('Jupiter');
   await expect(info).toContainText('Distance to the Sun');
   await expect(info).toContainText('light time');
+  // How the position is computed, as for the moons.
+  await expect(info.locator('.freshness')).toContainText('VSOP87');
+  await expect(info.locator('.freshness')).toHaveAttribute('data-state', 'fresh');
   await expect(page).toHaveURL(/view=solar/);
   await expect(page).toHaveURL(/sel=jupiter/);
 });

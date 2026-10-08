@@ -1474,10 +1474,15 @@ class SolarView implements View {
     ]);
     const texture = TEXTURE_NOTES[info.id];
     if (texture) rows.push([t('info.texture'), t(texture)]);
-    const badge = this.scaleBadge();
+    // How the position is obtained, as for the moons: astronomy-engine's VSOP87 series for the planets, a
+    // numerical integration under the giant planets' attraction for Pluto.
+    const badge = this.scaleBadge() ?? {
+      text: t(info.id === 'pluto' ? 'planet.model.pluto' : 'planet.model.vsop87'),
+      state: 'fresh' as BadgeState,
+    };
     return {
       title: info.name[i18n.lang],
-      ...(badge ? { badge } : {}),
+      badge,
       rows,
       sources: [
         'https://nssdc.gsfc.nasa.gov/planetary/factsheet/',

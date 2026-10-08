@@ -131,6 +131,9 @@ export const fr: Messages = {
   'moon.plane.laplace': 'par rapport au plan de Laplace local',
   'moon.plane.equator': 'par rapport à l’équateur de la planète',
   'moon.plane.ecliptic': 'par rapport à l’écliptique',
+  'planet.model.vsop87': 'Position calculée avec astronomy-engine (théorie planétaire VSOP87)',
+  'planet.model.pluto':
+    'Position calculée avec astronomy-engine (intégration numérique sous l’attraction des planètes géantes)',
   'moon.model.theory': 'Position calculée avec astronomy-engine (théorie analytique)',
   'moon.model.meanElements': 'Position approximative d’après les éléments orbitaux moyens du JPL',
   'about.author': 'Créé par',

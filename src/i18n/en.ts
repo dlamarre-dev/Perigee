@@ -124,6 +124,9 @@ export const en = {
   'moon.plane.laplace': 'to the local Laplace plane',
   'moon.plane.equator': "to the planet's equator",
   'moon.plane.ecliptic': 'to the ecliptic',
+  'planet.model.vsop87': 'Position computed with astronomy-engine (VSOP87 planetary theory)',
+  'planet.model.pluto':
+    'Position computed with astronomy-engine (numerical integration under the giant planets’ attraction)',
   'moon.model.theory': 'Position computed with astronomy-engine (analytical theory)',
   'moon.model.meanElements': 'Approximate position from JPL mean orbital elements',
   'about.author': 'Created by',
