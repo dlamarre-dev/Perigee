@@ -5,12 +5,13 @@
 import { readFileSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { float64LittleEndian } from '../../pipeline/horizons';
-import { publishDatasets, publishEphemerides } from '../../pipeline/publish';
+import { float64LittleEndian, moonStepMin } from '../../pipeline/horizons';
+import { publishDatasets, publishEphemerides, publishMoonEphemerides } from '../../pipeline/publish';
 import { MARS_RADIUS_KM, MOON_RADIUS_KM } from '../../src/astro/bodies';
 import { GM_KM3_S2, propagateKepler } from '../../src/astro/kepler';
 import { utcToTdbJd } from '../../src/astro/time';
-import { OmmListSchema, type SatcatRecord } from '../../src/data/schemas';
+import { MoonsCatalogSchema, OmmListSchema, type SatcatRecord } from '../../src/data/schemas';
+import { meanElementsState } from '../../src/astro/moons';
 
 const dataDir = resolve('dist/data');
 const omms = OmmListSchema.parse(JSON.parse(readFileSync(resolve('tests/fixtures/omm-sample.json'), 'utf8')));
@@ -150,3 +151,32 @@ await publishEphemerides(dataDir, [
     bytes: float64LittleEndian(voyagerRows),
   },
 ]);
+
+// Titan "Horizons" vectors (solar view): its own mean-element state, ±2 days around the frozen time, so the
+// moon is positioned from a loaded ephemeris. Not real Horizons data.
+const titan = MoonsCatalogSchema.parse(
+  JSON.parse(readFileSync(resolve('catalog/moons.json'), 'utf8')),
+).moons.find((m) => m.id === 'titan');
+if (titan?.elements) {
+  const stepMin = moonStepMin(titan.elements.periodDays);
+  const titanRows: number[] = [];
+  for (let t = -2 * 86_400; t <= 2 * 86_400; t += stepMin * 60) {
+    const jd = centreTdbJd + t / 86_400;
+    const s = meanElementsState(titan.elements, jd);
+    titanRows.push(jd, ...s.posKm, ...s.velKmS);
+  }
+  const titanTable = Float64Array.from(titanRows);
+  await publishMoonEphemerides(dataDir, [
+    {
+      moonId: 'titan',
+      horizonsId: String(titan.spkid),
+      center: '500@699',
+      planet: 'saturn',
+      stepMin,
+      source: 'fixture (mean elements)',
+      fetchedAt,
+      rows: titanTable,
+      bytes: float64LittleEndian(titanTable),
+    },
+  ]);
+}

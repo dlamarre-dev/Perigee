@@ -28,6 +28,7 @@ function manifest(gp: string, lro: string): Manifest {
     version: 1,
     generatedAt: '2026-10-03T00:00:00Z',
     datasets: { 'earth.gp': entry(gp) },
+    moons: {},
     ephemerides: {
       lro: {
         ...entry(lro),

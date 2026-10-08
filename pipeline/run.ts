@@ -39,6 +39,7 @@ import {
   checkLeapSeconds,
   checkEarthScienceMembers,
   checkMoonAnchors,
+  checkMoonEphemerides,
   checkOwnerCodes,
   checkStaleVerification,
   deepSpaceCandidates,
@@ -60,8 +61,15 @@ import {
   gpUrl,
   supGpUrl,
 } from './celestrak';
-import { CENTER_CODES, fetchMissionVectors, float64LittleEndian } from './horizons';
-import { publishDatasets, publishEphemerides, writeSupplementalInfo, type EphemerisToWrite } from './publish';
+import { CENTER_CODES, fetchMissionVectors, fetchMoonVectors, float64LittleEndian } from './horizons';
+import {
+  publishDatasets,
+  publishEphemerides,
+  publishMoonEphemerides,
+  writeSupplementalInfo,
+  type EphemerisToWrite,
+  type MoonEphemerisToWrite,
+} from './publish';
 import { mergeSupplemental } from './supgp';
 import { fetchRoverPositions } from './rovers';
 
@@ -261,8 +269,10 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
 }
 
 /**
- * One Horizons request per mission (a second one only when coverage ends inside the window).
- * Any HTTP failure aborts the run before anything is published.
+ * One Horizons request per mission (a second one only when coverage ends inside the window), then one per
+ * mean-element moon of catalog/moons.json (solar view). A mission failure aborts the run before anything is
+ * published. Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
+ * and only warns; the moons gathered are published, the others keep their previous file (the audit flags them).
  */
 async function runHorizons(dataDir: string): Promise<void> {
   const catalog = MissionsCatalogSchema.parse(
@@ -291,6 +301,30 @@ async function runHorizons(dataDir: string): Promise<void> {
       ...(clamped?.kind === 'after' ? { coverageEnd: clamped.date } : {}),
     });
   }
+
+  const moons = MoonsCatalogSchema.parse(JSON.parse(await readFile(resolve('catalog/moons.json'), 'utf8')));
+  const moonOut: MoonEphemerisToWrite[] = [];
+  for (const moon of moons.moons) {
+    if (moon.model !== 'mean-elements') continue;
+    try {
+      const { data, url, center, stepMin } = await fetchMoonVectors(moon, now);
+      moonOut.push({
+        moonId: moon.id,
+        horizonsId: String(moon.spkid),
+        center,
+        planet: moon.planet,
+        stepMin,
+        source: url,
+        fetchedAt: now,
+        rows: data,
+        bytes: float64LittleEndian(data),
+      });
+    } catch (err) {
+      console.warn(`::warning::moon ${moon.id}: ${String(err)}; remaining moons skipped this run`);
+      break;
+    }
+  }
+  await publishMoonEphemerides(dataDir, moonOut);
   await publishEphemerides(dataDir, out);
 }
 
@@ -412,6 +446,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ),
     ...checkEarthScienceMembers(publishedGroups, earthScience.satellites, satcatNames),
     ...checkMoonAnchors(moons.moons, now),
+    ...checkMoonEphemerides(manifest, moons.moons, now),
     ...checkLeapSeconds(iers, LATEST_LEAP_SECOND, now),
   ];
   const report = { generatedAt: now.toISOString(), items };

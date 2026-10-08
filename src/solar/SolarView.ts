@@ -69,9 +69,10 @@ import {
   type EphemerisEntry,
   type Mission,
   type Moon,
+  type Manifest,
 } from '../data/schemas';
 import { moonState } from '../astro/moons';
-import { hermite, type StateVector } from '../astro/hermite';
+import { EphemerisTable, hermite, type StateVector } from '../astro/hermite';
 import type { MessageKey } from '../i18n';
 import { BodyMesh, bodySphere } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
@@ -168,7 +169,15 @@ interface MoonObject extends LazyLoad {
   shown: boolean;
   /** Orbit size from the last computed state, for moons without mean elements. */
   lastAKm: number | undefined;
+  /** JPL Horizons vectors relative to the planet (mean-element moons), loaded on first use. */
+  ephem: EphemerisTable | undefined;
+  ephemRequested: boolean;
+  /** The last state came from the Horizons vectors (else from the moon's model). */
+  fromHorizons: boolean;
 }
+
+/** JPL Horizons, credited for the moons it positions. */
+const HORIZONS_PAGE = 'https://ssd.jpl.nasa.gov/horizons/';
 
 /** Selection key used by the panel and the URL. */
 function selectionKey(sel: Selection): string | undefined {
@@ -409,6 +418,9 @@ class SolarView implements View {
         scene: undefined,
         shown: false,
         lastAKm: undefined,
+        ephem: undefined,
+        ephemRequested: false,
+        fromHorizons: false,
         load: () => {
           const body = modelFor(`moon:${moon.id}`);
           // A NASA shape model brings its own map; otherwise the equirectangular texture.
@@ -914,6 +926,7 @@ class SolarView implements View {
     host.showNotice(host.i18n.t('solar.loading'));
     try {
       const manifest = await loadManifest(host.baseUrl);
+      this.moonEphemerides = manifest.moons;
       let oldest: Date | undefined;
       // Each ephemeris on its own: one missing or corrupt file must not hide the others.
       let failed = 0;
@@ -1492,6 +1505,25 @@ class SolarView implements View {
     };
   }
 
+  /** Horizons vectors of the moons (manifest `moons`), known once the manifest is read. */
+  private moonEphemerides: Manifest['moons'] = {};
+
+  /** Loads a moon's Horizons vectors the first time it is computed (shown or selected); one try per page. */
+  private requestMoonEphemeris(m: MoonObject): void {
+    if (m.ephemRequested) return;
+    const entry = this.moonEphemerides[m.moon.id];
+    if (!entry) return;
+    m.ephemRequested = true;
+    loadEphemeris(this.host.baseUrl, entry)
+      .then((table) => {
+        if (this.disposed) return;
+        m.ephem = table;
+        // Redraw the orbit through the new position.
+        m.orbitKey = '';
+      })
+      .catch((err: unknown) => console.warn(`Moon ephemeris unavailable: ${m.moon.id}`, err));
+  }
+
   /** Moon states, meshes (lit, tidally locked) and planet-relative orbits; nothing is drawn in log scale. */
   /** Date of the last moon update, to solve a skipped moon on demand (see `solveMoon`). */
   private moonDate: Date | undefined;
@@ -1499,7 +1531,14 @@ class SolarView implements View {
   /** Planet-relative state and scene position of one moon at the last update's date. */
   private solveMoon(m: MoonObject): void {
     const date = this.moonDate;
-    m.state = date && !this.logScale ? moonState(m.moon, date, this.tdbJd, this.jupiterCache) : undefined;
+    // Horizons vectors when they cover the date (sub-kilometre); otherwise the moon's own model (mean elements
+    // re-anchored yearly, or astronomy-engine).
+    const fromHorizons = date && !this.logScale ? m.ephem?.interpolate(this.tdbJd) : undefined;
+    m.fromHorizons = fromHorizons !== undefined;
+    m.state =
+      fromHorizons ??
+      (date && !this.logScale ? moonState(m.moon, date, this.tdbJd, this.jupiterCache) : undefined);
+    if (date && !this.logScale) this.requestMoonEphemeris(m);
     if (m.state) m.lastAKm = length(m.state.posKm);
     m.scene = m.state ? add(m.planet.scene, quatRotate(this.sceneQ, m.state.posKm)) : undefined;
   }
@@ -1661,15 +1700,17 @@ class SolarView implements View {
     if (moon.shape === 'grid') rows.push([t('info.shape'), t('shape.pds')]);
     const badge: { text: string; state: BadgeState } = this.logScale
       ? { text: t('solar.logWarning'), state: 'stale' }
-      : moon.model === 'mean-elements'
-        ? { text: t('moon.model.meanElements'), state: 'stale' }
-        : { text: t('moon.model.theory'), state: 'fresh' };
+      : m?.fromHorizons
+        ? { text: t('moon.model.horizons'), state: 'fresh' }
+        : moon.model === 'mean-elements'
+          ? { text: t('moon.model.meanElements'), state: 'stale' }
+          : { text: t('moon.model.theory'), state: 'fresh' };
     return {
       title: moon.name[i18n.lang],
       badge,
       rows,
       ...(moon.notes ? { notes: moon.notes[i18n.lang] } : {}),
-      sources: moon.sources,
+      sources: m?.fromHorizons ? [...moon.sources, HORIZONS_PAGE] : moon.sources,
       footnote: i18n.format('info.verified', { date: moon.verified }),
       followable: m?.scene !== undefined,
     };

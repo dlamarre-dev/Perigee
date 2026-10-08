@@ -21,7 +21,7 @@ export class ShrinkGuardError extends Error {
 export async function readManifest(dataDir: string): Promise<Manifest> {
   const file = join(dataDir, 'manifest.json');
   if (!existsSync(file))
-    return { version: 1, generatedAt: new Date(0).toISOString(), datasets: {}, ephemerides: {} };
+    return { version: 1, generatedAt: new Date(0).toISOString(), datasets: {}, ephemerides: {}, moons: {} };
   return ManifestSchema.parse(JSON.parse(await readFile(file, 'utf8')));
 }
 
@@ -160,4 +160,63 @@ export class AggregateShrinkError extends Error {
     super(errors.map((e) => e.message).join('; '));
     this.name = 'ShrinkGuardError';
   }
+}
+
+export interface MoonEphemerisToWrite {
+  readonly moonId: string;
+  readonly horizonsId: string;
+  readonly center: string;
+  readonly planet: string;
+  readonly stepMin: number;
+  readonly source: string;
+  readonly fetchedAt: Date;
+  /** Rows of 7 Float64: t_TDB JD, x, y, z, vx, vy, vz (planet-relative, km, km/s). */
+  readonly rows: Float64Array;
+  readonly bytes: Buffer;
+}
+
+/**
+ * Writes data/ephem/moons/<id>.bin and the manifest's `moons` entries. Same guard as the missions (an empty
+ * table, or below half the previous one without a coarser step, keeps the previous file), but refusals only
+ * warn: moons have a fallback (mean elements), and the weekly audit flags those not refreshed.
+ */
+export async function publishMoonEphemerides(
+  dataDir: string,
+  list: readonly MoonEphemerisToWrite[],
+): Promise<Manifest> {
+  const manifest = await readManifest(dataDir);
+  const next: Manifest = { ...manifest, moons: { ...manifest.moons } };
+  for (const m of list) {
+    const count = m.rows.length / 7;
+    const prev = manifest.moons[m.moonId];
+    if (count === 0 || (prev && count < prev.count * MIN_RATIO_VS_PREVIOUS && !(m.stepMin > prev.stepMin))) {
+      console.warn(
+        `moon ${m.moonId}: ${count} states is below half of the previous ${prev?.count ?? 0}; kept`,
+      );
+      continue;
+    }
+    const path = `ephem/moons/${m.moonId}.bin`;
+    const file = join(dataDir, path);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, m.bytes);
+    next.moons[m.moonId] = {
+      path,
+      source: m.source,
+      fetchedAt: m.fetchedAt.toISOString(),
+      count,
+      bytes: m.bytes.byteLength,
+      sha256: createHash('sha256').update(m.bytes).digest('hex'),
+      horizonsId: m.horizonsId,
+      center: m.center,
+      planet: m.planet,
+      startTdbJd: m.rows[0] ?? 0,
+      endTdbJd: m.rows[m.rows.length - 7] ?? 0,
+      stepMin: m.stepMin,
+    };
+    console.log(`wrote ${path}: ${count} states, ${(m.bytes.byteLength / 1024).toFixed(0)} KiB`);
+  }
+  next.generatedAt = new Date().toISOString();
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+  return next;
 }

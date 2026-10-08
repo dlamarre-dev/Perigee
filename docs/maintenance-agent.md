@@ -41,6 +41,10 @@ to do anything unless you explicitly ask for help.
      set's page on CelesTrak: if it was discontinued or renamed, move it to `ignoredSupplemental` (or rename the
      key) with the source; if CelesTrak still lists it, do not change the catalog and mention it to the
      maintainer in the report (the pipeline may be refused by CelesTrak).
+   - `moon-ephemeris-stale`: moons whose Horizons vectors (solar view) were not refreshed for days; the moon
+     requests only warn and the client falls back to mean elements. Read the last `data-horizons` run logs: if
+     Horizons rejected one moon (e.g. a changed `spkid`), verify the id with `horizons_lookup.api` and fix
+     `catalog/moons.json` with the source; otherwise list it under "Needs a human".
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:

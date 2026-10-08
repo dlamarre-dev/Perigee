@@ -106,11 +106,28 @@ export const EphemerisEntrySchema = DatasetEntrySchema.extend({
 });
 export type EphemerisEntry = z.infer<typeof EphemerisEntrySchema>;
 
+/**
+ * One moon's Horizons state vectors relative to its planet (solar view): data/ephem/moons/<id>.bin, same rows as
+ * EphemerisEntry. Natural moons have no coverage end.
+ */
+export const MoonEphemerisEntrySchema = DatasetEntrySchema.extend({
+  horizonsId: z.string(),
+  /** Horizons CENTER code of the planet, e.g. "500@699" (Saturn). */
+  center: z.string(),
+  planet: z.string(),
+  startTdbJd: z.number(),
+  endTdbJd: z.number(),
+  stepMin: z.number().positive(),
+});
+export type MoonEphemerisEntry = z.infer<typeof MoonEphemerisEntrySchema>;
+
 export const ManifestSchema = z.object({
   version: z.literal(1),
   generatedAt: z.string(),
   datasets: z.partialRecord(DatasetKeySchema, DatasetEntrySchema),
   ephemerides: z.record(z.string(), EphemerisEntrySchema).default({}),
+  /** Moons positioned from Horizons in the solar view (the others use astronomy-engine). */
+  moons: z.record(z.string(), MoonEphemerisEntrySchema).default({}),
   /**
    * CelesTrak supplemental GP sets merged into earth.gp: when each was last downloaded, how many records it had
    * and how many replaced the GP elements.
@@ -194,6 +211,7 @@ export type LandingSiteType = z.infer<typeof LandingSiteTypeSchema>;
  * plus apsidal and nodal precession) for the others.
  */
 export const MoonPlanetSchema = z.enum(['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto']);
+export type MoonPlanet = z.infer<typeof MoonPlanetSchema>;
 export const MoonElementsSchema = z.object({
   /** Epoch of the elements, Julian date (TDB). */
   epochJdTdb: z.number(),

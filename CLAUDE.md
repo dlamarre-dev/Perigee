@@ -214,6 +214,12 @@ No single API provides "active probes + landing sites". We maintain:
   astronomy-engine; the others from JPL SSD mean elements (two-body + uniform apsidal/nodal precession in the
   tabulated Laplace/equator/ecliptic plane), whose epoch angles and mean motion are re-anchored on Horizons states
   by hand about once a year (`npm run moons:anchor`, 3 Horizons requests per moon; ≤ 7° error after a year).
+  Those mean-element moons are also fetched from Horizons by the daily `horizons` run (planet-relative vectors,
+  `500@<planet>`, −2 d / +30 d, ~64 samples per orbit between 10 min and 1 d; `data/ephem/moons/<id>.bin`, manifest
+  `moons`) and loaded when the moon is first computed: the solar view interpolates them (Hermite) when they cover
+  the date, else falls back to the mean elements; the badge says which. Moon requests only warn on failure (the
+  missions are still published) and the audit flags moons not refreshed for 3 days (`moon-ephemeris-stale`).
+  The Moon and the Galilean moons stay on astronomy-engine (10–90 km from Horizons, any date, no data).
   Moons and their orbits are drawn only when the orbit spans ≥ 14 px (or the moon is selected); the panel lists
   them folded under their planet, unfolded while the planet or one of its moons is selected.
 

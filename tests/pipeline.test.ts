@@ -186,3 +186,36 @@ describe('Horizons window clamping', () => {
     expect(w.stop).toEqual(stop);
   });
 });
+
+describe('moon ephemerides', () => {
+  it('samples each moon about 64 times per orbit, between 10 min and a day', async () => {
+    const { moonStepMin } = await import('../pipeline/horizons');
+    expect(moonStepMin(0.3189)).toBe(10); // Phobos
+    expect(moonStepMin(15.945)).toBe(359); // Titan
+    expect(moonStepMin(546.19)).toBe(1440); // Phoebe
+  });
+
+  it('publishes moon tables in their own manifest section, and keeps a table that shrank', async () => {
+    const { publishMoonEphemerides, readManifest } = await import('../pipeline/publish');
+    const dir = await mkdtemp(join(tmpdir(), 'perigee-moons-'));
+    const rows = (n: number): Float64Array => Float64Array.from({ length: n * 7 }, (_, i) => i);
+    const write = (n: number) => ({
+      moonId: 'titan',
+      horizonsId: '606',
+      center: '500@699',
+      planet: 'saturn',
+      stepMin: 359,
+      source: 'test',
+      fetchedAt: new Date('2026-10-08T00:00:00Z'),
+      rows: rows(n),
+      bytes: Buffer.from(rows(n).buffer),
+    });
+    await publishMoonEphemerides(dir, [write(100)]);
+    let m = await readManifest(dir);
+    expect(m.moons['titan']).toMatchObject({ path: 'ephem/moons/titan.bin', count: 100, planet: 'saturn' });
+    expect(m.ephemerides).toEqual({});
+    await publishMoonEphemerides(dir, [write(10)]);
+    m = await readManifest(dir);
+    expect(m.moons['titan']?.count).toBe(100);
+  });
+});

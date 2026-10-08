@@ -129,8 +129,11 @@ export async function loadBulkDataset<N extends BulkSchemaName>(
   }
 }
 
-/** Loads a mission's state-vector table (rows of 7 little-endian Float64). */
-export async function loadEphemeris(baseUrl: string, entry: EphemerisEntry): Promise<EphemerisTable> {
+/** Loads a state-vector table (mission or moon; rows of 7 little-endian Float64). */
+export async function loadEphemeris(
+  baseUrl: string,
+  entry: Pick<EphemerisEntry, 'path' | 'sha256' | 'bytes'>,
+): Promise<EphemerisTable> {
   const url = `${dataRoot(baseUrl)}${entry.path}?v=${entry.sha256.slice(0, 12)}`;
   const res = await fetch(url);
   if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);

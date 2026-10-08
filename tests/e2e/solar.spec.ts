@@ -114,3 +114,15 @@ test('F follows a moon selected a moment ago, even before the next frame (slow d
     page.locator('aside.info:visible').getByRole('button', { name: 'Stop following' }),
   ).toBeVisible();
 });
+
+test('a moon with Horizons vectors says so; the others keep their model', async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}&sel=moon:titan`);
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Titan');
+  await expect(info.locator('.freshness')).toContainText('JPL Horizons');
+  await expect(info.locator('.freshness')).toHaveAttribute('data-state', 'fresh');
+  await expect(info.locator('.sources a[href="https://ssd.jpl.nasa.gov/horizons/"]')).toHaveCount(1);
+  // Rhea has no vectors in the fixture data: approximate, from mean elements.
+  await page.goto(`./?lang=en&view=solar&${FROZEN}&sel=moon:rhea`);
+  await expect(info.locator('.freshness')).toContainText('mean orbital elements');
+});

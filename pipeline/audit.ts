@@ -27,6 +27,7 @@ export type AuditKind =
   | 'ephemeris-ended-active'
   | 'stale-verification'
   | 'moon-anchor'
+  | 'moon-ephemeris-stale'
   | 'earth-science-member'
   | 'leap-second';
 
@@ -336,6 +337,33 @@ export function checkMoonAnchors(moons: readonly Moon[], now: Date): AuditItem[]
   ];
 }
 
+/** A moon whose Horizons vectors were not refreshed for this long is flagged (its failures do not fail the run). */
+export const MOON_EPHEMERIS_STALE_DAYS = 3;
+
+/** Mean-element moons (positioned from Horizons in the solar view) not refreshed for MOON_EPHEMERIS_STALE_DAYS. */
+export function checkMoonEphemerides(manifest: Manifest, moons: readonly Moon[], now: Date): AuditItem[] {
+  const stale = moons.filter((m) => {
+    if (m.model !== 'mean-elements') return false;
+    const info = manifest.moons[m.id];
+    return !info || (now.getTime() - Date.parse(info.fetchedAt)) / DAY_MS > MOON_EPHEMERIS_STALE_DAYS;
+  });
+  if (stale.length === 0) return [];
+  return [
+    {
+      kind: 'moon-ephemeris-stale',
+      key: 'data/ephem/moons',
+      summary: `${stale.length} moons have no Horizons vectors from the last ${MOON_EPHEMERIS_STALE_DAYS} days (${stale.map((m) => m.id).join(', ')}): check the Horizons runs`,
+      details: {
+        moons: stale.map((m) => ({
+          id: m.id,
+          spkid: m.spkid,
+          fetchedAt: manifest.moons[m.id]?.fetchedAt ?? null,
+        })),
+      },
+    },
+  ];
+}
+
 /** IERS Leap_Second.dat: last TAI − UTC step and the file's expiry date. */
 export function parseIersLeapSeconds(text: string): {
   lastUnixMs: number;
@@ -383,6 +411,7 @@ const TITLES: Record<AuditKind, string> = {
   'celestrak-group': 'New CelesTrak groups',
   'celestrak-supgp': 'New CelesTrak supplemental GP sets',
   'supgp-stale': 'Supplemental GP sets not refreshed',
+  'moon-ephemeris-stale': 'Moons without recent Horizons vectors',
   'deep-space-candidate': 'Deep-space payloads not in catalog/missions.json',
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',
   'ephemeris-ending': 'Public ephemerides ending within 30 days',

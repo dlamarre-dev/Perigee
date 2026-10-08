@@ -136,6 +136,7 @@ export const fr: Messages = {
   'planet.model.vsop87': 'Position calculée avec astronomy-engine (théorie planétaire VSOP87)',
   'planet.model.pluto':
     'Position calculée avec astronomy-engine (intégration numérique sous l’attraction des planètes géantes)',
+  'moon.model.horizons': 'Position interpolée à partir des éphémérides JPL Horizons',
   'moon.model.theory': 'Position calculée avec astronomy-engine (théorie analytique)',
   'moon.model.meanElements': 'Position approximative d’après les éléments orbitaux moyens du JPL',
   'about.author': 'Créé par',

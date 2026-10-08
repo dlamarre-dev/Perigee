@@ -271,3 +271,33 @@ describe('maintenance audit', () => {
     expect(md).toContain('- [ ] SATCAT owner code NEW');
   });
 });
+
+describe('moon ephemeris freshness', () => {
+  it('flags mean-element moons without recent Horizons vectors', async () => {
+    const { checkMoonEphemerides } = await import('../pipeline/audit');
+    const moon = (id: string, model: 'mean-elements' | 'astronomy-engine') =>
+      ({ id, spkid: 600, model }) as unknown as import('../src/data/schemas').Moon;
+    const entry = (fetchedAt: string) =>
+      ({ fetchedAt }) as unknown as import('../src/data/schemas').MoonEphemerisEntry;
+    const manifest = {
+      version: 1,
+      generatedAt: '',
+      datasets: {},
+      ephemerides: {},
+      moons: { titan: entry('2026-10-07T12:00:00Z'), rhea: entry('2026-10-01T12:00:00Z') },
+    } as const;
+    const items = checkMoonEphemerides(
+      manifest,
+      [
+        moon('titan', 'mean-elements'),
+        moon('rhea', 'mean-elements'),
+        moon('mimas', 'mean-elements'),
+        moon('io', 'astronomy-engine'),
+      ],
+      new Date('2026-10-08T12:00:00Z'),
+    );
+    expect(items).toHaveLength(1);
+    expect(items[0]?.kind).toBe('moon-ephemeris-stale');
+    expect(items[0]?.summary).toContain('rhea, mimas');
+  });
+});

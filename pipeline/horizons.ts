@@ -5,7 +5,7 @@
  * Request: EPHEM_TYPE=VECTORS, ICRF, REF_PLANE=FRAME (J2000 equator), km & km/s, CSV, VEC_TABLE=2,
  * output times in TDB (JD).
  */
-import type { CentralBody, Mission } from '../src/data/schemas';
+import type { CentralBody, Mission, Moon, MoonPlanet } from '../src/data/schemas';
 import { ProviderError, politeGet } from './http';
 
 export const HORIZONS_API = 'https://ssd.jpl.nasa.gov/api/horizons.api';
@@ -182,4 +182,47 @@ export function float64LittleEndian(data: Float64Array): Buffer {
   const buf = Buffer.alloc(data.length * 8);
   for (let i = 0; i < data.length; i++) buf.writeDoubleLE(data[i] ?? 0, i * 8);
   return buf;
+}
+
+/** Horizons CENTER codes of the planets (body centre), for moon vectors relative to their planet. */
+export const PLANET_CENTERS: Readonly<Record<MoonPlanet, string>> = {
+  earth: '500@399',
+  mars: '500@499',
+  jupiter: '500@599',
+  saturn: '500@699',
+  uranus: '500@799',
+  neptune: '500@899',
+  pluto: '500@999',
+};
+
+/** Moon window around the run: a month ahead, refreshed daily (beyond it the client falls back to mean elements). */
+export const MOON_WINDOW = { pastDays: 2, futureDays: 30 } as const;
+
+/**
+ * Step for a moon: about 64 samples per orbit (cubic Hermite then stays well under a kilometre), between 10 min
+ * (Phobos, Amalthea) and one day (Phoebe, Nereid).
+ */
+export function moonStepMin(periodDays: number): number {
+  return Math.min(1440, Math.max(10, Math.round((periodDays * 1440) / 64)));
+}
+
+export interface MoonVectors {
+  readonly data: Float64Array;
+  readonly url: string;
+  readonly center: string;
+  readonly stepMin: number;
+}
+
+/** One request: the moon's planet-relative state vectors over MOON_WINDOW around `now`. */
+export async function fetchMoonVectors(moon: Moon, now: Date): Promise<MoonVectors> {
+  const periodDays = moon.elements?.periodDays;
+  if (!periodDays) throw new Error(`${moon.id}: no orbital period to choose a step`);
+  const stepMin = moonStepMin(periodDays);
+  const center = PLANET_CENTERS[moon.planet];
+  const start = new Date(now.getTime() - MOON_WINDOW.pastDays * 86_400_000);
+  const stop = new Date(now.getTime() + MOON_WINDOW.futureDays * 86_400_000);
+  const url = vectorsUrl(String(moon.spkid), center, start, stop, stepMin);
+  const data = parseVectors(await query(url));
+  if (data.length === 0) throw new ProviderError(`${moon.id}: no vectors in Horizons result`, url, 200);
+  return { data, url, center, stepMin };
 }
