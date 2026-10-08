@@ -1,0 +1,6 @@
+# Perigee - https://perigee.info
+# Everything may be crawled: the page renders its content with JavaScript from the data and textures below.
+User-agent: *
+Allow: /
+
+Sitemap: https://perigee.info/sitemap.xml

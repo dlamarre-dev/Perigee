@@ -3,21 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Static metadata for search engines and link previews, in English (the default language); the app sets
+         the title, description, canonical URL and lang for the language it shows (src/app/main.ts). -->
+    <title>Perigee - objects in orbit, in real time</title>
     <meta
       name="description"
-      content="Real-time viewer of artificial objects orbiting the Earth, the Moon, Mars and the solar system. / Visualiseur en temps réel des objets artificiels en orbite."
+      content="See every active satellite around the Earth, the spacecraft orbiting the Moon and Mars, and the probes crossing the solar system, in real time and in 3D. Positions computed in your browser from public data (CelesTrak, NASA/JPL Horizons). English and French."
     />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://perigee.info/" />
+    <link rel="alternate" hreflang="en" href="https://perigee.info/?lang=en" />
+    <link rel="alternate" hreflang="fr" href="https://perigee.info/?lang=fr" />
+    <link rel="alternate" hreflang="x-default" href="https://perigee.info/" />
+    <meta name="author" content="David Fugère-Lamarre" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#02050a" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Perigee" />
+    <meta property="og:url" content="https://perigee.info/" />
+    <meta property="og:title" content="Perigee - objects in orbit, in real time" />
+    <meta
+      property="og:description"
+      content="Every active satellite around the Earth, spacecraft at the Moon and Mars, probes across the solar system: in real time and in 3D, in English and French."
+    />
+    <meta property="og:image" content="https://perigee.info/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Earth in 3D surrounded by thousands of satellites" />
+    <meta property="og:locale" content="en_CA" />
+    <meta property="og:locale:alternate" content="fr_CA" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Perigee - objects in orbit, in real time" />
+    <meta
+      name="twitter:description"
+      content="Every active satellite around the Earth, spacecraft at the Moon and Mars, probes across the solar system: in real time and in 3D."
+    />
+    <meta name="twitter:image" content="https://perigee.info/og-image.jpg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Perigee",
+        "alternateName": "Périgée",
+        "url": "https://perigee.info/",
+        "description": "Real-time 3D viewer of the artificial objects orbiting the Earth, the Moon and Mars, and of the spacecraft crossing the solar system. Positions are computed in the browser from public data (CelesTrak, NASA/JPL Horizons, astronomy-engine).",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any (web browser with WebGL 2)",
+        "inLanguage": ["en", "fr"],
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+        "image": "https://perigee.info/og-image.jpg",
+        "author": { "@type": "Person", "name": "David Fugère-Lamarre" },
+        "license": "https://opensource.org/licenses/MIT",
+        "codeRepository": "https://github.com/dlamarre-dev/Perigee"
+      }
+    </script>
+
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <title>Périgée</title>
   </head>
   <body>
     <main id="app">
       <div id="viewport" class="viewport"></div>
       <p class="loading" aria-live="polite">Loading… / Chargement…</p>
+      <noscript>
+        <h1>Perigee - objects in orbit, in real time</h1>
+        <p>
+          A real-time 3D viewer of the satellites around the Earth, the spacecraft at the Moon and Mars, and
+          the probes crossing the solar system. It needs JavaScript and WebGL 2.
+        </p>
+        <p lang="fr">
+          Périgée : les objets en orbite autour de la Terre, de la Lune et de Mars, et les sondes du système
+          solaire, en temps réel et en 3D. JavaScript et WebGL 2 sont nécessaires.
+        </p>
+      </noscript>
     </main>
     <script type="module" src="/src/app/main.ts"></script>
   </body>

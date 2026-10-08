@@ -1,0 +1,34 @@
+# Perigee
+
+> Perigee (Périgée in French) is a free, open-source web app showing in real time and in 3D the artificial objects orbiting the Earth, the Moon and Mars, and the spacecraft crossing the solar system. Every position is computed in the visitor's browser from public data; nothing is computed on a server. Interface in English and French. For education, not for navigation or conjunction assessment.
+
+Site: https://perigee.info/ (English: `?lang=en`, French: `?lang=fr`). It is a single-page WebGL 2 application: the views are rendered with JavaScript, so this file and the linked documents describe them in text.
+
+## Views
+
+- [Earth](https://perigee.info/?lang=en): every active catalogued satellite (about 16,000), propagated with SGP4 from CelesTrak orbital elements (OMM), with launch sites, filters by operator, country, constellation, orbit type and object type, and the Moon.
+- [Moon](https://perigee.info/?lang=en&view=moon): active lunar orbiters from NASA/JPL Horizons ephemerides, and the landing and impact sites (Apollo, Luna, Chang'e, Chandrayaan, commercial landers).
+- [Mars](https://perigee.info/?lang=en&view=mars): Mars orbiters, Phobos and Deimos (Horizons), landing sites and the current rover positions (NASA MMGIS waypoint feeds).
+- [Solar system](https://perigee.info/?lang=en&view=solar): planets and moons (astronomy-engine, JPL mean elements), dwarf planets and interplanetary probes (Horizons), with their trajectories.
+
+## Links into the app
+
+URL parameters: `view` (`moon`, `mars`, `solar`; Earth by default), `lang` (`en`, `fr`), `sel` (selected object: a NORAD catalogue number such as `25544` for the ISS, a mission id, `site:<id>` for a landing site, or a planet id such as `jupiter`), `t` (ISO 8601 UTC instant, e.g. `2026-10-08T15:00:00Z`), `rate` (time multiplier, `0` pauses), `frame` (`inertial`).
+Example: https://perigee.info/?lang=en&view=moon&sel=site:apollo-11
+
+## How it works
+
+- Positions: SGP4/SDP4 (satellite.js) for Earth satellites, cubic Hermite interpolation of JPL Horizons state vectors for spacecraft, two-body extrapolation beyond the published window (shown as extrapolated), astronomy-engine (VSOP87) for the planets.
+- Every object states how fresh and how reliable its position is (propagated from recent elements, interpolated from ephemerides, or extrapolated/modelled).
+- Data are refreshed by a GitHub Actions pipeline (CelesTrak every 4 h, SATCAT and Horizons daily) and served from the same site; the browser never contacts CelesTrak or Horizons.
+
+## Documentation
+
+- [README](https://github.com/dlamarre-dev/Perigee/blob/master/README.md): features and usage.
+- [Data sources and attribution](https://github.com/dlamarre-dev/Perigee/blob/master/DATA_SOURCES.md): CelesTrak, Space-Track, NASA/JPL Horizons, NASA SVS, USGS, NASA 3D Resources and others.
+- [Mission catalogue](https://github.com/dlamarre-dev/Perigee/blob/master/catalog/missions.json): missions beyond Earth orbit with their status, Horizons ids and sources.
+- [Source code](https://github.com/dlamarre-dev/Perigee) (MIT licence).
+
+## Optional
+
+- [Earth satellite data](https://perigee.info/data/manifest.json): manifest of the published datasets (OMM elements, SATCAT, ephemerides) with fetch times.

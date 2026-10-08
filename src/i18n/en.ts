@@ -1,6 +1,8 @@
 export const en = {
   'app.brand': 'Perigee',
   'app.title': 'Perigee - objects in orbit, in real time',
+  'app.description':
+    'See every active satellite around the Earth, the spacecraft orbiting the Moon and Mars, and the probes crossing the solar system, in real time and in 3D. Positions computed in your browser from public data (CelesTrak, NASA/JPL Horizons).',
   'app.loading': 'Loading…',
   'app.webglUnavailable': 'WebGL 2 is not available in this browser.',
 

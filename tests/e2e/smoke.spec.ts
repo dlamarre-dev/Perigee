@@ -196,3 +196,34 @@ test('the photo button downloads the view and the objects only, then confirms', 
   ]);
   await expect(toast).toBeHidden({ timeout: 5_000 });
 });
+
+test('search metadata follow the language and view; robots, sitemap and llms files are served', async ({
+  page,
+  request,
+}) => {
+  await page.goto('./?view=moon&lang=fr&sel=site:apollo-11');
+  await expect(page).toHaveTitle('Périgée - les objets en orbite, en temps réel');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    /^Voyez tous les satellites/,
+  );
+  // One canonical page per view and language, whatever the selection or time.
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    /\/Perigee\/\?lang=fr&view=moon$/,
+  );
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    'https://perigee.info/og-image.jpg',
+  );
+  for (const [file, text] of [
+    ['robots.txt', 'Sitemap: https://perigee.info/sitemap.xml'],
+    ['sitemap.xml', '<loc>https://perigee.info/?lang=fr&amp;view=moon</loc>'],
+    ['llms.txt', '# Perigee'],
+  ]) {
+    const res = await request.get(`./${file}`);
+    expect(res.status()).toBe(200);
+    expect(await res.text()).toContain(text);
+  }
+  expect((await request.get('./og-image.jpg')).headers()['content-type']).toBe('image/jpeg');
+});

@@ -137,9 +137,20 @@ function main(): void {
   let frame: FrameMode = url.frame;
   let viewId: ViewId = url.view;
 
+  // Canonical URL: language and view only (as in public/sitemap.xml), so the countless shared links with a
+  // selection, a time or filters fold into one page per view and language.
+  function updateCanonical(): void {
+    const query = `?lang=${i18n.lang}${viewId === 'earth' ? '' : `&view=${viewId}`}`;
+    const href = new URL(query, window.location.origin + import.meta.env.BASE_URL).href;
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', href);
+  }
+
   const applyDocumentLang = (): void => {
     document.documentElement.lang = i18n.lang;
     document.title = i18n.t('app.title');
+    // Search engines render the page: description and canonical URL follow the language shown.
+    document.querySelector('meta[name="description"]')?.setAttribute('content', i18n.t('app.description'));
+    updateCanonical();
     document.querySelector('canvas')?.setAttribute('aria-label', i18n.t('app.canvasLabel'));
     setSheetGrabLabel(i18n.t('panel.collapse'));
   };
@@ -585,6 +596,7 @@ function main(): void {
       const params = firstView && id === url.view ? startParams : new URLSearchParams();
       firstView = false;
       viewId = id;
+      updateCanonical();
       toolbar.setView(id);
       const factory = await VIEW_LOADERS[id]().catch((err: unknown) => {
         // A tab opened before a deployment asks for chunks that no longer exist: reload on the new build (once).

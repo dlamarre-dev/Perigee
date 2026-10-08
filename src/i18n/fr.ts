@@ -3,6 +3,8 @@ import type { Messages } from './en';
 export const fr: Messages = {
   'app.brand': 'Périgée',
   'app.title': 'Périgée - les objets en orbite, en temps réel',
+  'app.description':
+    'Voyez tous les satellites actifs autour de la Terre, les sondes en orbite autour de la Lune et de Mars, et celles qui traversent le système solaire, en temps réel et en 3D. Positions calculées dans votre navigateur à partir de données publiques (CelesTrak, NASA/JPL Horizons).',
   'app.loading': 'Chargement…',
   'app.webglUnavailable': 'WebGL 2 n’est pas disponible dans ce navigateur.',
 

@@ -271,6 +271,10 @@ the "up" vector and causes gimbal lock at the poles).
   sprite hidden except the starfield and the Sun's halo, `keepInPhoto`). Title (file name and PNG iTXt `Title`):
   brand, followed object (else the view's body), displayed date and time in the display zone. A toast confirms (3 s).
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
+- Search and sharing (site at https://perigee.info/, GitHub Pages custom domain): static English metadata in
+  `index.html` (description, Open Graph/Twitter card with `public/og-image.jpg`, hreflang, JSON-LD WebApplication);
+  the app sets title, description, `lang` and the canonical URL (language + view only) for what it shows.
+  `public/robots.txt`, `public/sitemap.xml` (one URL per view and language, with alternates) and `public/llms.txt`.
 - Bilingual **EN/FR** interface (see §0), strings in `src/i18n/`. Brand: "Perigee" in English, "Périgée" in French.
 - Visual style: sci-fi HUD inspired by recent Halo games (chamfered translucent panels, corner brackets, cyan
   accents, condensed uppercase labels) in `src/styles.css`. Fonts: Rajdhani (display) and Saira Semi Condensed
