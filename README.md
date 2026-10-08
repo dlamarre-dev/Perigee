@@ -5,7 +5,7 @@ spacecraft travelling through the solar system. Every position is computed in yo
 (CelesTrak, NASA/JPL Horizons, astronomy-engine). The site works in English and French (_Périgée_) and keeps
 working offline once visited.
 
-**→ [Open Perigee](https://dlamarre-dev.github.io/Perigee/)**
+**→ [Open Perigee](https://perigee.info/)**
 
 > Educational use only — not intended for navigation or conjunction assessment.
 

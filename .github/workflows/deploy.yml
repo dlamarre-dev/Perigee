@@ -29,7 +29,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          PERIGEE_BASE: /${{ github.event.repository.name }}/
+          # Served at the root of the custom domain (perigee.info, set in Settings → Pages).
+          PERIGEE_BASE: /
       # From M1: copy the orphan `data` branch into dist/data (same origin → no CORS).
       - name: Copy published data
         run: |
