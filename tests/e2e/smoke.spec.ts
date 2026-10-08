@@ -124,7 +124,14 @@ test('the top and bottom bars shrink step by step instead of wrapping', async ({
 test('a long dialog scrolls its body, its frame stays put', async ({ page }) => {
   await page.setViewportSize({ width: 1200, height: 500 });
   await page.goto('./?lang=en');
-  await page.locator('.toolbar button[aria-label="About"]').click();
+  // A 500 px tall window gets the compact bars: "About" may sit in the "☰" menu, depending on the fonts.
+  const about = page.locator('.toolbar button[aria-label="About"]');
+  const menu = page.locator('.toolbar .menu-toggle');
+  // The bars settle on their level a frame after loading (src/ui/fit.ts).
+  await expect(page.locator('.toolbar[data-fit]')).toHaveCount(1);
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (!(await about.isVisible()) && (await menu.isVisible())) await menu.click();
+  await about.click();
   const dialog = page.locator('dialog.about:not(.report)');
   const body = dialog.locator('.dialog-body');
   await expect(body).toBeVisible();
