@@ -58,6 +58,10 @@ export class Renderer {
     this.applyPixelRatio(this.adaptive.pixelRatio);
     this.camera.matrixAutoUpdate = true;
     canvas.tabIndex = 0;
+    // Focus ring only when the canvas was reached with Tab: Chrome would otherwise switch it on at the first
+    // key press (Q/E, arrows) after a click on the view.
+    canvas.addEventListener('pointerdown', () => canvas.classList.add('pointer-focus'));
+    canvas.addEventListener('blur', () => canvas.classList.remove('pointer-focus'));
     // The 3D scene is an image for assistive technologies; the side panels carry the same content as text.
     canvas.setAttribute('role', 'img');
     container.appendChild(canvas);

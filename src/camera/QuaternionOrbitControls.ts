@@ -7,7 +7,7 @@
  * `cameraPositionKm` (Float64) as the floating origin and copy `orientation` into the camera.
  */
 import type { Camera } from 'three';
-import type { Vec3 } from '../astro/vec3';
+import { scale, type Vec3 } from '../astro/vec3';
 import {
   arcballRotationVector,
   cameraPositionKm,
@@ -54,6 +54,8 @@ const TOUCH_PINCH_GAIN = 0.75;
 const TOUCH_TWIST_DEAD_RAD = (6 * Math.PI) / 180;
 const TOUCH_TWIST_GAIN = 0.6;
 const TOUCH_INERTIA_FACTOR = 0.7;
+/** Keyboard rotation and roll: time constant of the ease towards the requested turn (as the wheel zoom). */
+const KEY_SMOOTH_S = 0.12;
 
 function prefersReducedMotion(): boolean {
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -73,6 +75,8 @@ export class QuaternionOrbitControls {
   /** Requested distance, reached smoothly in update(); undefined when idle. */
   private zoomTargetKm: number | undefined;
   private zoomSmoothS = ZOOM_SMOOTH_S;
+  /** Keyboard turn still to apply (rotation vector, camera frame, rad), eased in update(). */
+  private pendingKeyTurn: Vec3 = [0, 0, 0];
   /** The last drag came from a finger (shorter inertia). */
   private touchDrag = false;
   /** Two-finger gesture: accumulated twist and the roll already applied for it. */
@@ -135,6 +139,7 @@ export class QuaternionOrbitControls {
 
   setState(state: OrbitState): void {
     this.fly = undefined;
+    this.pendingKeyTurn = [0, 0, 0];
     this.zoomTargetKm = undefined;
     this.stateValue = state;
   }
@@ -148,6 +153,7 @@ export class QuaternionOrbitControls {
   flyTo(to: OrbitState, durationS = 0.8): void {
     this.angularVelocity = [0, 0, 0];
     this.zoomTargetKm = undefined;
+    this.pendingKeyTurn = [0, 0, 0];
     // Reduced motion: a near-cut instead of a long glide (keeps the same code path).
     if (prefersReducedMotion()) durationS = Math.min(durationS, 0.12);
     const clamped = { ...to, distanceKm: clampDistance(to.distanceKm, this.limitsValue) };
@@ -200,6 +206,13 @@ export class QuaternionOrbitControls {
       const distanceKm = easeDistanceKm(this.stateValue.distanceKm, this.zoomTargetKm, dtS, this.zoomSmoothS);
       this.stateValue = { ...this.stateValue, distanceKm };
       if (distanceKm === this.zoomTargetKm) this.zoomTargetKm = undefined;
+    }
+    const turn = this.pendingKeyTurn;
+    if (turn[0] !== 0 || turn[1] !== 0 || turn[2] !== 0) {
+      // Ease towards the requested turn; the rest carries over (held keys add steps as they repeat).
+      const done = Math.hypot(turn[0], turn[1], turn[2]) < 1e-5 ? 1 : 1 - Math.exp(-dtS / KEY_SMOOTH_S);
+      this.stateValue = rotateByVector(this.stateValue, scale(turn, done));
+      this.pendingKeyTurn = done === 1 ? [0, 0, 0] : scale(turn, 1 - done);
     }
     if (this.pointers.size === 0 && this.inertiaTimeS > 0) {
       const w = this.angularVelocity;
@@ -338,28 +351,29 @@ export class QuaternionOrbitControls {
       return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-    const s = this.stateValue;
-    let next: OrbitState | undefined;
+    // Rotation vector in the camera frame (x: pitch, y: yaw, z: roll), eased in update().
+    let turn: Vec3 | undefined;
     switch (e.key) {
       case 'ArrowLeft':
-        next = rotateByVector(s, [0, KEY_ROTATE_RAD, 0]);
+        turn = [0, KEY_ROTATE_RAD, 0];
         break;
       case 'ArrowRight':
-        next = rotateByVector(s, [0, -KEY_ROTATE_RAD, 0]);
+        turn = [0, -KEY_ROTATE_RAD, 0];
         break;
       case 'ArrowUp':
-        next = rotateByVector(s, [KEY_ROTATE_RAD, 0, 0]);
+        turn = [KEY_ROTATE_RAD, 0, 0];
         break;
       case 'ArrowDown':
-        next = rotateByVector(s, [-KEY_ROTATE_RAD, 0, 0]);
+        turn = [-KEY_ROTATE_RAD, 0, 0];
         break;
       case 'q':
       case 'Q':
-        next = roll(s, KEY_ROLL_RAD);
+        // roll(s, a) turns about the view axis by −a.
+        turn = [0, 0, -KEY_ROLL_RAD];
         break;
       case 'e':
       case 'E':
-        next = roll(s, -KEY_ROLL_RAD);
+        turn = [0, 0, KEY_ROLL_RAD];
         break;
       case '+':
       case '=':
@@ -382,6 +396,11 @@ export class QuaternionOrbitControls {
     e.preventDefault();
     this.fly = undefined;
     this.angularVelocity = [0, 0, 0];
-    this.stateValue = next;
+    if (prefersReducedMotion()) {
+      this.stateValue = rotateByVector(this.stateValue, turn);
+      return;
+    }
+    const p = this.pendingKeyTurn;
+    this.pendingKeyTurn = [p[0] + turn[0], p[1] + turn[1], p[2] + turn[2]];
   }
 }

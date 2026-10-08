@@ -74,7 +74,7 @@ body,
   cursor: grabbing;
 }
 
-.viewport canvas:focus-visible {
+.viewport canvas:focus-visible:not(.pointer-focus) {
   outline: 1px solid var(--accent);
   outline-offset: -1px;
 }
