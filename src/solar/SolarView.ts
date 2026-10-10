@@ -108,14 +108,14 @@ import { setLinePositions } from '../render/lineBuffers';
 
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
 const PICK_RADIUS_PX = 14;
-/** A followed spacecraft's label is hidden while its 3D model covers more than this (CSS px). */
+/** A followed spacecraft's or body's label is hidden while its model or disc covers more than this (CSS px). */
 const MODEL_LABEL_MAX_PX = 10;
 const PLANET_PRIORITY = 70;
 /** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
 const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   venus: 'texture.artistVenus',
   saturn: 'texture.artist',
-  uranus: 'texture.artist',
+  uranus: 'texture.uranus',
   neptune: 'texture.artist',
   eris: 'texture.uniform',
   haumea: 'texture.uniform',
@@ -781,10 +781,14 @@ class SolarView implements View {
       }
     }
     this.placeMoons(rel);
+    // A followed body seen large names itself: no marker or ring over its disc (as for its label).
+    const large = this.followedBodyLarge();
+    const selKey = this.selection ? selectionKey(this.selection) : undefined;
     for (const p of this.planets) {
       const r = rel(p.scene);
       p.mesh.mesh.position.set(r[0], r[1], r[2]);
-      if (this.behindBody(p.scene, p.info.id)) this.planetMarkers.hide(p.index);
+      if (this.behindBody(p.scene, p.info.id) || (large && selKey === `planet:${p.info.id}`))
+        this.planetMarkers.hide(p.index);
       else this.planetMarkers.setPosition(p.index, r[0], r[1], r[2]);
       this.maybeLoad(p, r, p.info.radiusKm);
       p.rings?.setLighting(normalize(scale(p.scene, -1)), r);
@@ -792,7 +796,8 @@ class SolarView implements View {
     for (const t of this.probes) {
       if (t.scene) {
         const r = rel(t.scene);
-        if (this.behindBody(t.scene, t.mission.id)) this.probeMarkers.hide(t.index);
+        if (this.behindBody(t.scene, t.mission.id) || (large && selKey === `mission:${t.mission.id}`))
+          this.probeMarkers.hide(t.index);
         else this.probeMarkers.setPosition(t.index, r[0], r[1], r[2]);
         t.mesh?.mesh.position.set(r[0], r[1], r[2]);
         this.maybeLoad(t, r, t.mission.radiusKm ?? 0);
@@ -803,7 +808,7 @@ class SolarView implements View {
     const modelShown = this.placeModel(rel);
     const selected = this.scenePositionOf(this.selection);
     // No ring for the Sun: its disc shows where it is, and the ring would sit at its centre.
-    const ringed = selected && !modelShown && this.selection?.kind !== 'sun';
+    const ringed = selected && !modelShown && !large && this.selection?.kind !== 'sun';
     this.ring.set(ringed ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
@@ -1406,7 +1411,8 @@ class SolarView implements View {
     this.labels.begin();
     for (const p of this.planets) {
       const selected = sel?.kind === 'planet' && sel.planet.id === p.info.id;
-      const hiddenP = this.behindBody(p.scene, p.info.id);
+      const hiddenP =
+        this.behindBody(p.scene, p.info.id) || (selected && this.bodyHidesLabel(p.scene, p.info.radiusKm));
       this.labels.place(
         `p:${p.info.id}`,
         hiddenP ? undefined : sub(p.scene, o),
@@ -1424,7 +1430,10 @@ class SolarView implements View {
     for (const t of this.probes) {
       if (!t.scene) continue;
       const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
-      const hiddenM = this.behindBody(t.scene, t.mission.id) || (selected && this.modelHidesLabel());
+      const hiddenM =
+        this.behindBody(t.scene, t.mission.id) ||
+        (selected &&
+          (t.natural ? this.bodyHidesLabel(t.scene, t.mission.radiusKm ?? 0) : this.modelHidesLabel()));
       this.labels.place(
         `m:${t.mission.id}`,
         hiddenM ? undefined : sub(t.scene, o),
@@ -1439,7 +1448,13 @@ class SolarView implements View {
     }
     for (const m of this.moons) {
       const selected = sel?.kind === 'moon' && sel.moon.id === m.moon.id;
-      const scene = m.shown && m.scene && !this.behindBody(m.scene, m.moon.id) ? m.scene : undefined;
+      const scene =
+        m.shown &&
+        m.scene &&
+        !this.behindBody(m.scene, m.moon.id) &&
+        !(selected && this.bodyHidesLabel(m.scene, m.moon.radiusKm))
+          ? m.scene
+          : undefined;
       this.labels.place(
         `s:${m.moon.id}`,
         scene ? sub(scene, o) : undefined,
@@ -1468,6 +1483,35 @@ class SolarView implements View {
   /** A followed spacecraft's label goes once its 3D model is large enough to name itself. */
   private modelHidesLabel(): boolean {
     return this.host.follow.active && this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
+  }
+
+  /** The followed selection is a celestial body whose disc covers more than MODEL_LABEL_MAX_PX. */
+  private followedBodyLarge(): boolean {
+    const sel = this.selection;
+    if (sel?.kind === 'planet') {
+      const p = this.planets.find((x) => x.info.id === sel.planet.id);
+      return p !== undefined && this.bodyHidesLabel(p.scene, p.info.radiusKm);
+    }
+    if (sel?.kind === 'moon') {
+      const m = this.moons.find((x) => x.moon.id === sel.moon.id);
+      return m?.scene !== undefined && this.bodyHidesLabel(m.scene, m.moon.radiusKm);
+    }
+    if (sel?.kind === 'mission') {
+      const t = this.probes.find((x) => x.mission.id === sel.mission.id);
+      return (
+        t?.natural === true && t.scene !== undefined && this.bodyHidesLabel(t.scene, t.mission.radiusKm ?? 0)
+      );
+    }
+    return false;
+  }
+
+  /** Same for a followed celestial body (true scale only): its disc names itself once wide enough. */
+  private bodyHidesLabel(sceneKm: Vec3, radiusKm: number): boolean {
+    if (!this.host.follow.active || this.logScale || !this.originKm) return false;
+    const camera = this.host.renderer.camera.position;
+    const r = sub(sceneKm, this.originKm);
+    const distKm = Math.hypot(r[0] - camera.x, r[1] - camera.y, r[2] - camera.z);
+    return ((2 * radiusKm) / Math.max(distKm, 1e-9)) * this.focalPx() > MODEL_LABEL_MAX_PX;
   }
 
   private restoreFromUrl(p: URLSearchParams): void {
@@ -1855,9 +1899,11 @@ class SolarView implements View {
       });
       this.maybeLoad(m, r, m.moon.radiusKm);
     }
+    const large = this.followedBodyLarge();
     for (const m of this.moons) {
       if (!m.shown || !m.scene) continue;
-      if (this.behindBody(m.scene, m.moon.id)) this.moonMarkers.hide(m.index);
+      if (this.behindBody(m.scene, m.moon.id) || (large && sel?.kind === 'moon' && sel.moon.id === m.moon.id))
+        this.moonMarkers.hide(m.index);
       else {
         const r = rel(m.scene);
         this.moonMarkers.setPosition(m.index, r[0], r[1], r[2]);

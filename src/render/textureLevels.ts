@@ -33,7 +33,7 @@ export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, Tex
   venus: { color: photo([2, 4]) },
   jupiter: { color: photo([2, 4]) },
   saturn: { color: photo([2, 4]) },
-  uranus: { color: photo([2]) },
+  uranus: { color: procedural(2) },
   neptune: { color: photo([2]) },
   pluto: { color: photo([2]) },
   ceres: { color: photo([2]), normal: photo([2]) },

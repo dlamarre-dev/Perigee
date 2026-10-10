@@ -141,3 +141,15 @@ test('the Sun can be selected: figures, Carrington rotation and where the sunspo
   await page.reload();
   await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sun');
 });
+
+test("a followed body's label gives way to its disc and comes back when zooming out", async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&sel=saturn&${FROZEN}`);
+  const saturn = page.locator('.label', { hasText: /^Saturn$/ });
+  await page.locator('#viewport canvas').focus();
+  await page.keyboard.press('f');
+  // Framed at ten radii: the disc spans far more than 10 px.
+  await expect(saturn).toHaveAttribute('data-shown', 'false', { timeout: 15_000 });
+  // Still following, far enough for the disc to shrink under 10 px.
+  for (let i = 0; i < 40; i++) await page.keyboard.press('Minus');
+  await expect(saturn).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
+});

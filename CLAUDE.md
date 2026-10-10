@@ -141,10 +141,11 @@ No single API provides "active probes + landing sites". We maintain:
 - Moon: NASA SVS **CGI Moon Kit** (svs.gsfc.nasa.gov/4720) — LROC colour + LOLA displacement.
 - Mars: USGS Astrogeology **colourised Viking MDIM 2.1** + MOLA for relief.
 - Planets (view D): NASA Photojournal / USGS public-domain maps (Mercury, Jupiter, Pluto, Ceres); Solar System
-  Scope maps (CC BY 4.0, artist's impressions, labelled) for Venus cloud tops, Saturn, Uranus and Neptune;
+  Scope maps (CC BY 4.0, artist's impressions, labelled) for Venus cloud tops, Saturn and Neptune; an illustrative
+  procedural Uranus (Voyager hue, Hubble/JWST bands and polar cap, labelled);
   procedural uniform maps for unresolved dwarf planets and moons never mapped globally. Moons: USGS global mosaics, P. Stooke's PDS maps (Amalthea and
-  Hyperion hand-drawn, labelled). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' from the NASA
-  fact sheet (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
+  Hyperion hand-drawn, labelled). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' and Neptune's from the NASA
+  fact sheets (strengthened to stay visible; Neptune's Adams arcs left out) (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
 - **Offline** pre-processing (`tools/textures/` script): resample to 2k/4k/8k, KTX2 (Basis) compression,
   progressive loading by zoom level. Source textures are not committed; only compressed derivatives are
   (committed directly, no Git LFS: LFS bandwidth would be spent on every Pages deploy; keep each file well under GitHub's 100 MB limit — the UASTC 8k maps are 7–29 MB, approved 2026-09-27; re-encode only when a source changes, since every version stays in history). Levels per body are declared once in `src/render/textureLevels.ts` (read by the tool and
@@ -295,6 +296,8 @@ the "up" vector and causes gimbal lock at the poles).
 - Visual style: sci-fi HUD inspired by recent Halo games (chamfered translucent panels, corner brackets, cyan
   accents, condensed uppercase labels) in `src/styles.css`. Fonts: Rajdhani (display) and Saira Semi Condensed
   (text), OFL-1.1, bundled via `@fontsource` (latin subset).
+- A followed object that covers more than 10 px on screen (its 3D model, or a body's disc) names itself: its
+  label, marker and selection ring are hidden until it shrinks again (solar, Moon and Mars views).
 - Screen-sized markers on a body surface (sites) do not depth-test: occlusion is computed on the CPU
   (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar. The same holds for
   their selection ring (`SelectionMarker` surface mode). In the solar view the Sun, planets and small bodies hide

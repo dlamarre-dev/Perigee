@@ -78,6 +78,8 @@ export const en = {
   'time.maxRate.earth':
     'Not available in the Earth view: low satellites would complete several orbits between two computations.',
   'info.texture': 'Surface map',
+  'texture.uranus':
+    'Illustrative map: true-colour hue (Voyager 2) with the faint bands and bright north polar cap seen by Hubble and JWST (2022–2024)',
   'texture.artist': "Artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
   'texture.artistVenus':
     "Cloud tops, artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",

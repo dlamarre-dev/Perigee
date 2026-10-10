@@ -27,9 +27,13 @@ export interface RingExtent {
   readonly outerKm: number;
 }
 
-/** Saturn: D-ring edge to past the F ring; Uranus: ring 6 to past ε (NASA ring fact sheets). */
+/**
+ * Saturn: D-ring edge to past the F ring; Uranus: ring 6 to past ε; Neptune: Galle to past Adams (NASA ring fact
+ * sheets).
+ */
 export const SATURN_RINGS: RingExtent = { innerKm: 74_000, outerKm: 140_500 };
 export const URANUS_RINGS: RingExtent = { innerKm: 41_500, outerKm: 51_500 };
+export const NEPTUNE_RINGS: RingExtent = { innerKm: 40_500, outerKm: 63_500 };
 /** Ring alpha channel encodes sqrt(τ / RING_TAU_SCALE), τ = normal optical depth. */
 export const RING_TAU_SCALE = 4;
 
@@ -116,6 +120,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     periodDays: 60_182,
     gmKm3S2: 6_836_527.100_58,
     color: '#6f8fe8',
+    rings: NEPTUNE_RINGS,
   },
   {
     id: 'pluto',

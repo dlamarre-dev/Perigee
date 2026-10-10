@@ -105,7 +105,7 @@ export interface PlanetaryConfig {
 const TRAJECTORY_POINTS = 360;
 const TRAJECTORY_REFRESH_MS = 250;
 const PICK_RADIUS_PX = 14;
-/** A followed spacecraft's label is hidden while its 3D model covers more than this (CSS px). */
+/** A followed spacecraft's or moon's label is hidden while its model or disc covers more than this (CSS px). */
 const MODEL_LABEL_MAX_PX = 10;
 const SITE_COLORS: Record<LandingSite['type'], string> = {
   crewed: '#ffd54f',
@@ -477,6 +477,13 @@ export class PlanetaryView implements View {
         t.mesh.mesh.position.set(r[0], r[1], r[2]);
       }
     }
+    // A followed natural satellite seen large: no marker or ring over its disc (as for its label).
+    const sel = this.selection;
+    const selNatural = sel?.kind === 'mission' ? this.trackedFor(sel.mission.id) : undefined;
+    if (selNatural?.mesh && this.followedNamesItself(selNatural)) {
+      this.missionMarkers.hide(selNatural.index);
+      this.missionRing.set(undefined);
+    }
     this.missionMarkers.commit();
     this.sites.forEach((_, i) => {
       const scene = this.siteScene[i];
@@ -845,6 +852,20 @@ export class PlanetaryView implements View {
     ]);
   }
 
+  /**
+   * The followed object covers more than MODEL_LABEL_MAX_PX on screen (a spacecraft's 3D model, a natural
+   * satellite's disc): it names itself, so its label, marker and ring give way.
+   */
+  private followedNamesItself(t: Tracked): boolean {
+    if (!this.host.follow.active || !t.scene) return false;
+    if (!t.mesh) return this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
+    const camera = this.host.renderer.camera;
+    const r = sub(t.scene, this.originKm);
+    const distKm = Math.hypot(r[0] - camera.position.x, r[1] - camera.position.y, r[2] - camera.position.z);
+    const focalPx = this.host.renderer.canvas.clientHeight / 2 / Math.tan((camera.fov * Math.PI) / 360);
+    return ((2 * t.mesh.boundingRadiusKm) / Math.max(distKm, 1e-9)) * focalPx > MODEL_LABEL_MAX_PX;
+  }
+
   private placeLabels(): void {
     const camera = this.host.renderer.camera;
     const canvas = this.host.renderer.canvas;
@@ -859,9 +880,9 @@ export class PlanetaryView implements View {
       if (!s) continue;
       const r = sub(s, o);
       const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
-      // A followed spacecraft's label goes once its 3D model is large enough to name itself.
-      const modelNamed =
-        selected && this.host.follow.active && this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
+      // A followed spacecraft's label goes once its 3D model is large enough to name itself; a natural
+      // satellite's (Phobos, Deimos) once its disc is.
+      const modelNamed = selected && this.followedNamesItself(t);
       this.labels.place(
         `m:${t.mission.id}`,
         modelNamed ? undefined : r,

@@ -82,6 +82,8 @@ export const fr: Messages = {
   'time.maxRate.earth':
     'Indisponible dans la vue Terre : les satellites bas feraient plusieurs orbites entre deux calculs.',
   'info.texture': 'Carte de surface',
+  'texture.uranus':
+    'Carte illustrative : teinte en couleurs réelles (Voyager 2), avec les bandes discrètes et la calotte polaire nord claire vues par Hubble et le JWST (2022–2024)',
   'texture.artist': 'Vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
   'texture.artistVenus':
     'Sommet des nuages, vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',

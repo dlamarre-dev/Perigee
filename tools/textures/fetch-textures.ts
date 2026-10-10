@@ -16,7 +16,8 @@
  * - Pluto: New Horizons LORRI global map (NASA Photojournal PIA20658)
  * - Ceres: Dawn FC global mosaic, 20 px/deg (USGS Astrogeology / DLR)
  * - Saturn rings: Voyager 2 ISS I/F profile and PPS occultation optical depth (PDS Rings Node)
- * - Venus cloud tops, Saturn, Uranus, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
+ * - Venus cloud tops, Saturn, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
+ * - Uranus: procedural, illustrative (see procedural.ts); Uranus and Neptune rings from the NASA fact sheets
  * - Eris, Haumea, Makemake: procedural (see procedural.ts)
  * - Relief normal maps (see normals.ts): Moon LOLA (CGI Moon Kit `ldem_16`), Mars MOLA MEGDR 16 px/deg (PDS
  *   Geosciences Node), Mercury MESSENGER global DEM 665 m (USGS Astrogeology), Ceres Dawn HAMO DTM 60 px/deg (DLR,
@@ -36,7 +37,7 @@ import { decodeExr } from './exr';
 import { normalMap, resampleHeights, rollToPrimeMeridian } from './normals';
 import { readTiffGrid } from './tiff';
 import { bandedMap, PROCEDURAL } from './procedural';
-import { saturnRings, uranusRings, type RingProfile } from './rings';
+import { neptuneRings, saturnRings, uranusRings, type RingProfile } from './rings';
 
 const USER_AGENT = 'Perigee texture tool (https://github.com/dlamarre-dev/Perigee)';
 
@@ -177,11 +178,12 @@ const BODIES: Record<string, readonly Source[]> = {
     },
   ],
   uranus: [
-    { name: 'color', url: `${SSS_COMMONS}/9/95/Solarsystemscope_texture_2k_uranus.jpg`, quality: 88 },
+    { name: 'color', procedural: 'uranus' },
     { name: 'rings', rings: () => Promise.resolve(uranusRings()) },
   ],
   neptune: [
     { name: 'color', url: `${SSS_COMMONS}/1/1e/Solarsystemscope_texture_2k_neptune.jpg`, quality: 88 },
+    { name: 'rings', rings: () => Promise.resolve(neptuneRings()) },
   ],
   pluto: [
     {

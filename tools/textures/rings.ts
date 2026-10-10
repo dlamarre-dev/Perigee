@@ -6,12 +6,14 @@
  * Saturn: Voyager 2 ISS radial I/F profile (PDS Rings Node VG_2810, Showalter & Gordon) for brightness and the
  * Voyager 2 PPS δ Sco occultation (VG_2801, Esposito et al.) for optical depth, both at 10 km resolution.
  * Uranus: ring radii and widths from the NASA Uranian Rings Fact Sheet; dark (albedo ≈ 0.02) narrow rings.
+ * Neptune: NASA Neptunian Rings Fact Sheet and PDS Rings Node tables; faint, dusty, reddish rings.
  */
 
 import {
   RING_TAU_SCALE as TAU_SCALE,
   SATURN_RINGS,
   URANUS_RINGS as URANUS_EXTENT,
+  NEPTUNE_RINGS as NEPTUNE_EXTENT,
 } from '../../src/astro/planets';
 
 export interface RingProfile {
@@ -119,6 +121,41 @@ export function uranusRings(width = 1024): RingProfile {
     rgba[i * 4] = 92;
     rgba[i * 4 + 1] = 94;
     rgba[i * 4 + 2] = 98;
+    rgba[i * 4 + 3] = encodeTau(visible);
+  }
+  return { innerKm, outerKm, width, rgba };
+}
+
+/**
+ * [radius km, width km, optical depth]: Galle, Le Verrier, Lassell, Adams (NASA Neptunian Rings Fact Sheet; Le
+ * Verrier's depth between NASA's 0.01 and PDS's 0.003, Adams at NASA's lower bound). Arago has no published
+ * depth, and the Adams arcs (τ ≈ 0.1 over ~40° of longitude) would need an azimuthal map: both left out.
+ */
+const NEPTUNE_RINGS: readonly (readonly [number, number, number])[] = [
+  [41_900, 2_000, 1e-4],
+  [53_200, 100, 0.005],
+  [55_200, 4_000, 1e-4],
+  [62_933, 15, 0.01],
+];
+
+export function neptuneRings(width = 1024): RingProfile {
+  const { innerKm, outerKm } = NEPTUNE_EXTENT;
+  const step = (outerKm - innerKm) / width;
+  const rgba = Buffer.alloc(width * 4);
+  for (let i = 0; i < width; i++) {
+    const r0 = innerKm + i * step;
+    const r1 = r0 + step;
+    let tau = 0;
+    for (const [radius, w, t] of NEPTUNE_RINGS) {
+      const overlap = Math.max(0, Math.min(r1, radius + w / 2) - Math.max(r0, radius - w / 2));
+      tau += (t * overlap) / step;
+    }
+    // Strengthened (×60) so the narrow Adams and Le Verrier rings show as thin lines, about as visible as
+    // Uranus' rings; the broad dusty Galle and Lassell rings stay a faint haze.
+    const visible = Math.min(1.5, tau * 60 + (tau > 0 ? 0.03 : 0));
+    rgba[i * 4] = 104;
+    rgba[i * 4 + 1] = 94;
+    rgba[i * 4 + 2] = 88;
     rgba[i * 4 + 3] = encodeTau(visible);
   }
   return { innerKm, outerKm, width, rgba };

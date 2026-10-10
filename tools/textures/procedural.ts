@@ -117,4 +117,27 @@ export const PROCEDURAL: Record<string, BandedStyle> = {
   eris: { stops: uniform([230, 228, 223]), noise: 0.05, stretch: 1, seed: 11 },
   haumea: { stops: uniform([232, 230, 226]), noise: 0.05, stretch: 1, seed: 12 },
   makemake: { stops: uniform([216, 184, 154]), noise: 0.07, stretch: 1, seed: 13 },
+  // Uranus (illustrative): Voyager 2's pale cyan, with the faint zonal bands and the bright north polar cap
+  // (dark collar near 55–60°N) seen by Hubble and JWST in 2022–2024, and the bright southern collar near 45°S
+  // Voyager saw in 1986 (the south is now in darkness). Contrast kept low, as in true-colour images.
+  uranus: {
+    stops: [
+      [-90, [150, 196, 206]],
+      [-55, [157, 201, 211]],
+      [-45, [171, 212, 220]],
+      [-37, [160, 204, 213]],
+      [-18, [165, 207, 216]],
+      [0, [157, 200, 210]],
+      [18, [165, 207, 216]],
+      [40, [169, 210, 218]],
+      [52, [160, 203, 212]],
+      [58, [148, 192, 204]],
+      [64, [192, 225, 230]],
+      [76, [206, 233, 236]],
+      [90, [211, 236, 239]],
+    ],
+    noise: 0.02,
+    stretch: 4,
+    seed: 30,
+  },
 };
