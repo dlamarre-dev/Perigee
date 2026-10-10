@@ -63,15 +63,21 @@ async function followIss(page: Page, quality: string): Promise<void> {
   await page.goto(`./?lang=en&sel=25544&t=2026-09-26T12:00:00Z&rate=0&quality=${quality}`);
   await expect(page.locator('aside.info:visible .panel-title')).toContainText('ISS', { timeout: 30_000 });
   await page.locator('#viewport canvas').focus();
-  await page.keyboard.press('f');
+  // F does nothing until the selected state has been propagated once (slow on CI): press until it follows.
+  const following = page.locator('aside.info:visible button[aria-pressed="true"]');
+  await expect(async () => {
+    if (!(await following.isVisible())) await page.keyboard.press('f');
+    await expect(following).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 30_000 });
 }
 
 test.describe('full-quality models', () => {
   test.use({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 });
 
   test('are fetched on the high tier', async ({ page }) => {
-    test.setTimeout(90_000);
-    const request = page.waitForRequest('**/models/iss-high.glb*', { timeout: 60_000 });
+    // ~45 s locally at the high tier on a software GPU.
+    test.setTimeout(150_000);
+    const request = page.waitForRequest('**/models/iss-high.glb*', { timeout: 120_000 });
     await followIss(page, 'high');
     await request;
   });
