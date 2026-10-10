@@ -487,8 +487,14 @@ function main(): void {
   barObserver.observe(toolbar.element);
   barObserver.observe(timeControl.element);
   const music = new MusicPanel(i18n);
-  // The altimeter reads (and sets) the height above the surface: the camera distance minus that radius.
-  const altimeterRefKm = (): number => (controls.following ? followSurfaceKm : (view?.bodyRadiusKm ?? 0));
+  // The altimeter reads (and sets) the height above the surface: the camera distance minus that radius. A camera
+  // left aimed elsewhere than the central body (a follow stopped, a test framing) reads a plain distance.
+  const altimeterRefKm = (): number =>
+    controls.following
+      ? followSurfaceKm
+      : length(controls.state.targetKm) < 1
+        ? (view?.bodyRadiusKm ?? 0)
+        : 0;
   const altimeter = new Altimeter(i18n, (valueKm) => controls.zoomTo(valueKm + altimeterRefKm()));
   app.append(
     toolbar.element,
@@ -763,7 +769,7 @@ ${
         valueKm: Math.max(1e-6, controls.state.distanceKm - refKm),
         minKm: controls.limits.minDistanceKm - refKm,
         maxKm: controls.limits.maxDistanceKm - refKm,
-        kind: controls.following && refKm === 0 ? 'distance' : 'altitude',
+        kind: refKm === 0 ? 'distance' : 'altitude',
         toScale: v.distancesToScale?.() ?? true,
       });
     }
