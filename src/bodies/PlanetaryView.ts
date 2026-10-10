@@ -105,6 +105,8 @@ export interface PlanetaryConfig {
 const TRAJECTORY_POINTS = 360;
 const TRAJECTORY_REFRESH_MS = 250;
 const PICK_RADIUS_PX = 14;
+/** A followed spacecraft's label is hidden while its 3D model covers more than this (CSS px). */
+const MODEL_LABEL_MAX_PX = 10;
 const SITE_COLORS: Record<LandingSite['type'], string> = {
   crewed: '#ffd54f',
   soft: '#aed581',
@@ -857,10 +859,13 @@ export class PlanetaryView implements View {
       if (!s) continue;
       const r = sub(s, o);
       const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
+      // A followed spacecraft's label goes once its 3D model is large enough to name itself.
+      const modelNamed =
+        selected && this.host.follow.active && this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
       this.labels.place(
         `m:${t.mission.id}`,
-        r,
-        s,
+        modelNamed ? undefined : r,
+        modelNamed ? undefined : s,
         camera,
         o,
         R,

@@ -94,6 +94,8 @@ test.describe('immersive effects', () => {
   test('switch live on the high tier, are remembered, and cloud tiles load only when on', async ({
     page,
   }) => {
+    // Two loads at the high tier on a software GPU: ~30 s on CI.
+    test.setTimeout(90_000);
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     let cloudRequests = 0;

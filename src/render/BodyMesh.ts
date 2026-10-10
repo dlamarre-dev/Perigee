@@ -16,6 +16,7 @@ import {
   Raycaster,
   Vector2,
   Vector3,
+  Vector4,
   type Texture,
 } from 'three';
 import type { Quat } from '../astro/quat';
@@ -109,6 +110,9 @@ const fragmentShader = /* glsl */ `
   uniform float gasMotion;
   uniform float gasProfile;
   uniform float gasRadiusM;
+  // Storm kept still (Jupiter's Great Red Spot): map centre (u, v) and half-extent with its collar (u, v); zero
+  // extent for none. It keeps its shape and place while the bands flow past it.
+  uniform vec4 gasStill;
   // Eastward wind (m/s) against latitude, relative to the body's rotation model: rough shapes and speeds of the
   // observed profiles, tapered towards the poles.
   float zonalWindMs(float lat) {
@@ -119,15 +123,35 @@ const fragmentShader = /* glsl */ `
     if (gasProfile < 2.5) return 400.0 * c * (exp(-lat * lat * 5.0) + 0.2 * cos(lat * 12.0)); // Saturn
     return 250.0 * c * clamp(-0.8 + 2.4 * s2, -0.8, 1.0); // Uranus, Neptune: retrograde equator
   }
+  // 1 inside the still storm, 0 outside, with a soft edge (longitudes wrap).
+  float stillMask(vec2 uv) {
+    if (gasStill.z <= 0.0) return 0.0;
+    vec2 d = vec2(fract(uv.x - gasStill.x + 0.5) - 0.5, uv.y - gasStill.y) / gasStill.zw;
+    return 1.0 - smoothstep(0.7, 1.0, length(d));
+  }
+  // The moving bands, without the still storm: where a sample would carry part of it downstream (a sheared
+  // copy), the band at the same latitude two storm widths east fills in.
+  vec3 bandColor(vec2 uv, vec2 dx, vec2 dy) {
+    vec3 c = textureGrad(dayMap, uv, dx, dy).rgb;
+    float m = stillMask(uv);
+    if (m > 0.0) {
+      vec3 fill = textureGrad(dayMap, vec2(fract(uv.x + 4.0 * gasStill.z), uv.y), dx, dy).rgb;
+      c = mix(c, fill, m);
+    }
+    return c;
+  }
   vec3 dayColor() {
     float lat = (vUv.y - 0.5) * 3.14159265;
     // Map fraction per simulated second.
     float drift = gasMotion * zonalWindMs(lat) / (6.28318531 * gasRadiusM * max(cos(lat), 0.05));
     vec2 dx = dFdx(vUv);
     vec2 dy = dFdy(vUv);
-    vec3 a = textureGrad(dayMap, vec2(fract(vUv.x - drift * gasAgeA), vUv.y), dx, dy).rgb;
-    vec3 b = textureGrad(dayMap, vec2(fract(vUv.x - drift * gasAgeB), vUv.y), dx, dy).rgb;
-    return mix(b, a, gasWeightA);
+    float still = stillMask(vUv);
+    if (gasMotion <= 0.0 || still >= 1.0) return textureGrad(dayMap, vUv, dx, dy).rgb;
+    vec3 a = bandColor(vec2(fract(vUv.x - drift * gasAgeA), vUv.y), dx, dy);
+    vec3 b = bandColor(vec2(fract(vUv.x - drift * gasAgeB), vUv.y), dx, dy);
+    vec3 bands = mix(b, a, gasWeightA);
+    return still > 0.0 ? mix(bands, textureGrad(dayMap, vUv, dx, dy).rgb, still) : bands;
   }
   #else
   vec3 dayColor() {
@@ -186,6 +210,13 @@ export interface BodyMeshOptions {
 
 export type GasProfile = 'venus' | 'jupiter' | 'saturn' | 'iceGiant';
 const GAS_PROFILES: Record<GasProfile, number> = { venus: 0, jupiter: 1, saturn: 2, iceGiant: 3 };
+/**
+ * Storm held still while the bands move (map u, v of its centre, half-extent in u, v including its collar):
+ * Jupiter's Great Red Spot as it appears in the Cassini map (PIA07782), ~21°S.
+ */
+const GAS_STILL: Partial<Record<GasProfile, readonly [number, number, number, number]>> = {
+  jupiter: [0.367, 0.381, 0.046, 0.036],
+};
 /** Life of a moving-gas layer (simulated seconds): long enough to see the bands slide, short enough to keep
  * storms from smearing. */
 const GAS_CYCLE_S = 4 * 86_400;
@@ -271,6 +302,7 @@ export class BodyMesh {
           gasMotion: effectUniform('gasMotion'),
           gasProfile: { value: GAS_PROFILES[o.gasFlow] },
           gasRadiusM: { value: o.radiusKm * 1000 },
+          gasStill: { value: new Vector4(...(GAS_STILL[o.gasFlow] ?? [0, 0, 0, 0])) },
         }),
       },
       vertexShader,

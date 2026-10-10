@@ -103,6 +103,8 @@ import { setLinePositions } from '../render/lineBuffers';
 
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
 const PICK_RADIUS_PX = 14;
+/** A followed spacecraft's label is hidden while its 3D model covers more than this (CSS px). */
+const MODEL_LABEL_MAX_PX = 10;
 const PLANET_PRIORITY = 70;
 /** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
 const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
@@ -1410,7 +1412,7 @@ class SolarView implements View {
     for (const t of this.probes) {
       if (!t.scene) continue;
       const selected = sel?.kind === 'mission' && sel.mission.id === t.mission.id;
-      const hiddenM = this.behindBody(t.scene, t.mission.id);
+      const hiddenM = this.behindBody(t.scene, t.mission.id) || (selected && this.modelHidesLabel());
       this.labels.place(
         `m:${t.mission.id}`,
         hiddenM ? undefined : sub(t.scene, o),
@@ -1439,6 +1441,11 @@ class SolarView implements View {
       );
     }
     this.labels.layout(w, hgt);
+  }
+
+  /** A followed spacecraft's label goes once its 3D model is large enough to name itself. */
+  private modelHidesLabel(): boolean {
+    return this.host.follow.active && this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
   }
 
   private restoreFromUrl(p: URLSearchParams): void {

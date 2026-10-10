@@ -257,6 +257,8 @@ export class SceneModel {
   private highLoading = false;
   private largeSinceMs: number | undefined;
   private disposed = false;
+  /** Apparent size of the drawn model (CSS px), 0 while the marker stands in for it. */
+  shownSizePx = 0;
   /** Bounds of the loaded model in its own frame (metres). */
   private bounds: Box3 | undefined;
 
@@ -326,6 +328,7 @@ export class SceneModel {
       });
     }
     const shown = wanted && this.object !== undefined;
+    this.shownSizePx = shown ? sizePx : 0;
     this.group.visible = shown;
     this.sun.visible = shown;
     this.ambient.visible = shown;
