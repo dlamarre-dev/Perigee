@@ -256,9 +256,9 @@ export class Toolbar {
         el.scrollWidth <= el.clientWidth + 1,
     );
     if (!level.startsWith('menu') && this.menuOpen) this.setMenuOpen(false);
-    // The floating switches are placed once, under the button: close them when the bar is laid out again.
-    if (this.effectsPopover.classList.contains('floating') && !this.effectsPopover.hidden)
-      this.setEffectsOpen(false);
+    // The floating switches are placed once, under the button: place them again when the bar is laid out again
+    // (the first fit can land after a click on a slow page, and fonts or a resize can move the button).
+    if (!this.effectsPopover.hidden) this.setEffectsOpen(true);
   }
 
   /**
