@@ -195,7 +195,7 @@
         "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window.",
         "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique."
       },
-      "verified": "2026-10-03",
+      "verified": "2026-10-10",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
@@ -231,7 +231,7 @@
         "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
         "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
-      "verified": "2026-10-03",
+      "verified": "2026-10-10",
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
         "https://space.skyrocket.de/doc_sdat/swc-1.htm",
@@ -1317,10 +1317,11 @@
         "en": "ESA targets arrival in November 2026, a month earlier than planned (an older ESA ops page mentions an 'impulsive rendezvous' in October 2026). Second deep-space manoeuvre March 2026 (367 m/s). Six-month survey of DART's impact aftermath; releases CubeSats Milani and Juventas.",
         "fr": "L'ESA vise une arrivée en novembre 2026, un mois plus tôt que prévu (une page ESA plus ancienne mentionne un « rendez-vous impulsif » en octobre 2026). Deuxième manœuvre en espace lointain en mars 2026 (367 m/s). Étude de six mois des suites de l'impact de DART ; largage des CubeSats Milani et Juventas."
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-10",
       "sources": [
         "https://www.esa.int/Space_Safety/Hera/ESA_s_Hera_targets_early_arrival_at_Didymos_asteroids",
         "https://www.esa.int/Enabling_Support/Operations/Hera_operations",
+        "https://www.esa.int/Space_Safety/Hera/Hera_on_course_for_asteroid_rendezvous",
         "https://en.wikipedia.org/wiki/Hera_(space_mission)",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Hera"
       ]
@@ -1456,7 +1457,7 @@
         "en": "Extension endorsed by ESA's Science Programme Committee on 10-11 June 2026 (13 missions). End date of the new extension not stated in the opened source.",
         "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA les 10-11 juin 2026 (13 missions). Date de fin de la nouvelle extension non précisée dans la source consultée."
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-10",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=SOHO"
@@ -1656,12 +1657,13 @@
       },
       "lowOrbit": false,
       "notes": {
-        "en": "Entered final L1 orbit 2026-01-10; science mission began 2026-02-01. Maps the heliosphere boundary. Launched with Carruthers and SWFO-L1.",
-        "fr": "Orbite finale en L1 atteinte le 2026-01-10 ; mission scientifique depuis le 2026-02-01. Cartographie la frontière de l'héliosphère. Lancé avec Carruthers et SWFO-L1."
+        "en": "Entered final L1 orbit 2026-01-10; science mission began 2026-02-01. Maps the heliosphere boundary. All 10 instruments collecting data; as of August 2026, science data from 7 of them has been released. Launched with Carruthers and SWFO-L1.",
+        "fr": "Orbite finale en L1 atteinte le 2026-01-10 ; mission scientifique depuis le 2026-02-01. Cartographie la frontière de l'héliosphère. Les 10 instruments collectent des données ; en août 2026, les données scientifiques de 7 d'entre eux ont été publiées. Lancé avec Carruthers et SWFO-L1."
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-10",
       "sources": [
         "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
+        "https://science.nasa.gov/blogs/imap/2026/08",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=IMAP"
       ]
     },
