@@ -428,14 +428,14 @@ npm run textures       # offline texture pre-processing (downloads NASA sources,
 Known statuses at end of September 2026. Kept current by the weekly maintenance agent (§8), which re-verifies
 every active mission about monthly (due after 21 days, at most 15 per weekly audit, oldest first) and anything
 the audit flags:
-- Lunar orbit (verified 2026-10-03, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
+- Lunar orbit (verified 2026-10-10, details and sources in `catalog/missions.json`): LRO (−85), Chandrayaan-2
   orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA declared the mission complete 2026-07-06, Advanced Space
   continues flying it commercially (weekly NRHO station-keeping as of mid-2026); **public Horizons ephemeris
   stops 2026-08-14 and has not resumed**, likely permanently now that NASA's DSN-tracked mission has ended —
   re-check periodically), SWC-1/Shams (−168540, Saudi Space Agency cislunar space-weather 12U CubeSat deployed
   during Artemis II, launched 2026-04-01; still tracked in high Earth orbit in October 2026 (NORAD 68540,
-  Space-Track elements on N2YO, verified 2026-10-03), but its public Horizons ephemeris stops 2026-04-07, so it is
+  Space-Track elements on N2YO, verified 2026-10-10), but its public Horizons ephemeris stops 2026-04-07, so it is
   `ephemeris: "none"`). No Horizons ephemeris: Queqiao-2,
   Tiandu-2, Queqiao-1 (L2), DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025).
   ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
@@ -446,7 +446,7 @@ the audit flags:
   2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE Blue/Gold: launched
   2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept 2027. MMX (JAXA):
   launch 2026-10-19 19:41 UTC (H3 F10). Phobos (401) and Deimos (402) come from Horizons like the probes.
-- Interplanetary (verified 2026-10-03, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
+- Interplanetary (verified 2026-10-10, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
   (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
   step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
   2026-09-28), Europa Clipper (−159), Psyche (−255), Lucy (−49), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
