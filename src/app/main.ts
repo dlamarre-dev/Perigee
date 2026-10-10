@@ -30,6 +30,7 @@ import { configureKtx2 } from '../render/textures';
 import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
+import { setSimTime } from '../render/simTime';
 import { setPreviewFrameRate } from '../ui/ModelPreview';
 import { MusicPanel } from '../ui/MusicPanel';
 import { TimeControl } from '../ui/TimeControl';
@@ -710,6 +711,8 @@ ${
     framesDrawn++;
     const nowMs = clock.nowMs();
     const date = new Date(nowMs);
+    // Before the view: animations that follow the clock (clouds) may render off-screen passes here.
+    setSimTime(nowMs);
     const v = view;
     if (v) {
       const bodyQ = v.bodyOrientation(date);

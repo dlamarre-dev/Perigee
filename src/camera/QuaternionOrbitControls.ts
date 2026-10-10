@@ -256,7 +256,7 @@ export class QuaternionOrbitControls {
     // Following an object, the camera turns around it, not around the body: no surface slowdown (it made the
     // view crawl when zoomed in on a spacecraft, the follow limits being far below the body radius).
     if (this.follow) return Math.PI / Math.max(1, this.element.clientHeight);
-    const bodyRadiusKm = this.limitsValue.minDistanceKm / 1.02;
+    const bodyRadiusKm = this.limitsValue.surfaceRadiusKm ?? this.limitsValue.minDistanceKm / 1.02;
     // Same when turning around another point (a selected moon or planet framed in the solar view): the
     // slowdown is for skimming the central body's surface, the target then being its centre.
     const t = this.stateValue.targetKm;

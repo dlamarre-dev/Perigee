@@ -126,3 +126,18 @@ test('a moon with Horizons vectors says so; the others keep their model', async 
   await page.goto(`./?lang=en&view=solar&${FROZEN}&sel=moon:rhea`);
   await expect(info.locator('.freshness')).toContainText('mean orbital elements');
 });
+
+test('the Sun can be selected: figures, Carrington rotation and where the sunspots come from', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  await page.locator('#side-panel button[data-sun]').click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Sun');
+  await expect(info).toContainText('G2V');
+  await expect(info).toContainText('Carrington rotation');
+  await expect(info).toContainText('NOAA');
+  await expect(page).toHaveURL(/sel=sun/);
+  await page.reload();
+  await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sun');
+});

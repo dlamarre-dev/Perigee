@@ -6,7 +6,7 @@ on:
   workflow_call:
     inputs:
       command:
-        description: 'pipeline/run.ts command (gp | satcat | horizons | rovers)'
+        description: 'pipeline/run.ts command (gp | satcat | horizons | rovers | sun)'
         required: true
         type: string
 

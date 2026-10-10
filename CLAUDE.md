@@ -140,9 +140,9 @@ No single API provides "active probes + landing sites". We maintain:
 - Earth: NASA Blue Marble (public domain) + optional night mask (Black Marble).
 - Moon: NASA SVS **CGI Moon Kit** (svs.gsfc.nasa.gov/4720) — LROC colour + LOLA displacement.
 - Mars: USGS Astrogeology **colourised Viking MDIM 2.1** + MOLA for relief.
-- Planets (view D): NASA Photojournal / USGS public-domain maps (Mercury, Jupiter, Pluto, Ceres); procedural
-  band textures where no public-domain global map exists (Venus cloud tops, Saturn, Uranus, Neptune, unresolved
-  dwarf planets, moons never mapped globally). Moons: USGS global mosaics, P. Stooke's PDS maps (Amalthea and
+- Planets (view D): NASA Photojournal / USGS public-domain maps (Mercury, Jupiter, Pluto, Ceres); Solar System
+  Scope maps (CC BY 4.0, artist's impressions, labelled) for Venus cloud tops, Saturn, Uranus and Neptune;
+  procedural uniform maps for unresolved dwarf planets and moons never mapped globally. Moons: USGS global mosaics, P. Stooke's PDS maps (Amalthea and
   Hyperion hand-drawn, labelled). Saturn's rings from Voyager PDS profiles (brightness + optical depth), Uranus' from the NASA
   fact sheet (`tools/textures/rings.ts`, `src/render/RingMesh.ts`).
 - **Offline** pre-processing (`tools/textures/` script): resample to 2k/4k/8k, KTX2 (Basis) compression,
@@ -172,7 +172,8 @@ No single API provides "active probes + landing sites". We maintain:
   under a non-commercial licence: not used (permission requested).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.
-- Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); no sunspot map.
+- Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); sunspots from the
+  day's NOAA SWPC active regions (immersive effect, §7), never a fixed map.
 - Orbits of planets and small bodies: osculating ellipses whose vertices are offsets from the body, dense near it
   (`ellipseOffsetsAround`), rebuilt as the body moves. Spacecraft trajectories: Horizons samples densified with
   the same Hermite interpolation as the markers; stretches where a probe stays within 1.5 Hill radii of a planet
@@ -250,6 +251,8 @@ the "up" vector and causes gimbal lock at the poles).
 - Left drag: **arcball** rotation around the centre — axis = `(Δy, Δx, 0)` expressed in the camera frame,
   angle ∝ displacement; `orientation = orientation · q(axis, angle)`, then normalise.
 - Right drag or two-finger twist: **roll** around the view axis (camera z).
+- Rotation slows near the central body's surface (`OrbitLimits.surfaceRadiusKm`, default minimum distance / 1.02;
+  the solar view gives the Sun's radius, its closest approach being 1.5 radii).
 - Wheel / pinch: **logarithmic** zoom (`distance *= exp(k·Δ)`), min bound (body radius × 1.02) and max bound
   (per view).
 - Optional inertia (exponential damping of angular velocity).
@@ -297,10 +300,38 @@ the "up" vector and causes gimbal lock at the poles).
   below high; 30 fps when idle on low) and the preview rate. Adaptive resolution (`src/render/adaptiveResolution.ts`)
   steps the pixel ratio down by 0.25 while the median frame is slow and back up when it keeps the display's pace
   (5 s warm-up, ceiling after an up/down bounce); screen-sized points are given in CSS px and scaled by the shared
-  `PIXEL_RATIO_UNIFORM`. The visitor can force a tier in the top bar (gear on large screens, "Quality" in the
-  phone menu; remembered, reload in place); `?quality=` overrides for tests; `?debug=perf` shows the tier,
+  `PIXEL_RATIO_UNIFORM`. The visitor can force a tier at the head of the quality and effects popover (sparkle
+  button in the top bar, "Quality & effects" in the phone menu; remembered, reload in place); `?quality=` overrides for tests; `?debug=perf` shows the tier,
   reasons, GPU and frame rate; problem reports carry the tier. `tools/perf/bench.ts` measures main-thread cost
   per view (`--throttle 4` to approach a phone).
+- **Immersive effects** (high tier only; each switchable live in the quality and effects popover, remembered
+  per browser in `perigee-effects`; `src/render/effects.ts`, shared strength uniforms, no rebuild):
+  - *Relief*: normal maps (east/north/up, linear UASTC KTX2 `normal-*`, ≤ 4k) from elevation models (Moon LOLA,
+    Mars MOLA MEGDR, Mercury MESSENGER, Ceres Dawn; `tools/textures/normals.ts`, uncompressed int16 GeoTIFFs read
+    by `tools/textures/tiff.ts` since sharp clips signed samples; the USGS Mercury and Ceres models are 0–360°
+    despite their tie points, checked against the colour mosaics' shading). Diffuse light only: the day/night
+    mix stays on the sphere. No Earth relief (Blue Marble is already shaded).
+  - *Earth clouds*: illustrative Blue Marble cloud layer 12 km up, with ground shadows (`src/render/clouds.ts`),
+    labelled as such. A per-tab seed (`sessionStorage`, `src/render/cloudSeed.ts`) shifts it in longitude,
+    warps and thins it, so each visit differs but view switches and reloads keep it; that seeded cover is baked
+    on the GPU (`CloudBaker`), each frame only reads it.
+  - *Moving gas* (Venus, Jupiter, Saturn, Uranus, Neptune): the bands slide along schematic zonal wind profiles
+    (m/s, `BodyMesh` `gasFlow`).
+  - *Sunspots* (solar view): NOAA SWPC regions (`src/astro/sunspots.ts`): Carrington longitude = IAU body frame
+    of the Sun, positions as of 24:00 UT of the report day, differential rotation since, faded 7–14 days after
+    the last report; groups drawn procedurally in `SunMesh` (illustrative shapes, real place and area); the panel
+    names the report date. The Sun is selectable (`sel=sun`; click on its disc or the panel's first entry): main
+    figures (IAU 2015 nominal values), Carrington rotation and central meridian, the day's active regions and
+    where the sunspot data come from; it is framed and followed from the Earth's side.
+  - *Spacecraft lighting* (3D models, `SceneModel`): the Sun is nearly the only light (environment and ambient
+    fills cut to a trace), with self-shadowing from a shadow map fitted to the model each frame (the renderer's
+    shadow map is enabled on the high tier; only model parts cast, and only while the effect is on) and the
+    central body's shadow (`src/astro/eclipse.ts`, umbra and penumbra; orbiters only, not surface sites).
+  Clouds and gas follow the simulation clock (`src/render/simTime.ts`, set by the frame loop): two layers each
+  drift for a cycle (clouds 2 days, gas 4 days) and cross-fade into the next (`layerCycle`); a cloud layer's
+  next drawing is a new seed (tab seed + cycle number), so a date shows the same clouds in every view and a layer
+  is never blended with a shifted copy of itself (the earlier looping flow map looked stencilled). At ×1 the
+  drift is real-time slow (~12 m/s for clouds).
 - Phone layout (`styles.css`, ≤ 640 px wide; landscape ≤ 500 px tall): top bar with a "☰" menu and view tabs,
   compact time bar docked at the bottom (speed `<select>`, date popover), panels as collapsible bottom sheets
   above it, one at a time. The shell publishes `--timebar-h` and moves the camera's projection centre above an
@@ -314,6 +345,7 @@ the "up" vector and causes gimbal lock at the poles).
   data-celestrak.yml   # cron every 4 h: GP active (+ filter groups) — 1 request per group
   data-satcat.yml      # daily cron: active SATCAT
   data-horizons.yml    # daily cron: vectors for each mission in catalog/missions.json
+  data-sun.yml         # daily cron: NOAA SWPC solar active regions (sunspots effect) — 1 request
   data-audit.yml       # Friday 21:00 UTC: maintenance audit → audit.json / audit.md on the data branch
   maintenance-watchdog.yml  # Saturday 14:00 UTC: alert issue if the agent did not report or its PR is stuck
   deploy.yml           # Vite build + Pages deployment (triggered on main and after data updates)
@@ -351,7 +383,9 @@ Rules:
 - Schema validation (zod) before publication: an invalid or near-empty file (< 50 % of the previous one) does
   **not** overwrite the previous version; the action fails and opens an issue.
 - Output: `data/earth/gp-active.json.gz`, `data/earth/satcat.json.gz`, `data/ephem/<mission>.bin`
-  (compact Float64: t_TDB, x, y, z, vx, vy, vz) + `data/manifest.json` (timestamp, source, object count, hash).
+  (compact Float64: t_TDB, x, y, z, vx, vy, vz), `data/sun/regions.json.gz` (NOAA SWPC
+  `services.swpc.noaa.gov/json/solar_regions.json`, ~30 days of region reports) + `data/manifest.json`
+  (timestamp, source, object count, hash).
   The client reads `manifest.json` first.
 - Published on an **orphan `data` branch** force-pushed (no history) to avoid bloating the repo, then copied into
   the Pages artifact at deploy time. Same origin → no CORS issue.

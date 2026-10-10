@@ -6,6 +6,7 @@
 import {
   DataTexture,
   LinearMipmapLinearFilter,
+  NoColorSpace,
   SRGBColorSpace,
   TextureLoader,
   type Texture,
@@ -26,6 +27,8 @@ export interface ProgressiveTextureOptions {
   readonly anisotropy: number;
   /** Placeholder colour (sRGB bytes) shown until the first level loads. */
   readonly placeholderRgb: readonly [number, number, number];
+  /** Data rather than colour (normal maps): no sRGB decoding. */
+  readonly linear?: boolean;
   readonly onUpdate: (texture: Texture) => void;
 }
 
@@ -48,15 +51,15 @@ export function configureKtx2(renderer: WebGLRenderer, baseUrl: string): void {
   ktx2Loader = new KTX2Loader().setTranscoderPath(`${baseUrl}basis/`).detectSupport(renderer);
 }
 
-export function placeholderTexture(rgb: readonly [number, number, number]): Texture {
+export function placeholderTexture(rgb: readonly [number, number, number], linear = false): Texture {
   const tex = new DataTexture(new Uint8Array([rgb[0], rgb[1], rgb[2], 255]), 1, 1);
-  tex.colorSpace = SRGBColorSpace;
+  tex.colorSpace = linear ? NoColorSpace : SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
 
 export function progressiveTexture(options: ProgressiveTextureOptions): ProgressiveTexture {
-  const placeholder = placeholderTexture(options.placeholderRgb);
+  const placeholder = placeholderTexture(options.placeholderRgb, options.linear);
   const levels = textureLevels(options.body, options.name);
   const fits = (k: number): boolean => k * 1024 <= options.maxTextureSize;
   let useKtx2 = ktx2Loader !== undefined && (levels?.ktx2.length ?? 0) > 0;
@@ -71,7 +74,7 @@ export function progressiveTexture(options: ProgressiveTextureOptions): Progress
   };
 
   const accept = (tex: Texture, k: number): void => {
-    tex.colorSpace = SRGBColorSpace;
+    tex.colorSpace = options.linear ? NoColorSpace : SRGBColorSpace;
     tex.anisotropy = options.anisotropy;
     tex.minFilter = LinearMipmapLinearFilter;
     const previous = current;

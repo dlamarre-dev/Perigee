@@ -24,17 +24,19 @@ const procedural = (k: number): TextureLevels => ({ webp: [k], ktx2: [] });
 export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, TextureLevels>>>> = {
   // Star background (all views): 4k at first, 8k (UASTC) once the scene has settled on large screens.
   sky: { stars: photo([2, 4], [4, 8]) },
-  earth: { day: photo([2, 4], [2, 4, 8]), night: photo([2, 4], [2, 4, 8]) },
-  moon: { color: photo([2, 4], [2, 4, 8]) },
-  mars: { color: photo([2, 4], [2, 4, 8]) },
-  mercury: { color: photo([2]) },
+  // Clouds: illustrative layer (immersive effect, high tier), no 8k: soft features, seen through the day map.
+  earth: { day: photo([2, 4], [2, 4, 8]), night: photo([2, 4], [2, 4, 8]), clouds: photo([2, 4]) },
+  // Normal maps (relief effect, high tier; linear UASTC): 4k at most, the size of the 16 px/deg elevation models.
+  moon: { color: photo([2, 4], [2, 4, 8]), normal: photo([2, 4]) },
+  mars: { color: photo([2, 4], [2, 4, 8]), normal: photo([2, 4]) },
+  mercury: { color: photo([2]), normal: photo([2]) },
   venus: { color: photo([2, 4]) },
   jupiter: { color: photo([2, 4]) },
   saturn: { color: photo([2, 4]) },
   uranus: { color: photo([2]) },
   neptune: { color: photo([2]) },
   pluto: { color: photo([2]) },
-  ceres: { color: photo([2]) },
+  ceres: { color: photo([2]), normal: photo([2]) },
   io: { color: photo([2]) },
   europa: { color: photo([2]) },
   ganymede: { color: photo([2]) },

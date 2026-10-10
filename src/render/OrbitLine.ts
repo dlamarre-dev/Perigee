@@ -13,9 +13,14 @@ import type { Vec3 } from '../astro/vec3';
 import { setLinePositions } from './lineBuffers';
 import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 
-/** Orbit trace of the selected object, in the inertial (TEME) group. */
+/**
+ * Orbit trace of the selected object, in the inertial (TEME) group: the far part (`line`, rebuilt now and then)
+ * and the stretch around the object (`near`, rebuilt every frame relative to it, so the line passes through the
+ * object at any zoom). Each is positioned by the caller at the point its vertices are relative to.
+ */
 export class OrbitLine {
   readonly line: Line<BufferGeometry, LineBasicMaterial>;
+  readonly near: Line<BufferGeometry, LineBasicMaterial>;
 
   constructor(color = 0x6cb4ff) {
     this.line = new Line(
@@ -31,20 +36,36 @@ export class OrbitLine {
     this.line.name = 'orbit';
     this.line.frustumCulled = false;
     this.line.visible = false;
+    this.near = new Line(new BufferGeometry(), this.line.material);
+    this.near.name = 'orbit';
+    this.near.frustumCulled = false;
+    this.near.visible = false;
   }
 
-  /** Packed xyz positions (km, TEME). Pass undefined to hide. */
+  /** Far part: packed xyz positions (km, TEME). Pass undefined to hide the whole trace. */
   set(positionsKm: Float32Array | undefined): void {
     if (!positionsKm) {
       this.line.visible = false;
+      this.near.visible = false;
       return;
     }
     setLinePositions(this.line, positionsKm);
     this.line.visible = true;
   }
 
+  /** Stretch around the object: packed xyz positions (km, TEME). */
+  setNear(positionsKm: Float32Array | undefined): void {
+    if (!positionsKm) {
+      this.near.visible = false;
+      return;
+    }
+    setLinePositions(this.near, positionsKm);
+    this.near.visible = this.line.visible;
+  }
+
   dispose(): void {
     this.line.geometry.dispose();
+    this.near.geometry.dispose();
     this.line.material.dispose();
   }
 }

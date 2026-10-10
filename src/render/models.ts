@@ -4,7 +4,10 @@
  * enough for it to cover a few pixels. Models are in metres; the scene is in kilometres.
  *
  * Their attitude is illustrative (see src/astro/attitude.ts). They use PBR materials, lit by the Sun (one
- * directional light) and a dim neutral environment for the specular reflections.
+ * directional light) and a dim neutral environment for the specular reflections. With the "modelLighting"
+ * immersive effect (high tier), the Sun is nearly the only light, as in space: the parts cast shadows on each
+ * other (a shadow map fitted to the model), the environment and ambient fills drop to a trace, and the model
+ * darkens in the shadow of the central body (eclipse, penumbra included).
  */
 import {
   Box3,
@@ -15,6 +18,7 @@ import {
   DoubleSide,
   ShaderChunk,
   Group,
+  PCFShadowMap,
   PMREMGenerator,
   type BufferGeometry,
   type Mesh,
@@ -25,6 +29,8 @@ import {
   type WebGLRenderer,
 } from 'three';
 import { quality } from './quality';
+import { effectEnabled } from './effects';
+import { sunlitFraction } from '../astro/eclipse';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
@@ -189,9 +195,14 @@ export async function loadBodyShape(
 }
 
 const environments = new WeakMap<Scene, true>();
+const ENVIRONMENT_INTENSITY = 0.35;
 
 /** Dim neutral environment for PBR reflections (once per scene). */
-export function ensureEnvironment(renderer: WebGLRenderer, scene: Scene, intensity = 0.35): void {
+export function ensureEnvironment(
+  renderer: WebGLRenderer,
+  scene: Scene,
+  intensity = ENVIRONMENT_INTENSITY,
+): void {
   if (environments.has(scene)) return;
   environments.set(scene, true);
   const pmrem = new PMREMGenerator(renderer);
@@ -217,6 +228,22 @@ function highAllowed(): boolean {
 
 /** Below this apparent size (CSS px) the marker stays; above it the model replaces it. */
 const MODEL_MIN_PX = 4;
+
+/** Sun light intensity; with the lighting effect, the fills that remain (a trace of reflected light). */
+const SUN_INTENSITY = 3;
+const AMBIENT_INTENSITY = 0.08;
+const SPACE_AMBIENT_INTENSITY = 0.015;
+const SPACE_ENVIRONMENT_INTENSITY = 0.06;
+/** Shadow map texels across the model; the light frustum is fitted to the model's size every frame. */
+const SHADOW_MAP_PX = 4096;
+
+/** Body whose shadow can eclipse the model (scene frame, camera-relative like the model). */
+export interface ModelOccluder {
+  readonly centreKm: Vec3;
+  readonly radiusKm: number;
+  /** Distance from the model to the Sun (km), for the Sun's apparent size. */
+  readonly sunDistanceKm: number;
+}
 
 export class SceneModel {
   private readonly group = new Group();
@@ -253,6 +280,13 @@ export class SceneModel {
     this.group.scale.setScalar(0.001);
     this.group.add(this.sun.target);
     scene.add(this.group, this.sun, this.ambient);
+    if (quality().immersiveEffects) {
+      // Only objects marked castShadow are drawn into the map, and only while the Sun light casts: the other
+      // views' meshes are unaffected and nothing is rendered when the effect is off.
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = PCFShadowMap;
+      this.sun.shadow.mapSize.set(SHADOW_MAP_PX, SHADOW_MAP_PX);
+    }
   }
 
   /**
@@ -265,6 +299,7 @@ export class SceneModel {
     q: Quat,
     sunDir: Vec3,
     focalPx: number,
+    occluder?: ModelOccluder,
   ): boolean {
     const distKm = renderKm ? Math.hypot(renderKm[0], renderKm[1], renderKm[2]) : Infinity;
     const sizePx = entry ? ((entry.sizeM / 1000) * focalPx) / Math.max(distKm, 1e-9) : 0;
@@ -286,6 +321,7 @@ export class SceneModel {
         this.object = obj;
         // Model-frame bounds (metres), before it joins the scaled group.
         this.bounds = new Box3().setFromObject(obj, true);
+        castShadows(obj);
         this.group.add(obj);
       });
     }
@@ -296,10 +332,55 @@ export class SceneModel {
     if (shown && renderKm) {
       this.group.position.set(renderKm[0], renderKm[1], renderKm[2]);
       this.group.quaternion.set(q.x, q.y, q.z, q.w);
-      // Directional light: from the Sun side, aimed at the model (target is a child of the group).
-      this.sun.position.set(renderKm[0] + sunDir[0], renderKm[1] + sunDir[1], renderKm[2] + sunDir[2]);
+      this.light(entry.sizeM / 1000, renderKm, sunDir, occluder);
     }
     return shown;
+  }
+
+  /** Places the Sun light (aimed at the model: its target is a child of the group) and sets the fills. */
+  private light(sizeKm: number, renderKm: Vec3, sunDir: Vec3, occluder: ModelOccluder | undefined): void {
+    const space = effectEnabled('modelLighting');
+    // From the Sun side, far enough for the shadow frustum to hold the whole model in front of the light.
+    const backKm = space ? 2 * sizeKm : 1;
+    this.sun.position.set(
+      renderKm[0] + sunDir[0] * backKm,
+      renderKm[1] + sunDir[1] * backKm,
+      renderKm[2] + sunDir[2] * backKm,
+    );
+    const lit =
+      space && occluder
+        ? sunlitFraction(
+            [
+              occluder.centreKm[0] - renderKm[0],
+              occluder.centreKm[1] - renderKm[1],
+              occluder.centreKm[2] - renderKm[2],
+            ],
+            occluder.radiusKm,
+            sunDir,
+            occluder.sunDistanceKm,
+          )
+        : 1;
+    this.sun.intensity = SUN_INTENSITY * lit;
+    this.ambient.intensity = space ? SPACE_AMBIENT_INTENSITY : AMBIENT_INTENSITY;
+    this.scene.environmentIntensity = space ? SPACE_ENVIRONMENT_INTENSITY : ENVIRONMENT_INTENSITY;
+    const cast = space && lit > 0;
+    // Switching castShadow changes the lights' state: three recompiles the model's materials once.
+    if (this.sun.castShadow !== cast) this.sun.castShadow = cast;
+    if (!cast) return;
+    const shadow = this.sun.shadow;
+    const cam = shadow.camera;
+    // sizeM is the largest dimension: a half-width of 0.75 of it covers the model whatever its orientation.
+    const half = 0.75 * sizeKm;
+    if (cam.right !== half) {
+      cam.left = cam.bottom = -half;
+      cam.right = cam.top = half;
+      cam.near = 0.5 * sizeKm;
+      cam.far = 4 * sizeKm;
+      cam.updateProjectionMatrix();
+      // Offsets against shadow acne on the thin, double-sided parts (km: scene units), about two texels.
+      shadow.normalBias = (4 * half) / SHADOW_MAP_PX;
+      shadow.bias = -0.0005;
+    }
   }
 
   /**
@@ -328,6 +409,7 @@ export class SceneModel {
         return;
       }
       this.high = obj;
+      castShadows(obj);
       if (this.object) this.object.visible = false;
       this.group.add(obj);
     });
@@ -346,5 +428,16 @@ export class SceneModel {
     this.disposed = true;
     this.dropHigh();
     this.scene.remove(this.group, this.sun, this.ambient);
+    this.sun.shadow.dispose();
   }
+}
+
+/** Every part casts and receives shadows (used only while the Sun light casts, see SceneModel.light). */
+function castShadows(obj: Object3D): void {
+  obj.traverse((o) => {
+    const mesh = o as Mesh;
+    if (!mesh.isMesh) return;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+  });
 }

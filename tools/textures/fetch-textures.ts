@@ -2,11 +2,13 @@
  * Offline body texture pre-processing (run manually with `npm run textures [body…]`, never in CI).
  *
  * Downloads public-domain sources into tools/textures/src/ (git-ignored) and writes resampled
- * equirectangular WebP derivatives into public/textures/<body>/.
+ * equirectangular WebP derivatives into public/textures/<body>/. `npm run textures earth:clouds` processes one
+ * map of a body only (the others are left as they are: re-encode only when a source changes).
  *
  * Sources:
  * - Earth day: Blue Marble Next Generation, August 2004, topography + bathymetry (NASA Earth Observatory 73776)
  * - Earth night: Black Marble 2016, 3 km (NASA Earth Observatory 144898)
+ * - Earth clouds (illustrative cloud layer): Blue Marble clouds, 2002 composite (NASA Earth Observatory 57747)
  * - Moon: CGI Moon Kit, LROC WAC colour mosaic with polar fill (NASA SVS 4720)
  * - Mars: Viking MDIM2.1 colourised global mosaic, 1 km/px (USGS Astrogeology)
  * - Mercury: MESSENGER MDIS global mosaic (NASA Photojournal PIA16298)
@@ -16,6 +18,9 @@
  * - Saturn rings: Voyager 2 ISS I/F profile and PPS occultation optical depth (PDS Rings Node)
  * - Venus cloud tops, Saturn, Uranus, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
  * - Eris, Haumea, Makemake: procedural (see procedural.ts)
+ * - Relief normal maps (see normals.ts): Moon LOLA (CGI Moon Kit `ldem_16`), Mars MOLA MEGDR 16 px/deg (PDS
+ *   Geosciences Node), Mercury MESSENGER global DEM 665 m (USGS Astrogeology), Ceres Dawn HAMO DTM 60 px/deg (DLR,
+ *   USGS Astrogeology)
  *
  * All outputs follow one convention: equirectangular, north up, planetocentric east longitude increasing to the
  * right, prime meridian at the horizontal centre.
@@ -28,6 +33,8 @@ import sharp, { type Sharp } from 'sharp';
 import { BASE_MAX_LEVEL_K, textureLevels, type TextureLevels } from '../../src/render/textureLevels';
 import { encodeKtx2 } from './basisu';
 import { decodeExr } from './exr';
+import { normalMap, resampleHeights, rollToPrimeMeridian } from './normals';
+import { readTiffGrid } from './tiff';
 import { bandedMap, PROCEDURAL } from './procedural';
 import { saturnRings, uranusRings, type RingProfile } from './rings';
 
@@ -45,6 +52,23 @@ interface TextureSource {
   readonly exposure?: number;
 }
 
+/** Elevation model turned into a normal map (linear data, UASTC KTX2). */
+interface HeightSource {
+  readonly name: 'normal';
+  readonly heights: string;
+  /** Raw big-endian int16 grid (PDS .img) instead of an image file. */
+  readonly rawInt16?: { readonly width: number; readonly height: number };
+  /** Uncompressed integer GeoTIFF read directly (sharp clips signed samples), with its no-data value. */
+  readonly tiff?: { readonly noData?: number };
+  /** Metres per stored unit. */
+  readonly heightScaleM: number;
+  readonly radiusKm: number;
+  readonly exaggeration: number;
+  readonly centerLonDeg?: number;
+  /** Heights above a sphere on an oblate body: drop each row's mean (the flattening, not relief). */
+  readonly removeRowMean?: boolean;
+}
+
 interface ProceduralSource {
   readonly name: string;
   readonly procedural: string;
@@ -55,7 +79,7 @@ interface RingSource {
   readonly rings: () => Promise<RingProfile>;
 }
 
-type Source = TextureSource | ProceduralSource | RingSource;
+type Source = TextureSource | ProceduralSource | RingSource | HeightSource;
 
 const PDS_RINGS = 'https://pds-rings.seti.org/holdings/volumes/VG_28xx';
 const SSS_COMMONS = 'https://upload.wikimedia.org/wikipedia/commons';
@@ -73,12 +97,26 @@ const BODIES: Record<string, readonly Source[]> = {
       url: 'https://eoimages.gsfc.nasa.gov/images/imagerecords/144000/144898/BlackMarble_2016_3km.jpg',
       quality: 80,
     },
+    {
+      // Greyscale cloud cover (white: thick cloud), used as opacity by the cloud layer (src/render/clouds.ts).
+      name: 'clouds',
+      url: 'https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57747/cloud_combined_8192.tif',
+      quality: 85,
+    },
   ],
   moon: [
     {
       name: 'color',
       url: 'https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_poles_8k.tif',
       quality: 85,
+    },
+    {
+      // LOLA heights in km relative to 1737.4 km, 16 px/deg, same layout as the colour map.
+      name: 'normal',
+      heights: 'https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/ldem_16.tif',
+      heightScaleM: 1000,
+      radiusKm: 1737.4,
+      exaggeration: 1.5,
     },
   ],
   mars: [
@@ -89,8 +127,32 @@ const BODIES: Record<string, readonly Source[]> = {
       url: 'https://astrogeology.usgs.gov/ckan/dataset/7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/5ea881c6-01b3-41fa-a7af-42d2131b54f1/download/Mars_Viking_MDIM21_ClrMosaic_1km.jpg',
       quality: 85,
     },
+    {
+      // MOLA MEGDR topography, 16 px/deg, metres above the areoid, starting at 0°E (label megt90n000eb.lbl).
+      name: 'normal',
+      heights:
+        'https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg016/megt90n000eb.img',
+      rawInt16: { width: 5760, height: 2880 },
+      heightScaleM: 1,
+      radiusKm: 3389.5,
+      exaggeration: 1,
+      centerLonDeg: 180,
+    },
   ],
-  mercury: [{ name: 'color', url: `${PHOTOJOURNAL}/pia16/pia16298/PIA16298.jpg`, quality: 85 }],
+  mercury: [
+    { name: 'color', url: `${PHOTOJOURNAL}/pia16/pia16298/PIA16298.jpg`, quality: 85 },
+    {
+      name: 'normal',
+      // int16, GDAL SCALE 0.5 m, no data −32768. Laid out 0–360°E (as the Ceres model below), whatever the
+      // GeoTIFF tie point says: its slopes match the shading of the colour mosaic only when rolled by 180°.
+      heights: 'https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif',
+      tiff: { noData: -32768 },
+      heightScaleM: 0.5,
+      centerLonDeg: 180,
+      radiusKm: 2439.4,
+      exaggeration: 1.5,
+    },
+  ],
   // Solar System Scope (INOVE), CC BY 4.0, via the Wikimedia Commons mirror (same licence): artist's impressions
   // based on NASA imagery, used where no public-domain global map exists.
   venus: [
@@ -136,6 +198,19 @@ const BODIES: Record<string, readonly Source[]> = {
       url: 'https://planetarymaps.usgs.gov/mosaic/Ceres_Dawn_FC_DLR_global_20ppd_Oct2015.tif',
       quality: 85,
       centerLonDeg: 180,
+    },
+    {
+      name: 'normal',
+      // int16 metres above a 470 km sphere (GDAL OFFSET 470000), no data −32768. Laid out 0–360°E despite its
+      // GeoTIFF tie point (−180°): rolled by 180° its slopes match the shading of the colour mosaic, whose
+      // Occator crater sits at 239°E as it should.
+      heights: 'https://planetarymaps.usgs.gov/mosaic/Ceres_Dawn_FC_HAMO_DTM_DLR_Global_60ppd_Oct2016.tif',
+      tiff: { noData: -32768 },
+      heightScaleM: 1,
+      radiusKm: 470,
+      exaggeration: 1,
+      centerLonDeg: 180,
+      removeRowMean: true,
     },
   ],
   // Moons (solar-system view): USGS Astrogeology global mosaics, NASA/JPL products hosted by USGS, and
@@ -377,10 +452,97 @@ async function prepared(file: string, source: TextureSource): Promise<Sharp> {
   return sharp(out, { raw: { width, height, channels: ch }, limitInputPixels: false });
 }
 
+/** Height grid in metres, prime meridian at the centre, at most `maxWidth` wide (pre-shrunk by sharp). */
+async function readHeights(
+  body: string,
+  source: HeightSource,
+  maxWidth: number,
+): Promise<{ data: Float32Array; width: number; height: number }> {
+  const file = await download(body, { name: 'heights', url: source.heights });
+  let data: Float32Array;
+  let width: number;
+  let height: number;
+  if (source.tiff) {
+    width = maxWidth;
+    height = width / 2;
+    data = await readTiffGrid(file, { width, height, scale: source.heightScaleM, ...source.tiff });
+  } else if (source.rawInt16) {
+    ({ width, height } = source.rawInt16);
+    const bytes = await readFile(file);
+    if (bytes.byteLength !== width * height * 2) throw new Error(`Unexpected size for ${file}`);
+    data = new Float32Array(width * height);
+    for (let k = 0; k < data.length; k++) data[k] = bytes.readInt16BE(k * 2) * source.heightScaleM;
+  } else {
+    const meta = await sharp(file, { limitInputPixels: false }).metadata();
+    width = Math.min(meta.width ?? 0, maxWidth);
+    height = width / 2;
+    const raw = await sharp(file, { limitInputPixels: false })
+      .extractChannel(0)
+      .resize(width, height, { fit: 'fill', kernel: 'mitchell' })
+      .raw({ depth: 'float' })
+      .toBuffer({ resolveWithObject: true });
+    const channels = raw.info.channels;
+    const f = new Float32Array(raw.data.buffer, raw.data.byteOffset, raw.data.byteLength / 4);
+    data = new Float32Array(width * height);
+    for (let k = 0; k < data.length; k++) data[k] = (f[k * channels] ?? 0) * source.heightScaleM;
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  for (const v of data) {
+    min = Math.min(min, v);
+    max = Math.max(max, v);
+  }
+  console.log(`heights ${body}: ${width}×${height}, ${min.toFixed(0)} to ${max.toFixed(0)} m`);
+  if (source.removeRowMean) {
+    for (let j = 0; j < height; j++) {
+      let mean = 0;
+      for (let i = 0; i < width; i++) mean += data[j * width + i] ?? 0;
+      mean /= width;
+      for (let i = 0; i < width; i++) data[j * width + i] = (data[j * width + i] ?? 0) - mean;
+    }
+  }
+  return { data: rollToPrimeMeridian(data, width, height, source.centerLonDeg ?? 0), width, height };
+}
+
+async function processHeights(body: string, source: HeightSource, outDir: string): Promise<void> {
+  const { webp, ktx2 } = levels(body, source.name);
+  const largest = Math.max(...webp, ...ktx2) * 1024;
+  const grid = await readHeights(body, source, 2 * largest);
+  const map = (width: number): Sharp => {
+    const h = width / 2;
+    const heights = resampleHeights(grid.data, grid.width, grid.height, width, h);
+    const rgb = normalMap(heights, width, h, source.radiusKm * 1000, source.exaggeration);
+    return sharp(rgb, { raw: { width, height: h, channels: 3 } });
+  };
+  for (const k of ktx2) {
+    const width = k * 1024;
+    const out = join(outDir, `${source.name}-${levelName(width)}.ktx2`);
+    await encodeKtx2(await map(width).png().toBuffer(), out, {
+      workDir: join(here, 'src', 'tmp'),
+      cacheDir: join(here, 'src', 'bin'),
+      userAgent: USER_AGENT,
+      // Normals are data: no sRGB curve, and UASTC (ETC1S blocks show as facets in the shading).
+      codec: 'uastc',
+      srgb: false,
+    });
+    console.log(`write   ${out}`);
+  }
+  for (const k of webp) {
+    const width = k * 1024;
+    const out = join(outDir, `${source.name}-${levelName(width)}.webp`);
+    await map(width).webp({ quality: 92, effort: 6 }).toFile(out);
+    console.log(`write   ${out}`);
+  }
+}
+
 async function processBody(body: string, sources: readonly Source[]): Promise<void> {
   const outDir = join(here, '..', '..', 'public', 'textures', body);
   await mkdir(outDir, { recursive: true });
   for (const source of sources) {
+    if ('heights' in source) {
+      await processHeights(body, source, outDir);
+      continue;
+    }
     if ('rings' in source) {
       const profile = await source.rings();
       const out = join(outDir, 'rings.png');
@@ -425,10 +587,13 @@ async function processBody(body: string, sources: readonly Source[]): Promise<vo
 async function main(): Promise<void> {
   const requested = process.argv.slice(2);
   const bodies = requested.length > 0 ? requested : Object.keys(BODIES);
-  for (const body of bodies) {
+  for (const request of bodies) {
+    const [body = '', only] = request.split(':');
     const sources = BODIES[body];
     if (!sources) throw new Error(`Unknown body "${body}" (known: ${Object.keys(BODIES).join(', ')})`);
-    await processBody(body, sources);
+    const selected = only ? sources.filter((s) => s.name === only) : sources;
+    if (selected.length === 0) throw new Error(`Unknown map "${only}" for ${body}`);
+    await processBody(body, selected);
   }
 }
 

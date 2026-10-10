@@ -60,6 +60,7 @@ import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
+import { attachRelief, reliefStrength } from '../render/relief';
 import { BodyPanel } from '../ui/BodyPanel';
 import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { countryName } from '../ui/countries';
@@ -229,10 +230,12 @@ export class PlanetaryView implements View {
       dayMap: this.surface.initial,
       nightMap: black,
       ambient: config.ambient,
+      relief: reliefStrength(config.id),
       ...(config.atmosphere
         ? { atmosphereColor: config.atmosphere.color, atmosphereStrength: config.atmosphere.strength }
         : {}),
     });
+    attachRelief(this.body, config.id, renderer, host.baseUrl);
     this.siteBodyKm = this.sites.map((site) => this.siteSurfaceKm(site.latDeg, site.lonDeg));
     this.earth = config.earthFromBodyKm ? createEarthMesh(renderer, host.baseUrl) : undefined;
     renderer.scene.add(this.body.mesh, this.missionGroup);
@@ -545,6 +548,14 @@ export class PlanetaryView implements View {
       q,
       this.sunScene,
       focalPx,
+      // Orbiters only: a site may sit below the mean radius (Jezero), and the ground shows its night anyway.
+      scene && sel?.kind !== 'site'
+        ? {
+            centreKm: scale(originKm, -1),
+            radiusKm: this.config.radiusKm,
+            sunDistanceKm: length(sub(this.sunSceneKm, scene)),
+          }
+        : undefined,
     );
     if (shown && scene && entry) {
       hideMarker();

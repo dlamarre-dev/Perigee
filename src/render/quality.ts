@@ -43,6 +43,8 @@ export interface QualitySettings {
   readonly idleFps: number | undefined;
   /** Frame rate of the spinning model preview. */
   readonly previewFps: number;
+  /** Immersive effects (relief, clouds, moving gas, sunspots; src/render/effects.ts), each switchable. */
+  readonly immersiveEffects: boolean;
 }
 
 const SOFTWARE_GPU = /swiftshader|llvmpipe|softpipe|software|basic render/i;
@@ -86,6 +88,7 @@ export function settingsFor(tier: QualityTier): QualitySettings {
         maxFps: undefined,
         idleFps: undefined,
         previewFps: 30,
+        immersiveEffects: true,
       };
     case 'medium':
       return {
@@ -100,6 +103,7 @@ export function settingsFor(tier: QualityTier): QualitySettings {
         maxFps: 60,
         idleFps: undefined,
         previewFps: 30,
+        immersiveEffects: false,
       };
     case 'low':
       return {
@@ -114,6 +118,7 @@ export function settingsFor(tier: QualityTier): QualitySettings {
         maxFps: 60,
         idleFps: 30,
         previewFps: 15,
+        immersiveEffects: false,
       };
   }
 }

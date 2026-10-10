@@ -74,7 +74,13 @@ export const SatcatListSchema = z.array(SatcatRecordSchema);
 export const GroupsSchema = z.record(z.string(), z.array(z.number().int().positive()));
 export type Groups = z.infer<typeof GroupsSchema>;
 
-export const DatasetKeySchema = z.enum(['earth.gp', 'earth.satcat', 'earth.groups', 'mars.rovers']);
+export const DatasetKeySchema = z.enum([
+  'earth.gp',
+  'earth.satcat',
+  'earth.groups',
+  'mars.rovers',
+  'sun.regions',
+]);
 export type DatasetKey = z.infer<typeof DatasetKeySchema>;
 
 export const DatasetEntrySchema = z.object({
@@ -337,6 +343,24 @@ export const RoverPositionsSchema = z.record(
   }),
 );
 export type RoverPositions = z.infer<typeof RoverPositionsSchema>;
+
+/**
+ * data/sun/regions.json.gz: NOAA SWPC solar active regions, one record per region and observation day (the last
+ * ~30 days). Positions are as of the end of `date` (00:00 UT the next day): heliographic latitude and Carrington
+ * longitude, both in degrees as published (whole degrees). Area in millionths of the solar hemisphere; null for
+ * regions without spots (plage).
+ */
+export const SunRegionsSchema = z.array(
+  z.object({
+    region: z.number().int().positive(),
+    date: isoDate,
+    latDeg: z.number().min(-90).max(90),
+    carringtonLonDeg: z.number().min(0).max(360),
+    areaMh: z.number().nonnegative().nullable(),
+    spots: z.number().int().nonnegative().nullable(),
+  }),
+);
+export type SunRegions = z.infer<typeof SunRegionsSchema>;
 
 /** catalog/launch-sites.json — orbital spaceports, geodetic coordinates, SATCAT LAUNCH_SITE codes. */
 export const LaunchSitesSchema = z.object({

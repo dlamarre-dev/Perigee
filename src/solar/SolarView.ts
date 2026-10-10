@@ -60,21 +60,32 @@ import {
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
-import { ephemerisKey } from '../app/updates';
+import { datasetKey, ephemerisKey } from '../app/updates';
 import { assetUrl } from '../render/assetUrl';
-import { loadEphemeris, loadManifest } from '../data/loader';
+import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   MissionsCatalogSchema,
   MoonsCatalogSchema,
   type EphemerisEntry,
   type Mission,
+  SunRegionsSchema,
   type Moon,
   type Manifest,
+  type SunRegions,
 } from '../data/schemas';
+import {
+  CARRINGTON_RATE_DEG_PER_DAY,
+  carringtonRotation,
+  heliographicDirection,
+  subEarthCarringtonDeg,
+  sunspotGroups,
+} from '../astro/sunspots';
+import { effectEnabled } from '../render/effects';
 import { moonState } from '../astro/moons';
 import { EphemerisTable, hermite, type StateVector } from '../astro/hermite';
 import type { MessageKey } from '../i18n';
-import { BodyMesh, bodySphere } from '../render/BodyMesh';
+import { BodyMesh, bodySphere, type GasProfile } from '../render/BodyMesh';
+import { attachRelief, reliefStrength } from '../render/relief';
 import { createEarthMesh } from '../render/earthMesh';
 import { LabelLayer, LabelPriority, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
@@ -115,6 +126,14 @@ const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   nix: 'texture.uniform',
   hydra: 'texture.uniform',
 };
+/** Planets whose cloud tops drift (immersive effect `gasMotion`), with their zonal wind profile. */
+const GAS_FLOW: Readonly<Partial<Record<string, GasProfile>>> = {
+  venus: 'venus',
+  jupiter: 'jupiter',
+  saturn: 'saturn',
+  uranus: 'iceGiant',
+  neptune: 'iceGiant',
+};
 /** Hermite sub-samples per ephemeris interval for trajectory lines (1 d steps → 3 h vertices). */
 const TRAJECTORY_SUBSTEPS = 8;
 /** Near-line vertices on each side of the current time (geometric spacing, see nearSampleTimes). */
@@ -136,6 +155,7 @@ const LIGHT_SPEED_KM_S = 299_792.458;
 const TEXTURE_LOAD_RADII = 3000;
 
 type Selection =
+  | { readonly kind: 'sun' }
   | { readonly kind: 'planet'; readonly planet: PlanetInfo }
   | { readonly kind: 'moon'; readonly moon: Moon }
   | { readonly kind: 'mission'; readonly mission: Mission }
@@ -182,12 +202,14 @@ const HORIZONS_PAGE = 'https://ssd.jpl.nasa.gov/horizons/';
 /** Selection key used by the panel and the URL. */
 function selectionKey(sel: Selection): string | undefined {
   if (!sel) return undefined;
+  if (sel.kind === 'sun') return 'sun';
   if (sel.kind === 'planet') return `planet:${sel.planet.id}`;
   if (sel.kind === 'moon') return `moon:${sel.moon.id}`;
   return `mission:${sel.mission.id}`;
 }
 
 function selectionId(sel: NonNullable<Selection>): string {
+  if (sel.kind === 'sun') return 'sun';
   return sel.kind === 'planet' ? sel.planet.id : sel.kind === 'moon' ? sel.moon.id : sel.mission.id;
 }
 
@@ -278,7 +300,11 @@ function tdbJdToDate(tdbJd: number): Date {
 
 class SolarView implements View {
   readonly id = 'solar' as const;
-  readonly limits = { minDistanceKm: SUN_RADIUS_KM * 1.5, maxDistanceKm: 400 * AU_KM };
+  readonly limits = {
+    minDistanceKm: SUN_RADIUS_KM * 1.5,
+    maxDistanceKm: 400 * AU_KM,
+    surfaceRadiusKm: SUN_RADIUS_KM,
+  };
   readonly bodyRadiusKm = SUN_RADIUS_KM;
   /** Above the ecliptic, looking at the inner solar system and Jupiter. */
   readonly homeDirectionBody = latLonToUnit(55 * DEG_TO_RAD, -90 * DEG_TO_RAD);
@@ -319,6 +345,8 @@ class SolarView implements View {
   private hiddenMissions: ReadonlySet<string> = new Set();
   /** NASA 3D model of the selected spacecraft, drawn once it covers a few pixels. */
   private readonly sceneModel: SceneModel;
+  /** NOAA SWPC active regions (sunspots effect), once loaded. */
+  private sunRegions: SunRegions | undefined;
 
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
@@ -344,6 +372,8 @@ class SolarView implements View {
               dayMap: placeholderTexture(hexToRgb(info.color)),
               nightMap: black,
               ambient: 0.03,
+              gasFlow: GAS_FLOW[info.id],
+              relief: reliefStrength(info.id),
             });
       renderer.scene.add(mesh.mesh);
       const planet: PlanetObject = {
@@ -394,6 +424,7 @@ class SolarView implements View {
         dayMap: placeholderTexture(hexToRgb(moon.color)),
         nightMap: black,
         ambient: 0.03,
+        relief: reliefStrength(moon.id),
       });
       mesh.mesh.visible = false;
       renderer.scene.add(mesh.mesh);
@@ -481,6 +512,7 @@ class SolarView implements View {
               dayMap: placeholderTexture(hexToRgb(color)),
               nightMap: black,
               ambient: 0.03,
+              relief: reliefStrength(mission.id),
             })
           : undefined;
       if (mesh) renderer.scene.add(mesh.mesh);
@@ -522,6 +554,7 @@ class SolarView implements View {
       this.logScale,
       {
         onSelectPlanet: (p) => this.select({ kind: 'planet', planet: p }, { focus: true, frame: true }),
+        onSelectSun: () => this.select({ kind: 'sun' }, { focus: true, frame: true }),
         onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true, frame: true }),
         onSelectMoon: (m) => this.select({ kind: 'moon', moon: m }, { focus: true, frame: true }),
         onToggleLogScale: (on) => {
@@ -588,6 +621,7 @@ class SolarView implements View {
     this.sceneQ = f.sceneFromInertial;
     const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
 
+    this.updateSunspots(date);
     for (const p of this.planets) {
       p.eqj = heliocentricKm(p.info.body, date);
       p.scene = quatRotate(this.sceneQ, map(p.eqj));
@@ -653,6 +687,15 @@ class SolarView implements View {
           distanceKm: Math.max(aKm * 2.2, m.moon.radiusKm * 12),
         });
       }
+      this.pendingFrame = false;
+    }
+    if (this.pendingFrame && this.selection?.kind === 'sun') {
+      // From the Earth's side (the hemisphere NOAA observes), about ten solar radii away.
+      this.host.frameObject(this.earthScene(), {
+        tiltRad: 8 * DEG_TO_RAD,
+        targetFraction: 0,
+        distanceKm: SUN_RADIUS_KM * 10,
+      });
       this.pendingFrame = false;
     }
     if (this.pendingFrame) {
@@ -745,7 +788,9 @@ class SolarView implements View {
     }
     const modelShown = this.placeModel(rel);
     const selected = this.scenePositionOf(this.selection);
-    this.ring.set(selected && !modelShown ? rel(selected) : undefined);
+    // No ring for the Sun: its disc shows where it is, and the ring would sit at its centre.
+    const ringed = selected && !modelShown && this.selection?.kind !== 'sun';
+    this.ring.set(ringed ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
     this.moonMarkers.commit();
@@ -819,6 +864,14 @@ class SolarView implements View {
     for (const p of this.planets) consider({ kind: 'planet', planet: p.info }, p.scene);
     for (const t of this.probes) consider({ kind: 'mission', mission: t.mission }, t.scene);
     for (const m of this.moons) if (m.shown) consider({ kind: 'moon', moon: m.moon }, m.scene);
+    // The Sun: anywhere on its disc (objects in front of it are picked first).
+    if (!best) {
+      const c = this.project([0, 0, 0]);
+      const distanceKm = Math.max(1, length(this.originKm));
+      const discPx = (SUN_RADIUS_KM / distanceKm) * this.focalPx();
+      if (c && Math.hypot(c.x - xCss, c.y - yCss) <= Math.max(discPx, pickRadiusPx(PICK_RADIUS_PX)))
+        best = { sel: { kind: 'sun' }, d: 0, depth: distanceKm };
+    }
     if (best) this.select(best.sel, { follow: double });
   }
 
@@ -828,6 +881,7 @@ class SolarView implements View {
 
   writeUrl(p: URLSearchParams): void {
     const sel = this.selection;
+    if (sel?.kind === 'sun') p.set('sel', 'sun');
     if (sel?.kind === 'planet') p.set('sel', sel.planet.id);
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
@@ -901,6 +955,7 @@ class SolarView implements View {
   private loadTexture(id: string, color: string, mesh: BodyMesh): void {
     if (!textureLevels(id, 'color')) return;
     const renderer = this.host.renderer;
+    attachRelief(mesh, id, renderer, this.host.baseUrl);
     loadProgressiveTexture({
       baseUrl: this.host.baseUrl,
       body: id,
@@ -912,6 +967,39 @@ class SolarView implements View {
         if (!this.disposed) mesh.setDayMap(tex);
       },
     });
+  }
+
+  /** Sunspots are an enhancement: without the dataset the Sun is drawn without them. */
+  private async loadSunRegions(manifest: Manifest): Promise<void> {
+    const regions = await loadOptionalDataset(this.host.baseUrl, manifest, 'sun.regions', SunRegionsSchema);
+    if (!regions || this.disposed) return;
+    this.loadedData.set(datasetKey('sun.regions'), regions.entry.sha256);
+    this.sunRegions = regions.data;
+  }
+
+  /** Active regions at the date, placed on the Sun in the scene frame (sunspots effect). */
+  private updateSunspots(date: Date): void {
+    const regions = this.sunRegions;
+    if (!regions || !effectEnabled('sunspots')) {
+      this.sun.setSpots([], [0, 0, 1]);
+      this.panel.setSunspotReport(undefined);
+      return;
+    }
+    const q = quatMultiply(this.sceneQ, bodyOrientationEqj(Astronomy.Body.Sun, date));
+    const groups = sunspotGroups(regions, date);
+    this.sun.setSpots(
+      groups.map((g) => ({
+        dirScene: quatRotate(q, heliographicDirection(g.latRad, g.lonRad)),
+        radiusRad: g.radiusRad,
+        spots: g.spots,
+        strength: g.strength,
+        region: g.region,
+      })),
+      quatRotate(q, [0, 0, 1]),
+    );
+    let latest: string | undefined;
+    for (const g of groups) if (!latest || g.reportDate > latest) latest = g.reportDate;
+    this.panel.setSunspotReport(latest);
   }
 
   private makeTrack(table: ConstructorParameters<typeof EphemerisTrack>[0]): EphemerisTrack {
@@ -927,6 +1015,7 @@ class SolarView implements View {
     try {
       const manifest = await loadManifest(host.baseUrl);
       this.moonEphemerides = manifest.moons;
+      void this.loadSunRegions(manifest);
       let oldest: Date | undefined;
       // Each ephemeris on its own: one missing or corrupt file must not hide the others.
       let failed = 0;
@@ -1100,10 +1189,16 @@ class SolarView implements View {
     t.near.visible = t.line.visible && table !== undefined && i >= 0 && now !== undefined;
     if (!t.near.visible || !table || !now) return;
     // A free-flying probe moves along its own curve: the line (relative to where it was built) is rebuilt after
-    // NEAR_REBUILD_FRACTION of the interval (43 s for a one-day step; every frame at high rates), the probe then
-    // being at most metres from it. Following a planet, it is rebuilt every frame.
+    // NEAR_REBUILD_FRACTION of the interval (43 s for a one-day step; every frame at high rates). The selected
+    // probe's line is rebuilt every frame, like one following a planet: the camera can be metres from it, and a
+    // line built earlier drifted a few pixels off it (Float32 vertices hundreds of km from their anchor) before
+    // snapping back.
     const span = table.time(i + 1) - table.time(i);
-    if (!planet && Math.abs(this.tdbJd - t.nearBuiltJd) < span * NEAR_REBUILD_FRACTION) return;
+    const selected = this.selection?.kind === 'mission' && this.selection.mission.id === t.mission.id;
+    const fresh = selected
+      ? this.tdbJd === t.nearBuiltJd
+      : Math.abs(this.tdbJd - t.nearBuiltJd) < span * NEAR_REBUILD_FRACTION;
+    if (!planet && fresh) return;
     const centre = map(now.posKm);
     t.nearBuiltJd = this.tdbJd;
     t.nearAnchor = planet ? undefined : centre;
@@ -1349,6 +1444,10 @@ class SolarView implements View {
   private restoreFromUrl(p: URLSearchParams): void {
     const sel = p.get('sel');
     if (!sel) return;
+    if (sel === 'sun') {
+      this.select({ kind: 'sun' }, { frame: true });
+      return;
+    }
     const planet = PLANETS.find((x) => x.id === sel);
     if (planet) {
       this.select({ kind: 'planet', planet }, { frame: true });
@@ -1378,6 +1477,7 @@ class SolarView implements View {
   }
 
   private scenePositionOf(sel: Selection): Vec3 | undefined {
+    if (sel?.kind === 'sun') return [0, 0, 0];
     if (sel?.kind === 'planet') return this.planets.find((p) => p.info.id === sel.planet.id)?.scene;
     if (sel?.kind === 'mission') return this.probes.find((t) => t.mission.id === sel.mission.id)?.scene;
     if (sel?.kind === 'moon') {
@@ -1402,13 +1502,15 @@ class SolarView implements View {
     this.pendingFrame = false;
     // Planets, moons and natural objects (dwarf planets) are framed by their size; spacecraft by their model.
     const radiusKm =
-      sel.kind === 'planet'
-        ? sel.planet.radiusKm
-        : sel.kind === 'moon'
-          ? sel.moon.radiusKm
-          : sel.mission.objectType === 'natural'
-            ? sel.mission.radiusKm
-            : undefined;
+      sel.kind === 'sun'
+        ? SUN_RADIUS_KM
+        : sel.kind === 'planet'
+          ? sel.planet.radiusKm
+          : sel.kind === 'moon'
+            ? sel.moon.radiusKm
+            : sel.mission.objectType === 'natural'
+              ? sel.mission.radiusKm
+              : undefined;
     const body = radiusKm !== undefined && !this.logScale ? bodyFollow(radiusKm) : undefined;
     const modelKm =
       sel.kind === 'mission' && !this.logScale
@@ -1416,9 +1518,10 @@ class SolarView implements View {
         : undefined;
     const distanceKm = this.logScale ? 0.08 * AU_KM : (body?.distanceKm ?? modelKm ?? 3e6);
     // Seen from the day side, 45° from the Sun direction towards the scene north (the Sun is at the origin).
+    // The Sun is seen from the Earth's side, where its spots were observed.
     const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
-    const sunward = normalize(scale(pos, -1));
-    const viewFrom = add(scale(sunward, Math.SQRT1_2), [0, 0, Math.SQRT1_2]);
+    const sunward = sel.kind === 'sun' ? normalize(this.earthScene()) : normalize(scale(pos, -1));
+    const viewFrom = sel.kind === 'sun' ? sunward : add(scale(sunward, Math.SQRT1_2), [0, 0, Math.SQRT1_2]);
     this.detail.following = this.host.follow.start(
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
@@ -1430,6 +1533,11 @@ class SolarView implements View {
           : modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '')),
       },
     );
+  }
+
+  /** The Earth in the scene frame (true scale, for viewing directions). */
+  private earthScene(): Vec3 {
+    return quatRotate(this.sceneQ, this.earthEqj());
   }
 
   private earthEqj(): Vec3 {
@@ -1458,16 +1566,80 @@ class SolarView implements View {
     const sel = this.selection;
     if (!sel) return;
     const content =
-      sel.kind === 'planet'
-        ? this.planetDetail(sel.planet)
-        : sel.kind === 'moon'
-          ? this.moonDetail(sel.moon)
-          : this.missionDetail(sel.mission);
+      sel.kind === 'sun'
+        ? this.sunDetail()
+        : sel.kind === 'planet'
+          ? this.planetDetail(sel.planet)
+          : sel.kind === 'moon'
+            ? this.moonDetail(sel.moon)
+            : this.missionDetail(sel.mission);
     this.detail.show(content, focus);
   }
 
   private scaleBadge(): { text: string; state: BadgeState } | undefined {
     return this.logScale ? { text: this.host.i18n.t('solar.logWarning'), state: 'stale' } : undefined;
+  }
+
+  /** The Sun: main figures (IAU 2015 nominal values, NASA fact sheet), rotation, and the sunspot data used. */
+  private sunDetail(): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const date = this.moonDate ?? new Date();
+    const rows: [string, string][] = [this.distanceRows([0, 0, 0])[1] ?? [t('info.distEarth'), '']];
+    rows.push(
+      [t('sun.type'), t('sun.typeValue')],
+      [t('info.radius'), `${i18n.number(SUN_RADIUS_KM)} km`],
+      [t('sun.mass'), '1.9885 × 10³⁰ kg'.replace('.', i18n.lang === 'fr' ? ',' : '.')],
+      [t('sun.temperature'), `${i18n.number(5772)} K`],
+      [t('sun.luminosity'), '3.828 × 10²⁶ W'.replace('.', i18n.lang === 'fr' ? ',' : '.')],
+      [t('sun.age'), t('sun.ageValue')],
+      [
+        t('sun.rotation'),
+        i18n.format('sun.rotationValue', {
+          sidereal: i18n.number(360 / CARRINGTON_RATE_DEG_PER_DAY, 2),
+          synodic: i18n.number(27.2753, 2),
+        }),
+      ],
+      [
+        t('sun.carrington'),
+        i18n.format('sun.carringtonValue', {
+          n: String(carringtonRotation(date)),
+          lon: i18n.number(subEarthCarringtonDeg(date), 1),
+        }),
+      ],
+    );
+    const groups = this.sunRegions ? sunspotGroups(this.sunRegions, date) : [];
+    let report: string | undefined;
+    for (const g of groups) if (!report || g.reportDate > report) report = g.reportDate;
+    if (report) {
+      const spotted = groups.filter((g) => g.radiusRad > 0);
+      const areaMh = spotted.reduce((sum, g) => sum + (g.radiusRad * g.radiusRad) / 2e-6, 0);
+      rows.push(
+        [
+          t('sun.regions'),
+          i18n.format('sun.regionsValue', {
+            spots: String(spotted.length),
+            area: i18n.number(Math.round(areaMh)),
+            plage: String(groups.length - spotted.length),
+          }),
+        ],
+        [t('sun.report'), report],
+      );
+    }
+    const drawn = effectEnabled('sunspots');
+    return {
+      title: t('sun.name'),
+      badge: report ? { text: t('sun.model'), state: 'fresh' } : { text: t('sun.noReport'), state: 'stale' },
+      rows,
+      notes: drawn ? t('sun.notes') : `${t('sun.notes')} ${t('sun.spotsOff')}`,
+      sources: [
+        'https://www.swpc.noaa.gov/products/solar-region-summary',
+        'https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html',
+        'https://doi.org/10.3847/0004-6256/152/2/41',
+        'https://github.com/cosinekitty/astronomy',
+      ],
+      followable: true,
+    };
   }
 
   private planetDetail(info: PlanetInfo): DetailContent {

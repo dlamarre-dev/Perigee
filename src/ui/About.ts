@@ -28,6 +28,16 @@ const DATA_CREDITS: readonly Credit[] = [
     url: 'https://celestrak.org/NORAD/elements/supplemental/',
   },
   { name: 'NASA/JPL-Caltech Horizons', url: 'https://ssd.jpl.nasa.gov/horizons/' },
+  {
+    name: 'NOAA Space Weather Prediction Center',
+    detail: { en: 'solar active regions (sunspots)', fr: 'régions actives du Soleil (taches solaires)' },
+    url: 'https://www.swpc.noaa.gov',
+  },
+  {
+    name: 'NASA PDS Geosciences Node',
+    detail: { en: 'MOLA topography of Mars (relief)', fr: 'topographie MOLA de Mars (relief)' },
+    url: 'https://pds-geosciences.wustl.edu',
+  },
   { name: 'NASA SVS CGI Moon Kit', url: 'https://svs.gsfc.nasa.gov/4720' },
   { name: 'LROC (Lunar Reconnaissance Orbiter Camera, ASU)', url: 'https://lroc.im-ldi.com' },
   { name: 'NASA NSSDCA', url: 'https://nssdc.gsfc.nasa.gov' },

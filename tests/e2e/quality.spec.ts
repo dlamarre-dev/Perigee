@@ -9,7 +9,11 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
 }) => {
   await page.goto('./?lang=en&view=moon');
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'low');
-  const select = page.getByLabel('Quality');
+  // Quality heads the effects popover.
+  const openPopover = (): Promise<void> =>
+    page.getByRole('button', { name: 'Quality and visual effects' }).click();
+  await openPopover();
+  const select = page.getByLabel('Quality', { exact: true });
   await expect(select.locator('option:checked')).toHaveText('Auto');
   await expect(select).toHaveAttribute('title', /detected: Saver/);
   // Saver: opaque panels, no backdrop blur over the canvas.
@@ -18,12 +22,17 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
   await Promise.all([page.waitForEvent('load'), select.selectOption('medium')]);
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'medium');
   await expect(page).toHaveURL(/view=moon/);
-  await expect(page.getByLabel('Quality')).toHaveValue('medium');
+  await openPopover();
+  await expect(page.getByLabel('Quality', { exact: true })).toHaveValue('medium');
   await expect(page.locator('.toolbar')).not.toHaveCSS('backdrop-filter', 'none');
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'medium');
-  await Promise.all([page.waitForEvent('load'), page.getByLabel('Quality').selectOption('auto')]);
+  await openPopover();
+  await Promise.all([
+    page.waitForEvent('load'),
+    page.getByLabel('Quality', { exact: true }).selectOption('auto'),
+  ]);
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'low');
 });
 
@@ -78,5 +87,38 @@ test.describe('full-quality models', () => {
     await page.waitForRequest('**/models/iss.glb*', { timeout: 30_000 }).catch(() => undefined);
     await page.waitForTimeout(20_000);
     expect(requests).toBe(0);
+  });
+});
+
+test.describe('immersive effects', () => {
+  test('switch live on the high tier, are remembered, and cloud tiles load only when on', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    let cloudRequests = 0;
+    page.on('request', (r) => {
+      if (r.url().includes('/textures/earth/clouds-')) cloudRequests++;
+    });
+    await page.goto('./?lang=en&view=earth&quality=high');
+    await page.getByRole('button', { name: 'Quality and visual effects' }).click();
+    const clouds = page.getByLabel('Earth clouds (illustrative)');
+    await expect(clouds).toBeEnabled();
+    await expect(clouds).toBeChecked();
+    await expect.poll(() => cloudRequests).toBeGreaterThan(0);
+    await clouds.uncheck();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('perigee-effects'))).toBe('-clouds');
+    await page.reload();
+    await page.getByRole('button', { name: 'Quality and visual effects' }).click();
+    await expect(page.getByLabel('Earth clouds (illustrative)')).not.toBeChecked();
+    await page.waitForTimeout(2000);
+    expect(errors).toEqual([]);
+  });
+
+  test('are greyed out below the high tier', async ({ page }) => {
+    await page.goto('./?lang=fr&view=solar&quality=medium');
+    await page.getByRole('button', { name: 'Qualité et effets visuels' }).click();
+    await expect(page.getByLabel('Relief')).toBeDisabled();
+    await expect(page.getByText('Disponible en qualité élevée seulement.')).toBeVisible();
   });
 });

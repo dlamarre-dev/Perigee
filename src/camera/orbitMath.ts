@@ -45,6 +45,11 @@ export interface OrbitState {
 export interface OrbitLimits {
   readonly minDistanceKm: number;
   readonly maxDistanceKm: number;
+  /**
+   * Radius of the central body, for the rotation slowdown near its surface; default minDistanceKm / 1.02 (the
+   * closest approach of the Earth, Moon and Mars views). The Sun keeps the camera farther (1.5 radii).
+   */
+  readonly surfaceRadiusKm?: number;
 }
 
 export function cameraPositionKm(state: OrbitState): Vec3 {

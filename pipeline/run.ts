@@ -5,6 +5,7 @@
  *   tsx pipeline/run.ts satcat  [--data-dir <dir>]   # SATCAT + group membership (daily in CI)
  *   tsx pipeline/run.ts horizons [--data-dir <dir>]  # JPL Horizons vectors for catalog/missions.json (daily)
  *   tsx pipeline/run.ts rovers  [--data-dir <dir>]   # Mars rover positions from NASA MMGIS feeds (daily)
+ *   tsx pipeline/run.ts sun     [--data-dir <dir>]   # NOAA SWPC solar active regions (daily)
  *   tsx pipeline/run.ts audit   [--data-dir <dir>]   # weekly maintenance audit → audit.json + audit.md
  *
  * The data directory holds the currently published files and is updated in place.
@@ -72,6 +73,7 @@ import {
 } from './publish';
 import { mergeSupplemental } from './supgp';
 import { fetchRoverPositions } from './rovers';
+import { SWPC_REGIONS_URL, fetchSunRegions } from './sun';
 
 const LOCAL_MIN_INTERVAL_MS = 2 * 3600_000;
 const LOCAL_LOG = resolve('node_modules/.cache/perigee/fetch-log.json');
@@ -350,6 +352,24 @@ async function runRovers(dataDir: string): Promise<void> {
   ]);
 }
 
+/** One request: the active regions NOAA SWPC lists for the last ~30 days. */
+async function runSun(dataDir: string): Promise<void> {
+  const fetchedAt = new Date();
+  const regions = await fetchSunRegions();
+  const last = regions[regions.length - 1]?.date;
+  console.log(`${regions.length} region records, latest ${last ?? 'none'}`);
+  await publishDatasets(dataDir, [
+    {
+      key: 'sun.regions',
+      path: 'sun/regions.json.gz',
+      source: SWPC_REGIONS_URL,
+      fetchedAt,
+      count: regions.length,
+      payload: regions,
+    },
+  ]);
+}
+
 const CELESTRAK_INDEX_URL = 'https://celestrak.org/NORAD/elements/';
 const IERS_LEAP_SECONDS_URL = 'https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat';
 const satcatLaunchesUrl = (year: number): string =>
@@ -475,11 +495,14 @@ async function main(): Promise<void> {
     case 'rovers':
       await runRovers(dataDir);
       break;
+    case 'sun':
+      await runSun(dataDir);
+      break;
     case 'audit':
       await runAudit(dataDir, guard);
       break;
     default:
-      throw new Error('Usage: tsx pipeline/run.ts <gp|satcat|horizons|rovers|audit> [--data-dir <dir>]');
+      throw new Error('Usage: tsx pipeline/run.ts <gp|satcat|horizons|rovers|sun|audit> [--data-dir <dir>]');
   }
 }
 

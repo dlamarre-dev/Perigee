@@ -5,6 +5,7 @@
  * Nothing is sent until the visitor submits; the attached context is shown before sending.
  */
 import type { I18n, MessageKey } from '../i18n';
+import { effectsSummary } from '../render/effects';
 import { pixelRatio } from '../render/pixelRatio';
 import { qualityState } from '../render/quality';
 import { h, scrollingDialog } from './dom';
@@ -59,7 +60,7 @@ export function qualitySummary(): string {
   const q = qualityState();
   if (!q) return 'quality unknown';
   const how = q.choice === 'auto' ? `auto: ${q.detected.reasons.join(', ')}` : 'chosen';
-  return `quality ${q.settings.tier} (${how}), render ×${pixelRatio()}, GPU ${q.signals.gpu ?? 'unknown'}`;
+  return `quality ${q.settings.tier} (${how}), render ×${pixelRatio()}, GPU ${q.signals.gpu ?? 'unknown'}, ${effectsSummary()}`;
 }
 
 export class ReportDialog {

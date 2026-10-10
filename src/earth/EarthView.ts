@@ -204,7 +204,11 @@ class EarthView implements View {
       axisVector(entry.forwardAxis ?? '+z'),
       vel,
     );
-    const shown = this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx);
+    const shown = this.sceneModel.update(entry, sub(pos, originKm), q, this.sunScene, focalPx, {
+      centreKm: scale(originKm, -1),
+      radiusKm: this.earth.radiusKm,
+      sunDistanceKm: length(sub(this.sunSceneKm, pos)),
+    });
     this.sats?.setSelectedPointHidden(shown);
   }
 

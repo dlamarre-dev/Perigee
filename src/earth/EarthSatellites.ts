@@ -5,7 +5,7 @@
 import { Color, Group } from 'three';
 import { rotZ } from '../astro/frames';
 import type { Vec3 } from '../astro/vec3';
-import { trajectoryTimes } from '../astro/trajectory';
+import { nearSampleTimes } from '../astro/trajectory';
 import { GpuPicker } from '../render/GpuPicker';
 import { OrbitLine, SelectionMarker } from '../render/OrbitLine';
 import { SatState, SatellitePoints } from '../render/SatellitePoints';
@@ -24,9 +24,12 @@ const REGIME_COLORS: Record<SatObject['regime'], string> = {
   HEO: '#f28b82',
 };
 const ORBIT_SAMPLES = 360;
-/** Re-evaluate staleness (depends on simulated time) at most this often. */
-/** The selected orbit's trace is rebuilt after the object covers this fraction of its period (0.5°). */
+/** The selected orbit's far trace is rebuilt after the object covers this fraction of its period (0.5°). */
 const ORBIT_REBUILD_FRACTION = 1 / 720;
+/** Near stretch: ± this many grid steps around the far trace's build time (the object stays within ½ step). */
+const ORBIT_NEAR_STEPS = 2;
+const ORBIT_NEAR_PER_SIDE = 24;
+/** Re-evaluate staleness (depends on simulated time) at most this often. */
 const STATE_REFRESH_MS = 1000;
 
 export interface SatStats {
@@ -83,7 +86,13 @@ export class EarthSatellites {
     this.filterMatch = new Uint8Array(n).fill(1);
     this.statsValue = { total: n, shown: 0, invalid: 0, stale: 0 };
     this.group.name = 'inertial';
-    this.group.add(this.points.points, this.points.pickPoints, this.orbit.line, this.marker.points);
+    this.group.add(
+      this.points.points,
+      this.points.pickPoints,
+      this.orbit.line,
+      this.orbit.near,
+      this.marker.points,
+    );
     this.points.setColors(this.buildColors());
   }
 
@@ -241,10 +250,11 @@ export class EarthSatellites {
     this.selectedState = sel.satrec ? propagateTeme(sel.satrec, new Date(simNowMs)) : undefined;
     this.marker.set(this.selectedState?.posKm);
 
-    // The trace (≈ 400 SGP4 calls) is rebuilt around the object, densified near it, each time it has moved
-    // ORBIT_REBUILD_FRACTION of its period (every frame at high rates): its vertices are relative to where it
-    // was then, so it stays free of Float32 jitter when the camera follows it closely, and the object stays in
-    // the densely sampled stretch, a few metres at most from the line.
+    // The far trace (≈ 360 SGP4 calls) is rebuilt each time the object has moved ORBIT_REBUILD_FRACTION of its
+    // period (every frame at high rates), its vertices relative to where the object was then. The stretch
+    // around the object (≈ 50 calls) is rebuilt every frame relative to the object: drawn from the far trace,
+    // the line drifted metres off the object between rebuilds (chords, Float32) and snapped back, which showed
+    // as an oscillation when following it closely.
     const periodMs = sel.object.periodMin * 60_000;
     const centre = this.selectedState?.posKm;
     if (!sel.satrec || !centre) {
@@ -253,15 +263,16 @@ export class EarthSatellites {
       return;
     }
     if (
-      sel === this.orbitBuiltFor &&
-      Math.abs(simNowMs - this.orbitBuiltMs) < periodMs * ORBIT_REBUILD_FRACTION
+      sel !== this.orbitBuiltFor ||
+      Math.abs(simNowMs - this.orbitBuiltMs) >= periodMs * ORBIT_REBUILD_FRACTION
     ) {
-      return;
+      this.orbitBuiltFor = sel;
+      this.orbitBuiltMs = simNowMs;
+      this.orbit.set(orbitTraceFar(sel.satrec, simNowMs, periodMs, centre));
+      this.orbit.line.position.set(centre[0], centre[1], centre[2]);
     }
-    this.orbitBuiltFor = sel;
-    this.orbitBuiltMs = simNowMs;
-    this.orbit.set(orbitTrace(sel.satrec, simNowMs, periodMs, centre));
-    this.orbit.line.position.set(centre[0], centre[1], centre[2]);
+    this.orbit.setNear(orbitTraceNear(sel.satrec, this.orbitBuiltMs, simNowMs, periodMs, centre));
+    this.orbit.near.position.set(centre[0], centre[1], centre[2]);
   }
 
   private buildColors(): Float32Array {
@@ -277,16 +288,42 @@ export class EarthSatellites {
 }
 
 /**
- * One revolution centred on `simNowMs`, densified around it (trajectoryTimes), TEME km relative to `centreKm`
- * (the object's current position), packed xyz; undefined if propagation fails.
+ * One revolution centred on `builtMs` except the near stretch (± ORBIT_NEAR_STEPS grid steps), which
+ * `orbitTraceNear` draws: from the stretch's end round to its start (the half-revolution ends meet with a short
+ * chord, a revolution's drift apart), TEME km relative to `centreKm` (the object's position at `builtMs`),
+ * packed xyz; undefined if propagation fails.
  */
-export function orbitTrace(
+export function orbitTraceFar(
   satrec: SatRec,
+  builtMs: number,
+  periodMs: number,
+  centreKm: Vec3 = [0, 0, 0],
+): Float32Array | undefined {
+  const step = periodMs / ORBIT_SAMPLES;
+  const half = ORBIT_SAMPLES / 2;
+  const times: number[] = [];
+  for (let k = ORBIT_NEAR_STEPS; k <= half; k++) times.push(builtMs + k * step);
+  for (let k = -half; k <= -ORBIT_NEAR_STEPS; k++) times.push(builtMs + k * step);
+  return traceAt(satrec, times, centreKm);
+}
+
+/**
+ * The near stretch of the orbit drawn by `orbitTraceFar` built at `builtMs`, densified towards `simNowMs` (a
+ * vertex), TEME km relative to `centreKm` (the object's position at `simNowMs`): the line passes through the
+ * object, and its ends meet the far trace.
+ */
+export function orbitTraceNear(
+  satrec: SatRec,
+  builtMs: number,
   simNowMs: number,
   periodMs: number,
   centreKm: Vec3 = [0, 0, 0],
 ): Float32Array | undefined {
-  const times = trajectoryTimes(simNowMs - periodMs / 2, simNowMs + periodMs / 2, simNowMs, ORBIT_SAMPLES);
+  const w = (ORBIT_NEAR_STEPS * periodMs) / ORBIT_SAMPLES;
+  return traceAt(satrec, nearSampleTimes(builtMs - w, builtMs + w, simNowMs, ORBIT_NEAR_PER_SIDE), centreKm);
+}
+
+function traceAt(satrec: SatRec, times: readonly number[], centreKm: Vec3): Float32Array | undefined {
   const out = new Float32Array(times.length * 3);
   let written = 0;
   for (const t of times) {
