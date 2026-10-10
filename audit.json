@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-10-10T00:26:31.427Z",
+  "items": [
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "capstone",
+      "summary": "CAPSTONE: public Horizons ephemeris ended 2026-08-14 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-1176",
+        "coverageEnd": "2026-08-14T11:58:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "swc-1",
+      "summary": "SWC-1 (Shams): public Horizons ephemeris ended 2026-04-07 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-168540",
+        "coverageEnd": "2026-04-07T14:31:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "hera",
+      "summary": "Hera: public Horizons ephemeris ends 2026-11-04 (within 30 days)",
+      "details": {
+        "horizonsId": "-91",
+        "coverageEnd": "2026-11-04T01:01:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "soho",
+      "summary": "SOHO: public Horizons ephemeris ends 2026-11-02 (within 30 days)",
+      "details": {
+        "horizonsId": "-21",
+        "coverageEnd": "2026-11-02T23:51:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "imap",
+      "summary": "IMAP: public Horizons ephemeris ends 2026-11-09 (within 30 days)",
+      "details": {
+        "horizonsId": "-43",
+        "coverageEnd": "2026-11-09T00:01:00.000Z"
+      }
+    }
+  ]
+}
