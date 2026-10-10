@@ -283,6 +283,8 @@ export const en = {
   'country.int': 'International',
   'country.eu': 'Europe (ESA)',
   'info.radius': 'Mean radius',
+  'info.radiiEqPolar': 'Equatorial / polar radius',
+  'info.semiAxes': 'Semi-axes',
   'info.sol': 'Sol',
   'info.odometry': 'Distance driven',
   'info.liveFeed': 'Position updated daily from NASA’s rover waypoint feed',

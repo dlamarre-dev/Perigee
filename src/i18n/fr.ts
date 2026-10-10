@@ -291,6 +291,8 @@ export const fr: Messages = {
   'country.int': 'International',
   'country.eu': 'Europe (ESA)',
   'info.radius': 'Rayon moyen',
+  'info.radiiEqPolar': 'Rayon équatorial / polaire',
+  'info.semiAxes': 'Demi-axes',
   'info.sol': 'Sol',
   'info.odometry': 'Distance parcourue',
   'info.liveFeed': 'Position mise à jour chaque jour depuis le flux de points de passage de la NASA',

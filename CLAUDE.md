@@ -154,6 +154,12 @@ No single API provides "active probes + landing sites". We maintain:
   wrappers cap images at ~12 Mpixel. 8k levels (Earth day/night, Moon, Mars) are KTX2-only and load on demand
   when the camera is within one radius of the surface (`BodyMesh.requestDetail()` / `ProgressiveTexture`), on the
   high quality tier only (§7).
+- Ellipsoids where the flattening shows (`radiiKm`: `src/astro/planets.ts` for the giants, NASA fact sheets
+  1-bar radii; `catalog/` for Ceres (Dawn), Haumea (2017 occultation) and Mimas (Thomas 2010)): the BodyMesh
+  sphere is scaled along its body axes (x prime meridian or towards the planet, z pole), normals from the
+  ellipsoid; the mean radius still sets framing and sizes, the largest semi-axis the camera obstacle. Haumea
+  spins about its ring pole (`haumeaOrientationEqj`) with an unpublished, illustrative rotation phase. Not for
+  the Earth or Mars (≤ 0.6 %, and the surface code assumes a sphere).
 - Irregular moons (Amalthea, Proteus, Hyperion, Phoebe): PDS shape models resampled to radius grids
   (`tools/shapes/fetch-shapes.ts` → `public/shapes/<id>.json`, `moons.json` `shape: "grid"`), displacing the body
   sphere (`src/render/shapeGeometry.ts`); UVs unchanged, so the equirectangular maps still apply.

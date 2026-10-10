@@ -1881,6 +1881,7 @@
       },
       "objectType": "natural",
       "radiusKm": 469.7,
+      "radiiKm": [482.2, 482.1, 445.9],
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -1896,9 +1897,11 @@
       },
       "lowOrbit": false,
       "color": "#8f8b86",
-      "verified": "2026-09-27",
+      "verified": "2026-10-10",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/ceres/",
+        "https://doi.org/10.1038/nature18955",
+        "https://arxiv.org/pdf/2010.06086",
         "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Ceres"
       ]
     },
@@ -1910,6 +1913,7 @@
       },
       "objectType": "natural",
       "radiusKm": 798,
+      "radiiKm": [1161, 852, 513],
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -1925,9 +1929,15 @@
       },
       "lowOrbit": false,
       "color": "#d9d6d0",
-      "verified": "2026-09-27",
+      "notes": {
+        "en": "Elongated ellipsoid measured during the 21 January 2017 stellar occultation; spins in 3.9 hours about the pole of its ring. The direction of its long axis at a given moment is illustrative (rotation phase not published).",
+        "fr": "Ellipsoïde allongé mesuré lors de l’occultation stellaire du 21 janvier 2017 ; tourne en 3,9 heures autour du pôle de son anneau. L’orientation de son grand axe à un instant donné est indicative (phase de rotation non publiée)."
+      },
+      "verified": "2026-10-10",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/haumea/",
+        "https://doi.org/10.1038/nature24051",
+        "https://arxiv.org/pdf/2006.03113",
         "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Haumea"
       ]
     },

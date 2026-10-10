@@ -40,6 +40,17 @@ export function ceresOrientationEqj(tdbJd: number): Quat {
   return iauOrientationEqj(291.418 * DEG_TO_RAD, 66.764 * DEG_TO_RAD, wDeg * DEG_TO_RAD);
 }
 
+/**
+ * Haumea (no IAU model): pole from its ring, coplanar with the equator (Ortiz et al. 2017, solution 1:
+ * α₀ = 285.1°, δ₀ = −10.6°), spin period 3.915341 h. The rotation phase is not anchored (W₀ = 0): the long
+ * axis's direction at a given time is illustrative.
+ */
+export function haumeaOrientationEqj(tdbJd: number): Quat {
+  const d = tdbJd - 2_451_545.0;
+  const wDeg = ((24 / 3.915341) * 360 * d) % 360;
+  return iauOrientationEqj(285.1 * DEG_TO_RAD, -10.6 * DEG_TO_RAD, wDeg * DEG_TO_RAD);
+}
+
 /** Moon centre relative to the Earth centre, EQJ, km. */
 export function geoMoonKm(date: Date): Vec3 {
   const v = Astronomy.GeoMoon(date);

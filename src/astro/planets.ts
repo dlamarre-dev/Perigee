@@ -11,6 +11,8 @@ export interface PlanetInfo {
   readonly body: Astronomy.Body;
   readonly name: { readonly en: string; readonly fr: string };
   readonly radiusKm: number;
+  /** Oblate giants: equatorial, equatorial, polar radius at the 1-bar level (km, NASA fact sheets). */
+  readonly radiiKm?: readonly [number, number, number];
   readonly periodDays: number;
   /** GM of the planet system (km³/s², JPL DE440; the Earth value includes the Moon). */
   readonly gmKm3S2: number;
@@ -78,6 +80,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     body: Astronomy.Body.Jupiter,
     name: { en: 'Jupiter', fr: 'Jupiter' },
     radiusKm: 69_911,
+    radiiKm: [71_492, 71_492, 66_854],
     periodDays: 4332.59,
     gmKm3S2: 126_712_764.1,
     color: '#d8b98f',
@@ -87,6 +90,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     body: Astronomy.Body.Saturn,
     name: { en: 'Saturn', fr: 'Saturne' },
     radiusKm: 58_232,
+    radiiKm: [60_268, 60_268, 54_364],
     periodDays: 10_759.22,
     gmKm3S2: 37_940_584.841_8,
     color: '#e3d19c',
@@ -97,6 +101,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     body: Astronomy.Body.Uranus,
     name: { en: 'Uranus', fr: 'Uranus' },
     radiusKm: 25_362,
+    radiiKm: [25_559, 25_559, 24_973],
     periodDays: 30_688.5,
     gmKm3S2: 5_794_556.4,
     color: '#9fd8e0',
@@ -107,6 +112,7 @@ export const PLANETS: readonly PlanetInfo[] = [
     body: Astronomy.Body.Neptune,
     name: { en: 'Neptune', fr: 'Neptune' },
     radiusKm: 24_622,
+    radiiKm: [24_764, 24_764, 24_341],
     periodDays: 60_182,
     gmKm3S2: 6_836_527.100_58,
     color: '#6f8fe8',

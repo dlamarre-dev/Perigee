@@ -21,7 +21,12 @@ import {
 import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
-import { bodyOrientationEqj, ceresOrientationEqj, earthOrientation } from '../astro/bodies';
+import {
+  bodyOrientationEqj,
+  ceresOrientationEqj,
+  earthOrientation,
+  haumeaOrientationEqj,
+} from '../astro/bodies';
 import { AU_KM, DEG_TO_RAD, J2000_JD, MS_PER_DAY, SECONDS_PER_DAY } from '../astro/constants';
 import { latLonToUnit } from '../astro/frames';
 import { ellipseOffsetsAround, GM_KM3_S2, osculatingElements } from '../astro/kepler';
@@ -371,6 +376,7 @@ class SolarView implements View {
           : new BodyMesh({
               name: info.id,
               radiusKm: info.radiusKm,
+              radiiKm: info.radiiKm,
               dayMap: placeholderTexture(hexToRgb(info.color)),
               nightMap: black,
               ambient: 0.03,
@@ -401,7 +407,8 @@ class SolarView implements View {
             innerKm: info.rings.innerKm,
             outerKm: info.rings.outerKm,
             tauScale: RING_TAU_SCALE,
-            planetRadiusKm: info.radiusKm,
+            // Equatorial: the shadow falls on the rings in the equator's plane.
+            planetRadiusKm: info.radiiKm?.[0] ?? info.radiusKm,
           });
           mesh.mesh.add(planet.rings.mesh);
         }
@@ -423,6 +430,7 @@ class SolarView implements View {
       const mesh = new BodyMesh({
         name: moon.id,
         radiusKm: moon.radiusKm,
+        radiiKm: moon.radiiKm,
         dayMap: placeholderTexture(hexToRgb(moon.color)),
         nightMap: black,
         ambient: 0.03,
@@ -511,6 +519,7 @@ class SolarView implements View {
           ? new BodyMesh({
               name: mission.id,
               radiusKm: mission.radiusKm,
+              radiiKm: mission.radiiKm,
               dayMap: placeholderTexture(hexToRgb(color)),
               nightMap: black,
               ambient: 0.03,
@@ -641,9 +650,12 @@ class SolarView implements View {
       if (t.mesh) {
         t.mesh.mesh.visible = !this.logScale && t.scene !== undefined;
         if (t.scene) t.mesh.setSunDirection(normalize(scale(t.scene, -1)));
-        // Only Ceres has a published rotation model among the small bodies shown here.
+        // Only Ceres has a published rotation model among the small bodies shown here; Haumea's pole and spin
+        // are known, not its rotation phase (illustrative, see haumeaOrientationEqj).
         if (t.mission.id === 'ceres')
           t.mesh.setOrientation(quatMultiply(this.sceneQ, ceresOrientationEqj(this.tdbJd)));
+        if (t.mission.id === 'haumea')
+          t.mesh.setOrientation(quatMultiply(this.sceneQ, haumeaOrientationEqj(this.tdbJd)));
       }
       this.probeMarkers.setColor(
         t.index,
@@ -758,7 +770,7 @@ class SolarView implements View {
     this.occluders = [{ id: 'sun', sceneKm: [0, 0, 0], radiusKm: SUN_RADIUS_KM }];
     if (!this.logScale) {
       for (const p of this.planets)
-        this.occluders.push({ id: p.info.id, sceneKm: p.scene, radiusKm: p.info.radiusKm });
+        this.occluders.push({ id: p.info.id, sceneKm: p.scene, radiusKm: p.mesh.boundingRadiusKm });
       for (const t of this.probes) {
         if (t.mesh && t.scene && t.mission.radiusKm)
           this.occluders.push({
@@ -1443,6 +1455,16 @@ class SolarView implements View {
     this.labels.layout(w, hgt);
   }
 
+  /** Equatorial / polar radius of an oblate body, or the three semi-axes of a triaxial one. */
+  private shapeRow(radiiKm: readonly [number, number, number] | undefined): [string, string] | undefined {
+    if (!radiiKm) return undefined;
+    const { i18n } = this.host;
+    const [a, b, c] = radiiKm.map((r) => i18n.number(r, r < 1000 ? 1 : 0));
+    return a === b
+      ? [i18n.t('info.radiiEqPolar'), `${a} / ${c} km`]
+      : [i18n.t('info.semiAxes'), `${a} × ${b} × ${c} km`];
+  }
+
   /** A followed spacecraft's label goes once its 3D model is large enough to name itself. */
   private modelHidesLabel(): boolean {
     return this.host.follow.active && this.sceneModel.shownSizePx > MODEL_LABEL_MAX_PX;
@@ -1657,6 +1679,8 @@ class SolarView implements View {
     // The Earth's distance to itself is meaningless.
     if (info.id === 'earth') rows.splice(1, 1);
     rows.push([t('info.radius'), `${i18n.number(info.radiusKm)} km`]);
+    const shape = this.shapeRow(info.radiiKm);
+    if (shape) rows.push(shape);
     const years = info.periodDays / 365.25;
     rows.push([
       t('info.orbitalPeriod'),
@@ -1850,6 +1874,8 @@ class SolarView implements View {
     const planetName = m?.planet.info.name[i18n.lang] ?? moon.planet;
     const rows: [string, string][] = [[t('info.parent'), planetName]];
     rows.push([t('info.radius'), `${num(moon.radiusKm)} km`]);
+    const shape = this.shapeRow(moon.radiiKm);
+    if (shape) rows.push(shape);
     if (s) {
       rows.push([t('info.distPlanet'), `${num(length(s.posKm))} km`]);
       rows.push([t('info.speedPlanet'), `${num(length(s.velKmS), 2)} km/s`]);
@@ -1906,6 +1932,8 @@ class SolarView implements View {
     if (m.launchDate) rows.push([t('info.launch'), m.launchDate]);
     if (m.objectType === 'natural') {
       if (m.radiusKm) rows.push([t('info.radius'), `${num(m.radiusKm)} km`]);
+      const shape = this.shapeRow(m.radiiKm);
+      if (shape) rows.push(shape);
       if (m.orbit) rows.push([t('info.orbit'), m.orbit[i18n.lang]]);
       const texture = TEXTURE_NOTES[m.id];
       if (texture) rows.push([t('info.texture'), t(texture)]);

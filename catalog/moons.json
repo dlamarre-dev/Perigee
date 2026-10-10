@@ -276,6 +276,7 @@
       "planet": "saturn",
       "spkid": 601,
       "radiusKm": 198.2,
+      "radiiKm": [207.8, 196.7, 190.6],
       "color": "#cfcfcf",
       "model": "mean-elements",
       "elements": {
@@ -294,8 +295,9 @@
         "laplacePoleRaDeg": 40.6,
         "laplacePoleDecDeg": 83.5
       },
-      "verified": "2026-09-29",
+      "verified": "2026-10-10",
       "sources": [
+        "https://www.aanda.org/articles/aa/full_html/2011/12/aa17558-11/T1.html",
         "https://ssd.jpl.nasa.gov/sats/elem/",
         "https://ssd.jpl.nasa.gov/sats/elem/sep.html",
         "https://ssd.jpl.nasa.gov/sats/phys_par/",

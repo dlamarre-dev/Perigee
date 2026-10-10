@@ -192,7 +192,13 @@ const fragmentShader = /* glsl */ `
 
 export interface BodyMeshOptions {
   readonly name: string;
+  /** Mean radius (sizes on screen, follow framing, moving gas). */
   readonly radiusKm: number;
+  /**
+   * Ellipsoid semi-axes (km) in the body frame instead of a sphere: x towards the prime meridian (the planet,
+   * for a synchronous moon), y, z along the pole. The equirectangular maps apply unchanged.
+   */
+  readonly radiiKm?: readonly [number, number, number] | undefined;
   readonly dayMap: Texture;
   /** Night-side emission (city lights); black texture when absent. */
   readonly nightMap: Texture;
@@ -241,10 +247,35 @@ export function bodySphere(radiusKm: number): BufferGeometry {
   return sphere(radiusKm, 192, 96);
 }
 
-/** UV sphere with the pole on +Z (three's sphere is Y-up with u = 0.5 on +X; +90° about X puts 90°E on +Y). */
-function sphere(radiusKm: number, widthSegments: number, heightSegments: number): BufferGeometry {
-  const geometry = new SphereGeometry(radiusKm, widthSegments, heightSegments);
+/**
+ * UV sphere with the pole on +Z (three's sphere is Y-up with u = 0.5 on +X; +90° about X puts 90°E on +Y), or
+ * the ellipsoid of semi-axes `radiiKm` (same parametrisation: each vertex scaled along its sphere direction, normal
+ * from the ellipsoid's gradient).
+ */
+function sphere(
+  radiusKm: number,
+  widthSegments: number,
+  heightSegments: number,
+  radiiKm?: readonly [number, number, number],
+): BufferGeometry {
+  const geometry = new SphereGeometry(radiiKm ? 1 : radiusKm, widthSegments, heightSegments);
   geometry.rotateX(Math.PI / 2);
+  if (!radiiKm) return geometry;
+  const [a, b, c] = radiiKm;
+  const pos = geometry.getAttribute('position');
+  const nor = geometry.getAttribute('normal');
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    const z = pos.getZ(i);
+    pos.setXYZ(i, x * a, y * b, z * c);
+    const nx = x / a;
+    const ny = y / b;
+    const nz = z / c;
+    const len = Math.hypot(nx, ny, nz);
+    nor.setXYZ(i, nx / len, ny / len, nz / len);
+  }
+  geometry.computeBoundingSphere();
   return geometry;
 }
 
@@ -262,13 +293,15 @@ export class BodyMesh {
   private patch: Mesh<BufferGeometry, ShaderMaterial> | undefined;
   private patchKey = '';
   private boundingKm: number;
+  private readonly radiiKm: readonly [number, number, number] | undefined;
   private readonly defines: Record<string, string>;
   private readonly disposers: (() => void)[] = [];
 
   constructor(o: BodyMeshOptions) {
     this.radiusKm = o.radiusKm;
-    this.boundingKm = o.radiusKm;
-    const geometry = sphere(o.radiusKm, 192, 96);
+    this.radiiKm = o.radiiKm;
+    this.boundingKm = o.radiiKm ? Math.max(...o.radiiKm) : o.radiusKm;
+    const geometry = sphere(o.radiusKm, 192, 96, o.radiiKm);
     this.full = geometry;
     this.defines = {
       ...(o.gasFlow && { GAS_FLOW: '' }),
@@ -337,7 +370,7 @@ export class BodyMesh {
         (this.radiusKm / Math.max(distance, 1e-9)) * (heightPx / 2 / Math.tan((camera.fov * Math.PI) / 360));
       const usingLight = this.mesh.geometry === this.light;
       if (!usingLight && radiusPx < LIGHT_BELOW_PX) {
-        this.light ??= sphere(this.radiusKm, 48, 24);
+        this.light ??= sphere(this.radiusKm, 48, 24, this.radiiKm);
         this.useGeometry(this.light);
       } else if (usingLight && radiusPx > FULL_ABOVE_PX) {
         this.useGeometry(this.full);

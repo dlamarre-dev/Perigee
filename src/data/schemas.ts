@@ -169,6 +169,11 @@ export const MissionSchema = z.object({
   objectType: z.enum(['spacecraft', 'natural']).default('spacecraft'),
   /** Mean radius of a natural satellite (km), drawn as a small sphere. */
   radiusKm: z.number().positive().optional(),
+  /**
+   * Ellipsoid semi-axes (km), drawn instead of a sphere where the flattening shows: x towards the prime
+   * meridian (the planet, for a synchronous moon), y, z along the pole.
+   */
+  radiiKm: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]).optional(),
   agency: z.string().optional(),
   country: iso2.optional(),
   launchDate: isoDate.optional(),
@@ -245,6 +250,11 @@ export const MoonSchema = z.object({
   planet: MoonPlanetSchema,
   spkid: z.number().int().positive(),
   radiusKm: z.number().positive(),
+  /**
+   * Ellipsoid semi-axes (km), drawn instead of a sphere where the flattening shows: x towards the prime
+   * meridian (the planet, for a synchronous moon), y, z along the pole.
+   */
+  radiiKm: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]).optional(),
   color: hexColor,
   model: z.enum(['astronomy-engine', 'mean-elements']),
   elements: MoonElementsSchema.optional(),
