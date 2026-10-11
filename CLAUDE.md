@@ -393,7 +393,9 @@ Rules:
   for 2 days (`supgp-stale`). CelesTrak answered 503 to the pipeline's SupGP requests from a residential IP on
   2026-10-05 (cause unknown).
 - Schema validation (zod) before publication: an invalid or near-empty file (< 50 % of the previous one) does
-  **not** overwrite the previous version; the action fails and opens an issue.
+  **not** overwrite the previous version; the action fails. A failed scheduled run only warns (providers have
+  occasional outages); `data-pipeline.yml` opens or comments an issue when the previous run of the same workflow
+  failed too (two in a row).
 - Output: `data/earth/gp-active.json.gz`, `data/earth/satcat.json.gz`, `data/ephem/<mission>.bin`
   (compact Float64: t_TDB, x, y, z, vx, vy, vz), `data/sun/regions.json.gz` (NOAA SWPC
   `services.swpc.noaa.gov/json/solar_regions.json`, ~30 days of region reports) + `data/manifest.json`

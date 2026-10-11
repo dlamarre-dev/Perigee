@@ -64,11 +64,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Providers have occasional outages (CelesTrak connection errors): a single failed run only warns, and an
+      # issue is opened (or commented) when the previous completed run of the same workflow failed too.
       - name: Report failure
         if: failure()
         run: |
+          # In a reusable workflow, github.workflow_ref names the caller (owner/repo/.github/workflows/<file>@ref).
+          workflow_file=$(basename "${GITHUB_WORKFLOW_REF%@*}")
+          previous=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow_file" --status completed --limit 10 \
+            --json databaseId,conclusion --jq "[.[] | select(.databaseId != ${GITHUB_RUN_ID})][0].conclusion // \"\"")
+          if [ "$previous" != "failure" ]; then
+            echo "::warning::${{ inputs.command }} failed once (previous run: ${previous:-none}); an issue is opened if the next run fails too."
+            exit 0
+          fi
           title="Data pipeline failed: ${{ inputs.command }}"
-          body="Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          body="Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} (second failure in a row)
           Previously published data was left untouched. The pipeline stops on any non-200 response;
           check the log before re-running (CelesTrak usage policy)."
           existing=$(gh issue list --state open --label data-pipeline --search "$title in:title" --json number --jq '.[0].number')

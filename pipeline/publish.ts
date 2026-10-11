@@ -100,8 +100,8 @@ export interface EphemerisToWrite {
  * Writes data/ephem/<mission>.bin files and their manifest entries. Guard per mission: an empty table, or one
  * below half the previous size without an explanation (a coverage end reported by Horizons now truncating the
  * window, or a coarser sampling step), keeps that mission's previous file; the others are still published,
- * then the refused ones are reported (ShrinkGuardError) so the run fails and opens an issue. Missions not listed
- * keep their previously published file.
+ * then the refused ones are reported (ShrinkGuardError) so the run fails (an issue after two in a row). Missions
+ * not listed keep their previously published file.
  */
 export async function publishEphemerides(
   dataDir: string,
