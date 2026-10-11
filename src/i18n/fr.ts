@@ -60,6 +60,10 @@ export const fr: Messages = {
   'report.sending': 'Envoi…',
   'report.sent': 'Merci, votre signalement a été envoyé.',
   'report.error': 'Le signalement n’a pas pu être envoyé. Réessayez plus tard.',
+  'about.privacy': 'Confidentialité',
+  'about.analytics':
+    'Ni compte, ni publicité, ni témoins. Les pages vues sont comptées par {goatcounter}, un service respectueux de la vie privée qui ne conserve aucune adresse IP et n’utilise pas de témoins.',
+  'about.privacyPolicy': 'Politique de confidentialité',
   'about.reports':
     'Les signalements envoyés avec le bouton « Signaler » parviennent au mainteneur par courriel via Web3Forms, avec votre adresse seulement si vous la donnez.',
 

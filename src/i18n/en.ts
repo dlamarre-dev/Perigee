@@ -57,6 +57,10 @@ export const en = {
   'report.sending': 'Sending…',
   'report.sent': 'Thank you, your report was sent.',
   'report.error': 'The report could not be sent. Please try again later.',
+  'about.privacy': 'Privacy',
+  'about.analytics':
+    'No account, no ads, no cookies. Page views are counted by {goatcounter}, a privacy-friendly service that stores no IP address and uses no cookies.',
+  'about.privacyPolicy': 'Privacy policy',
   'about.reports':
     'Reports sent with the "Report" button reach the maintainer by e-mail through Web3Forms, with your e-mail address only if you give it.',
 

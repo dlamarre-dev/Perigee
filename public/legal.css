@@ -1,0 +1,60 @@
+/* Static pages (privacy policy): the site's colours, system fonts, readable in light and dark. */
+:root {
+  --bg: #f4f7fa;
+  --fg: #16202a;
+  --muted: #55636f;
+  --accent: #006d85;
+  --rule: #c9d4dc;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #070b10;
+    --fg: #dbe6ee;
+    --muted: #8fa1ae;
+    --accent: #5fd4f0;
+    --rule: #22303b;
+  }
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    16px/1.6 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+main {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+h1 {
+  margin: 0.5rem 0 0;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+h2 {
+  margin: 2rem 0 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
+}
+a {
+  color: var(--accent);
+}
+.top,
+.updated {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+ul {
+  padding-left: 1.25rem;
+}
+li + li {
+  margin-top: 0.4rem;
+}

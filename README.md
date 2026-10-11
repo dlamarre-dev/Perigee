@@ -120,6 +120,9 @@ Satellite elements come from [CelesTrak](https://celestrak.org) (T.S. Kelso); sp
 pipeline mirrors the data (your browser never contacts these providers), and every mission, site and status is
 curated with its sources in [`catalog/`](catalog/). Full list: [DATA_SOURCES.md](DATA_SOURCES.md).
 
+No account, no ads, no cookies: page views are counted by [GoatCounter](https://www.goatcounter.com), which
+stores no IP address. See the [privacy policy](https://perigee.info/privacy.html).
+
 Created by David Fugère-Lamarre. Code under the [MIT license](LICENSE).
 
 ## Contributing

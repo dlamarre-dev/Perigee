@@ -102,6 +102,12 @@ const DATA_CREDITS: readonly Credit[] = [
 
 const AUTHOR = 'David Fugère-Lamarre';
 const REPOSITORY = 'https://github.com/dlamarre-dev/Perigee';
+const GOATCOUNTER = 'https://www.goatcounter.com';
+/** Static pages in public/, one per language. */
+const PRIVACY_PAGES: Readonly<Record<Lang, string>> = {
+  en: 'privacy.html',
+  fr: 'confidentialite.html',
+};
 
 const SOFTWARE_CREDITS: readonly Credit[] = [
   { name: 'astronomy-engine (MIT)', url: 'https://github.com/cosinekitty/astronomy' },
@@ -141,7 +147,10 @@ export class About {
   private readonly dataCredits = h('ul');
   private readonly softwareCredits = h('ul');
   private readonly license = h('p');
+  private readonly privacyTitle = h('h3');
+  private readonly analytics = h('p', { class: 'small' });
   private readonly reports = h('p', { class: 'small' });
+  private readonly privacyLink = h('a', { target: '_blank', rel: 'noopener' });
   private readonly close = h('button', { type: 'button', class: 'btn', autofocus: true });
 
   constructor(
@@ -167,7 +176,10 @@ export class About {
       this.softwareTitle,
       this.softwareCredits,
       this.license,
+      this.privacyTitle,
+      this.analytics,
       this.reports,
+      h('p', { class: 'small' }, [this.privacyLink]),
       h('div', { class: 'dialog-actions' }, [this.close]),
     ]);
     scrollingDialog(this.element);
@@ -242,7 +254,16 @@ export class About {
     renderCredits(this.dataCredits, DATA_CREDITS, this.i18n.lang);
     renderCredits(this.softwareCredits, SOFTWARE_CREDITS, this.i18n.lang);
     this.license.textContent = t('about.license');
+    this.privacyTitle.textContent = t('about.privacy');
+    const [before = '', after = ''] = t('about.analytics').split('{goatcounter}');
+    this.analytics.replaceChildren(
+      before,
+      h('a', { href: GOATCOUNTER, target: '_blank', rel: 'noopener' }, ['GoatCounter']),
+      after,
+    );
     this.reports.textContent = t('about.reports');
+    this.privacyLink.textContent = t('about.privacyPolicy');
+    this.privacyLink.href = `${this.baseUrl}${PRIVACY_PAGES[this.i18n.lang]}`;
     this.close.textContent = t('about.close');
   }
 }

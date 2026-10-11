@@ -65,4 +65,18 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://perigee.info/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://perigee.info/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://perigee.info/confidentialite.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://perigee.info/confidentialite.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://perigee.info/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://perigee.info/confidentialite.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 </urlset>

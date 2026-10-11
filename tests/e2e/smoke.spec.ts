@@ -60,6 +60,12 @@ test('about panel shows the build version and the data refresh date', async ({ p
   const about = page.locator('dialog.about:not(.report)');
   await expect(about).toContainText(/Version: \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
+  await expect(about.getByRole('link', { name: 'GoatCounter' })).toBeVisible();
+  // The privacy policy is a static page of public/, one per language.
+  const policy = about.getByRole('link', { name: 'Privacy policy' });
+  const response = await page.request.get((await policy.getAttribute('href')) ?? '');
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain('GoatCounter');
 });
 
 test('report form sends to Web3Forms with the type, message and optional e-mail', async ({ page }) => {

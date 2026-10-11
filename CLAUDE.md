@@ -43,6 +43,9 @@ Cross-cutting features:
    The only third-party request the app makes on its own is the "Report" form (`src/ui/ReportDialog.ts`), sent to
    Web3Forms (which e-mails the maintainer) only when the visitor submits it, plus the GoatCounter page-view counter
    (`index.html`, `perigeeinfo.goatcounter.com`: cookie-less, privacy-friendly analytics).
+   Both are named in the About dialog and described, with what stays in browser storage and SoundCloud's
+   music player (loaded only when its panel opens), in the static privacy pages `public/privacy.html` (EN) and
+   `public/confidentialite.html` (FR): update them whenever the site starts sending or storing something new.
 4. **No mission list hardcoded in the code.** Missions, their IDs and statuses live in `catalog/*.json`,
    versioned and changed through PRs — by the maintainer or by the weekly maintenance agent, whose PRs
    auto-merge only when CI (including `catalog-guard`) passes (§8).
