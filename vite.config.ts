@@ -33,17 +33,21 @@ function basisTranscoder(): Plugin {
   };
 }
 
-/** Version shown in the About panel: the commit the site was built from (short hash, commit date). */
-function buildInfo(): { commit: string; date: string } {
+/**
+ * Version shown in the About panel: the release (package.json, tagged `v<version>` in git) and the commit the site
+ * was built from (short hash, commit date).
+ */
+function buildInfo(): { version: string; commit: string; date: string } {
+  const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
   try {
     const [commit = 'dev', date = ''] = execFileSync('git', ['log', '-1', '--format=%h|%cI'], {
       encoding: 'utf8',
     })
       .trim()
       .split('|');
-    return { commit, date };
+    return { version, commit, date };
   } catch {
-    return { commit: 'dev', date: '' };
+    return { version, commit: 'dev', date: '' };
   }
 }
 

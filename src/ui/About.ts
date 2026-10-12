@@ -243,7 +243,7 @@ export class About {
       [build.commit],
     );
     this.versionLine.replaceChildren(
-      `${t('about.version')} `,
+      `${t('about.version')} ${build.version} · ${t('about.commit')} `,
       build.commit === 'dev' ? build.commit : commit,
       build.date ? ` (${build.date.slice(0, 10)})` : '',
     );

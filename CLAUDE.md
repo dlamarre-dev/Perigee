@@ -514,6 +514,8 @@ the audit flags:
   Never degrees in internal computations.
 - Astrodynamics functions are **pure** and tested; no Three.js dependency in `src/astro/`.
 - No `localStorage` for large data; the Service Worker's Cache API holds datasets and textures.
+- Releases: semantic version in `package.json`, tagged `v<version>` on the release commit; the About dialog shows
+  it beside the build commit (`__PERIGEE_BUILD__`).
 - Conventional commits (`feat:`, `fix:`, `data:`, `catalog:`). Any change to `catalog/` must include the source
   in the PR.
 - Before adding a dependency: check the license (MIT/BSD/Apache/public domain only; **fonts may also be

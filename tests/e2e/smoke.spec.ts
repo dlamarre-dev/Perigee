@@ -58,7 +58,7 @@ test('about panel shows the build version and the data refresh date', async ({ p
   await page.goto('./?lang=en');
   await page.getByRole('button', { name: 'About' }).click();
   const about = page.locator('dialog.about:not(.report)');
-  await expect(about).toContainText(/Version: \w+/);
+  await expect(about).toContainText(/Version \d+\.\d+\.\d+ · commit \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
   await expect(about.getByRole('link', { name: 'GoatCounter' })).toBeVisible();
   // The privacy policy is a static page of public/, one per language.

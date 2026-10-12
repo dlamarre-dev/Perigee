@@ -154,7 +154,7 @@ export class ReportDialog {
     const build = __PERIGEE_BUILD__;
     return {
       url: window.location.href,
-      build: `${build.commit} (${build.date})`,
+      build: `${build.version} ${build.commit} (${build.date})`,
       lang: this.i18n.lang,
       viewport: `${window.innerWidth}×${window.innerHeight} @${window.devicePixelRatio}x`,
       quality: qualitySummary(),
