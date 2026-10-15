@@ -272,6 +272,38 @@ export const MoonsCatalogSchema = z
   });
 export type MoonsCatalog = z.infer<typeof MoonsCatalogSchema>;
 
+/**
+ * Well-known stars named on the sky of the solar-system view (catalog/stars.json): ICRS J2000 position,
+ * V magnitude and spectral type from SIMBAD, physical values of the primary star for multiple systems.
+ */
+export const StarSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  name: localized,
+  /** Bayer designation (Greek letter + Latin genitive), the same in every language. */
+  designation: z.string(),
+  constellation: localized,
+  raDeg: z.number().min(0).max(360),
+  decDeg: z.number().min(-90).max(90),
+  magnitude: z.number(),
+  distanceLy: z.number().positive(),
+  spectralType: z.string(),
+  kind: localized,
+  radiusSun: z.number().positive().optional(),
+  massSun: z.number().positive().optional(),
+  temperatureK: z.number().positive().optional(),
+  luminositySun: z.number().positive().optional(),
+  notes: localized,
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type Star = z.infer<typeof StarSchema>;
+export const StarsCatalogSchema = z.object({
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+  stars: z.array(StarSchema).min(1),
+});
+export type StarsCatalog = z.infer<typeof StarsCatalogSchema>;
+
 /** Model axis, in the GLB's own frame (glTF: +Y up, +Z front). */
 export const ModelAxisSchema = z.enum(['+x', '-x', '+y', '-y', '+z', '-z']);
 export type ModelAxis = z.infer<typeof ModelAxisSchema>;

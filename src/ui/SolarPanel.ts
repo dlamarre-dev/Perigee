@@ -1,9 +1,10 @@
 /**
  * Side panel of the solar-system view: planets (their moons folded underneath, unfolded while the planet or
- * one of its moons is selected), spacecraft (status, ephemeris availability), log scale.
+ * one of its moons is selected), well-known stars (named on the sky when ticked), spacecraft (status, ephemeris
+ * availability), log scale.
  */
 import type { PlanetInfo } from '../astro/planets';
-import type { Mission, Moon } from '../data/schemas';
+import type { Mission, Moon, Star } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { MissionToggles } from './missionToggles';
@@ -13,6 +14,9 @@ export interface SolarPanelCallbacks {
   readonly onSelectSun: () => void;
   readonly onSelectMission: (m: Mission) => void;
   readonly onSelectMoon: (m: Moon) => void;
+  readonly onSelectStar: (s: Star) => void;
+  /** Names the well-known stars on the sky (off by default). */
+  readonly onToggleStars: (on: boolean) => void;
   readonly onToggleLogScale: (on: boolean) => void;
   /** Spacecraft whose markers, trajectories and labels are not drawn. */
   readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
@@ -26,6 +30,9 @@ export class SolarPanel {
   private readonly logLabel = h('label', { for: 'toggle-log-scale' });
   private readonly planetsTitle = h('h3', { class: 'results-title' });
   private readonly planetsList = h('ul', { class: 'results' });
+  private readonly starsToggle = h('input', { type: 'checkbox', id: 'toggle-stars' });
+  private readonly starsLabel = h('label', { for: 'toggle-stars' });
+  private readonly starsList = h('ul', { class: 'results moon-list star-list', id: 'star-list' });
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
   private fetchedAt: Date | undefined;
@@ -38,12 +45,14 @@ export class SolarPanel {
     private readonly i18n: I18n,
     private readonly planets: readonly PlanetInfo[],
     private readonly moons: readonly Moon[],
+    private readonly stars: readonly Star[],
     private readonly missions: readonly Mission[],
     private readonly colors: ReadonlyMap<string, string>,
     private readonly hasEphemeris: (m: Mission) => boolean,
     logScale: boolean,
     private readonly callbacks: SolarPanelCallbacks,
     hiddenMissions: ReadonlySet<string> = new Set(),
+    showStars = false,
   ) {
     this.toggles = new MissionToggles(
       i18n,
@@ -53,6 +62,13 @@ export class SolarPanel {
     );
     this.logToggle.checked = logScale;
     this.logToggle.addEventListener('change', () => callbacks.onToggleLogScale(this.logToggle.checked));
+    this.starsToggle.checked = showStars;
+    this.starsToggle.setAttribute('aria-controls', 'star-list');
+    this.starsToggle.addEventListener('change', () => {
+      this.starsList.hidden = !this.starsToggle.checked;
+      callbacks.onToggleStars(this.starsToggle.checked);
+    });
+    this.starsList.hidden = !showStars;
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'solar-panel-title' },
       [
@@ -62,6 +78,8 @@ export class SolarPanel {
         h('p', { class: 'search-row' }, [this.logToggle, this.logLabel]),
         this.planetsTitle,
         this.planetsList,
+        h('p', { class: 'search-row' }, [this.starsToggle, this.starsLabel]),
+        this.starsList,
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
@@ -111,6 +129,7 @@ export class SolarPanel {
           (el.dataset['site'] !== undefined && `site:${el.dataset['site']}` === key) ||
           (el.dataset['planet'] !== undefined && `planet:${el.dataset['planet']}` === key) ||
           (el.dataset['sun'] !== undefined && key === 'sun') ||
+          (el.dataset['star'] !== undefined && `star:${el.dataset['star']}` === key) ||
           (el.dataset['moon'] !== undefined && `moon:${el.dataset['moon']}` === key)),
       scroll,
     );
@@ -148,6 +167,22 @@ export class SolarPanel {
       ? this.i18n.format('solar.sunspots', { date: this.sunspotsDate })
       : '';
     this.logLabel.textContent = t('solar.logScale');
+    this.starsLabel.textContent = t('solar.stars');
+    // Brightest first (lowest apparent magnitude).
+    this.starsList.replaceChildren(
+      ...[...this.stars]
+        .sort((a, b) => a.magnitude - b.magnitude)
+        .map((s) => {
+          const b = h('button', { type: 'button', class: 'result', 'data-star': s.id }, [
+            h('span', { class: 'result-name' }, [s.name[lang]]),
+            h('span', { class: 'result-id' }, [
+              this.i18n.format('star.magnitudeShort', { mag: this.i18n.number(s.magnitude, 2) }),
+            ]),
+          ]);
+          b.addEventListener('click', () => this.callbacks.onSelectStar(s));
+          return h('li', {}, [b]);
+        }),
+    );
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');
     this.toggles.renderLabels();

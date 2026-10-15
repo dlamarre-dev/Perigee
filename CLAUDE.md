@@ -137,6 +137,15 @@ No single API provides "active probes + landing sites". We maintain:
 - Every entry must cite at least one source (NASA, ESA, JAXA, CNSA, ISRO, KARI, LROC, Wikipedia as last resort).
 - Every catalog text shown to visitors (names, notes, orbits, purposes…) is a `{ en, fr }` object, enforced by the
   zod schemas: a plain string fails validation, so updates cannot add English-only text.
+- `catalog/stars.json`: well-known stars named on the sky of the solar view (EN/FR name, Bayer designation,
+  constellation, ICRS J2000 position, V magnitude and spectral type from SIMBAD; distance, radius, mass,
+  temperature and luminosity of the main star from the cited literature; student-level notes). Off by default
+  (panel checkbox "Identify the bright stars", URL `stars=1`): no marker, a leader line from the star to its label
+  (`LabelLayer` `leaderPx`); selectable (`sel=star:<id>`, not followable), the camera turns towards it
+  (`ViewHost.aimAt`). Hidden behind the Sun and the bodies like the other labels. The info panel shows an
+  illustration (`src/render/starImage.ts`, labelled "not a photograph": black-body colour of the effective
+  temperature, limb darkening, convection cells sized to the star, the Sun at the same scale); few stars were
+  ever resolved, so none uses a real image.
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models
@@ -172,7 +181,9 @@ No single API provides "active probes + landing sites". We maintain:
   decals covered, ISS stray parts dropped) → `public/models/<id>.glb`. The selected object's model replaces its
   marker once it covers ≥ 4 px (`src/render/models.ts` `SceneModel`, PBR lit by the Sun and a dim room environment;
   illustrative attitude from `src/astro/attitude.ts`), and a preview spins at the top of the info panel
-  (`src/ui/ModelPreview.ts`). Following such an object lets the camera come to twice its size. Phobos and Deimos
+  (`src/ui/ModelPreview.ts`). The same preview shows a selected celestial body as drawn in the view (its
+  BodyMesh: map, flattening, moving gas, rings, shape grid; planets, moons, dwarf planets, and the Moon of the
+  Earth view, selectable with `sel=moon`), and the Sun and the named stars as 2D illustrations. Following such an object lets the camera come to twice its size. Phobos and Deimos
   (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. Entries with `high` (the
   ISS) also get a full-quality variant (`--high`: every part, no simplification beyond 1e-3 of the extent, KTX2
   textures) loaded only on the high quality tier and large screens while the model covers ≥ `minPx` (a Pixel 10

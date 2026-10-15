@@ -2,7 +2,7 @@
  * The Moon seen from the Earth view: textured BodyMesh at its true geocentric position (astronomy-engine,
  * rotated from J2000 to the equator of date so it matches the TEME satellites to ~35 km), IAU orientation,
  * lit by the Sun, with a label hidden behind the Earth. Its pick-pass occluder (BodyMesh) keeps satellites
- * behind it from being picked.
+ * behind it from being picked. Selectable: a click on its disc or its label.
  */
 import type { PerspectiveCamera, Scene } from 'three';
 import { Astronomy } from '../astro/astronomy';
@@ -57,8 +57,42 @@ export class MoonInSky {
     this.setLabel(label);
   }
 
+  private labelText = '';
+  private selected = false;
+
   setLabel(text: string): void {
-    this.labels.setItems([{ id: 'moon', text, className: 'label-natural' }]);
+    this.labelText = text;
+    this.labels.setItems([
+      { id: 'moon', text, className: this.selected ? 'label-natural label-selected' : 'label-natural' },
+    ]);
+  }
+
+  setSelected(selected: boolean): void {
+    this.selected = selected;
+    this.setLabel(this.labelText);
+  }
+
+  /**
+   * True when a click at (x, y) CSS px lands on the Moon: on its label, or on its disc (at least `pickPx` wide),
+   * unless the Earth hides it.
+   */
+  hit(
+    xCss: number,
+    yCss: number,
+    originKm: Vec3,
+    camera: PerspectiveCamera,
+    earthRadiusKm: number,
+    widthCss: number,
+    heightCss: number,
+    pickPx: number,
+  ): boolean {
+    if (this.labels.hit(xCss, yCss) === 'moon') return true;
+    const r = sub(this.sceneKm, originKm);
+    const p = this.labels.project(r, this.sceneKm, camera, originKm, earthRadiusKm, widthCss, heightCss);
+    if (!p) return false;
+    const focalPx = heightCss / 2 / Math.tan((camera.fov * Math.PI) / 360);
+    const discPx = (MOON_RADIUS_KM / Math.max(length(r), 1)) * focalPx;
+    return Math.hypot(p.x - xCss, p.y - yCss) <= Math.max(discPx, pickPx);
   }
 
   /** `sceneFromInertial`: the view's TEME → scene rotation; `sunScene`: unit Sun direction in the scene. */

@@ -76,7 +76,8 @@ export class InfoPanel {
     if (object !== this.object) setPanelCollapsed(this.element, false);
     this.object = object;
     this.element.hidden = !object;
-    this.preview.show(object ? modelFor(`norad:${object.noradId}`) : undefined);
+    const entry = object ? modelFor(`norad:${object.noradId}`) : undefined;
+    this.preview.show(entry ? { kind: 'model', entry } : undefined);
     this.render();
     if (object && focus) this.title.focus();
   }

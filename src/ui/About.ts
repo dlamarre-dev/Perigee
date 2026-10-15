@@ -86,6 +86,14 @@ const DATA_CREDITS: readonly Credit[] = [
     url: 'https://svs.gsfc.nasa.gov/4851',
   },
   {
+    name: 'SIMBAD (CDS, Strasbourg)',
+    detail: {
+      en: 'positions, magnitudes and spectral types of the named stars',
+      fr: 'positions, magnitudes et types spectraux des étoiles nommées',
+    },
+    url: 'https://simbad.cds.unistra.fr/simbad/',
+  },
+  {
     name: 'NASA MMGIS',
     detail: { en: 'Mars rover traverses', fr: 'trajets des rovers martiens' },
     url: 'https://mars.nasa.gov/maps/',

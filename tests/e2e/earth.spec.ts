@@ -130,3 +130,30 @@ test('the info panel says where the elements come from', async ({ page }) => {
     timeout: 30_000,
   });
 });
+
+test('the Moon is selectable: by its name, with its phase, a 3D preview, the URL and following', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&${FROZEN}&e2e`);
+  await expect(page.locator('.notice')).toBeHidden({ timeout: 30_000 });
+  await page.evaluate(() =>
+    (
+      window as unknown as { __perigeeTest: { lookToward(what: string, d?: number): boolean } }
+    ).__perigeeTest.lookToward('moon', 60_000),
+  );
+  const label = page.locator('.label-natural', { hasText: 'Moon' });
+  await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 10_000 });
+  const box = await label.boundingBox();
+  if (!box) throw new Error('no Moon label');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Moon');
+  await expect(info).toContainText('Phase');
+  await expect(info).toContainText('% lit');
+  await expect(info.locator('figure.model-preview canvas')).toBeVisible();
+  await expect(page).toHaveURL(/sel=moon/);
+  await page.reload();
+  await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Moon');
+  await page.locator('aside.info:visible').getByRole('button', { name: 'Follow' }).click();
+  await expect(page.locator('aside.info:visible button[aria-pressed="true"]')).toBeVisible();
+});

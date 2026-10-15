@@ -10,6 +10,8 @@ test('shows planets with distances and light time', async ({ page }) => {
   const info = page.locator('aside.info:visible');
   await expect(info.locator('.panel-title')).toHaveText('Jupiter');
   await expect(info).toContainText('Distance to the Sun');
+  // The planet itself, as drawn in the view.
+  await expect(info.locator('figure.model-preview canvas')).toBeVisible();
   await expect(info).toContainText('light time');
   // How the position is computed, as for the moons.
   await expect(info.locator('.freshness')).toContainText('VSOP87');
@@ -140,6 +142,36 @@ test('the Sun can be selected: figures, Carrington rotation and where the sunspo
   await expect(page).toHaveURL(/sel=sun/);
   await page.reload();
   await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sun');
+});
+
+test('bright stars are named on demand, selectable from the list and by their name on the sky', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  const sirius = page.locator('.label-star', { hasText: /^Sirius$/ });
+  await expect(page.locator('#side-panel [data-star="sirius"]')).toBeHidden();
+  await expect(sirius).toHaveAttribute('data-shown', 'false');
+  await page.getByLabel('Identify the bright stars').check();
+  await expect(page).toHaveURL(/stars=1/);
+  await page.locator('#side-panel [data-star="sirius"]').click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Sirius');
+  await expect(info).toContainText('α Canis Majoris');
+  await expect(info).toContainText('light-years');
+  await expect(info.getByRole('button', { name: 'Follow' })).toBeHidden();
+  // An illustration, not a photograph.
+  await expect(info.locator('figure.model-preview canvas')).toBeVisible();
+  await expect(info.locator('figure.model-preview')).toContainText('not a photograph');
+  await expect(page).toHaveURL(/sel=star%3Asirius|sel=star:sirius/);
+  // The camera turned towards it: its name shows, with a leader line; a click on the name selects it again.
+  await expect(sirius).toHaveAttribute('data-shown', 'true', { timeout: 10_000 });
+  await expect(sirius).toHaveClass(/label-selected/);
+  await info.getByRole('button', { name: 'Close' }).click();
+  await expect(info).toBeHidden();
+  const box = await sirius.boundingBox();
+  if (!box) throw new Error('no label');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sirius');
 });
 
 test("a followed body's label gives way to its disc and comes back when zooming out", async ({ page }) => {

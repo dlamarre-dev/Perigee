@@ -20,6 +20,7 @@ import {
 } from 'three';
 import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
+import starsJson from '../../catalog/stars.json';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import {
   bodyOrientationEqj,
@@ -71,13 +72,18 @@ import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader
 import {
   MissionsCatalogSchema,
   MoonsCatalogSchema,
+  StarsCatalogSchema,
   type EphemerisEntry,
   type Mission,
   SunRegionsSchema,
   type Moon,
   type Manifest,
+  type Star,
   type SunRegions,
 } from '../data/schemas';
+import { formatDec, formatRa, starDirectionEqj } from '../astro/stars';
+import { temperatureFromSpectralType } from '../render/starImage';
+import type { PreviewSubject } from '../ui/ModelPreview';
 import {
   CARRINGTON_RATE_DEG_PER_DAY,
   carringtonRotation,
@@ -111,6 +117,10 @@ const PICK_RADIUS_PX = 14;
 /** A followed spacecraft's or body's label is hidden while its model or disc covers more than this (CSS px). */
 const MODEL_LABEL_MAX_PX = 10;
 const PLANET_PRIORITY = 70;
+/** Star names stand this far (CSS px) from their star, joined by a leader line: no marker over the sky map. */
+const STAR_LEADER_PX = 26;
+/** Beyond every body of the view (km): a star's direction is tested for occlusion with a point this far out. */
+const STAR_TEST_DISTANCE_KM = 1e13;
 /** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
 const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   venus: 'texture.artistVenus',
@@ -166,7 +176,14 @@ type Selection =
   | { readonly kind: 'planet'; readonly planet: PlanetInfo }
   | { readonly kind: 'moon'; readonly moon: Moon }
   | { readonly kind: 'mission'; readonly mission: Mission }
+  | { readonly kind: 'star'; readonly star: Star }
   | undefined;
+
+/** A well-known star: its direction at infinity (EQJ). */
+interface StarObject {
+  readonly star: Star;
+  readonly dirEqj: Vec3;
+}
 
 /** Deferred texture (and ring) loading, run once the camera comes near the body. */
 interface LazyLoad {
@@ -212,11 +229,13 @@ function selectionKey(sel: Selection): string | undefined {
   if (sel.kind === 'sun') return 'sun';
   if (sel.kind === 'planet') return `planet:${sel.planet.id}`;
   if (sel.kind === 'moon') return `moon:${sel.moon.id}`;
+  if (sel.kind === 'star') return `star:${sel.star.id}`;
   return `mission:${sel.mission.id}`;
 }
 
 function selectionId(sel: NonNullable<Selection>): string {
   if (sel.kind === 'sun') return 'sun';
+  if (sel.kind === 'star') return `star:${sel.star.id}`;
   return sel.kind === 'planet' ? sel.planet.id : sel.kind === 'moon' ? sel.moon.id : sel.mission.id;
 }
 
@@ -325,6 +344,9 @@ class SolarView implements View {
   private readonly planets: PlanetObject[] = [];
   private readonly probes: ProbeObject[] = [];
   private readonly moons: MoonObject[] = [];
+  private readonly stars: readonly StarObject[];
+  /** Name the well-known stars on the sky (URL `stars=1`); a selected star is named in any case. */
+  private showStars: boolean;
   private readonly moonMarkers: MarkerPoints;
   private readonly jupiterCache: Parameters<typeof moonState>[3] = {};
   private readonly planetMarkers: MarkerPoints;
@@ -357,6 +379,11 @@ class SolarView implements View {
 
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
+    this.showStars = host.initialParams.get('stars') === '1';
+    this.stars = StarsCatalogSchema.parse(starsJson).stars.map((star) => ({
+      star,
+      dirEqj: starDirectionEqj(star),
+    }));
     this.missions = MissionsCatalogSchema.parse(missionsJson).missions.filter((m) => m.centralBody === 'sun');
     const renderer = host.renderer;
 
@@ -559,6 +586,7 @@ class SolarView implements View {
       host.i18n,
       PLANETS,
       this.moons.map((m) => m.moon),
+      this.stars.map((s) => s.star),
       this.missions,
       this.colors,
       (m) => m.ephemeris === 'horizons',
@@ -568,6 +596,11 @@ class SolarView implements View {
         onSelectSun: () => this.select({ kind: 'sun' }, { focus: true, frame: true }),
         onSelectMission: (m) => this.select({ kind: 'mission', mission: m }, { focus: true, frame: true }),
         onSelectMoon: (m) => this.select({ kind: 'moon', moon: m }, { focus: true, frame: true }),
+        onSelectStar: (star) => this.select({ kind: 'star', star }, { focus: true, frame: true }),
+        onToggleStars: (on) => {
+          this.showStars = on;
+          this.host.syncUrl();
+        },
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -584,6 +617,7 @@ class SolarView implements View {
         },
       },
       this.hiddenMissions,
+      this.showStars,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.ring = new SelectionMarker();
@@ -701,6 +735,10 @@ class SolarView implements View {
           distanceKm: Math.max(aKm * 2.2, m.moon.radiusKm * 12),
         });
       }
+      this.pendingFrame = false;
+    }
+    if (this.pendingFrame && this.selection?.kind === 'star') {
+      this.host.aimAt(quatRotate(this.sceneQ, this.starOf(this.selection.star).dirEqj));
       this.pendingFrame = false;
     }
     if (this.pendingFrame && this.selection?.kind === 'sun') {
@@ -891,6 +929,22 @@ class SolarView implements View {
       if (c && Math.hypot(c.x - xCss, c.y - yCss) <= Math.max(discPx, pickRadiusPx(PICK_RADIUS_PX)))
         best = { sel: { kind: 'sun' }, d: 0, depth: distanceKm };
     }
+    // Stars, behind everything: their name, or the star itself.
+    if (!best) {
+      const hit = this.labels.hit(xCss, yCss);
+      const named = hit?.startsWith('*:') ? this.stars.find((s) => `*:${s.star.id}` === hit) : undefined;
+      if (named) best = { sel: { kind: 'star', star: named.star }, d: 0, depth: Infinity };
+    }
+    if (!best) {
+      for (const s of this.stars) {
+        if (!this.starNamed(s)) continue;
+        const p = this.projectStar(s);
+        if (!p) continue;
+        const d = Math.hypot(p.x - xCss, p.y - yCss);
+        if (d <= pickRadiusPx(PICK_RADIUS_PX) && (!best || d < best.d))
+          best = { sel: { kind: 'star', star: s.star }, d, depth: Infinity };
+      }
+    }
     if (best) this.select(best.sel, { follow: double });
   }
 
@@ -904,7 +958,9 @@ class SolarView implements View {
     if (sel?.kind === 'planet') p.set('sel', sel.planet.id);
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
+    if (sel?.kind === 'star') p.set('sel', `star:${sel.star.id}`);
     if (this.logScale) p.set('log', '1');
+    if (this.showStars) p.set('stars', '1');
     writeHiddenMissions(p, this.hiddenMissions);
   }
 
@@ -1398,7 +1454,51 @@ class SolarView implements View {
         text: m.moon.name[lang],
         className: 'label-planet',
       })),
+      ...this.stars.map((s) => {
+        const selected = this.selection?.kind === 'star' && this.selection.star.id === s.star.id;
+        return {
+          id: `*:${s.star.id}`,
+          text: s.star.name[lang],
+          className: selected ? 'label-star label-selected' : 'label-star',
+          leaderPx: STAR_LEADER_PX,
+        };
+      }),
     ]);
+  }
+
+  private starOf(star: Star): StarObject {
+    return this.stars.find((s) => s.star.id === star.id) ?? { star, dirEqj: starDirectionEqj(star) };
+  }
+
+  /** Named on the sky: every star while the panel's box is ticked, the selected one always. */
+  private starNamed(s: StarObject): boolean {
+    return this.showStars || (this.selection?.kind === 'star' && this.selection.star.id === s.star.id);
+  }
+
+  /**
+   * The star's direction relative to the camera, at a distance inside the clipping range (only the direction
+   * matters on screen), or undefined when the Sun, a planet or a small body hides it.
+   */
+  private starRender(s: StarObject): Vec3 | undefined {
+    const dir = quatRotate(this.sceneQ, s.dirEqj);
+    const far = add(this.originKm, scale(dir, STAR_TEST_DISTANCE_KM));
+    if (this.behindBody(far, '')) return undefined;
+    return scale(dir, this.host.renderer.camera.near * 4);
+  }
+
+  private projectStar(s: StarObject): { x: number; y: number } | undefined {
+    const r = this.starRender(s);
+    if (!r) return undefined;
+    const canvas = this.host.renderer.canvas;
+    return this.labels.project(
+      r,
+      r,
+      this.host.renderer.camera,
+      [0, 0, 0],
+      0,
+      canvas.clientWidth,
+      canvas.clientHeight,
+    );
   }
 
   private placeLabels(): void {
@@ -1467,6 +1567,21 @@ class SolarView implements View {
         selected ? LabelPriority.Selected : MOON_PRIORITY,
       );
     }
+    for (const s of this.stars) {
+      const selected = sel?.kind === 'star' && sel.star.id === s.star.id;
+      const r = this.starNamed(s) ? this.starRender(s) : undefined;
+      this.labels.place(
+        `*:${s.star.id}`,
+        r,
+        r,
+        camera,
+        [0, 0, 0],
+        0,
+        w,
+        hgt,
+        selected ? LabelPriority.Selected : LabelPriority.Star,
+      );
+    }
     this.labels.layout(w, hgt);
   }
 
@@ -1533,6 +1648,8 @@ class SolarView implements View {
     }
     const moon = this.moons.find((m) => `moon:${m.moon.id}` === sel)?.moon;
     if (moon) this.select({ kind: 'moon', moon }, { frame: true });
+    const star = this.stars.find((s) => `star:${s.star.id}` === sel)?.star;
+    if (star) this.select({ kind: 'star', star }, { frame: true });
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
@@ -1542,6 +1659,7 @@ class SolarView implements View {
     this.selection = sel;
     this.panel.setSelected(selectionKey(sel));
     this.styleOrbits();
+    if (sel?.kind === 'star' || cur?.kind === 'star') this.refreshLabels();
     this.pendingFrame = sel !== undefined && (options.frame ?? false) && !options.follow;
     if (!sel) this.detail.hide();
     else this.renderDetail(options.focus ?? false);
@@ -1570,7 +1688,8 @@ class SolarView implements View {
 
   private startFollowing(): void {
     const sel = this.selection;
-    if (!sel || !this.scenePositionOf(sel)) return;
+    // Stars are at infinity: nothing to follow.
+    if (!sel || sel.kind === 'star' || !this.scenePositionOf(sel)) return;
     // Following supersedes a framing requested by the same selection but not applied yet.
     this.pendingFrame = false;
     // Planets, moons and natural objects (dwarf planets) are framed by their size; spacecraft by their model.
@@ -1645,7 +1764,9 @@ class SolarView implements View {
           ? this.planetDetail(sel.planet)
           : sel.kind === 'moon'
             ? this.moonDetail(sel.moon)
-            : this.missionDetail(sel.mission);
+            : sel.kind === 'star'
+              ? this.starDetail(sel.star)
+              : this.missionDetail(sel.mission);
     this.detail.show(content, focus);
   }
 
@@ -1712,6 +1833,53 @@ class SolarView implements View {
         'https://github.com/cosinekitty/astronomy',
       ],
       followable: true,
+      preview: { kind: 'star', star: { id: 'sun', temperatureK: 5772, radiusSun: 1 } },
+    };
+  }
+
+  /** A well-known star: catalog values (SIMBAD position, magnitude and spectral type; physical values). */
+  private starDetail(star: Star): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const lang = i18n.lang;
+    const sig = (v: number): string => i18n.number(v, v < 10 ? 2 : v < 100 ? 1 : 0);
+    const timesSun = (v: number | undefined): string | undefined =>
+      v === undefined ? undefined : i18n.format('star.timesSun', { n: sig(v) });
+    const ly = sig(star.distanceLy);
+    const rows: [string, string | undefined][] = [
+      [t('star.designation'), star.designation],
+      [t('star.constellation'), star.constellation[lang]],
+      [t('star.type'), star.kind[lang]],
+      [t('star.spectralType'), star.spectralType],
+      [t('star.magnitude'), i18n.format('star.magnitudeValue', { mag: i18n.number(star.magnitude, 2) })],
+      [t('star.distance'), i18n.format('star.distanceValue', { ly })],
+      [t('star.radius'), timesSun(star.radiusSun)],
+      [t('star.mass'), timesSun(star.massSun)],
+      [
+        t('star.temperature'),
+        star.temperatureK === undefined ? undefined : `${i18n.number(star.temperatureK)} K`,
+      ],
+      [t('star.luminosity'), timesSun(star.luminositySun)],
+      [
+        t('star.position'),
+        i18n.format('star.positionValue', { ra: formatRa(star.raDeg), dec: formatDec(star.decDeg) }),
+      ],
+    ];
+    return {
+      title: star.name[lang],
+      rows: rows.filter((r): r is [string, string] => r[1] !== undefined),
+      notes: star.notes[lang],
+      sources: star.sources,
+      footnote: t('star.footnote'),
+      followable: false,
+      preview: {
+        kind: 'star',
+        star: {
+          id: star.id,
+          temperatureK: star.temperatureK ?? temperatureFromSpectralType(star.spectralType) ?? 5800,
+          radiusSun: star.radiusSun,
+        },
+      },
     };
   }
 
@@ -1749,6 +1917,18 @@ class SolarView implements View {
         'https://github.com/cosinekitty/astronomy',
       ],
       followable: true,
+      preview: {
+        kind: 'body',
+        body: {
+          id: info.id,
+          radiusKm: info.radiusKm,
+          radiiKm: info.radiiKm,
+          color: info.color,
+          map: info.id === 'earth' ? 'day' : 'color',
+          gasFlow: GAS_FLOW[info.id],
+          rings: info.rings && { ...info.rings, tauScale: RING_TAU_SCALE },
+        },
+      },
     };
   }
 
@@ -1964,6 +2144,7 @@ class SolarView implements View {
       sources: m?.fromHorizons ? [...moon.sources, HORIZONS_PAGE] : moon.sources,
       footnote: i18n.format('info.verified', { date: moon.verified }),
       followable: m?.scene !== undefined,
+      ...this.moonPreview(moon),
     };
   }
 
@@ -2035,6 +2216,37 @@ class SolarView implements View {
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,
       ...withModel(`mission:${m.id}`),
+      ...(m.objectType === 'natural' && m.radiusKm
+        ? {
+            preview: {
+              kind: 'body',
+              body: {
+                id: m.id,
+                radiusKm: m.radiusKm,
+                radiiKm: m.radiiKm,
+                color: this.colors.get(m.id) ?? DEFAULT_PROBE_COLOR,
+              },
+            } satisfies PreviewSubject,
+          }
+        : {}),
+    };
+  }
+
+  /** A moon's NASA shape model (Phobos, Deimos), or its sphere with the view's map. */
+  private moonPreview(moon: Moon): Pick<DetailContent, 'model' | 'preview'> {
+    const entry = modelFor(`moon:${moon.id}`);
+    if (entry?.body) return { model: entry };
+    return {
+      preview: {
+        kind: 'body',
+        body: {
+          id: moon.id,
+          radiusKm: moon.radiusKm,
+          radiiKm: moon.radiiKm,
+          color: moon.color,
+          shapeGrid: moon.shape === 'grid',
+        },
+      },
     };
   }
 

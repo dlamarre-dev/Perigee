@@ -1,7 +1,7 @@
 import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
-import { ModelPreview } from './ModelPreview';
+import { ModelPreview, type PreviewSubject } from './ModelPreview';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
 
@@ -16,6 +16,8 @@ export interface DetailContent {
   readonly followable: boolean;
   /** NASA 3D model shown at the top of the panel. */
   readonly model?: ModelEntry;
+  /** Otherwise: a celestial body in 3D, or a star illustration. */
+  readonly preview?: PreviewSubject;
   /** Optional secondary action (e.g. apply a filter). */
   readonly action?: { readonly label: string; readonly run: () => void };
 }
@@ -92,7 +94,7 @@ export class DetailPanel {
     // Opening (not the periodic refresh) shows the whole sheet on phones.
     if (wasHidden) setPanelCollapsed(this.element, false);
     setText(this.title, content.title);
-    this.preview.show(content.model);
+    this.preview.show(content.model ? { kind: 'model', entry: content.model } : content.preview);
     this.badge.hidden = !content.badge;
     if (content.badge) {
       setText(this.badge, content.badge.text);

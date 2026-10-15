@@ -19,7 +19,8 @@ import {
   type Quat,
 } from '../astro/quat';
 import { SimClock } from '../astro/time';
-import { add, cross, dot, length, normalize, scale, type Vec3 } from '../astro/vec3';
+import { DEG_TO_RAD } from '../astro/constants';
+import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
 import { heightAboveKm, keepOutside, orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
@@ -548,6 +549,19 @@ function main(): void {
       );
       const target = scale(pos, options.targetFraction ?? 0);
       controls.flyTo(orbitStateLookingFrom(target, dir, [0, 0, 1], distanceKm));
+    },
+    aimAt: (direction: Vec3) => {
+      if (!view || keepRestoredCamera) return;
+      follow.stop();
+      const d = normalize(direction);
+      // Look 10° below the direction, towards the scene south: the star sits above the target (the Sun).
+      let north: Vec3 = [0, 0, 1];
+      if (Math.abs(dot(d, north)) > 0.98) north = [1, 0, 0];
+      const up = normalize(sub(north, scale(d, dot(d, north))));
+      const tilt = 10 * DEG_TO_RAD;
+      const look = add(scale(d, Math.cos(tilt)), scale(up, -Math.sin(tilt)));
+      const { targetKm, distanceKm } = controls.state;
+      controls.flyTo(orbitStateLookingFrom(targetKm, scale(look, -1), up, distanceKm));
     },
     sceneFromInertial,
     mount: (el) => {

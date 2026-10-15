@@ -4,14 +4,18 @@ import earthScienceJson from '../../catalog/earth-science.json';
 import operatorsJson from '../../catalog/operators.json';
 import { DEG_TO_RAD, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { latLonToUnit, rotZ } from '../astro/frames';
-import { earthOrientation, geoSunKm, MOON_RADIUS_KM } from '../astro/bodies';
+import { earthOrientation, geoMoonKm, geoSunKm, MOON_RADIUS_KM } from '../astro/bodies';
+import { Astronomy } from '../astro/astronomy';
+import { moonPhase } from '../astro/moonPhase';
 import { alignAxes, axisVector } from '../astro/attitude';
 import { QUAT_IDENTITY, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { sunDirectionEci } from '../astro/sun';
 import { SUN_RADIUS_KM } from '../astro/planets';
 import { gmstRad } from '../astro/time';
 import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
-import { orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
+import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
+import type { MessageKey } from '../i18n';
+import { pickRadiusPx } from '../render/pointer';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { datasetKey } from '../app/updates';
 import { loadBulkDataset, loadManifest, loadOptionalDataset } from '../data/loader';
@@ -44,6 +48,11 @@ const FOLLOW_DISTANCE_KM = 1500;
 const SITE_FOLLOW_DISTANCE_KM = 2500;
 /** A launch site this close to the pointer wins over satellites (they are dense near the Earth). */
 const SITE_PRIORITY_PX = 8;
+const MOON_PICK_PX = 14;
+const LIGHT_SPEED_KM_S = 299_792.458;
+/** Sidereal and synodic months (days), NASA Moon fact sheet. */
+const MOON_SIDEREAL_DAYS = 27.3217;
+const MOON_SYNODIC_DAYS = 29.5306;
 
 class EarthView implements View {
   readonly id = 'earth' as const;
@@ -64,6 +73,9 @@ class EarthView implements View {
   private readonly operators = OperatorsCatalogSchema.parse(operatorsJson);
   private readonly infoPanel: InfoPanel;
   private readonly siteDetail: DetailPanel;
+  /** The Moon, when selected (URL `sel=moon`). */
+  private readonly moonDetail: DetailPanel;
+  private moonSelected = false;
   private readonly launchSites: readonly LaunchSite[];
   private readonly launchVerified: string;
   private readonly launch: LaunchSiteLayer;
@@ -117,6 +129,7 @@ class EarthView implements View {
       this.launch.setLanguage(lang);
       this.moon.setLabel(host.i18n.t('earth.moon'));
       if (this.selectedSite) this.showSite(this.selectedSite, false);
+      if (this.moonSelected) this.moonDetail.show(this.moonContent(), false);
     });
     host.mount(this.launch.labels.element);
     this.launch.visible = host.initialParams.get('ls') !== '0';
@@ -125,7 +138,13 @@ class EarthView implements View {
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.followSite()),
     });
     host.mount(this.siteDetail.element);
+    this.moonDetail = new DetailPanel(host.i18n, {
+      onClose: () => this.selectMoon(false),
+      onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.followMoon()),
+    });
+    host.mount(this.moonDetail.element);
     const sel = host.initialParams.get('sel');
+    if (sel === 'moon') this.selectMoon(true);
     if (sel?.startsWith('site:')) {
       const site = this.launchSites.find((x) => x.id === sel.slice(5));
       if (site) this.selectSite(site);
@@ -213,6 +232,7 @@ class EarthView implements View {
   }
 
   uiTick(nowMs: number): void {
+    if (this.moonSelected) this.moonDetail.show(this.moonContent(), false);
     if (!this.sats) return;
     this.filterPanel?.updateStats(this.sats.stats);
     this.infoPanel.update(this.sats.selection?.state, nowMs);
@@ -230,6 +250,19 @@ class EarthView implements View {
     const obj = this.sats?.pick(renderer.scene, renderer.camera, xCss, yCss);
     if (obj) this.select(obj, { follow: double });
     else if (site) this.selectSite(site.site, { follow: double });
+    else if (
+      this.moon.hit(
+        xCss,
+        yCss,
+        this.host.controls.cameraPositionKm,
+        renderer.camera,
+        this.earth.radiusKm,
+        w,
+        hgt,
+        pickRadiusPx(MOON_PICK_PX),
+      )
+    )
+      this.selectMoon(true, { follow: double });
   }
 
   dataVersions(): ReadonlyMap<string, string> {
@@ -239,6 +272,7 @@ class EarthView implements View {
   writeUrl(p: URLSearchParams): void {
     writeEarthUrl({ filters: this.filters, selected: this.selectedNorad }, p);
     if (this.selectedSite) p.set('sel', `site:${this.selectedSite.id}`);
+    if (this.moonSelected) p.set('sel', 'moon');
     if (!this.launch.visible) p.set('ls', '0');
   }
 
@@ -262,6 +296,7 @@ class EarthView implements View {
     this.pendingFrame = false;
     if (this.host.follow.active) this.host.follow.stop();
     else if (this.selectedSite) this.followSite();
+    else if (this.moonSelected) this.followMoon();
     else this.startFollowing();
   }
 
@@ -284,6 +319,7 @@ class EarthView implements View {
     if (!this.sats) return;
     if (!obj || obj.noradId !== this.selectedNorad) this.host.follow.stop();
     if (obj && this.selectedSite) this.clearSite();
+    if (obj && this.moonSelected) this.clearMoon();
     this.sats.select(obj);
     this.selectedNorad = obj?.noradId;
     this.infoPanel.show(obj, options.focus ?? false);
@@ -310,6 +346,7 @@ class EarthView implements View {
 
   private selectSite(site: LaunchSite | undefined, options: { follow?: boolean } = {}): void {
     if (site?.id !== this.selectedSite?.id) this.host.follow.stop();
+    if (site && this.moonSelected) this.clearMoon();
     if (site && this.selectedNorad !== undefined) {
       this.sats?.select(undefined);
       this.selectedNorad = undefined;
@@ -324,6 +361,89 @@ class EarthView implements View {
       if (options.follow) this.followSite();
     }
     this.host.syncUrl();
+  }
+
+  private clearMoon(): void {
+    this.moonSelected = false;
+    this.moon.setSelected(false);
+    this.moonDetail.hide();
+  }
+
+  private selectMoon(selected: boolean, options: { follow?: boolean } = {}): void {
+    if (selected !== this.moonSelected) this.host.follow.stop();
+    if (!selected) {
+      this.clearMoon();
+    } else {
+      if (this.selectedNorad !== undefined) {
+        this.sats?.select(undefined);
+        this.selectedNorad = undefined;
+        this.infoPanel.show(undefined);
+        this.filterPanel?.setSelected(undefined);
+      }
+      if (this.selectedSite) this.clearSite();
+      this.moonSelected = true;
+      this.moon.setSelected(true);
+      this.moonDetail.show(this.moonContent(), true);
+      if (options.follow) this.followMoon();
+    }
+    this.host.syncUrl();
+  }
+
+  /** Follows the Moon from its day side, framed by its size (as bodies are in the other views). */
+  private followMoon(): void {
+    if (!this.moonSelected) return;
+    const body = bodyFollow(MOON_RADIUS_KM);
+    const toSun = normalize(sub(this.sunSceneKm, this.moon.sceneKm));
+    this.moonDetail.following = this.host.follow.start(
+      () => (this.moonSelected ? this.moon.sceneKm : undefined),
+      body.distanceKm,
+      () => (this.moonDetail.following = false),
+      {
+        viewFrom: normalize([toSun[0], toSun[1], toSun[2] + 1]),
+        minDistanceKm: body.minDistanceKm,
+        surfaceRadiusKm: body.surfaceRadiusKm,
+      },
+    );
+  }
+
+  /** The Moon: distance and light time, phase, size, months (positions from astronomy-engine). */
+  private moonContent(): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const date = new Date(this.host.clock.nowMs());
+    const distanceKm = length(geoMoonKm(date));
+    const lightS = distanceKm / LIGHT_SPEED_KM_S;
+    const elongation = Astronomy.MoonPhase(date);
+    const lit = Astronomy.Illumination(Astronomy.Body.Moon, date).phase_fraction;
+    return {
+      title: t('earth.moon'),
+      badge: { text: t('moon.model.theory'), state: 'fresh' },
+      rows: [
+        [
+          t('info.distEarth'),
+          `${i18n.number(distanceKm)} km · ${t('info.lightTime')} ${i18n.number(lightS, 2)} s`,
+        ],
+        [
+          t('info.phase'),
+          `${t(`moonPhase.${moonPhase(elongation)}`)} · ${i18n.format('moonPhase.lit', { pct: i18n.number(lit * 100, 0) })}`,
+        ],
+        [t('info.radius'), `${i18n.number(MOON_RADIUS_KM, 1)} km`],
+        [
+          t('info.orbitalPeriod'),
+          i18n.format('moonPhase.months', {
+            sidereal: i18n.number(MOON_SIDEREAL_DAYS, 2),
+            synodic: i18n.number(MOON_SYNODIC_DAYS, 2),
+          }),
+        ],
+      ],
+      notes: t('earth.moonNotes'),
+      sources: [
+        'https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html',
+        'https://github.com/cosinekitty/astronomy',
+      ],
+      followable: true,
+      preview: { kind: 'body', body: { id: 'moon', radiusKm: MOON_RADIUS_KM, color: '#9a9a9a' } },
+    };
   }
 
   private followSite(): void {

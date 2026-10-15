@@ -76,6 +76,11 @@ export interface ViewHost {
       distanceKm?: number;
     },
   ): void;
+  /**
+   * Turns the camera, around its current target and at its current distance, to look towards a scene-frame
+   * direction at infinity (a star), shown a little above the centre of the view so the target does not hide it.
+   */
+  aimAt(directionScene: Vec3): void;
   frame(): FrameMode;
   /** scene ← inertial rotation for the current frame mode. */
   sceneFromInertial(date: Date): Quat;

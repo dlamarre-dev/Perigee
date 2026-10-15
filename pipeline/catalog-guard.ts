@@ -19,6 +19,7 @@ import {
   EarthScienceCatalogSchema,
   ModelsCatalogSchema,
   MoonsCatalogSchema,
+  StarsCatalogSchema,
   OperatorsCatalogSchema,
 } from '../src/data/schemas';
 
@@ -80,6 +81,10 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
   'catalog/moons.json': {
     schema: MoonsCatalogSchema,
     entries: (p) => byId((p as z.infer<typeof MoonsCatalogSchema>).moons),
+  },
+  'catalog/stars.json': {
+    schema: StarsCatalogSchema,
+    entries: (p) => byId((p as z.infer<typeof StarsCatalogSchema>).stars),
   },
   'catalog/operators.json': {
     schema: OperatorsCatalogSchema,

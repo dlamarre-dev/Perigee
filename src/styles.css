@@ -14,6 +14,8 @@
   --text: #dbe8f3;
   --text-muted: #93a8bb;
   --accent: #5ad7ff;
+  /* Star names on the sky: pale starlight, quieter than the objects' labels. */
+  --star-label: #e8dcb8;
   --accent-strong: #9fe6ff;
   --accent-soft: rgb(90 215 255 / 12%);
   --accent-glow: 0 0 10px rgb(90 215 255 / 45%);
@@ -1469,6 +1471,50 @@ h2[tabindex='-1']:focus {
 .label-planet {
   border-left-color: #ffd27a;
   color: #ffe9b8;
+}
+
+/* Stars on the sky (solar view): no marker, a thin leader from the star to its label. */
+.label-star {
+  z-index: 0;
+  border-left-color: var(--star-label);
+  background: rgb(3 9 16 / 70%);
+  color: var(--star-label);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  /* Proper names on the sky, not objects of the solar system: no capitals. */
+  text-transform: none;
+}
+
+.label-leader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  transform-origin: 0 50%;
+  background: var(--star-label);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.label-leader[data-shown='false'] {
+  visibility: hidden;
+}
+
+.label-natural.label-selected {
+  border-left-color: var(--accent);
+  color: var(--text);
+}
+
+.label-star.label-selected {
+  border-left-color: var(--accent);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.label-leader.label-selected {
+  background: var(--accent);
+  opacity: 1;
 }
 
 /* Side panels: the frame stays put, the body scrolls (vertically only). */

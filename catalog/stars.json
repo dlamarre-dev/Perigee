@@ -1,0 +1,946 @@
+{
+  "verified": "2026-10-14",
+  "sources": ["https://simbad.cds.unistra.fr/simbad/", "https://www.iau.org/public/themes/naming_stars/"],
+  "stars": [
+    {
+      "id": "sirius",
+      "name": {
+        "en": "Sirius",
+        "fr": "Sirius"
+      },
+      "designation": "α Canis Majoris",
+      "constellation": {
+        "en": "Canis Major",
+        "fr": "Grand Chien"
+      },
+      "raDeg": 101.28716,
+      "decDeg": -16.71612,
+      "magnitude": -1.46,
+      "distanceLy": 8.6,
+      "spectralType": "A0mA1Va",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 1.71,
+      "massSun": 2.06,
+      "temperatureK": 9850,
+      "luminositySun": 24.7,
+      "notes": {
+        "en": "The brightest star in the night sky, and one of the closest at 8.6 light-years. Its name comes from the Greek for “scorching”. The values given are for Sirius A: it has a tiny companion, Sirius B, a white dwarf about the size of the Earth but as massive as the Sun.",
+        "fr": "L’étoile la plus brillante du ciel nocturne, et l’une des plus proches, à 8,6 années-lumière. Son nom vient du grec « brûlant ». Les valeurs indiquées sont celles de Sirius A : elle a un minuscule compagnon, Sirius B, une naine blanche de la taille de la Terre mais aussi massive que le Soleil."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+CMa",
+        "https://en.wikipedia.org/wiki/Sirius",
+        "https://doi.org/10.3847/1538-4357/aa6af8"
+      ]
+    },
+    {
+      "id": "canopus",
+      "name": {
+        "en": "Canopus",
+        "fr": "Canopus"
+      },
+      "designation": "α Carinae",
+      "constellation": {
+        "en": "Carina",
+        "fr": "Carène"
+      },
+      "raDeg": 95.98796,
+      "decDeg": -52.69566,
+      "magnitude": -0.74,
+      "distanceLy": 310,
+      "spectralType": "A9II",
+      "kind": {
+        "en": "white bright giant",
+        "fr": "géante lumineuse blanche"
+      },
+      "radiusSun": 71,
+      "temperatureK": 7400,
+      "luminositySun": 16600,
+      "notes": {
+        "en": "The second-brightest star in the night sky, about 71 times wider than the Sun. Too far south to be seen from Canada or France. Many spacecraft have used it as a reference star to keep their orientation.",
+        "fr": "La deuxième étoile la plus brillante du ciel nocturne, environ 71 fois plus large que le Soleil. Trop au sud pour être vue du Québec ou de la France. De nombreuses sondes spatiales s’en sont servies comme étoile de référence pour garder leur orientation."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Car",
+        "https://en.wikipedia.org/wiki/Canopus",
+        "https://doi.org/10.1051/0004-6361/202140478"
+      ]
+    },
+    {
+      "id": "arcturus",
+      "name": {
+        "en": "Arcturus",
+        "fr": "Arcturus"
+      },
+      "designation": "α Boötis",
+      "constellation": {
+        "en": "Boötes",
+        "fr": "Bouvier"
+      },
+      "raDeg": 213.9153,
+      "decDeg": 19.18241,
+      "magnitude": -0.05,
+      "distanceLy": 36.7,
+      "spectralType": "K1.5IIIFe-0.5",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 25.4,
+      "massSun": 1.08,
+      "temperatureK": 4290,
+      "luminositySun": 170,
+      "notes": {
+        "en": "The brightest star of the northern celestial hemisphere. To find it, follow the curve of the Big Dipper’s handle: “arc to Arcturus”. An old star, it has already swollen into a giant about 25 times wider than the Sun.",
+        "fr": "L’étoile la plus brillante de l’hémisphère céleste nord. Pour la trouver, prolongez la courbe du manche de la Grande Casserole. Étoile âgée, elle a déjà gonflé en une géante environ 25 fois plus large que le Soleil."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Boo",
+        "https://en.wikipedia.org/wiki/Arcturus",
+        "https://doi.org/10.1088/0004-637X/743/2/135"
+      ]
+    },
+    {
+      "id": "alpha-centauri",
+      "name": {
+        "en": "Alpha Centauri (Rigil Kentaurus)",
+        "fr": "Alpha du Centaure (Rigil Kentaurus)"
+      },
+      "designation": "α Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 219.90208,
+      "decDeg": -60.83397,
+      "magnitude": -0.1,
+      "distanceLy": 4.37,
+      "spectralType": "G2V+K1V",
+      "kind": {
+        "en": "triple star system",
+        "fr": "système d’étoiles triple"
+      },
+      "radiusSun": 1.22,
+      "massSun": 1.08,
+      "temperatureK": 5750,
+      "luminositySun": 1.51,
+      "notes": {
+        "en": "The nearest star system to the Sun. To the naked eye it is a single point, but it holds two Sun-like stars, A and B, that orbit each other every 80 years, plus the faint red dwarf Proxima Centauri. The values given are for Alpha Centauri A, the brighter star.",
+        "fr": "Le système stellaire le plus proche du Soleil. À l’œil nu, c’est un seul point, mais il réunit deux étoiles semblables au Soleil, A et B, qui tournent l’une autour de l’autre en 80 ans, ainsi que la faible naine rouge Proxima du Centaure. Les valeurs indiquées sont celles d’Alpha du Centaure A, la plus brillante."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Cen",
+        "https://en.wikipedia.org/wiki/Alpha_Centauri",
+        "https://doi.org/10.3847/1538-3881/abfaff"
+      ]
+    },
+    {
+      "id": "vega",
+      "name": {
+        "en": "Vega",
+        "fr": "Véga"
+      },
+      "designation": "α Lyrae",
+      "constellation": {
+        "en": "Lyra",
+        "fr": "Lyre"
+      },
+      "raDeg": 279.23473,
+      "decDeg": 38.78369,
+      "magnitude": 0.03,
+      "distanceLy": 25,
+      "spectralType": "A0V",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 2.73,
+      "massSun": 2.15,
+      "luminositySun": 47.2,
+      "notes": {
+        "en": "One of the three stars of the Summer Triangle, with Deneb and Altair. It spins so fast that it is flattened: its poles (about 10,000 K) are hotter than its equator, and the radius given is the equatorial one. Because of the slow wobble of the Earth’s axis, it was the pole star 14,000 years ago and will be again around the year 13,700.",
+        "fr": "L’une des trois étoiles du Triangle d’été, avec Deneb et Altaïr. Elle tourne si vite qu’elle est aplatie : ses pôles (environ 10 000 K) sont plus chauds que son équateur, et le rayon indiqué est le rayon équatorial. À cause du lent balancement de l’axe de la Terre, elle était l’étoile polaire il y a 14 000 ans et le redeviendra vers l’an 13 700."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Lyr",
+        "https://en.wikipedia.org/wiki/Vega",
+        "https://doi.org/10.1088/2041-8205/761/1/L3"
+      ]
+    },
+    {
+      "id": "capella",
+      "name": {
+        "en": "Capella",
+        "fr": "Capella"
+      },
+      "designation": "α Aurigae",
+      "constellation": {
+        "en": "Auriga",
+        "fr": "Cocher"
+      },
+      "raDeg": 79.17233,
+      "decDeg": 45.99799,
+      "magnitude": 0.08,
+      "distanceLy": 42.9,
+      "spectralType": "G3III",
+      "kind": {
+        "en": "pair of yellow giants",
+        "fr": "couple de géantes jaunes"
+      },
+      "radiusSun": 12,
+      "massSun": 2.57,
+      "temperatureK": 4970,
+      "luminositySun": 78.7,
+      "notes": {
+        "en": "What looks like one star is in fact two yellow giants orbiting each other every 104 days, with a pair of red dwarfs much farther out. Its name means “little she-goat” in Latin. The values given are for the larger giant, Capella Aa.",
+        "fr": "Ce qui ressemble à une seule étoile est en fait deux géantes jaunes qui tournent l’une autour de l’autre en 104 jours, avec un couple de naines rouges beaucoup plus loin. Son nom signifie « petite chèvre » en latin. Les valeurs indiquées sont celles de la plus grosse géante, Capella Aa."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Aur",
+        "https://en.wikipedia.org/wiki/Capella",
+        "https://doi.org/10.1088/0004-637X/807/1/26"
+      ]
+    },
+    {
+      "id": "rigel",
+      "name": {
+        "en": "Rigel",
+        "fr": "Rigel"
+      },
+      "designation": "β Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 78.63447,
+      "decDeg": -8.20164,
+      "magnitude": 0.13,
+      "distanceLy": 850,
+      "spectralType": "B8Ia",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "radiusSun": 74,
+      "massSun": 21,
+      "temperatureK": 12100,
+      "luminositySun": 120000,
+      "notes": {
+        "en": "The bright blue star at Orion’s foot; its name comes from the Arabic for “foot”. This supergiant shines about 120,000 times more than the Sun. The values given are for Rigel A, which has fainter companions.",
+        "fr": "L’étoile bleue brillante au pied d’Orion ; son nom vient de l’arabe « le pied ». Cette supergéante brille environ 120 000 fois plus que le Soleil. Les valeurs indiquées sont celles de Rigel A, qui a des compagnons plus faibles."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Ori",
+        "https://en.wikipedia.org/wiki/Rigel",
+        "https://doi.org/10.3847/1538-3881/aa9d8b",
+        "https://doi.org/10.1051/0004-6361/201014164"
+      ]
+    },
+    {
+      "id": "procyon",
+      "name": {
+        "en": "Procyon",
+        "fr": "Procyon"
+      },
+      "designation": "α Canis Minoris",
+      "constellation": {
+        "en": "Canis Minor",
+        "fr": "Petit Chien"
+      },
+      "raDeg": 114.8255,
+      "decDeg": 5.22499,
+      "magnitude": 0.37,
+      "distanceLy": 11.5,
+      "spectralType": "F5IV-V+DQZ",
+      "kind": {
+        "en": "yellow-white star",
+        "fr": "étoile blanc-jaune"
+      },
+      "radiusSun": 2.04,
+      "massSun": 1.48,
+      "temperatureK": 6580,
+      "luminositySun": 7.05,
+      "notes": {
+        "en": "Forms the Winter Triangle with Sirius and Betelgeuse. Its name means “before the dog” in Greek, because it rises just before Sirius, the Dog Star. Like Sirius, it has a white dwarf companion, Procyon B; the values given are for Procyon A.",
+        "fr": "Forme le Triangle d’hiver avec Sirius et Bételgeuse. Son nom signifie « avant le chien » en grec, car elle se lève juste avant Sirius, l’étoile du Chien. Comme Sirius, elle a une naine blanche pour compagne, Procyon B ; les valeurs indiquées sont celles de Procyon A."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+CMi",
+        "https://en.wikipedia.org/wiki/Procyon",
+        "https://doi.org/10.1088/0004-637x/813/2/106"
+      ]
+    },
+    {
+      "id": "betelgeuse",
+      "name": {
+        "en": "Betelgeuse",
+        "fr": "Bételgeuse"
+      },
+      "designation": "α Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 88.79294,
+      "decDeg": 7.40706,
+      "magnitude": 0.42,
+      "distanceLy": 550,
+      "spectralType": "M1-M2Ia-Iab",
+      "kind": {
+        "en": "red supergiant",
+        "fr": "supergéante rouge"
+      },
+      "radiusSun": 760,
+      "temperatureK": 3780,
+      "luminositySun": 87000,
+      "notes": {
+        "en": "The red shoulder of Orion, a supergiant so large that, in place of the Sun, it would reach beyond the orbit of Mars. Its brightness varies (magnitude roughly 0 to 1.6); in 2019–2020 a dust cloud made it fade spectacularly (the “Great Dimming”). It will end as a supernova, probably within the next 100,000 years.",
+        "fr": "L’épaule rouge d’Orion, une supergéante si grosse qu’à la place du Soleil, elle dépasserait l’orbite de Mars. Son éclat varie (magnitude d’environ 0 à 1,6) ; en 2019-2020, un nuage de poussière l’a fait pâlir de façon spectaculaire (la « Grande Baisse d’éclat »). Elle finira en supernova, probablement d’ici 100 000 ans."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Ori",
+        "https://en.wikipedia.org/wiki/Betelgeuse",
+        "https://doi.org/10.3847/1538-4357/abb8db"
+      ]
+    },
+    {
+      "id": "achernar",
+      "name": {
+        "en": "Achernar",
+        "fr": "Achernar"
+      },
+      "designation": "α Eridani",
+      "constellation": {
+        "en": "Eridanus",
+        "fr": "Éridan"
+      },
+      "raDeg": 24.42852,
+      "decDeg": -57.23675,
+      "magnitude": 0.46,
+      "distanceLy": 139,
+      "spectralType": "B6Vpe",
+      "kind": {
+        "en": "blue-white main-sequence star",
+        "fr": "étoile bleu-blanc de la séquence principale"
+      },
+      "radiusSun": 9.2,
+      "massSun": 6,
+      "temperatureK": 15000,
+      "luminositySun": 3500,
+      "notes": {
+        "en": "Its name means “end of the river” in Arabic: it marks the southern end of Eridanus. It spins so fast that it is one of the flattest stars known, about 35 % wider at the equator (radius given) than from pole to pole. The values given are for Achernar A, which has a smaller companion.",
+        "fr": "Son nom signifie « la fin du fleuve » en arabe : elle marque l’extrémité sud de l’Éridan. Elle tourne si vite qu’elle est l’une des étoiles les plus aplaties connues, environ 35 % plus large à l’équateur (rayon indiqué) que d’un pôle à l’autre. Les valeurs indiquées sont celles d’Achernar A, qui a un compagnon plus petit."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Eri",
+        "https://en.wikipedia.org/wiki/Achernar",
+        "https://doi.org/10.1051/0004-6361/202244009"
+      ]
+    },
+    {
+      "id": "polaris",
+      "name": {
+        "en": "Polaris (North Star)",
+        "fr": "Polaris (étoile Polaire)"
+      },
+      "designation": "α Ursae Minoris",
+      "constellation": {
+        "en": "Ursa Minor",
+        "fr": "Petite Ourse"
+      },
+      "raDeg": 37.95456,
+      "decDeg": 89.26411,
+      "magnitude": 2.02,
+      "distanceLy": 446,
+      "spectralType": "F8Ib",
+      "kind": {
+        "en": "yellow supergiant (Cepheid)",
+        "fr": "supergéante jaune (céphéide)"
+      },
+      "radiusSun": 46,
+      "massSun": 5.1,
+      "temperatureK": 6000,
+      "luminositySun": 1260,
+      "notes": {
+        "en": "Less than 1° from the north celestial pole, it barely moves while the whole sky turns around it, which is why it has guided travellers for centuries. Contrary to a common belief, it is far from the brightest star in the sky. It is a Cepheid, a pulsating star; the values given are for Polaris Aa, the main star of a triple system.",
+        "fr": "À moins de 1° du pôle Nord céleste, elle bouge à peine pendant que tout le ciel tourne autour d’elle ; c’est pourquoi elle guide les voyageurs depuis des siècles. Contrairement à une idée répandue, elle est loin d’être l’étoile la plus brillante du ciel. C’est une céphéide, une étoile qui pulse ; les valeurs indiquées sont celles de Polaris Aa, l’étoile principale d’un système triple."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+UMi",
+        "https://en.wikipedia.org/wiki/Polaris",
+        "https://doi.org/10.3847/1538-4357/ad5e7a"
+      ]
+    },
+    {
+      "id": "aldebaran",
+      "name": {
+        "en": "Aldebaran",
+        "fr": "Aldébaran"
+      },
+      "designation": "α Tauri",
+      "constellation": {
+        "en": "Taurus",
+        "fr": "Taureau"
+      },
+      "raDeg": 68.98016,
+      "decDeg": 16.5093,
+      "magnitude": 0.86,
+      "distanceLy": 65,
+      "spectralType": "K5+III",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 45,
+      "massSun": 1.03,
+      "temperatureK": 3900,
+      "luminositySun": 439,
+      "notes": {
+        "en": "The red eye of the Bull. It seems to belong to the Hyades cluster but is in fact less than half as far away. Its name means “the follower” in Arabic, because it follows the Pleiades across the sky; the Pioneer 10 probe is drifting in its direction.",
+        "fr": "L’œil rouge du Taureau. Elle semble faire partie de l’amas des Hyades, mais elle est en réalité plus de deux fois plus proche. Son nom signifie « la suivante » en arabe, car elle suit les Pléiades dans le ciel ; la sonde Pioneer 10 dérive dans sa direction."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Tau",
+        "https://en.wikipedia.org/wiki/Aldebaran",
+        "https://doi.org/10.1051/0004-6361/201526319"
+      ]
+    },
+    {
+      "id": "antares",
+      "name": {
+        "en": "Antares",
+        "fr": "Antarès"
+      },
+      "designation": "α Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 247.35192,
+      "decDeg": -26.432,
+      "magnitude": 0.91,
+      "distanceLy": 550,
+      "spectralType": "M1.5Iab+B2Vn",
+      "kind": {
+        "en": "red supergiant",
+        "fr": "supergéante rouge"
+      },
+      "radiusSun": 680,
+      "temperatureK": 3660,
+      "luminositySun": 76000,
+      "notes": {
+        "en": "The red heart of the Scorpion. Its name means “rival of Mars” (Ares), because of its colour. This supergiant, which would swallow the orbit of Mars in place of the Sun, will explode as a supernova; the values given are for Antares A, which has a hot blue companion.",
+        "fr": "Le cœur rouge du Scorpion. Son nom signifie « rival de Mars » (Arès), à cause de sa couleur. Cette supergéante, qui engloutirait l’orbite de Mars à la place du Soleil, explosera en supernova ; les valeurs indiquées sont celles d’Antarès A, qui a une compagne bleue très chaude."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Sco",
+        "https://en.wikipedia.org/wiki/Antares",
+        "https://doi.org/10.1051/0004-6361/201321063"
+      ]
+    },
+    {
+      "id": "deneb",
+      "name": {
+        "en": "Deneb",
+        "fr": "Deneb"
+      },
+      "designation": "α Cygni",
+      "constellation": {
+        "en": "Cygnus",
+        "fr": "Cygne"
+      },
+      "raDeg": 310.35798,
+      "decDeg": 45.28034,
+      "magnitude": 1.25,
+      "distanceLy": 2600,
+      "spectralType": "A2Ia",
+      "kind": {
+        "en": "white supergiant",
+        "fr": "supergéante blanche"
+      },
+      "radiusSun": 203,
+      "massSun": 19,
+      "temperatureK": 8500,
+      "luminositySun": 196000,
+      "notes": {
+        "en": "The tail of the Swan (its name means “tail” in Arabic) and one of the three stars of the Summer Triangle. Though it looks only a little fainter than Vega, it is about 100 times farther away, which makes it one of the most luminous stars visible to the naked eye. Its distance is uncertain (1,400 to 2,600 light-years); the values given assume the larger one.",
+        "fr": "La queue du Cygne (son nom signifie « queue » en arabe) et l’une des trois étoiles du Triangle d’été. Elle paraît à peine plus faible que Véga, mais elle est environ 100 fois plus loin, ce qui en fait l’une des étoiles les plus lumineuses visibles à l’œil nu. Sa distance est incertaine (1 400 à 2 600 années-lumière) ; les valeurs indiquées supposent la plus grande."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Cyg",
+        "https://en.wikipedia.org/wiki/Deneb",
+        "https://arxiv.org/abs/0712.0040",
+        "https://doi.org/10.1051/0004-6361:20078590"
+      ]
+    },
+    {
+      "id": "alnilam",
+      "name": {
+        "en": "Alnilam",
+        "fr": "Alnilam"
+      },
+      "designation": "ε Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 84.05339,
+      "decDeg": -1.20192,
+      "magnitude": 1.69,
+      "distanceLy": 1250,
+      "spectralType": "B0Ia",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "radiusSun": 34,
+      "massSun": 28,
+      "temperatureK": 25000,
+      "luminositySun": 271000,
+      "notes": {
+        "en": "The middle star of Orion’s Belt; its name comes from the Arabic for “string of pearls”. This blue supergiant shines over 250,000 times more than the Sun and will probably end as a supernova.",
+        "fr": "L’étoile du milieu de la ceinture d’Orion ; son nom vient de l’arabe « collier de perles ». Cette supergéante bleue brille plus de 250 000 fois plus que le Soleil et finira probablement en supernova."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Ori",
+        "https://en.wikipedia.org/wiki/Alnilam"
+      ]
+    },
+    {
+      "id": "altair",
+      "name": {
+        "en": "Altair",
+        "fr": "Altaïr"
+      },
+      "designation": "α Aquilae",
+      "constellation": {
+        "en": "Aquila",
+        "fr": "Aigle"
+      },
+      "raDeg": 297.69583,
+      "decDeg": 8.86832,
+      "magnitude": 0.76,
+      "distanceLy": 16.7,
+      "spectralType": "A7Vn",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 2.01,
+      "massSun": 1.86,
+      "luminositySun": 10.6,
+      "notes": {
+        "en": "One of the three stars of the Summer Triangle, only 16.7 light-years away. It turns on itself in less than 8 hours (the Sun takes about 25 days), so fast that it is flattened; the radius given is the equatorial one. In 2007 it was one of the first stars, after the Sun, whose surface was imaged.",
+        "fr": "L’une des trois étoiles du Triangle d’été, à seulement 16,7 années-lumière. Elle tourne sur elle-même en moins de 8 heures (le Soleil en met environ 25 jours), si vite qu’elle est aplatie ; le rayon indiqué est le rayon équatorial. En 2007, elle a été l’une des premières étoiles, après le Soleil, dont on a photographié la surface."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Aql",
+        "https://en.wikipedia.org/wiki/Altair",
+        "https://doi.org/10.1051/0004-6361/201936830",
+        "https://doi.org/10.1086/497981"
+      ]
+    },
+    {
+      "id": "spica",
+      "name": {
+        "en": "Spica",
+        "fr": "Spica (l’Épi)"
+      },
+      "designation": "α Virginis",
+      "constellation": {
+        "en": "Virgo",
+        "fr": "Vierge"
+      },
+      "raDeg": 201.29825,
+      "decDeg": -11.16132,
+      "magnitude": 0.97,
+      "distanceLy": 250,
+      "spectralType": "B1V",
+      "kind": {
+        "en": "blue binary star",
+        "fr": "étoile double bleue"
+      },
+      "radiusSun": 7.5,
+      "massSun": 10,
+      "temperatureK": 25300,
+      "luminositySun": 20500,
+      "notes": {
+        "en": "The brightest star of Virgo; its name means “ear of wheat”. It is two hot blue stars so close that they orbit each other in 4 days and stretch each other into egg shapes. The values given are for the main star; around 130 BC, Hipparchus used Spica to discover the slow wobble of the Earth’s axis (precession).",
+        "fr": "L’étoile la plus brillante de la Vierge ; son nom signifie « épi de blé ». Ce sont deux étoiles bleues très chaudes si proches qu’elles tournent l’une autour de l’autre en 4 jours et se déforment mutuellement en forme d’œuf. Les valeurs indiquées sont celles de l’étoile principale ; vers 130 av. J.-C., Hipparque a découvert grâce à Spica le lent balancement de l’axe de la Terre (la précession)."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Vir",
+        "https://en.wikipedia.org/wiki/Spica",
+        "https://doi.org/10.1051/0004-6361/201526507"
+      ]
+    },
+    {
+      "id": "pollux",
+      "name": {
+        "en": "Pollux",
+        "fr": "Pollux"
+      },
+      "designation": "β Geminorum",
+      "constellation": {
+        "en": "Gemini",
+        "fr": "Gémeaux"
+      },
+      "raDeg": 116.32896,
+      "decDeg": 28.0262,
+      "magnitude": 1.14,
+      "distanceLy": 34,
+      "spectralType": "K0IIIb",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 8.97,
+      "massSun": 1.91,
+      "temperatureK": 4810,
+      "luminositySun": 38.4,
+      "notes": {
+        "en": "One of the heads of the Twins, brighter than Castor even though Castor is “alpha”. At 34 light-years, it is the closest giant star to the Sun. A giant planet, Thestias, has been reported around it.",
+        "fr": "L’une des têtes des Gémeaux, plus brillante que Castor même si c’est Castor qui porte la lettre « alpha ». À 34 années-lumière, c’est l’étoile géante la plus proche du Soleil. Une planète géante, Thestias, a été signalée autour d’elle."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Gem",
+        "https://en.wikipedia.org/wiki/Pollux_(star)",
+        "https://doi.org/10.1051/0004-6361/201219332"
+      ]
+    },
+    {
+      "id": "castor",
+      "name": {
+        "en": "Castor",
+        "fr": "Castor"
+      },
+      "designation": "α Geminorum",
+      "constellation": {
+        "en": "Gemini",
+        "fr": "Gémeaux"
+      },
+      "raDeg": 113.64947,
+      "decDeg": 31.88828,
+      "magnitude": 1.58,
+      "distanceLy": 49,
+      "spectralType": "A1V+A2Vm",
+      "kind": {
+        "en": "six-star system",
+        "fr": "système de six étoiles"
+      },
+      "radiusSun": 2.09,
+      "massSun": 2.37,
+      "temperatureK": 10300,
+      "notes": {
+        "en": "The other head of the Twins. A small telescope splits it into two stars, and each of them, like a fainter third companion, is itself a close pair: six stars in all. The values given are for the brightest one, Castor Aa.",
+        "fr": "L’autre tête des Gémeaux. Un petit télescope la sépare en deux étoiles, et chacune d’elles, comme un troisième compagnon plus faible, est elle-même un couple serré : six étoiles en tout. Les valeurs indiquées sont celles de la plus brillante, Castor Aa."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Gem",
+        "https://en.wikipedia.org/wiki/Castor_(star)",
+        "https://doi.org/10.3847/1538-4357/ac9d8d"
+      ]
+    },
+    {
+      "id": "fomalhaut",
+      "name": {
+        "en": "Fomalhaut",
+        "fr": "Fomalhaut"
+      },
+      "designation": "α Piscis Austrini",
+      "constellation": {
+        "en": "Piscis Austrinus",
+        "fr": "Poisson austral"
+      },
+      "raDeg": 344.41269,
+      "decDeg": -29.62224,
+      "magnitude": 1.16,
+      "distanceLy": 25.1,
+      "spectralType": "A4V",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 1.84,
+      "massSun": 1.92,
+      "temperatureK": 8590,
+      "luminositySun": 16.6,
+      "notes": {
+        "en": "Its name means “mouth of the fish” in Arabic. It is surrounded by a wide ring of dust and ice, photographed by Hubble and the James Webb Space Telescope. An object first announced as a planet there, “Fomalhaut b”, turned out to be an expanding cloud of dust, probably left by a collision.",
+        "fr": "Son nom signifie « la bouche du poisson » en arabe. Elle est entourée d’un large anneau de poussière et de glace, photographié par Hubble et le télescope spatial James-Webb. Un objet d’abord annoncé comme une planète, « Fomalhaut b », s’est révélé être un nuage de poussière en expansion, sans doute laissé par une collision."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+PsA",
+        "https://en.wikipedia.org/wiki/Fomalhaut",
+        "https://doi.org/10.1088/2041-8205/754/2/L20"
+      ]
+    },
+    {
+      "id": "regulus",
+      "name": {
+        "en": "Regulus",
+        "fr": "Régulus"
+      },
+      "designation": "α Leonis",
+      "constellation": {
+        "en": "Leo",
+        "fr": "Lion"
+      },
+      "raDeg": 152.09296,
+      "decDeg": 11.96721,
+      "magnitude": 1.4,
+      "distanceLy": 79,
+      "spectralType": "B8IVn",
+      "kind": {
+        "en": "blue-white main-sequence star",
+        "fr": "étoile bleu-blanc de la séquence principale"
+      },
+      "radiusSun": 4.2,
+      "massSun": 4.15,
+      "luminositySun": 341,
+      "notes": {
+        "en": "The heart of the Lion; its name means “little king” in Latin. It lies almost on the path of the Sun, the Moon and the planets, so the Moon often passes in front of it. It turns so fast that it is flattened (radius given at the equator); the values given are for Regulus A, the main star of a system of four.",
+        "fr": "Le cœur du Lion ; son nom signifie « petit roi » en latin. Elle se trouve presque sur le chemin du Soleil, de la Lune et des planètes, si bien que la Lune passe souvent devant elle. Elle tourne si vite qu’elle est aplatie (rayon indiqué à l’équateur) ; les valeurs indiquées sont celles de Régulus A, l’étoile principale d’un système de quatre."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Leo",
+        "https://en.wikipedia.org/wiki/Regulus",
+        "https://doi.org/10.1088/0004-637x/732/2/68"
+      ]
+    },
+    {
+      "id": "alnitak",
+      "name": {
+        "en": "Alnitak",
+        "fr": "Alnitak"
+      },
+      "designation": "ζ Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 85.18969,
+      "decDeg": -1.94257,
+      "magnitude": 1.77,
+      "distanceLy": 1260,
+      "spectralType": "O9.7Ib+B0III",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "radiusSun": 20,
+      "massSun": 33,
+      "temperatureK": 29500,
+      "luminositySun": 250000,
+      "notes": {
+        "en": "The eastern star of Orion’s Belt, next to the Flame Nebula and the famous Horsehead Nebula. Its name means “the girdle” in Arabic. The values given are for Alnitak Aa, one of the hottest stars visible to the naked eye, in a system of three stars.",
+        "fr": "L’étoile est de la ceinture d’Orion, voisine de la nébuleuse de la Flamme et de la célèbre nébuleuse de la Tête de Cheval. Son nom signifie « la ceinture » en arabe. Les valeurs indiquées sont celles d’Alnitak Aa, l’une des étoiles les plus chaudes visibles à l’œil nu, dans un système de trois étoiles."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+zet+Ori",
+        "https://en.wikipedia.org/wiki/Alnitak",
+        "https://doi.org/10.1051/0004-6361/201321434"
+      ]
+    },
+    {
+      "id": "mintaka",
+      "name": {
+        "en": "Mintaka",
+        "fr": "Mintaka"
+      },
+      "designation": "δ Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 83.00167,
+      "decDeg": -0.2991,
+      "magnitude": 2.41,
+      "distanceLy": 1250,
+      "spectralType": "O9.5II",
+      "kind": {
+        "en": "blue giant (multiple system)",
+        "fr": "géante bleue (système multiple)"
+      },
+      "radiusSun": 13,
+      "massSun": 17.8,
+      "temperatureK": 31400,
+      "luminositySun": 190000,
+      "notes": {
+        "en": "The western star of Orion’s Belt. It sits almost exactly on the celestial equator, so it rises due east and sets due west everywhere on Earth. It is a family of several stars, two of which eclipse each other every 5.7 days; the values given are for the main one, Mintaka Aa1.",
+        "fr": "L’étoile ouest de la ceinture d’Orion. Elle se trouve presque exactement sur l’équateur céleste : partout sur Terre, elle se lève plein est et se couche plein ouest. C’est une famille de plusieurs étoiles, dont deux s’éclipsent mutuellement tous les 5,7 jours ; les valeurs indiquées sont celles de la principale, Mintaka Aa1."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+del+Ori",
+        "https://en.wikipedia.org/wiki/Mintaka",
+        "https://doi.org/10.1088/0004-637X/809/2/135",
+        "https://doi.org/10.1051/0004-6361/202245272"
+      ]
+    },
+    {
+      "id": "proxima-centauri",
+      "name": {
+        "en": "Proxima Centauri",
+        "fr": "Proxima du Centaure"
+      },
+      "designation": "α Centauri C",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 217.42894,
+      "decDeg": -62.67949,
+      "magnitude": 11.13,
+      "distanceLy": 4.25,
+      "spectralType": "M5.5Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.154,
+      "massSun": 0.122,
+      "temperatureK": 2990,
+      "luminositySun": 0.00157,
+      "notes": {
+        "en": "The closest star to the Sun, at 4.25 light-years, yet far too faint to be seen with the naked eye. This small red dwarf belongs to the Alpha Centauri system and has at least two planets: Proxima b, in the zone where liquid water could exist, and the tiny Proxima d. It often throws out powerful flares.",
+        "fr": "L’étoile la plus proche du Soleil, à 4,25 années-lumière, et pourtant beaucoup trop faible pour être vue à l’œil nu. Cette petite naine rouge fait partie du système d’Alpha du Centaure et possède au moins deux planètes : Proxima b, dans la zone où de l’eau liquide pourrait exister, et la minuscule Proxima d. Elle lance souvent de violentes éruptions."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=NAME+Proxima+Centauri",
+        "https://en.wikipedia.org/wiki/Proxima_Centauri",
+        "https://doi.org/10.1051/0004-6361/201629930"
+      ]
+    },
+    {
+      "id": "dubhe",
+      "name": {
+        "en": "Dubhe",
+        "fr": "Dubhe"
+      },
+      "designation": "α Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 165.93196,
+      "decDeg": 61.75103,
+      "magnitude": 1.79,
+      "distanceLy": 123,
+      "spectralType": "G9III+A7.5",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 27,
+      "massSun": 3.7,
+      "temperatureK": 4810,
+      "luminositySun": 339,
+      "notes": {
+        "en": "With Merak, one of the two “pointers” at the end of the Big Dipper’s bowl: draw a line from Merak through Dubhe and extend it about five times to reach Polaris. The values given are for Dubhe A, an orange giant with a closer companion.",
+        "fr": "Avec Merak, l’une des deux « gardes » au bout de la casserole de la Grande Ourse : tracez une ligne de Merak vers Dubhe et prolongez-la environ cinq fois pour atteindre l’étoile Polaire. Les valeurs indiquées sont celles de Dubhe A, une géante orange avec un compagnon proche."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+UMa",
+        "https://en.wikipedia.org/wiki/Dubhe",
+        "https://doi.org/10.3847/1538-3881/adc930"
+      ]
+    },
+    {
+      "id": "merak",
+      "name": {
+        "en": "Merak",
+        "fr": "Merak"
+      },
+      "designation": "β Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 165.46033,
+      "decDeg": 56.38243,
+      "magnitude": 2.37,
+      "distanceLy": 80,
+      "spectralType": "A1IV",
+      "kind": {
+        "en": "white subgiant",
+        "fr": "sous-géante blanche"
+      },
+      "radiusSun": 2.81,
+      "massSun": 2.56,
+      "temperatureK": 9700,
+      "luminositySun": 63.5,
+      "notes": {
+        "en": "The other “pointer” of the Big Dipper: the line from Merak to Dubhe leads to Polaris. Like most stars of the Dipper, it belongs to the same family of stars born together, the Ursa Major moving group. It is surrounded by a disc of dust, like Fomalhaut.",
+        "fr": "L’autre « garde » de la Grande Ourse : la ligne de Merak vers Dubhe mène à l’étoile Polaire. Comme la plupart des étoiles de la casserole, elle appartient à une même famille d’étoiles nées ensemble, le groupe mobile de la Grande Ourse. Elle est entourée d’un disque de poussière, comme Fomalhaut."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+UMa",
+        "https://en.wikipedia.org/wiki/Merak_(star)"
+      ]
+    },
+    {
+      "id": "algol",
+      "name": {
+        "en": "Algol",
+        "fr": "Algol"
+      },
+      "designation": "β Persei",
+      "constellation": {
+        "en": "Perseus",
+        "fr": "Persée"
+      },
+      "raDeg": 47.04222,
+      "decDeg": 40.95565,
+      "magnitude": 2.12,
+      "distanceLy": 90,
+      "spectralType": "B8V",
+      "kind": {
+        "en": "eclipsing binary",
+        "fr": "binaire à éclipses"
+      },
+      "radiusSun": 2.73,
+      "massSun": 3.17,
+      "temperatureK": 13000,
+      "luminositySun": 182,
+      "notes": {
+        "en": "The “Demon Star” (from the Arabic for “head of the ghoul”), the eye of Medusa held by Perseus. Every 2.87 days a dimmer companion passes in front of the main star and Algol fades from magnitude 2.1 to 3.4 for about ten hours, a change you can follow with the naked eye. The values given are for Algol A.",
+        "fr": "L’« étoile du Démon » (de l’arabe « la tête de l’ogre »), l’œil de Méduse tenu par Persée. Tous les 2,87 jours, une compagne moins brillante passe devant l’étoile principale et Algol baisse de la magnitude 2,1 à 3,4 pendant une dizaine d’heures, un changement visible à l’œil nu. Les valeurs indiquées sont celles d’Algol A."
+      },
+      "verified": "2026-10-14",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Per",
+        "https://en.wikipedia.org/wiki/Algol",
+        "https://doi.org/10.1088/0004-637X/752/1/20"
+      ]
+    }
+  ]
+}

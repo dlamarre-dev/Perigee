@@ -24,6 +24,7 @@ import {
   EarthScienceCatalogSchema,
   GroupsSchema,
   MoonsCatalogSchema,
+  StarsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
   SupGpRecordSchema,
@@ -395,6 +396,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   const moon = LandingSitesSchema.parse(await readJson('catalog/landing-sites/moon.json'));
   const mars = LandingSitesSchema.parse(await readJson('catalog/landing-sites/mars.json'));
   const moons = MoonsCatalogSchema.parse(await readJson('catalog/moons.json'));
+  const stars = StarsCatalogSchema.parse(await readJson('catalog/stars.json'));
   const earthScience = EarthScienceCatalogSchema.parse(await readJson('catalog/earth-science.json'));
   const manifest = await readManifest(dataDir);
   const satcat = SatcatListSchema.parse(
@@ -459,6 +461,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/landing-sites/mars.json', verified: mars.verified },
         { path: 'catalog/moons.json', verified: moons.verified },
         { path: 'catalog/earth-science.json', verified: earthScience.verified },
+        { path: 'catalog/stars.json', verified: stars.verified },
       ],
       missions,
       now,

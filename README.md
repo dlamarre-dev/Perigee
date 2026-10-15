@@ -69,6 +69,11 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   Ceres), illustrative Earth clouds with their shadows, gas moving with the winds of Venus and the giant planets,
   sunspots at the places NOAA reported them, and spacecraft lit by the Sun alone, with their own shadows and the
   shadow of the body they orbit.
+- **Named stars**: tick _Identify the bright stars_ to label some 25 well-known stars on the starry background (a
+  thin line points at each one); click a name for its distance, type, size, temperature and luminosity, with an
+  illustration of the star beside the Sun at the same scale.
+- **Previews**: the info panel shows the selected planet, moon or dwarf planet in 3D, as drawn in the view; in
+  the Earth view the Moon can be selected too, with its phase.
 - **Honest pictures**: artists' impressions, hand-drawn maps and illustrative effects are labelled as such in
   the panels.
 
@@ -97,18 +102,19 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 The address bar always describes what you see, so a link reproduces it:
 
-| Parameter                                      | Meaning                                                                                                               |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `view=earth\|moon\|mars\|solar`                | View                                                                                                                  |
-| `lang=en\|fr`                                  | Language                                                                                                              |
-| `frame=fixed\|inertial`                        | Reference frame                                                                                                       |
-| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                                               |
-| `sel=<id>`                                     | Selected object: NORAD number (Earth), mission or planet id, `sun`, `site:<id>` for a site, or `moon:<id>` for a moon |
-| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                                |
-| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                               |
-| `log=1`                                        | Logarithmic distances in the solar-system view                                                                        |
-| `hide=<id>,<id>`                               | Missions not drawn in the Moon, Mars and solar-system views (unticked in the panel)                                   |
-| `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                     |
+| Parameter                                      | Meaning                                                                                                                                                 |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `view=earth\|moon\|mars\|solar`                | View                                                                                                                                                    |
+| `lang=en\|fr`                                  | Language                                                                                                                                                |
+| `frame=fixed\|inertial`                        | Reference frame                                                                                                                                         |
+| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                                                                                 |
+| `sel=<id>`                                     | Selected object: NORAD number or `moon` (Earth), mission or planet id, `sun`, `site:<id>` for a site, `moon:<id>` for a moon, or `star:<id>` for a star |
+| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                                                                  |
+| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                                                                 |
+| `log=1`                                        | Logarithmic distances in the solar-system view                                                                                                          |
+| `stars=1`                                      | Name the well-known stars on the sky (solar-system view)                                                                                                |
+| `hide=<id>,<id>`                               | Missions not drawn in the Moon, Mars and solar-system views (unticked in the panel)                                                                     |
+| `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                                                       |
 
 ## Data and credits
 

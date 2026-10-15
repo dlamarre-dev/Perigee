@@ -7,6 +7,8 @@
  * - hysteresis prevents flicker: a label keeps its position while it fits, and a hidden label only comes back
  *   after staying free for several consecutive frames.
  * Labels behind the camera, off-screen or occluded by the central body (ray–sphere test) are hidden.
+ * A label with a leader (stars on the sky) sits further from its anchor, joined to it by a thin line, without a
+ * marker of its own.
  */
 import { Vector3, type PerspectiveCamera } from 'three';
 import { dot, sub, type Vec3 } from '../astro/vec3';
@@ -15,10 +17,12 @@ export interface LabelItem {
   readonly id: string;
   readonly text: string;
   readonly className?: string;
+  /** Leader length (CSS px): the label stands off its anchor diagonally, with a line pointing at it. */
+  readonly leaderPx?: number;
 }
 
 /** Priorities used by the views. */
-export const LabelPriority = { Site: 10, Orbiting: 50, Selected: 100 } as const;
+export const LabelPriority = { Star: 5, Site: 10, Orbiting: 50, Selected: 100 } as const;
 
 /** True if the segment camera → point crosses a sphere centred at the scene origin. */
 export function occludedBySphere(cameraKm: Vec3, pointKm: Vec3, radiusKm: number): boolean {
@@ -62,6 +66,31 @@ export function candidateRects(ax: number, ay: number, w: number, h: number, gap
   ];
 }
 
+/** Diagonal placements at the end of a leader of `leaderPx`: right-above first, then right-below, left-above, left-below. */
+export function leaderRects(ax: number, ay: number, w: number, h: number, leaderPx: number): Rect[] {
+  const d = leaderPx * Math.SQRT1_2;
+  return [
+    { x: ax + d, y: ay - d - h, w, h },
+    { x: ax + d, y: ay + d, w, h },
+    { x: ax - d - w, y: ay - d - h, w, h },
+    { x: ax - d - w, y: ay + d, w, h },
+  ];
+}
+
+/** The leader runs from just off the anchor to the label's nearest corner (CSS px). */
+export function leaderSegment(
+  ax: number,
+  ay: number,
+  rect: Rect,
+  gapPx = 3,
+): { x: number; y: number; lengthPx: number; angleRad: number } {
+  const cx = ax <= rect.x ? rect.x : rect.x + rect.w;
+  const cy = ay <= rect.y ? rect.y : rect.y + rect.h;
+  const angleRad = Math.atan2(cy - ay, cx - ax);
+  const lengthPx = Math.max(0, Math.hypot(cx - ax, cy - ay) - gapPx);
+  return { x: ax + Math.cos(angleRad) * gapPx, y: ay + Math.sin(angleRad) * gapPx, lengthPx, angleRad };
+}
+
 interface LabelState {
   offset: number;
   shown: boolean;
@@ -86,6 +115,8 @@ export interface LayoutInput {
   readonly w: number;
   readonly h: number;
   readonly priority: number;
+  /** Leader length: diagonal placements (see `leaderRects`) instead of the four close ones. */
+  readonly leaderPx?: number;
 }
 
 export interface LayoutResult {
@@ -115,7 +146,10 @@ export function layoutLabels(
       state = { offset: 0, shown: false, freeFrames: SHOW_AFTER_FREE_FRAMES };
       states.set(input.id, state);
     }
-    const rects = candidateRects(input.anchorX, input.anchorY, input.w, input.h);
+    const rects =
+      input.leaderPx !== undefined
+        ? leaderRects(input.anchorX, input.anchorY, input.w, input.h, input.leaderPx)
+        : candidateRects(input.anchorX, input.anchorY, input.w, input.h);
     const order = [state.offset, ...[0, 1, 2, 3].filter((i) => i !== state.offset)];
     const blockers = obstacles.filter((o) => o.priority > input.priority);
     let chosen: number | undefined;
@@ -153,6 +187,9 @@ export function layoutLabels(
 export class LabelLayer {
   readonly element: HTMLElement;
   private readonly labels = new Map<string, HTMLElement>();
+  private readonly leaders = new Map<string, { readonly el: HTMLElement; readonly lengthPx: number }>();
+  /** Rectangles of the labels shown by the last layout (CSS px), for clicks on a label. */
+  private shownRects = new Map<string, Rect>();
   private readonly sizes = new Map<string, { w: number; h: number }>();
   private readonly states = new Map<string, LabelState>();
   private candidates: Candidate[] = [];
@@ -172,6 +209,8 @@ export class LabelLayer {
     for (const [id, el] of this.labels) {
       if (!keep.has(id)) {
         el.remove();
+        this.leaders.get(id)?.el.remove();
+        this.leaders.delete(id);
         this.labels.delete(id);
         this.sizes.delete(id);
         this.states.delete(id);
@@ -191,7 +230,28 @@ export class LabelLayer {
         el.textContent = item.text;
         this.sizes.delete(item.id);
       }
+      const leader = this.leaders.get(item.id);
+      if (item.leaderPx === undefined) {
+        leader?.el.remove();
+        this.leaders.delete(item.id);
+      } else if (!leader || leader.lengthPx !== item.leaderPx) {
+        const line = leader?.el ?? document.createElement('span');
+        line.className = `label-leader ${item.className ?? ''}`;
+        line.dataset['shown'] = 'false';
+        if (!leader) this.element.prepend(line);
+        this.leaders.set(item.id, { el: line, lengthPx: item.leaderPx });
+      } else {
+        leader.el.className = `label-leader ${item.className ?? ''}`;
+      }
     }
+  }
+
+  /** The label shown under a point (CSS px), if any. */
+  hit(xCss: number, yCss: number): string | undefined {
+    for (const [id, r] of this.shownRects) {
+      if (xCss >= r.x && xCss <= r.x + r.w && yCss >= r.y && yCss <= r.y + r.h) return id;
+    }
+    return undefined;
   }
 
   /** Starts a frame: forget last frame's candidates and obstacles. */
@@ -253,16 +313,29 @@ export class LabelLayer {
     const inputs: LayoutInput[] = [];
     for (const c of this.candidates) {
       const size = this.measure(c.id);
+      const leaderPx = this.leaders.get(c.id)?.lengthPx;
       if (size)
-        inputs.push({ id: c.id, anchorX: c.x, anchorY: c.y, w: size.w, h: size.h, priority: c.priority });
+        inputs.push({
+          id: c.id,
+          anchorX: c.x,
+          anchorY: c.y,
+          w: size.w,
+          h: size.h,
+          priority: c.priority,
+          ...(leaderPx !== undefined ? { leaderPx } : {}),
+        });
     }
+    const anchors = new Map(this.candidates.map((c) => [c.id, c]));
+    this.shownRects = new Map();
     const results = new Map(
       layoutLabels(inputs, this.obstacles, this.states, widthCss, heightCss).map((r) => [r.id, r.rect]),
     );
     for (const [id, el] of this.labels) {
       const rect = results.get(id);
+      const leader = this.leaders.get(id)?.el;
       if (!rect) {
         el.dataset['shown'] = 'false';
+        if (leader) leader.dataset['shown'] = 'false';
         // Not a candidate this frame (occluded, off-screen): must earn its way back.
         if (!results.has(id)) {
           const s = this.states.get(id);
@@ -275,12 +348,21 @@ export class LabelLayer {
       }
       el.dataset['shown'] = 'true';
       el.style.transform = `translate(${rect.x.toFixed(1)}px, ${rect.y.toFixed(1)}px)`;
+      this.shownRects.set(id, rect);
+      const anchor = anchors.get(id);
+      if (leader && anchor) {
+        const seg = leaderSegment(anchor.x, anchor.y, rect);
+        leader.dataset['shown'] = 'true';
+        leader.style.width = `${seg.lengthPx.toFixed(1)}px`;
+        leader.style.transform = `translate(${seg.x.toFixed(1)}px, ${seg.y.toFixed(1)}px) rotate(${seg.angleRad.toFixed(4)}rad)`;
+      }
     }
   }
 
   dispose(): void {
     this.element.remove();
     this.labels.clear();
+    this.leaders.clear();
   }
 
   private measure(id: string): { w: number; h: number } | undefined {

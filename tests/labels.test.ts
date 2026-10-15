@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   layoutLabels,
+  leaderRects,
+  leaderSegment,
   occludedBySphere,
   occludedBySphereAt,
   rectsOverlap,
@@ -101,5 +103,26 @@ describe('occludedBySphereAt', () => {
     expect(occludedBySphereAt(cam, p, centre, 200)).toBe(
       occludedBySphere([cam[0] - 1000, cam[1], cam[2]], [p[0] - 1000, p[1], p[2]], 200),
     );
+  });
+});
+
+describe('leader labels (stars)', () => {
+  it('stand off the anchor diagonally, right-above first', () => {
+    const [first] = leaderRects(500, 400, 80, 16, 20);
+    const d = 20 * Math.SQRT1_2;
+    expect(first).toEqual({ x: 500 + d, y: 400 - d - 16, w: 80, h: 16 });
+    const { results } = run([{ ...label('star', 500, 400, 5), leaderPx: 20 }]);
+    // Hysteresis: a new label shows once free (first layout).
+    expect(results.get('star')).toEqual(first);
+  });
+
+  it('point from just off the star to the nearest corner of the label', () => {
+    const seg = leaderSegment(0, 0, { x: 30, y: -40, w: 80, h: 16 }, 3);
+    // Nearest corner: bottom-left (30, −24), at 38.4 px.
+    expect(seg.angleRad).toBeCloseTo(Math.atan2(-24, 30), 12);
+    expect(seg.lengthPx).toBeCloseTo(Math.hypot(30, 24) - 3, 9);
+    expect(Math.hypot(seg.x, seg.y)).toBeCloseTo(3, 12);
+    const left = leaderSegment(0, 0, { x: -110, y: 10, w: 80, h: 16 }, 3);
+    expect(left.angleRad).toBeCloseTo(Math.atan2(10, -30), 12);
   });
 });
