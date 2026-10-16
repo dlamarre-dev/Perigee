@@ -633,9 +633,11 @@ h2[tabindex='-1']:focus {
 }
 
 /* Larger screens: a collapsed panel keeps only its header (title, toggle, close), so it no longer covers the
-   view but the selection stays in sight. Phones collapse their sheets with the grab bar instead. */
+   view but the selection stays in sight. Phones collapse their sheets with the grab bar instead. Only panels
+   with a header (the details) collapse here: a list panel collapsed on a phone has no toggle on larger screens,
+   so it stays whole once the window widens. */
 @media (min-width: 641px) {
-  .side-panel.collapsed > .panel-body > :not(.panel-header) {
+  .side-panel.collapsed:has(> .panel-body > .panel-header) > .panel-body > :not(.panel-header) {
     display: none;
   }
 
