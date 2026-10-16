@@ -41,6 +41,7 @@ import { EarthSatellites } from './EarthSatellites';
 import { parseEarthUrl, writeEarthUrl } from './earthUrl';
 import { EMPTY_FILTERS, type FilterState } from './filters';
 import { LaunchSiteLayer } from './LaunchSiteLayer';
+import { withImage } from '../render/images';
 import { makeSatrec, propagateTeme } from './sgp4';
 
 const R = EARTH_EQUATORIAL_RADIUS_KM;
@@ -485,6 +486,7 @@ class EarthView implements View {
       sources: site.sources,
       footnote: i18n.format('info.verified', { date: this.launchVerified }),
       followable: true,
+      ...withImage(`launch:${site.id}`),
     };
     if (!launched?.length || !site.satcatCodes.length) return content;
     return {

@@ -53,6 +53,7 @@ import {
   modelMinDistance,
   withModel,
 } from '../render/models';
+import { withImage } from '../render/images';
 import { createEarthMesh } from '../render/earthMesh';
 import { DistantSun } from '../render/SunMesh';
 import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
@@ -1084,6 +1085,7 @@ export class PlanetaryView implements View {
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,
       ...withModel(`mission:${m.id}`),
+      ...withImage(`mission:${m.id}`),
     };
   }
 
@@ -1114,6 +1116,7 @@ export class PlanetaryView implements View {
       footnote: i18n.format('info.verified', { date: this.config.sites.verified }),
       followable: true,
       ...withModel(`site:${site.id}`),
+      ...withImage(`site:${site.id}`),
     };
   }
 

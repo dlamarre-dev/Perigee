@@ -17,6 +17,7 @@ import {
   LaunchSitesSchema,
   MissionsCatalogSchema,
   EarthScienceCatalogSchema,
+  ImagesCatalogSchema,
   ModelsCatalogSchema,
   MoonsCatalogSchema,
   StarsCatalogSchema,
@@ -73,6 +74,10 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
   'catalog/models.json': {
     schema: ModelsCatalogSchema,
     entries: (p) => byId((p as z.infer<typeof ModelsCatalogSchema>).models),
+  },
+  'catalog/images.json': {
+    schema: ImagesCatalogSchema,
+    entries: (p) => byId((p as z.infer<typeof ImagesCatalogSchema>).images),
   },
   'catalog/earth-science.json': {
     schema: EarthScienceCatalogSchema,

@@ -17,3 +17,4 @@ public/data/
 *.tmp.*
 tools/shapes/src/
 tools/models/src/
+tools/images/src/

@@ -94,6 +94,14 @@ const DATA_CREDITS: readonly Credit[] = [
     url: 'https://simbad.cds.unistra.fr/simbad/',
   },
   {
+    name: 'Wikimedia Commons, NASA Image and Video Library, LROC',
+    detail: {
+      en: 'images of the objects without a 3D model; author and licence under each image',
+      fr: 'images des objets sans modèle 3D ; auteur et licence sous chaque image',
+    },
+    url: 'https://commons.wikimedia.org',
+  },
+  {
     name: 'NASA MMGIS',
     detail: { en: 'Mars rover traverses', fr: 'trajets des rovers martiens' },
     url: 'https://mars.nasa.gov/maps/',

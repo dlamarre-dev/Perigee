@@ -63,6 +63,7 @@ import {
   modelMinDistance,
   withModel,
 } from '../render/models';
+import { withImage } from '../render/images';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
@@ -2216,6 +2217,7 @@ class SolarView implements View {
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,
       ...withModel(`mission:${m.id}`),
+      ...withImage(`mission:${m.id}`),
       ...(m.objectType === 'natural' && m.radiusKm
         ? {
             preview: {

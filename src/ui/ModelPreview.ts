@@ -3,7 +3,8 @@
  * - a spacecraft's 3D model, its PBR materials lit by a "Sun" and a dim room environment (specular highlights);
  * - a celestial body: the view's own BodyMesh (same maps, flattening, moving gas, rings), lit from one side,
  *   spinning about its pole;
- * - a star: a 2D illustration (src/render/starImage.ts), drawn once.
+ * - a star: a 2D illustration (src/render/starImage.ts), drawn once;
+ * - otherwise a representative image (catalog/images.json), with its kind, credit, source and licence.
  * Hidden when the selection has none of these.
  *
  * All previews share one small WebGL renderer (created on first use, its canvas moved into whichever preview is
@@ -25,10 +26,11 @@ import {
   WebGLRenderer,
   type Texture,
 } from 'three';
-import type { ModelEntry } from '../data/schemas';
+import type { ImageEntry, ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { assetUrl } from '../render/assetUrl';
 import { BodyMesh, bodySphere, type GasProfile } from '../render/BodyMesh';
+import { imageUrl } from '../render/images';
 import { ensureEnvironment, loadModel } from '../render/models';
 import { quality } from '../render/quality';
 import { RingMesh } from '../render/RingMesh';
@@ -36,6 +38,7 @@ import { applyShape, loadShape } from '../render/shapeGeometry';
 import { drawStar } from '../render/starImage';
 import { placeholderTexture, progressiveTexture } from '../render/textures';
 import { h } from './dom';
+import { imageCaption, openImage } from './ImageViewer';
 
 /** A celestial body drawn as in the 3D view. */
 export interface BodyPreview {
@@ -64,11 +67,13 @@ export interface StarPreview {
 export type PreviewSubject =
   | { readonly kind: 'model'; readonly entry: ModelEntry }
   | { readonly kind: 'body'; readonly body: BodyPreview }
-  | { readonly kind: 'star'; readonly star: StarPreview };
+  | { readonly kind: 'star'; readonly star: StarPreview }
+  | { readonly kind: 'image'; readonly entry: ImageEntry; readonly title: string };
 
 function subjectKey(subject: PreviewSubject): string {
   if (subject.kind === 'model') return `model:${subject.entry.id}`;
   if (subject.kind === 'body') return `body:${subject.body.id}`;
+  if (subject.kind === 'image') return `image:${subject.entry.id}`;
   return `star:${subject.star.id}`;
 }
 
@@ -158,6 +163,10 @@ export class ModelPreview {
   private readonly canvasBox = h('div', { class: 'model-canvas' });
   private readonly caption = h('p', { class: 'muted small model-credit' });
   private readonly starCanvas = h('canvas', { role: 'img' });
+  private readonly image = h('img', { class: 'preview-image', decoding: 'async' });
+  /** The image opens larger in a dialog (src/ui/ImageViewer.ts). */
+  private readonly imageButton = h('button', { type: 'button', class: 'preview-image-button' }, [this.image]);
+  private captionKey = '';
   private readonly size = new Vector2();
   private current: string | undefined;
   private subject: PreviewSubject | undefined;
@@ -176,6 +185,10 @@ export class ModelPreview {
     private readonly baseUrl: string,
   ) {
     this.element = h('figure', { class: 'model-preview', hidden: true }, [this.canvasBox, this.caption]);
+    this.imageButton.addEventListener('click', () => {
+      if (this.subject?.kind !== 'image') return;
+      openImage(this.i18n, this.baseUrl, this.subject.entry, this.subject.title, this.image.currentSrc);
+    });
     if (typeof IntersectionObserver !== 'undefined') {
       this.observer = new IntersectionObserver((entries) => {
         this.onScreen = entries.some((e) => e.isIntersecting);
@@ -203,7 +216,11 @@ export class ModelPreview {
       this.caption.textContent = this.i18n.format('model.credit', { credit: subject.entry.credit });
     } else if (subject.kind === 'body') {
       this.caption.textContent = this.i18n.t('preview.body');
+    } else if (subject.kind === 'image') {
+      this.imageCaption(subject.entry);
     }
+    if (subject.kind !== 'image') this.captionKey = '';
+    this.element.classList.toggle('is-image', subject.kind === 'image');
     if (key !== this.current) {
       this.current = key;
       this.yaw = 0.6;
@@ -238,6 +255,12 @@ export class ModelPreview {
       this.drawStar(this.subject.star);
       return;
     }
+    if (this.subject?.kind === 'image') {
+      this.stop();
+      this.showImage(this.subject.entry);
+      return;
+    }
+    this.imageButton.remove();
     this.starCanvas.remove();
     this.starDrawn = '';
     const s = getShared();
@@ -252,6 +275,29 @@ export class ModelPreview {
     }
     if (s.shownId !== this.current) this.load(s, this.current ?? '');
     this.start();
+  }
+
+  /** A still image: no renderer, the shared one is left to other previews. */
+  private showImage(entry: ImageEntry): void {
+    const shared = getSharedIfAny();
+    if (shared?.owner === this) shared.owner = undefined;
+    if (this.imageButton.parentElement !== this.canvasBox) this.canvasBox.replaceChildren(this.imageButton);
+    const src = imageUrl(this.baseUrl, entry);
+    if (this.image.getAttribute('src') !== src) this.image.src = src;
+    this.image.alt = this.i18n.t(`image.kind.${entry.kind}`);
+    const hint = this.i18n.t('image.enlarge');
+    if (this.imageButton.title !== hint) {
+      this.imageButton.title = hint;
+      this.imageButton.setAttribute('aria-label', hint);
+    }
+  }
+
+  /** Caption rebuilt only when the image or the language changes, so its links keep hover and focus. */
+  private imageCaption(entry: ImageEntry): void {
+    const key = `${entry.id}|${this.i18n.lang}`;
+    if (key === this.captionKey) return;
+    this.captionKey = key;
+    this.caption.replaceChildren(...imageCaption(this.i18n, entry));
   }
 
   /** The star illustration, redrawn when the star, the language or the width changes. */

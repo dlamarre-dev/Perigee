@@ -56,3 +56,35 @@ describe('3D models catalogue', () => {
     }
   });
 });
+
+describe('panel images catalogue', () => {
+  it('every image target exists, has no 3D model, appears once, and each image file is published', async () => {
+    const { existsSync } = await import('node:fs');
+    const images = (await import('../catalog/images.json')).default;
+    const models = (await import('../catalog/models.json')).default;
+    const marsSites = (await import('../catalog/landing-sites/mars.json')).default;
+    const launchSites = (await import('../catalog/launch-sites.json')).default;
+    const science = (await import('../catalog/earth-science.json')).default;
+    const { ImagesCatalogSchema, ModelsCatalogSchema, LaunchSitesSchema, EarthScienceCatalogSchema } =
+      await import('../src/data/schemas');
+    const parsed = ImagesCatalogSchema.parse(images);
+    const known = new Set([
+      ...MissionsCatalogSchema.parse(missionsJson).missions.map((m) => `mission:${m.id}`),
+      ...LandingSitesSchema.parse(marsSites).sites.map((s) => `site:${s.id}`),
+      ...LandingSitesSchema.parse(moonSitesJson).sites.map((s) => `site:${s.id}`),
+      ...LaunchSitesSchema.parse(launchSites).sites.map((s) => `launch:${s.id}`),
+      ...EarthScienceCatalogSchema.parse(science).satellites.map((s) => `norad:${s.norad}`),
+    ]);
+    const modelled = new Set(ModelsCatalogSchema.parse(models).models.flatMap((m) => m.targets));
+    const targets = new Set<string>();
+    for (const i of parsed.images) {
+      expect(known.has(i.target), i.target).toBe(true);
+      expect(modelled.has(i.target), `${i.target} has a 3D model`).toBe(false);
+      expect(targets.has(i.target), i.target).toBe(false);
+      targets.add(i.target);
+      expect(i.sources[0], i.id).toMatch(/^https:\/\//);
+      expect(existsSync(`public/images/${i.id}.webp`), i.id).toBe(true);
+      expect(existsSync(`public/images/${i.id}-large.webp`), i.id).toBe(true);
+    }
+  });
+});

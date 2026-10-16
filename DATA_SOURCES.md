@@ -118,6 +118,18 @@ Each effect can be switched off in the top bar (sparkle icon); none is drawn bel
 | Moving gas            | — (shader only)                                                                                                                                                                                                                                                                                                                                                                                                                                                      | —                                               | Schematic zonal wind profiles of Venus, Jupiter, Saturn, Uranus and Neptune, on the simulation clock                                                                               |
 | Sunspots (solar view) | [NOAA SWPC solar regions](https://services.swpc.noaa.gov/json/solar_regions.json) (latitude, Carrington longitude, area, spot count of each active region)                                                                                                                                                                                                                                                                                                           | Public domain (US Government); daily, 1 request | `data/sun/regions.json.gz`; placed with the IAU rotation of the Sun (Carrington frame) plus differential rotation, faded 7–14 days after the last report; spot shapes illustrative |
 
+## Images of objects without a 3D model (detail panel)
+
+Probes, landing and impact sites, launch sites and science satellites that have no NASA 3D model show one
+representative image, listed in `catalog/images.json` with its kind (photo, image taken by the spacecraft, seen
+from orbit, aerial view, artist's impression, replica or test model, same type of craft, launch), author,
+licence and description page. They come from [Wikimedia Commons](https://commons.wikimedia.org), the
+[NASA Image and Video Library](https://images.nasa.gov), [LROC](https://lroc.im-ldi.com) (NASA/GSFC/Arizona State
+University) and NASA/JPL pages. Accepted licences: public domain, CC0, CC BY 2.0–4.0, CC BY-SA 3.0, 3.0 IGO (ESA)
+and 4.0, and the attribution-only government licences GODL-India and KOGL Type 1 (Korea). Each image is only
+resized (720 × 540 px at most in the panel, 1600 × 1200 px in the enlarged view; WebP, `tools/images/`), never cropped or retouched; the panel names its kind, its
+author (linked to its source page) and its licence (linked to the licence text).
+
 ## Offline cache (M5)
 
 The service worker (`public/sw.js`) caches same-origin files only (build assets, data files, textures) with the

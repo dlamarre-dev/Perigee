@@ -1,4 +1,4 @@
-import type { ModelEntry } from '../data/schemas';
+import type { ImageEntry, ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
 import type { GlossaryTerm } from '../i18n/glossary';
@@ -21,6 +21,8 @@ export interface DetailContent {
   readonly model?: ModelEntry;
   /** Otherwise: a celestial body in 3D, or a star illustration. */
   readonly preview?: PreviewSubject;
+  /** Otherwise: a representative image (catalog/images.json). */
+  readonly image?: ImageEntry;
   /** Optional secondary action (e.g. apply a filter). */
   readonly action?: { readonly label: string; readonly run: () => void };
 }
@@ -100,7 +102,12 @@ export class DetailPanel {
     // Opening (not the periodic refresh) shows the whole sheet on phones.
     if (wasHidden) setPanelCollapsed(this.element, false);
     setText(this.title, content.title);
-    this.preview.show(content.model ? { kind: 'model', entry: content.model } : content.preview);
+    this.preview.show(
+      content.model
+        ? { kind: 'model', entry: content.model }
+        : (content.preview ??
+            (content.image ? { kind: 'image', entry: content.image, title: content.title } : undefined)),
+    );
     this.badge.hidden = !content.badge;
     if (content.badge) {
       setText(this.badge, content.badge.text);

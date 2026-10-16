@@ -188,7 +188,13 @@ No single API provides "active probes + landing sites". We maintain:
   ISS) also get a full-quality variant (`--high`: every part, no simplification beyond 1e-3 of the extent, KTX2
   textures) loaded only on the high quality tier and large screens while the model covers ≥ `minPx` (a Pixel 10
   flickered with its 2 M triangles and ~215 MB of textures), and released (GPU memory freed) when it
-  shrinks; the light model stays for the panel preview. glTF BLEND materials are drawn as cut-outs (alpha test,
+  shrinks; the light model stays for the panel preview. Objects without a model (probes, landing/impact and launch sites, science satellites) may
+  show one image instead (`catalog/images.json`, targets `mission:`/`site:`/`launch:`/`norad:`; kind, credit,
+  licence, source page): Wikimedia Commons, NASA Image Library, LROC; public domain, CC0, CC BY, CC BY-SA (3.0,
+  3.0 IGO, 4.0), GODL-India and KOGL-1 only (approved 2026-10-16); `tools/images/fetch-images.ts` resizes them
+  to WebP in `public/images/` (`<id>.webp` ≤ 720 × 540 for the panel, `<id>-large.webp` ≤ 1600 × 1200; never
+  cropped); the panel frames the image itself with "kind · image: credit, licence", and a click opens it larger
+  in a centred dialog (`src/ui/ImageViewer.ts`, About's frame). glTF BLEND materials are drawn as cut-outs (alpha test,
   plus alpha to coverage on the high tier, with a minimum edge width) so overlapping parts keep their depth order. ESA models (SCIFLEET) are
   under a non-commercial licence: not used (permission requested).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
@@ -535,6 +541,7 @@ the audit flags:
 - Before adding a dependency: check the license (MIT/BSD/Apache/public domain only; **fonts may also be
   OFL-1.1**, approved by the maintainer on 2026-09-27) and weight. Imagery: public domain / NASA media first;
   CC BY 4.0 (attribution only) allowed where none exists (approved 2026-09-27), credited and labelled if artistic;
+  panel images (`catalog/images.json`) also CC BY 2.0/3.0, CC BY-SA 3.0/3.0 IGO/4.0, GODL-India, KOGL-1 (2026-10-16);
   never NC/ND. Fonts are bundled locally (`@fontsource`),
   never loaded from a third-party CDN.
 

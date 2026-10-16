@@ -6,6 +6,7 @@ import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
 import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
+import { imageFor } from '../render/images';
 import { modelFor } from '../render/models';
 import { enableDefinitions, labelDefinitions } from './Glossary';
 import { ModelPreview } from './ModelPreview';
@@ -80,8 +81,6 @@ export class InfoPanel {
     if (object !== this.object) setPanelCollapsed(this.element, false);
     this.object = object;
     this.element.hidden = !object;
-    const entry = object ? modelFor(`norad:${object.noradId}`) : undefined;
-    this.preview.show(entry ? { kind: 'model', entry } : undefined);
     this.render();
     if (object && focus) this.title.focus();
   }
@@ -110,11 +109,25 @@ export class InfoPanel {
     this.element.setAttribute('aria-label', t('info.label'));
     this.close.textContent = t('info.close');
     this.following = this.followingValue;
-    if (!obj) return;
+    if (!obj) {
+      this.preview.show(undefined);
+      return;
+    }
 
     const curated = obj.curated;
     const lang = this.i18n.lang;
     this.title.textContent = displayName(obj, lang);
+    // The image's title (enlarged view) follows the language, hence here rather than in show().
+    const target = `norad:${obj.noradId}`;
+    const model = modelFor(target);
+    const image = model ? undefined : imageFor(target);
+    this.preview.show(
+      model
+        ? { kind: 'model', entry: model }
+        : image
+          ? { kind: 'image', entry: image, title: displayName(obj, lang) }
+          : undefined,
+    );
     const freshness: Freshness = !this.state ? 'invalid' : isStale(obj, this.simNowMs) ? 'stale' : 'fresh';
     this.freshness.textContent = t(`info.${freshness}`);
     this.freshness.dataset['state'] = freshness;

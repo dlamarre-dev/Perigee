@@ -348,6 +348,63 @@ export const ModelsCatalogSchema = z.object({
 });
 export type ModelsCatalog = z.infer<typeof ModelsCatalogSchema>;
 
+/**
+ * Licences accepted for the panel images (CLAUDE.md §14): public domain, CC0, CC BY, CC BY-SA (only resized,
+ * never altered otherwise) and attribution-only government licences (India GODL, Korea KOGL type 1).
+ */
+export const ImageLicenceSchema = z.enum([
+  'public-domain',
+  'cc0',
+  'cc-by-2.0',
+  'cc-by-3.0',
+  'cc-by-3.0-de',
+  'cc-by-4.0',
+  'cc-by-sa-3.0',
+  'cc-by-sa-3.0-igo',
+  'cc-by-sa-4.0',
+  'godl-india',
+  'kogl-1',
+]);
+export type ImageLicence = z.infer<typeof ImageLicenceSchema>;
+
+/**
+ * What an image shows, named under it: the object photographed, an image it took, its site seen from orbit or
+ * from the air, an artist's impression, a replica or test model, the same kind of craft (not this one), or its
+ * launch.
+ */
+export const ImageKindSchema = z.enum([
+  'photo',
+  'observation',
+  'orbital',
+  'aerial',
+  'illustration',
+  'replica',
+  'similar',
+  'launch',
+]);
+export type ImageKind = z.infer<typeof ImageKindSchema>;
+
+/** Representative image of an object without a 3D model (public/images/<id>.webp, tools/images). */
+export const ImageEntrySchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  target: z.string().regex(/^(mission|site|launch):[a-z0-9-]+$|^norad:\d+$/),
+  kind: ImageKindSchema,
+  /** Original file, downloaded and resized by tools/images. */
+  file: z.url(),
+  credit: z.string().min(1),
+  licence: ImageLicenceSchema,
+  verified: isoDate,
+  /** The image's description page first (shown as its source link). */
+  sources: z.array(z.url()).min(1),
+});
+export type ImageEntry = z.infer<typeof ImageEntrySchema>;
+export const ImagesCatalogSchema = z.object({
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+  images: z.array(ImageEntrySchema),
+});
+export type ImagesCatalog = z.infer<typeof ImagesCatalogSchema>;
+
 /** catalog/landing-sites/<body>.json — planetocentric coordinates, east-positive longitudes. */
 export const LandingSitesSchema = z.object({
   verified: isoDate,
