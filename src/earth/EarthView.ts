@@ -426,6 +426,7 @@ class EarthView implements View {
         [
           t('info.phase'),
           `${t(`moonPhase.${moonPhase(elongation)}`)} · ${i18n.format('moonPhase.lit', { pct: i18n.number(lit * 100, 0) })}`,
+          'moonPhase',
         ],
         [t('info.radius'), `${i18n.number(MOON_RADIUS_KM, 1)} km`],
         [

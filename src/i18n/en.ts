@@ -176,6 +176,7 @@ export const en = {
   'about.sources': 'Data and imagery',
   'about.software': 'Software',
   'about.license': 'Code released under the MIT license.',
+  'glossary.open': 'What does “{label}” mean?',
   'about.close': 'Close',
 
   'toolbar.filters': 'Filters',

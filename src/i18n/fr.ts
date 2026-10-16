@@ -183,6 +183,7 @@ export const fr: Messages = {
   'about.sources': 'Données et imagerie',
   'about.software': 'Logiciels',
   'about.license': 'Code publié sous licence MIT.',
+  'glossary.open': 'Que veut dire « {label} » ?',
   'about.close': 'Fermer',
 
   'toolbar.filters': 'Filtres',

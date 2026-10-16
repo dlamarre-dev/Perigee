@@ -7,6 +7,7 @@ import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
 import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
 import { modelFor } from '../render/models';
+import { enableDefinitions, labelDefinitions } from './Glossary';
 import { ModelPreview } from './ModelPreview';
 import { countryName } from './countries';
 import { facetLabel } from './labels';
@@ -39,6 +40,7 @@ export class InfoPanel {
   private launchSiteName: (code: string) => string | undefined = () => undefined;
 
   private readonly preview: ModelPreview;
+  private readonly define: ReturnType<typeof labelDefinitions>;
 
   constructor(
     private readonly i18n: I18n,
@@ -47,6 +49,8 @@ export class InfoPanel {
   ) {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
+    this.define = labelDefinitions(i18n);
+    enableDefinitions(this.fields, i18n);
     this.preview = new ModelPreview(i18n, import.meta.env.BASE_URL);
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'info-title', hidden: true },
@@ -186,6 +190,7 @@ export class InfoPanel {
     syncRows(
       this.fields,
       rows.map(([k, v]) => [t(k), v]),
+      this.define,
     );
     if (!sc && !curated) this.fields.append(h('p', { class: 'muted small' }, [t('info.noMetadata')]));
 

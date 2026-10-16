@@ -302,6 +302,9 @@ the "up" vector and causes gimbal lock at the poles).
   sprite hidden except the starfield and the Sun's halo, `keepInPhoto`). Title (file name and PNG iTXt `Title`):
   brand, followed object (else the view's body), displayed date and time in the display zone. A toast confirms (3 s).
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
+- Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
+  underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
+  a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).
 - Search and sharing (site at https://perigee.info/, GitHub Pages custom domain): static English metadata in
   `index.html` (description, Open Graph/Twitter card with `public/og-image.jpg`, hreflang, JSON-LD WebApplication);
   the app sets title, description, `lang` and the canonical URL (language + view only) for what it shows.

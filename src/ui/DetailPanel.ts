@@ -1,6 +1,8 @@
 import type { ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
+import type { GlossaryTerm } from '../i18n/glossary';
+import { enableDefinitions, labelDefinitions } from './Glossary';
 import { ModelPreview, type PreviewSubject } from './ModelPreview';
 
 export type BadgeState = 'fresh' | 'stale' | 'invalid';
@@ -8,7 +10,8 @@ export type BadgeState = 'fresh' | 'stale' | 'invalid';
 export interface DetailContent {
   readonly title: string;
   readonly badge?: { readonly text: string; readonly state: BadgeState };
-  readonly rows: readonly (readonly [label: string, value: string])[];
+  /** The optional third item names a glossary term for a label whose text alone is ambiguous. */
+  readonly rows: readonly (readonly [label: string, value: string, term?: GlossaryTerm])[];
   readonly notes?: string;
   readonly sources?: readonly string[];
   readonly footnote?: string;
@@ -44,6 +47,7 @@ export class DetailPanel {
   private followingValue = false;
   private lastSourcesKey = '';
   private readonly preview: ModelPreview;
+  private readonly define: ReturnType<typeof labelDefinitions>;
 
   constructor(
     private readonly i18n: I18n,
@@ -52,6 +56,8 @@ export class DetailPanel {
     this.close.addEventListener('click', callbacks.onClose);
     this.follow.addEventListener('click', callbacks.onToggleFollow);
     this.action.addEventListener('click', () => this.actionRun?.());
+    this.define = labelDefinitions(i18n);
+    enableDefinitions(this.fields, i18n);
     this.preview = new ModelPreview(i18n, import.meta.env.BASE_URL);
     this.element = sidePanel(
       { class: 'panel side-panel info', 'aria-labelledby': 'detail-title', hidden: true },
@@ -100,7 +106,7 @@ export class DetailPanel {
       setText(this.badge, content.badge.text);
       this.badge.dataset['state'] = content.badge.state;
     }
-    syncRows(this.fields, content.rows);
+    syncRows(this.fields, content.rows, this.define);
     this.notes.hidden = !content.notes;
     setText(this.notes, content.notes ?? '');
     // Rebuild the links only when they change, so keyboard focus survives live updates.

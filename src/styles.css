@@ -788,6 +788,43 @@ h2[tabindex='-1']:focus {
   font-variant-numeric: tabular-nums;
 }
 
+/* A label with a definition (src/ui/Glossary.ts): looks like the other labels, underlined like a link. */
+.fields .term {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: rgb(90 215 255 / 55%);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.fields .term:hover,
+.fields .term:focus-visible {
+  color: var(--accent-strong);
+  text-decoration-color: currentcolor;
+}
+
+.fields .term:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.glossary {
+  max-width: min(460px, calc(100% - 2 * var(--gutter)));
+}
+
+.glossary p {
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+
 .freshness {
   margin: 0;
   padding: 5px 9px;

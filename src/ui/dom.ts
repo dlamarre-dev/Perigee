@@ -83,26 +83,69 @@ export function markCurrent(
   if (scroll && first) first.scrollIntoView({ block: 'nearest' });
 }
 
+/** A label with a definition: the term opening it and the button's tooltip. */
+export interface LabelDefinition {
+  readonly term: string;
+  readonly hint: string;
+}
+
 /**
  * Shows label/value rows in a <dl>, refreshed several times a second: the existing <dt>/<dd> nodes are reused
  * and only changed texts are written (no node churn, no style work for unchanged rows). Rebuilt when the
- * number of rows changes.
+ * number of rows changes. Labels `define` knows (or given a term as the row's third item) become buttons,
+ * underlined like links, opening their definition
+ * (src/ui/Glossary.ts `enableDefinitions`).
  */
-export function syncRows(dl: HTMLElement, rows: readonly (readonly [string, string])[]): void {
+export function syncRows(
+  dl: HTMLElement,
+  rows: readonly (readonly [label: string, value: string, term?: string])[],
+  define?: (label: string, term?: string) => LabelDefinition | undefined,
+): void {
   const nodes = dl.children;
   const reusable =
     nodes.length === rows.length * 2 &&
     rows.every((_, i) => nodes[2 * i]?.tagName === 'DT' && nodes[2 * i + 1]?.tagName === 'DD');
   if (!reusable) {
-    dl.replaceChildren(...rows.flatMap(([k, v]) => [h('dt', {}, [k]), h('dd', {}, [v])]));
+    dl.replaceChildren(
+      ...rows.flatMap(([k, v, term]) => {
+        const dt = h('dt');
+        fillLabel(dt, k, define?.(k, term));
+        return [dt, h('dd', {}, [v])];
+      }),
+    );
     return;
   }
-  rows.forEach(([k, v], i) => {
+  rows.forEach(([k, v, term], i) => {
     const dt = nodes[2 * i];
     const dd = nodes[2 * i + 1];
-    if (dt && dt.textContent !== k) dt.textContent = k;
+    if (dt instanceof HTMLElement) {
+      const definition = define?.(k, term);
+      // Same text in both languages (NORAD, Altitude…): the tooltip still follows the language.
+      const hint = dt.firstElementChild?.getAttribute('title') ?? undefined;
+      if (dt.textContent !== k || hint !== definition?.hint) fillLabel(dt, k, definition);
+    }
     if (dd && dd.textContent !== v) dd.textContent = v;
   });
+}
+
+function fillLabel(dt: HTMLElement, label: string, definition: LabelDefinition | undefined): void {
+  if (!definition) {
+    dt.textContent = label;
+    return;
+  }
+  dt.replaceChildren(
+    h(
+      'button',
+      {
+        type: 'button',
+        class: 'term',
+        'data-term': definition.term,
+        'aria-haspopup': 'dialog',
+        title: definition.hint,
+      },
+      [label],
+    ),
+  );
 }
 
 /** Writes an element's text only when it changed (periodic refreshes then cost no DOM mutation). */
