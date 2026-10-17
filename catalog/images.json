@@ -1235,6 +1235,38 @@
       "sources": [
         "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Ballistic_Missile_Defense_Test_Site_at_Kwajalein_Atoll,_Republic_of_the_Marshall_Islands.jpg"
       ]
+    },
+    {
+      "id": "mission-queqiao-1",
+      "target": "mission:queqiao-1",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/0/0b/QueqiaoDFH.jpg",
+      "credit": "Zhang Lihua/DFH Satellite Co.",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-17",
+      "sources": ["https://commons.wikimedia.org/wiki/File:QueqiaoDFH.jpg"]
+    },
+    {
+      "id": "mission-queqiao-2",
+      "target": "mission:queqiao-2",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/4/45/Queqiao_2_relay_satellite_model.png",
+      "credit": "China News Service",
+      "licence": "cc-by-3.0",
+      "verified": "2026-10-17",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Queqiao_2_relay_satellite_model.png"]
+    },
+    {
+      "id": "mission-change-7",
+      "target": "mission:change-7",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Artist_view_of_Chang%27e_7_lunar_mission_post_launch_01.png",
+      "credit": "China News Service",
+      "licence": "cc-by-3.0",
+      "verified": "2026-10-17",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Artist_view_of_Chang%27e_7_lunar_mission_post_launch_01.png"
+      ]
     }
   ]
 }

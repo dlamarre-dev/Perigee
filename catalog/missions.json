@@ -339,10 +339,7 @@
         "fr": "Tiandu-2 est un petit satellite expérimental lancé avec Queqiao-2 pour tester les technologies d’une future constellation chinoise de navigation et de communication autour de la Lune. Volant en formation avec Tiandu-1, il emporte une charge de communication et des équipements de navigation pour tester les liaisons entre les deux engins et avec la Terre."
       },
       "verified": "2026-09-26",
-      "sources": [
-        "https://space.skyrocket.de/doc_sdat/tiandu-1.htm",
-        "https://en.wikipedia.org/wiki/Queqiao-2"
-      ]
+      "sources": ["https://space.skyrocket.de/doc_sdat/tiandu-1.htm", "https://en.wikipedia.org/wiki/Tiandu"]
     },
     {
       "id": "tiandu-1",
@@ -368,7 +365,8 @@
       },
       "verified": "2026-09-26",
       "sources": [
-        "https://news.cgtn.com/news/2025-05-28/China-s-Tiandu-1-satellite-enters-historic-Earth-moon-resonant-orbit-1DKj9SqRaSc/p.html"
+        "https://news.cgtn.com/news/2025-05-28/China-s-Tiandu-1-satellite-enters-historic-Earth-moon-resonant-orbit-1DKj9SqRaSc/p.html",
+        "https://en.wikipedia.org/wiki/Tiandu"
       ]
     },
     {
