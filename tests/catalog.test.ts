@@ -88,3 +88,20 @@ describe('panel images catalogue', () => {
     }
   });
 });
+
+describe('mission goals and main pages', () => {
+  it('every spacecraft of the other views and every science satellite describes its goals in EN and FR', async () => {
+    const science = (await import('../catalog/earth-science.json')).default;
+    const { EarthScienceCatalogSchema } = await import('../src/data/schemas');
+    const entries = [
+      ...MissionsCatalogSchema.parse(missionsJson).missions.filter((m) => m.objectType !== 'natural'),
+      ...EarthScienceCatalogSchema.parse(science).satellites,
+    ];
+    for (const e of entries) {
+      expect(e.goals?.en.length ?? 0, e.id).toBeGreaterThan(80);
+      expect(e.goals?.fr.length ?? 0, e.id).toBeGreaterThan(80);
+      // Quebec typography: a no-break space before ":" only.
+      expect(e.goals?.fr, e.id).not.toMatch(/ :|[ \u00a0][;?!]/);
+    }
+  });
+});

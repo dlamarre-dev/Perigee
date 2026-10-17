@@ -148,6 +148,31 @@ function fillLabel(dt: HTMLElement, label: string, definition: LabelDefinition |
   );
 }
 
+/** A mission's main page (catalog `website`). */
+export interface WebsiteLink {
+  readonly url: string;
+  readonly lang?: string | undefined;
+}
+
+/**
+ * Source links of a panel: the mission's main page first ("science.nasa.gov · mission page", with the page's
+ * language code when it is neither English nor French), then the other sources (hostnames).
+ */
+export function sourceItems(
+  sources: readonly string[],
+  website: WebsiteLink | undefined,
+  websiteLabel: string,
+): HTMLLIElement[] {
+  const link = (url: string): HTMLAnchorElement =>
+    h('a', { href: url, target: '_blank', rel: 'noopener' }, [new URL(url).hostname]);
+  const items = sources.filter((u) => u !== website?.url).map((url) => h('li', {}, [link(url)]));
+  if (website) {
+    const lang = website.lang ? ` (${website.lang})` : '';
+    items.unshift(h('li', {}, [link(website.url), `${lang} · ${websiteLabel}`]));
+  }
+  return items;
+}
+
 /** Writes an element's text only when it changed (periodic refreshes then cost no DOM mutation). */
 export function setText(el: HTMLElement, text: string): void {
   if (el.textContent !== text) el.textContent = text;

@@ -1081,6 +1081,8 @@ export class PlanetaryView implements View {
       badge,
       rows,
       ...(m.notes ? { notes: m.notes[i18n.lang] } : {}),
+      ...(m.goals ? { goals: m.goals[i18n.lang] } : {}),
+      ...(m.website ? { website: m.website } : {}),
       sources: m.sources,
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,

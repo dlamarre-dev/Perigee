@@ -44,7 +44,7 @@ export const fr: Messages = {
   'toolbar.report': 'Signaler',
   'report.title': 'Signaler un problème',
   'report.intro':
-    'Un bogue, une donnée erronée ou une idée ? Écrivez-le ici ; le message parvient au mainteneur par courriel.',
+    'Un bogue, une donnée erronée ou une idée? Écrivez-le ici; le message parvient au mainteneur par courriel.',
   'report.type': 'Type',
   'report.type.bug': 'Bogue',
   'report.type.data': 'Donnée erronée',
@@ -54,7 +54,7 @@ export const fr: Messages = {
   'report.messagePlaceholder': 'Ce qui s’est passé, quel objet ou quelle vue, ce que vous attendiez…',
   'report.email': 'Courriel (facultatif)',
   'report.emailNote':
-    'Utilisé seulement pour vous répondre au sujet de ce signalement ; transmis par Web3Forms, jamais partagé ni publié.',
+    'Utilisé seulement pour vous répondre au sujet de ce signalement; transmis par Web3Forms, jamais partagé ni publié.',
   'report.context': 'Informations jointes',
   'report.send': 'Envoyer',
   'report.sending': 'Envoi…',
@@ -190,11 +190,11 @@ export const fr: Messages = {
   'about.data.satellites': 'satellites',
   'about.data.satcat': 'catalogue',
   'about.data.ephemerides': 'éphémérides',
-  'about.dataUnavailable': 'Date de rafraîchissement des données indisponible (hors ligne ?).',
+  'about.dataUnavailable': 'Date de rafraîchissement des données indisponible (hors ligne?).',
   'about.sources': 'Données et imagerie',
   'about.software': 'Logiciels',
   'about.license': 'Code publié sous licence MIT.',
-  'glossary.open': 'Que veut dire « {label} » ?',
+  'glossary.open': 'Que veut dire « {label} »?',
   'about.close': 'Fermer',
 
   'toolbar.filters': 'Filtres',
@@ -321,6 +321,7 @@ export const fr: Messages = {
   'info.notes': 'Notes',
   'info.purpose': 'Mission',
   'info.catalogName': 'Nom au catalogue',
+  'info.missionPage': 'page de la mission',
   'info.sources': 'Sources',
   'info.verified': 'Vérifié le {date}',
 

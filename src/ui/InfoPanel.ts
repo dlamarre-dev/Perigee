@@ -5,7 +5,7 @@ import { displayName, elementAgeDays, isStale, type SatObject } from '../earth/c
 import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
-import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
+import { h, panelToggle, setPanelCollapsed, setText, sidePanel, sourceItems, syncRows } from './dom';
 import { imageFor } from '../render/images';
 import { modelFor } from '../render/models';
 import { enableDefinitions, labelDefinitions } from './Glossary';
@@ -27,6 +27,7 @@ export class InfoPanel {
   private readonly freshness = h('p', { class: 'freshness' });
   private readonly fields = h('dl', { class: 'fields' });
   // Curated science satellites: notes, sources and the verification date (like the missions of other views).
+  private readonly goals = h('p', { class: 'small goals' });
   private readonly notes = h('p', { class: 'small' });
   private readonly sourcesTitle = h('h3', { class: 'results-title' });
   private readonly sources = h('ul', { class: 'sources small' });
@@ -63,6 +64,7 @@ export class InfoPanel {
         this.preview.element,
         this.freshness,
         this.fields,
+        this.goals,
         this.notes,
         this.sourcesTitle,
         this.sources,
@@ -207,21 +209,22 @@ export class InfoPanel {
     );
     if (!sc && !curated) this.fields.append(h('p', { class: 'muted small' }, [t('info.noMetadata')]));
 
+    const goals = curated?.goals?.[lang];
+    this.goals.hidden = !goals;
+    setText(this.goals, goals ?? '');
     const notes = curated?.notes?.[lang];
     this.notes.hidden = !notes;
     setText(this.notes, notes ?? '');
     const urls = curated?.sources ?? [];
-    this.sourcesTitle.hidden = urls.length === 0;
+    const w = curated?.website;
+    this.sourcesTitle.hidden = urls.length === 0 && !w;
     setText(this.sourcesTitle, t('info.sources'));
     // Rebuild the links only when they change, so keyboard focus survives live updates.
-    const key = urls.join('|');
+    const websiteLabel = t('info.missionPage');
+    const key = [w?.url, w?.lang, websiteLabel, ...urls].join('|');
     if (key !== this.lastSourcesKey) {
       this.lastSourcesKey = key;
-      this.sources.replaceChildren(
-        ...urls.map((url) =>
-          h('li', {}, [h('a', { href: url, target: '_blank', rel: 'noopener' }, [new URL(url).hostname])]),
-        ),
-      );
+      this.sources.replaceChildren(...sourceItems(urls, w, websiteLabel));
     }
     setText(this.footnote, curated ? this.i18n.format('info.verified', { date: curated.verified }) : '');
   }

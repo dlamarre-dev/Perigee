@@ -126,10 +126,13 @@ Cross-cutting features:
 ### 4.4 Curated catalog (in the repo)
 No single API provides "active probes + landing sites". We maintain:
 - `catalog/missions.json`: missions beyond Earth orbit (internal id, EN/FR name, agency, country, launch date,
-  Horizons ID, NORAD if any, central body, status, `ephemeris: horizons|kepler|none`, `verified: YYYY-MM-DD`,
-  `sources: [url]`).
+  Horizons ID, NORAD if any, central body, status, `ephemeris: horizons|kepler|none`, `goals` (main objectives,
+  2–3 sentences for students, shown before the `notes` on the current state), `website` (main official page,
+  listed first among the links; `lang` only when neither English nor French, shown as "(zh)"),
+  `verified: YYYY-MM-DD`, `sources: [url]`).
 - `catalog/earth-science.json`: the featured "space & Earth science" satellites of the Earth view (CelesTrak
-  `science` group + the ISS): known name EN/FR, agency, country, status, purpose, notes, `verified`, `sources`.
+  `science` group + the ISS): known name EN/FR, agency, country, status, purpose, `goals`, notes, `website`,
+  `verified`, `sources`.
   Shown first in the filters, with curated names in the list and the info panel; re-verified monthly like the
   missions; the audit flags new members of the CelesTrak group.
 - `catalog/landing-sites/moon.json`, `catalog/landing-sites/mars.json`: planetocentric lat/lon, date, mission,

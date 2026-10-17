@@ -26,6 +26,13 @@
       },
       "lowOrbit": true,
       "color": "#7cc4ff",
+      "goals": {
+        "en": "LRO was built to map the Moon in great detail to prepare future human and robotic missions. Its instruments measure the surface’s shape, temperature, composition and radiation environment, which helps choose safe landing sites. It also searches the polar regions for resources such as water ice and for places that get almost constant sunlight.",
+        "fr": "LRO a été conçu pour cartographier la Lune avec une grande précision afin de préparer les futures missions habitées et robotiques. Ses instruments mesurent le relief, la température, la composition et les radiations à la surface, ce qui aide à choisir des sites d’atterrissage sûrs. Il cherche aussi, près des pôles, des ressources comme la glace d’eau et des zones éclairées presque en permanence."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/lro/"
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://science.nasa.gov/mission/lro/",
@@ -57,9 +64,16 @@
       },
       "lowOrbit": true,
       "color": "#ffb74d",
+      "goals": {
+        "en": "The Chandrayaan-2 orbiter studies the Moon from a low polar orbit with eight scientific instruments. It maps the minerals and chemical elements of the surface, looks for water molecules and ice in the polar regions, and studies the very thin lunar atmosphere. These data help scientists understand how the Moon formed and evolved.",
+        "fr": "L’orbiteur de Chandrayaan-2 étudie la Lune depuis une orbite polaire basse grâce à huit instruments scientifiques. Il cartographie les minéraux et les éléments chimiques de la surface, recherche des molécules d’eau et de la glace dans les régions polaires et analyse la très ténue atmosphère lunaire. Ces données aident à comprendre comment la Lune s’est formée et a évolué."
+      },
       "notes": {
         "en": "Planned 7-year life reached around mid-2026; no end-of-mission announcement found as of 2026-09-26.",
         "fr": "Durée de vie prévue de 7 ans atteinte vers la mi-2026 ; aucune annonce de fin de mission au 2026-09-26."
+      },
+      "website": {
+        "url": "https://www.isro.gov.in/Chandrayaan_2.html"
       },
       "verified": "2026-09-26",
       "sources": [
@@ -93,9 +107,16 @@
       },
       "lowOrbit": true,
       "color": "#81c784",
+      "goals": {
+        "en": "Danuri is South Korea’s first lunar mission, designed to develop and test the technologies needed to explore the Moon. Its cameras and instruments map the surface to help choose future landing sites, study the Moon’s magnetic field and geology, and look for resources such as water ice. NASA’s ShadowCam on board images permanently shadowed polar craters.",
+        "fr": "Danuri est la première mission lunaire de la Corée du Sud, conçue pour mettre au point et tester les technologies nécessaires à l’exploration de la Lune. Ses caméras et instruments cartographient la surface pour aider à choisir de futurs sites d’atterrissage, étudient le champ magnétique et la géologie lunaires et recherchent des ressources comme la glace d’eau. La caméra ShadowCam de la NASA photographie les cratères polaires plongés dans l’ombre permanente."
+      },
       "notes": {
         "en": "Extended through 2027; controlled impact planned in early 2028.",
         "fr": "Prolongée jusqu’en 2027 ; impact contrôlé prévu début 2028."
+      },
+      "website": {
+        "url": "https://www.kari.re.kr/eng/contents/193"
       },
       "verified": "2026-09-26",
       "sources": [
@@ -129,6 +150,13 @@
       },
       "lowOrbit": false,
       "color": "#ce93d8",
+      "goals": {
+        "en": "ARTEMIS P1 is one of two THEMIS probes that were moved from Earth orbit to the Moon to give them a second mission. With its twin P2, it measures the solar wind, the Earth’s magnetic tail and the “wake” the Moon leaves in the solar wind from two points at once. P1 was also the first spacecraft to fly around the Earth–Moon L1 and L2 points.",
+        "fr": "ARTEMIS P1 est l’une des deux sondes THEMIS déplacées de l’orbite terrestre vers la Lune pour une seconde mission. Avec sa jumelle P2, elle mesure simultanément en deux points le vent solaire, la queue magnétique de la Terre et le « sillage » que la Lune laisse dans le vent solaire. P1 a aussi été le premier engin à se placer en orbite autour des points L1 et L2 du système Terre–Lune."
+      },
+      "website": {
+        "url": "https://artemis.igpp.ucla.edu/"
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://artemis.igpp.ucla.edu/",
@@ -160,6 +188,13 @@
       },
       "lowOrbit": false,
       "color": "#f48fb1",
+      "goals": {
+        "en": "ARTEMIS P2 is the second of two THEMIS probes sent to orbit the Moon. Flying with P1, it allows two-point measurements of the solar wind, the Earth’s magnetic tail and the Moon’s wake, revealing how particles are accelerated and how magnetic fields reconnect. The pair also studies the Moon itself: its tenuous exosphere, surface charging and the interior through magnetic induction.",
+        "fr": "ARTEMIS P2 est la seconde des deux sondes THEMIS envoyées en orbite autour de la Lune. Volant avec P1, elle permet des mesures en deux points du vent solaire, de la queue magnétique terrestre et du sillage lunaire, pour comprendre comment les particules sont accélérées et comment les champs magnétiques se reconnectent. Le duo étudie aussi la Lune elle-même : son exosphère ténue, la charge électrique de sa surface et son intérieur, par induction magnétique."
+      },
+      "website": {
+        "url": "https://artemis.igpp.ucla.edu/"
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://artemis.igpp.ucla.edu/",
@@ -191,9 +226,16 @@
       },
       "lowOrbit": false,
       "color": "#4dd0e1",
+      "goals": {
+        "en": "CAPSTONE is a microwave-oven-sized CubeSat built to test the near-rectilinear halo orbit planned for NASA’s lunar Gateway station: how to enter it and stay in it with little fuel. It also demonstrates a navigation system in which spacecraft locate themselves by exchanging signals with each other (here with LRO) instead of relying only on tracking from Earth.",
+        "fr": "CAPSTONE est un CubeSat de la taille d’un four à micro-ondes conçu pour tester l’orbite de halo quasi rectiligne prévue pour la station lunaire Gateway de la NASA : comment s’y insérer et s’y maintenir avec peu de carburant. Il démontre aussi un système de navigation où les engins se localisent en échangeant des signaux entre eux (ici avec LRO) plutôt qu’en dépendant uniquement du suivi depuis la Terre."
+      },
       "notes": {
         "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window.",
         "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique."
+      },
+      "website": {
+        "url": "https://www.nasa.gov/smallspacecraft/capstone/"
       },
       "verified": "2026-10-17",
       "sources": [
@@ -227,6 +269,10 @@
       },
       "lowOrbit": false,
       "color": "#fff176",
+      "goals": {
+        "en": "Shams (Space Weather CubeSat-1) is a small Saudi satellite built to study space weather far from Earth, where the planet’s magnetic field no longer protects spacecraft. It measures space radiation, solar X-rays, high-energy solar particles and the Earth’s magnetic field, to better understand how solar activity affects communications and navigation.",
+        "fr": "Shams (Space Weather CubeSat-1) est un petit satellite saoudien conçu pour étudier la météo spatiale loin de la Terre, là où le champ magnétique terrestre ne protège plus les engins. Il mesure les radiations spatiales, les rayons X solaires, les particules solaires très énergétiques et le champ magnétique terrestre, afin de mieux comprendre l’effet de l’activité solaire sur les communications et la navigation."
+      },
       "notes": {
         "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
         "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
@@ -256,6 +302,10 @@
       "ephemeris": "none",
       "norad": 59276,
       "lowOrbit": false,
+      "goals": {
+        "en": "Queqiao-2 is a relay satellite that passes messages between Earth and spacecraft on the far side and south pole of the Moon, which cannot talk to Earth directly. It serves China’s Chang’e-6, Chang’e-7 and Chang’e-8 missions and the planned International Lunar Research Station. With its large antenna it also carries scientific instruments, including an extreme-ultraviolet camera and a neutral-atom imager that observe the Earth’s magnetosphere.",
+        "fr": "Queqiao-2 est un satellite relais qui transmet les messages entre la Terre et les engins posés sur la face cachée et au pôle Sud de la Lune, qui ne peuvent pas communiquer directement avec la Terre. Il sert les missions chinoises Chang’e-6, Chang’e-7 et Chang’e-8 ainsi que la future Station internationale de recherche lunaire. Doté d’une grande antenne, il emporte aussi des instruments scientifiques, dont une caméra ultraviolette et un imageur d’atomes neutres qui observent la magnétosphère terrestre."
+      },
       "notes": {
         "en": "No public ephemeris (not in JPL Horizons); orbit figures come from independent tracking only.",
         "fr": "Aucune éphéméride publique (absent de JPL Horizons) ; les paramètres d’orbite proviennent seulement de suivis indépendants."
@@ -284,6 +334,10 @@
       "ephemeris": "none",
       "norad": 59279,
       "lowOrbit": false,
+      "goals": {
+        "en": "Tiandu-2 is a small experimental satellite launched with Queqiao-2 to test technologies for a future Chinese navigation and communication constellation around the Moon. Flying in formation with Tiandu-1, it carries a communication payload and navigation devices to test links between the two craft and with Earth.",
+        "fr": "Tiandu-2 est un petit satellite expérimental lancé avec Queqiao-2 pour tester les technologies d’une future constellation chinoise de navigation et de communication autour de la Lune. Volant en formation avec Tiandu-1, il emporte une charge de communication et des équipements de navigation pour tester les liaisons entre les deux engins et avec la Terre."
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://space.skyrocket.de/doc_sdat/tiandu-1.htm",
@@ -308,6 +362,10 @@
       "ephemeris": "none",
       "norad": 59278,
       "lowOrbit": false,
+      "goals": {
+        "en": "Tiandu-1 is an experimental satellite from China’s Deep Space Exploration Laboratory, a pathfinder for a future navigation and communication constellation around the Moon. It tests high-speed radio links, an in-space data router and laser ranging from Earth using a reflector on board, together with its smaller companion Tiandu-2.",
+        "fr": "Tiandu-1 est un satellite expérimental du Laboratoire chinois d’exploration de l’espace lointain, précurseur d’une future constellation de navigation et de communication autour de la Lune. Avec son petit compagnon Tiandu-2, il teste des liaisons radio à haut débit, un routeur de données spatial et la télémétrie laser depuis la Terre grâce à un réflecteur embarqué."
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://news.cgtn.com/news/2025-05-28/China-s-Tiandu-1-satellite-enters-historic-Earth-moon-resonant-orbit-1DKj9SqRaSc/p.html"
@@ -331,6 +389,10 @@
       "ephemeris": "none",
       "norad": 43470,
       "lowOrbit": false,
+      "goals": {
+        "en": "Queqiao was the first relay satellite placed beyond the Moon, near the Earth–Moon L2 point. It was built so that China’s Chang’e-4 lander and Yutu-2 rover, the first to land on the far side of the Moon, could communicate with Earth, which never sees that side. It also carried a Dutch–Chinese low-frequency radio instrument for astronomy.",
+        "fr": "Queqiao a été le premier satellite relais placé au-delà de la Lune, près du point L2 Terre–Lune. Il a été conçu pour que l’atterrisseur chinois Chang’e-4 et le rover Yutu-2, premiers à se poser sur la face cachée de la Lune, puissent communiquer avec la Terre, qui ne voit jamais cette face. Il emportait aussi un instrument sino-néerlandais de radioastronomie à basse fréquence."
+      },
       "verified": "2026-09-26",
       "sources": ["https://en.wikipedia.org/wiki/Queqiao_relay_satellite"]
     },
@@ -352,6 +414,10 @@
       "ephemeris": "none",
       "norad": 59228,
       "lowOrbit": false,
+      "goals": {
+        "en": "DRO-A is an experimental satellite of the Chinese Academy of Sciences sent to a distant retrograde orbit, a very stable orbit around the Moon. With DRO-B and the DRO-L satellite in Earth orbit, it forms a three-satellite test network that tests precise navigation and radio links between spacecraft across Earth–Moon distances.",
+        "fr": "DRO-A est un satellite expérimental de l’Académie chinoise des sciences placé sur une orbite rétrograde distante, une orbite très stable autour de la Lune. Avec DRO-B et le satellite DRO-L en orbite terrestre, il forme un réseau d’essai de trois satellites qui teste la navigation de précision et les liaisons radio entre engins à l’échelle des distances Terre–Lune."
+      },
       "verified": "2026-09-26",
       "sources": [
         "https://space.skyrocket.de/doc_sdat/dro-a.htm",
@@ -376,6 +442,10 @@
       "ephemeris": "none",
       "norad": 60058,
       "lowOrbit": false,
+      "goals": {
+        "en": "DRO-B is the twin of DRO-A, launched together to test spacecraft operations in the space between the Earth and the Moon. With DRO-A and DRO-L, it forms a three-satellite network that tests high-precision relative navigation and microwave links between spacecraft.",
+        "fr": "DRO-B est le jumeau de DRO-A, lancé avec lui pour tester l’exploitation d’engins dans l’espace entre la Terre et la Lune. Avec DRO-A et DRO-L, il forme un réseau de trois satellites qui teste la navigation relative de haute précision et les liaisons micro-ondes entre engins."
+      },
       "verified": "2026-09-26",
       "sources": ["https://space.skyrocket.de/doc_sdat/dro-a.htm"]
     },
@@ -397,6 +467,10 @@
       "ephemeris": "none",
       "norad": 59629,
       "lowOrbit": false,
+      "goals": {
+        "en": "ICUBE-Q was Pakistan’s first lunar satellite, built by the Institute of Space Technology with SUPARCO and Shanghai Jiao Tong University and carried to the Moon by China’s Chang’e-6. Its goals were to prove that a small satellite could be released into lunar orbit and work there, to photograph the Moon’s surface with two cameras, and to collect magnetic-field data.",
+        "fr": "ICUBE-Q était le premier satellite lunaire du Pakistan, construit par l’Institute of Space Technology avec la SUPARCO et l’université Jiao Tong de Shanghai, et emporté vers la Lune par la mission chinoise Chang’e-6. Il devait prouver qu’un petit satellite pouvait être largué en orbite lunaire et y fonctionner, photographier la surface de la Lune avec deux caméras et recueillir des données sur le champ magnétique."
+      },
       "notes": {
         "en": "Contact lost around July 2024; a published study predicted lunar impact by about April 2025.",
         "fr": "Contact perdu vers juillet 2024 ; une étude publiée prévoyait un impact lunaire vers avril 2025."
@@ -419,6 +493,10 @@
       "status": "planned",
       "ephemeris": "none",
       "lowOrbit": true,
+      "goals": {
+        "en": "Chang'e-7 is a Chinese robotic mission to the Moon's south pole, made of an orbiter, a lander, a rover and a small hopping probe. Its main goal is to look for water ice and other volatiles in permanently shadowed craters, and to study the region's soil composition, environment and terrain. These findings will help prepare a future lunar research station.",
+        "fr": "Chang'e-7 est une mission robotique chinoise vers le pôle Sud de la Lune, composée d'un orbiteur, d'un atterrisseur, d'un rover et d'une petite sonde sauteuse. Elle doit surtout rechercher de la glace d'eau et d'autres substances volatiles dans les cratères plongés dans une ombre permanente, et étudier la composition du sol, l'environnement et le relief de la région. Ces résultats aideront à préparer une future station de recherche lunaire."
+      },
       "notes": {
         "en": "Not launched: the August 2026 window was lost to Typhoon Narra; launch postponed to 2027.",
         "fr": "Pas lancée : la fenêtre d’août 2026 a été perdue à cause du typhon Narra ; lancement reporté à 2027."
@@ -454,9 +532,16 @@
       },
       "lowOrbit": true,
       "color": "#ffb74d",
+      "goals": {
+        "en": "2001 Mars Odyssey was sent to map the chemical elements and minerals of the Martian surface and to look for signs of water, as part of NASA's \"follow the water\" strategy. It found large amounts of ice hidden just below the surface at high latitudes. It also studies clouds, fog and frost, helps choose safe landing sites and relays data from rovers to Earth.",
+        "fr": "2001 Mars Odyssey devait cartographier les éléments chimiques et les minéraux de la surface martienne et y chercher des traces d'eau, selon la stratégie de la NASA « suivre l'eau ». Elle a découvert de grandes quantités de glace cachées juste sous la surface aux hautes latitudes. Elle étudie aussi les nuages, le brouillard et le givre, aide à choisir des sites d'atterrissage sûrs et relaie vers la Terre les données des rovers."
+      },
       "notes": {
         "en": "Longest continually active spacecraft at another planet (Mars orbit since 2001-10-24). NASA lists the mission as ongoing; propellant is low (earlier estimates: enough to end of 2025), so an end-of-mission announcement is plausible soon. Re-verify before each release.",
         "fr": "Plus longue mission active en continu autour d'une autre planète (en orbite martienne depuis le 2001-10-24). La NASA la considère toujours en cours ; ergols presque épuisés (estimations antérieures : jusqu'à fin 2025), une fin de mission pourrait être annoncée prochainement. À revérifier avant chaque version."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/odyssey/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -490,9 +575,16 @@
       },
       "lowOrbit": false,
       "color": "#64b5f6",
+      "goals": {
+        "en": "Mars Express, ESA's first mission to another planet, studies Mars from below its surface to its upper atmosphere, as well as its two moons, Phobos and Deimos. Its camera produces 3D views of the landscape, its radar probes beneath the surface and its spectrometers analyse the air and the minerals. A central goal is to trace the history of water and whether early Mars could have hosted life.",
+        "fr": "Mars Express, première mission de l'ESA vers une autre planète, étudie Mars de son sous-sol jusqu'à sa haute atmosphère, ainsi que ses deux lunes, Phobos et Deimos. Sa caméra livre des vues en relief des paysages, son radar sonde le sous-sol et ses spectromètres analysent l'air et les minéraux. Elle cherche notamment à retracer l'histoire de l'eau et à savoir si la jeune planète a pu abriter la vie."
+      },
       "notes": {
         "en": "In Mars orbit since 2003-12-25. ESA's Science Programme Committee endorsed a further extension in June 2026 (previously confirmed to 2026-12-31). ESA image releases continue in September 2026.",
         "fr": "En orbite martienne depuis le 2003-12-25. Le comité du programme scientifique de l'ESA a approuvé une nouvelle prolongation en juin 2026 (auparavant confirmée jusqu'au 2026-12-31). Publications d'images par l'ESA en septembre 2026."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -527,9 +619,16 @@
       },
       "lowOrbit": true,
       "color": "#81c784",
+      "goals": {
+        "en": "Mars Reconnaissance Orbiter was built to understand where water has been on Mars and how that changed over time. Its HiRISE camera, the most powerful ever sent to another planet, can spot objects the size of a kitchen table, while other instruments map minerals formed in water, probe underground ice and monitor the daily weather. It is also a key relay for rovers on the surface.",
+        "fr": "Mars Reconnaissance Orbiter a été conçue pour comprendre où l'eau s'est trouvée sur Mars et comment sa répartition a évolué. Sa caméra HiRISE, la plus puissante jamais envoyée vers une autre planète, distingue des objets de la taille d'une table de cuisine, tandis que d'autres instruments cartographient les minéraux formés dans l'eau, sondent la glace du sous-sol et suivent la météo au jour le jour. C'est aussi un relais essentiel pour les rovers."
+      },
       "notes": {
         "en": "In Mars orbit since 2006-03-10; key relay for Curiosity and Perseverance. CRISM retired 2023; HiRISE has partial CCD degradation. Fuel reported sufficient to ~2035 (Jan 2024 estimate).",
         "fr": "En orbite martienne depuis le 2006-03-10 ; relais essentiel pour Curiosity et Perseverance. CRISM retiré en 2023 ; HiRISE partiellement dégradé. Ergols suffisants jusqu'à ~2035 (estimation de janvier 2024)."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -563,9 +662,16 @@
       },
       "lowOrbit": true,
       "color": "#ce93d8",
+      "goals": {
+        "en": "The Trace Gas Orbiter, the first part of ESA's ExoMars programme, measures tiny amounts of gases such as methane in the Martian atmosphere, which could come from geological activity or even from living organisms. It also photographs surface features that might be linked to these gases and maps hydrogen, a sign of water ice, in the top metre of the ground. It serves as a data relay for rovers too.",
+        "fr": "Le Trace Gas Orbiter, premier volet du programme ExoMars de l'ESA, mesure d'infimes quantités de gaz comme le méthane dans l'atmosphère martienne : ils pourraient provenir d'une activité géologique, voire d'organismes vivants. Il photographie aussi les reliefs susceptibles d'être liés à ces gaz et cartographie l'hydrogène, signe de glace d'eau, dans le premier mètre du sol. Il sert également de relais aux rovers."
+      },
       "notes": {
         "en": "Mars orbit insertion 2016-10-19; science since April 2018; relay for NASA rovers and the future Rosalind Franklin rover. Recent 2025–2026 science activity reported; formal extension beyond 2026 not found (TGO is not in the June 2026 SPC list, as it belongs to ESA's exploration programme).",
         "fr": "Insertion en orbite le 2016-10-19 ; science depuis avril 2018 ; relais pour les rovers de la NASA et le futur rover Rosalind Franklin. Activité scientifique signalée en 2025–2026 ; prolongation officielle au-delà de 2026 non trouvée (TGO relève du programme d'exploration, absent de la liste SPC de juin 2026)."
+      },
+      "website": {
+        "url": "https://explorationscience.esa.int/project/exomars-trace-gas-orbiter-tgo/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -599,9 +705,16 @@
       },
       "lowOrbit": false,
       "color": "#f48fb1",
+      "goals": {
+        "en": "The Hope probe, the Arab world's first mission to another planet, is building the first complete picture of Martian weather through the day and across the seasons. From a high orbit, its three instruments observe dust storms and temperature changes in the lower atmosphere, and track how hydrogen and oxygen escape from the upper atmosphere into space. This helps explain how Mars lost much of its air and water.",
+        "fr": "La sonde Hope (Al-Amal), première mission du monde arabe vers une autre planète, dresse le premier portrait complet de la météo martienne au fil de la journée et des saisons. Depuis une orbite haute, ses trois instruments observent les tempêtes de poussière et les variations de température de la basse atmosphère, et suivent la fuite de l'hydrogène et de l'oxygène de la haute atmosphère vers l'espace. Elle aide ainsi à comprendre comment Mars a perdu une grande partie de son air et de son eau."
+      },
       "notes": {
         "en": "Mars orbit since 2021-02-09. Mission extended to 2028 (announced February 2026).",
         "fr": "En orbite martienne depuis le 2021-02-09. Mission prolongée jusqu'en 2028 (annonce de février 2026)."
+      },
+      "website": {
+        "url": "https://space.gov.ae/en/projects-and-initiatives/space-exploration/emirates-mars-mission"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -630,6 +743,10 @@
       "ephemeris": "none",
       "norad": 45935,
       "lowOrbit": false,
+      "goals": {
+        "en": "Tianwen-1 was China's first independent mission to Mars, combining an orbiter, a lander and the Zhurong rover in a single flight. The orbiter maps the planet's landforms and geology, studies the soil, the distribution of water ice and the surface composition, and measures the ionosphere, the climate and the planet's magnetic and gravity fields. It also served as the relay between the rover and Earth.",
+        "fr": "Tianwen-1 est la première mission martienne menée par la Chine seule, réunissant en un seul vol un orbiteur, un atterrisseur et le rover Zhurong. L'orbiteur cartographie les reliefs et la géologie de la planète, étudie le sol, la répartition de la glace d'eau et la composition de la surface, et mesure l'ionosphère, le climat ainsi que les champs magnétique et gravitationnel de Mars. Il a aussi servi de relais entre le rover et la Terre."
+      },
       "notes": {
         "en": "Mars orbit since 2021-02-10. Latest official confirmation opened: Xinhua (2025-11-06), operating stably for over 4 years in good condition (observed interstellar comet 3I/ATLAS). No public ephemerides; orbit parameters from Wikipedia and may be outdated.",
         "fr": "En orbite martienne depuis le 2021-02-10. Dernière confirmation officielle consultée : Xinhua (2025-11-06), fonctionnement stable depuis plus de 4 ans, bon état (observation de la comète interstellaire 3I/ATLAS). Pas d'éphémérides publiques ; paramètres orbitaux issus de Wikipédia, possiblement périmés."
@@ -665,9 +782,16 @@
       },
       "lowOrbit": false,
       "color": "#4dd0e1",
+      "goals": {
+        "en": "MAVEN (Mars Atmosphere and Volatile EvolutioN) was the first mission devoted to Mars's upper atmosphere. It measured how the Sun and the solar wind strip gas from the top of the atmosphere into space, to find out how Mars lost its once-thick atmosphere and changed from a world that may have had liquid water to today's cold desert. It also relayed data from rovers.",
+        "fr": "MAVEN (Mars Atmosphere and Volatile EvolutioN) a été la première mission consacrée à la haute atmosphère de Mars. Elle mesurait comment le Soleil et le vent solaire arrachent des gaz au sommet de l'atmosphère, afin de comprendre comment Mars a perdu son épaisse atmosphère d'autrefois et est passée d'un monde où l'eau liquide a pu couler au désert froid d'aujourd'hui. Elle relayait aussi les données des rovers."
+      },
       "notes": {
         "en": "Loss of signal 2025-12-06 after passing behind Mars; spacecraft found tumbling, batteries drained. Review board (Feb 2026) judged it unrecoverable; NASA declared end of mission 2026-06-03.",
         "fr": "Perte de signal le 2025-12-06 après un passage derrière Mars ; engin en rotation, batteries épuisées. Le comité d'examen (fév. 2026) l'a jugé irrécupérable ; fin de mission déclarée par la NASA le 2026-06-03."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/maven/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -694,9 +818,16 @@
       "ephemeris": "none",
       "norad": 39370,
       "lowOrbit": false,
+      "goals": {
+        "en": "The Mars Orbiter Mission (Mangalyaan) was India's first interplanetary mission. Its main goal was technological: to show that India could design, build and fly a spacecraft able to reach Mars largely on its own and enter orbit around it. Its five small instruments also studied the planet's surface features, minerals and atmosphere, including a search for methane.",
+        "fr": "La Mars Orbiter Mission (Mangalyaan) a été la première mission interplanétaire de l'Inde. Son objectif principal était technologique : prouver que le pays savait concevoir, construire et piloter une sonde capable de rejoindre Mars de façon largement autonome et de se placer en orbite. Ses cinq petits instruments étudiaient aussi le relief, les minéraux et l'atmosphère de la planète, notamment à la recherche de méthane."
+      },
       "notes": {
         "en": "Mars orbit 2014-09-24. Contact lost after a long eclipse in April 2022; ISRO declared the mission over in October 2022.",
         "fr": "En orbite martienne le 2014-09-24. Contact perdu après une longue éclipse en avril 2022 ; l'ISRO a déclaré la fin de mission en octobre 2022."
+      },
+      "website": {
+        "url": "https://www.isro.gov.in/MarsOrbiterMissionSpacecraft.html"
       },
       "verified": "2026-09-27",
       "sources": ["https://en.wikipedia.org/wiki/Mars_Orbiter_Mission"]
@@ -719,9 +850,16 @@
       "ephemeris": "none",
       "norad": 66451,
       "lowOrbit": false,
+      "goals": {
+        "en": "ESCAPADE Blue is one of two identical small spacecraft, with its twin Gold, that will orbit Mars together to study how the solar wind interacts with the planet's patchy magnetic field. By measuring from two places at once, they can see how this space environment changes from minute to minute and how it strips away the atmosphere. This helps explain how Mars turned from a warmer, wetter world into today's cold one.",
+        "fr": "ESCAPADE Blue est l'une des deux petites sondes identiques, avec sa jumelle Gold, qui tourneront ensemble autour de Mars pour étudier l'action du vent solaire sur le champ magnétique morcelé de la planète. En mesurant en deux points à la fois, elles verront comment cet environnement spatial change d'une minute à l'autre et comment il arrache l'atmosphère. De quoi comprendre comment Mars, autrefois plus chaude et humide, est devenue froide."
+      },
       "notes": {
         "en": "Twin smallsats launched on the second New Glenn flight (NG-2). Not yet en route to Mars: TMI burns near Earth planned 2026-11-07 and 2026-11-09. A low-thrust TCM on one spacecraft in Dec 2025 was completed in Jan 2026.",
         "fr": "Deux petits satellites lancés par le 2e vol de New Glenn (NG-2). Pas encore en route vers Mars : injections prévues les 7 et 9 novembre 2026. Une manœuvre à poussée insuffisante sur l'un des engins en déc. 2025 a été complétée en janv. 2026."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/escapade/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -748,9 +886,16 @@
       "ephemeris": "none",
       "norad": 66452,
       "lowOrbit": false,
+      "goals": {
+        "en": "ESCAPADE Gold is one of two identical small spacecraft, with its twin Blue, that will orbit Mars together to study how the solar wind interacts with the planet's patchy magnetic field. By measuring from two places at once, they can see how this space environment changes from minute to minute and how it strips away the atmosphere. This helps explain how Mars turned from a warmer, wetter world into today's cold one.",
+        "fr": "ESCAPADE Gold est l'une des deux petites sondes identiques, avec sa jumelle Blue, qui tourneront ensemble autour de Mars pour étudier l'action du vent solaire sur le champ magnétique morcelé de la planète. En mesurant en deux points à la fois, elles verront comment cet environnement spatial change d'une minute à l'autre et comment il arrache l'atmosphère. De quoi comprendre comment Mars, autrefois plus chaude et humide, est devenue froide."
+      },
       "notes": {
         "en": "Twin of Blue. In science campaign B their apoapses diverge (Blue ~7,000 km, Gold ~10,000 km).",
         "fr": "Jumeau de Blue. En campagne scientifique B, apoapsides différentes (Blue ~7 000 km, Gold ~10 000 km)."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/escapade/"
       },
       "verified": "2026-09-27",
       "sources": ["https://science.nasa.gov/mission/escapade/", "https://en.wikipedia.org/wiki/ESCAPADE"]
@@ -772,9 +917,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "MMX (Martian Moons eXploration) is a Japanese mission to Phobos and Deimos, the two moons of Mars. It will study both moons from close up, land on Phobos to collect at least 10 grams of its surface and bring them back to Earth, to find out whether these moons are captured asteroids or debris from a giant impact on Mars. It carries IDEFIX, a small French–German rover.",
+        "fr": "MMX (Martian Moons eXploration) est une mission japonaise vers Phobos et Deimos, les deux lunes de Mars. Elle étudiera de près les deux lunes, se posera sur Phobos pour y prélever au moins 10 grammes de sol et les rapporter sur Terre, afin de savoir si ces lunes sont des astéroïdes capturés ou des débris d'un impact géant sur Mars. Elle emporte IDEFIX, un petit rover franco-allemand."
+      },
       "notes": {
         "en": "Launch scheduled 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; reserve period 2026-10-21 to 2026-11-07. Carries the CNES/DLR IDEFIX rover and NASA MEGANE.",
         "fr": "Lancement prévu le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; période de réserve du 2026-10-21 au 2026-11-07. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA)."
+      },
+      "website": {
+        "url": "https://www.mmx.jaxa.jp/en/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -869,9 +1021,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Voyager 1 was launched to explore Jupiter and Saturn up close, studying their atmospheres, rings, magnetic fields and moons, including a close flyby of Titan, Saturn's largest moon. Now the most distant human-made object, it measures particles, magnetic fields and plasma waves in interstellar space, outside the bubble created by the Sun. It also carries the Golden Record, a message from Earth.",
+        "fr": "Voyager 1 a été lancée pour explorer de près Jupiter et Saturne : leur atmosphère, leurs anneaux, leur champ magnétique et leurs lunes, dont Titan, la plus grande lune de Saturne, survolée de près. Devenue l'objet le plus lointain fabriqué par l'humanité, elle mesure désormais les particules, les champs magnétiques et les ondes de plasma de l'espace interstellaire, au-delà de la bulle créée par le Soleil. Elle emporte aussi le Disque d'or, un message de la Terre."
+      },
       "notes": {
         "en": "LECP instrument switched off on 2026-04-17; only the plasma wave instrument and magnetometer remain on. The same 'Big Bang' procedure tested on Voyager 2 is being applied; if it succeeds, LECP could be switched back on.",
         "fr": "Instrument LECP éteint le 2026-04-17 ; seuls l'instrument d'ondes de plasma et le magnétomètre restent allumés. La procédure « Big Bang » testée sur Voyager 2 est en cours d'application ; en cas de succès, le LECP pourrait être rallumé."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/voyager/voyager-1/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -904,9 +1063,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Voyager 2 is the only spacecraft to have visited all four giant planets, Jupiter, Saturn, Uranus and Neptune, studying their atmospheres, rings, magnetic fields and moons up close. It remains the only probe to have explored Uranus and Neptune. Now in interstellar space, outside the bubble created by the Sun, it measures the particles and magnetic fields found between the stars.",
+        "fr": "Voyager 2 est la seule sonde à avoir visité les quatre planètes géantes, Jupiter, Saturne, Uranus et Neptune, en étudiant de près leur atmosphère, leurs anneaux, leur champ magnétique et leurs lunes. Elle reste la seule à avoir exploré Uranus et Neptune. Désormais dans l'espace interstellaire, au-delà de la bulle créée par le Soleil, elle mesure les particules et les champs magnétiques qui règnent entre les étoiles."
+      },
       "notes": {
         "en": "LECP switched off in March 2025. The 'Big Bang' power reconfiguration (tests May-June, executed July 2026, announced 2026-08-04) keeps three science instruments on (magnetometer, plasma wave, cosmic ray) for at least one more year.",
         "fr": "LECP éteint en mars 2025. La reconfiguration énergétique « Big Bang » (essais mai-juin, exécutée en juillet 2026, annoncée le 2026-08-04) garde trois instruments scientifiques allumés (magnétomètre, ondes de plasma, rayons cosmiques) pour au moins un an de plus."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/voyager/voyager-2/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -938,9 +1104,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "New Horizons was built to make the first close-up study of Pluto and its moons, mapping their surfaces, geology and atmospheres. It then explores the Kuiper Belt, a distant ring of icy bodies left over from the formation of the planets, and flew past Arrokoth, the most distant object ever visited by a spacecraft. It also measures the Sun's influence on the outer Solar System.",
+        "fr": "New Horizons a été conçue pour étudier de près, pour la première fois, Pluton et ses lunes : leur surface, leur géologie et leur atmosphère. Elle explore ensuite la ceinture de Kuiper, un anneau lointain de corps glacés restés de la formation des planètes, et a survolé Arrokoth, l'objet le plus lointain jamais visité par une sonde. Elle mesure aussi l'influence du Soleil aux confins du Système solaire."
+      },
       "notes": {
         "en": "Beyond 60 AU. Woke from its longest hibernation in good health (July 2026). Extended until it exits the Kuiper Belt (~2028-2029); a further KBO flyby remains possible if a target is found. No end date announced.",
         "fr": "Au-delà de 60 UA. Sorti en bonne santé de sa plus longue hibernation (juillet 2026). Mission prolongée jusqu'à la sortie de la ceinture de Kuiper (~2028-2029) ; un nouveau survol d'objet de Kuiper reste possible si une cible est trouvée. Aucune date de fin annoncée."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/new-horizons/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -971,9 +1144,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Juno studies Jupiter to understand how the largest planet formed and evolved, since it kept much of the material of the early Solar System. From a polar orbit it measures Jupiter's gravity and magnetic field to probe its deep interior and core, and studies the water and ammonia of its atmosphere, its polar cyclones and its auroras. Its extended mission also observes the moons Ganymede, Europa and Io and the faint rings.",
+        "fr": "Juno étudie Jupiter pour comprendre comment la plus grande planète s'est formée et a évolué, car elle a conservé une grande partie de la matière des débuts du Système solaire. Depuis une orbite polaire, elle mesure sa gravité et son champ magnétique pour sonder son intérieur et son noyau, et étudie l'eau et l'ammoniac de son atmosphère, ses cyclones polaires et ses aurores. Sa mission étendue observe aussi Ganymède, Europe, Io et les anneaux ténus."
+      },
       "notes": {
         "en": "Still operating in 2026: imaged the inner moon Thebe on 2026-05-01. Mission status was uncertain in late 2025 (FY2026 budget request zeroed it; first extension ended 2025-09-30). Wikipedia states a 3-year second extended mission began October 2025 (to ~September 2028) and that no deorbit is planned; NASA's mission page still shows the old 'through September 2025' text. No deliberate plunge into Jupiter is announced.",
         "fr": "Toujours en service en 2026 : image de la lune interne Thébé le 2026-05-01. Statut incertain fin 2025 (financement supprimé dans la demande budgétaire FY2026 ; première extension terminée le 2025-09-30). Wikipédia indique une deuxième mission étendue de 3 ans depuis octobre 2025 (jusqu'à ~septembre 2028) sans désorbitation prévue ; la page NASA affiche encore « jusqu'en septembre 2025 ». Aucune plongée volontaire dans Jupiter n'est annoncée."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/juno/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1006,9 +1186,16 @@
         "futureDays": 120
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Parker Solar Probe flies through the Sun's outer atmosphere, the corona, closer than any spacecraft before it. It aims to find out why the corona is far hotter than the Sun's visible surface, what accelerates the solar wind and where the Sun's most energetic particles come from. These answers help forecast space weather, which can disturb satellites and their electronics.",
+        "fr": "La sonde solaire Parker traverse l'atmosphère externe du Soleil, la couronne, de plus près qu'aucun engin avant elle. Elle cherche à comprendre pourquoi la couronne est bien plus chaude que la surface visible du Soleil, ce qui accélère le vent solaire et d'où viennent ses particules les plus énergétiques. Ces réponses aident à prévoir la météo spatiale, qui peut perturber les satellites et leur électronique."
+      },
       "notes": {
         "en": "29th perihelion on 2026-09-04 (3.8 million miles, 430,000 mph), healthy beacon 2026-09-07. Extended into 2029 by the 2026 Heliophysics Senior Review. Perihelia recur roughly every 88 days (next date not confirmed by an opened source).",
         "fr": "29e périhélie le 2026-09-04 (6,1 millions de km, 692 000 km/h), signal de bonne santé le 2026-09-07. Prolongée jusqu'en 2029 par la revue héliophysique de 2026. Périhélies environ tous les 88 jours (prochaine date non confirmée par une source consultée)."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/parker-solar-probe/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1044,9 +1231,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Solar Orbiter combines close-up images of the Sun with measurements of the solar wind around the spacecraft, linking the particles to the regions of the Sun they came from. It seeks to explain the 11-year cycle of solar activity, the heating of the corona to millions of degrees and the origin of the solar wind. Its tilted orbit gives the first views of the Sun's poles, key to understanding its magnetic field.",
+        "fr": "Solar Orbiter associe des images rapprochées du Soleil à des mesures du vent solaire autour de la sonde, afin de relier les particules aux régions du Soleil d'où elles viennent. Elle cherche à expliquer le cycle d'activité solaire de 11 ans, le chauffage de la couronne à des millions de degrés et l'origine du vent solaire. Son orbite inclinée offre les premières vues des pôles du Soleil, essentielles pour comprendre son champ magnétique."
+      },
       "notes": {
         "en": "Mission extension approved by ESA's Science Programme Committee (June 2026). Further Venus flybys 2028-03-18, 2029-06-10, 2030-09-02 raise inclination to 33°. Next perihelion 2027-02-06 (0.28 AU).",
         "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA (juin 2026). Survols de Vénus suivants 2028-03-18, 2029-06-10, 2030-09-02 pour atteindre 33° d'inclinaison. Prochain périhélie 2027-02-06 (0,28 UA)."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Solar_Orbiter"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1083,9 +1277,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "BepiColombo sends two orbiters to Mercury, the smallest planet and the closest to the Sun, still the least explored of the inner planets. Europe's MPO maps its surface, composition and interior, while Japan's Mio studies its magnetic field and its surroundings. Scientists want to know why Mercury has a magnetic field, how ice survives in its polar craters and what its strange 'hollows' are, shedding light on the history of the Solar System.",
+        "fr": "BepiColombo envoie deux orbiteurs autour de Mercure, la plus petite planète et la plus proche du Soleil, encore la moins explorée des planètes intérieures. Le MPO européen cartographie sa surface, sa composition et son intérieur, tandis que le Mio japonais étudie son champ magnétique et son environnement. Les scientifiques veulent comprendre pourquoi Mercure a un champ magnétique, comment de la glace subsiste dans ses cratères polaires et ce que sont ses mystérieux « creux », pour éclairer l'histoire du Système solaire."
+      },
       "notes": {
         "en": "Mercury Transfer Module separated 2026-09-03, all systems nominal. MPO (ESA) and Mio (JAXA) separate 2026-12-09/10; science phase from April 2027. Arrival had been delayed from 2025 by a 2024 thruster power anomaly.",
         "fr": "Module de transfert séparé le 2026-09-03, systèmes nominaux. Séparation de MPO (ESA) et Mio (JAXA) les 2026-12-09/10 ; phase scientifique à partir d'avril 2027. Arrivée retardée de 2025 par une anomalie d'alimentation des propulseurs en 2024."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/BepiColombo"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1122,9 +1323,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "JUICE explores Jupiter and three of its large icy moons, Ganymede, Callisto and Europa, which are thought to hide oceans of liquid water beneath their crust. It will study these moons as possible habitats for life, explore Jupiter's atmosphere and magnetic environment, and finally orbit Ganymede. The Jupiter system also serves as a model for the giant planets found around other stars.",
+        "fr": "JUICE explore Jupiter et trois de ses grandes lunes glacées, Ganymède, Callisto et Europe, qui cacheraient des océans d'eau liquide sous leur croûte. Elle étudiera ces lunes comme habitats possibles pour la vie, explorera l'atmosphère et l'environnement magnétique de Jupiter, puis se placera en orbite autour de Ganymède. Le système jovien sert aussi de modèle pour les planètes géantes découvertes autour d'autres étoiles."
+      },
       "notes": {
         "en": "Third gravity assist; instruments on from 23 Sept to 3 Oct for Earth/Moon calibration; eclipse in Earth's shadow night of 27-28 Sept. Final Earth flyby January 2029, Ganymede orbit 2034.",
         "fr": "Troisième assistance gravitationnelle ; instruments allumés du 23 sept. au 3 oct. pour calibration sur la Terre et la Lune ; passage dans l'ombre de la Terre la nuit du 27 au 28 sept. Dernier survol de la Terre en janvier 2029, orbite de Ganymède en 2034."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Juice"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1160,9 +1368,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Europa Clipper is designed to find out whether Jupiter's moon Europa has conditions suitable for life. Beneath its icy shell lies a salty ocean that may hold more than twice as much water as all of Earth's oceans. During 49 close flybys, its nine instruments and a gravity experiment will study the ice shell, the ocean, the moon's composition and its geology.",
+        "fr": "Europa Clipper doit déterminer si Europe, une lune de Jupiter, réunit des conditions favorables à la vie. Sous sa carapace de glace se trouve un océan salé qui pourrait contenir plus de deux fois plus d'eau que tous les océans terrestres. Au fil de 49 survols rapprochés, ses neuf instruments et une expérience de gravité étudieront la glace, l'océan, la composition et la géologie de cette lune."
+      },
       "notes": {
         "en": "Mars flyby 2025-03-01. The Earth flyby (~3,200 km) also allows the only post-launch absolute magnetometer calibration. 49 Europa flybys planned.",
         "fr": "Survol de Mars le 2025-03-01. Le survol de la Terre (~3 200 km) permet aussi la seule calibration absolue du magnétomètre après le lancement. 49 survols d'Europe prévus."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/europa-clipper/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1198,9 +1413,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Psyche is the first mission to an asteroid whose surface contains a large amount of metal. Orbiting it for about two years, the spacecraft will image and map the asteroid and work out what it is made of. Scientists think Psyche may be part of the iron core of an early planetary building block, which would give an indirect look at cores like Earth's, which can never be reached.",
+        "fr": "Psyché est la première mission vers un astéroïde dont la surface contient beaucoup de métal. En orbite pendant environ deux ans, la sonde photographiera et cartographiera l'astéroïde et déterminera sa composition. Les scientifiques pensent que Psyché pourrait être une partie du noyau de fer d'une ancienne « brique » de planète, ce qui offrirait un regard indirect sur des noyaux comme celui de la Terre, impossibles à atteindre."
+      },
       "notes": {
         "en": "Mars gravity assist 2026-05-15 at 4,609 km; all three instruments tested successfully. Thrusting resumes 'later this fall' (2026).",
         "fr": "Assistance gravitationnelle de Mars le 2026-05-15 à 4 609 km ; les trois instruments testés avec succès. Reprise de la poussée « plus tard cet automne » (2026)."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/psyche/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1236,9 +1458,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Lucy is the first mission to the Trojan asteroids, two swarms that share Jupiter's orbit around the Sun, one ahead of the planet and one behind it. These bodies are thought to be leftovers of the material that built the outer planets, time capsules from the birth of the Solar System over four billion years ago. By flying past eleven asteroids of different types, Lucy tests models of how the planets formed.",
+        "fr": "Lucy est la première mission vers les astéroïdes troyens, deux essaims qui partagent l'orbite de Jupiter autour du Soleil, l'un en avant de la planète, l'autre en arrière. Ces corps seraient des restes de la matière qui a formé les planètes externes, de véritables capsules temporelles de la naissance du Système solaire, il y a plus de quatre milliards d'années. En survolant onze astéroïdes de types variés, Lucy met à l'épreuve les modèles de formation des planètes."
+      },
       "notes": {
         "en": "Camera tests on future targets in spring 2026. Then Polymele 2027-09-15, Leucus 2028-04-18, Orus 2028-11-11, Patroclus-Menoetius 2033-03-03. Past: Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20.",
         "fr": "Essais de caméra sur les futures cibles au printemps 2026. Ensuite Polymèle 2027-09-15, Leucos 2028-04-18, Orus 2028-11-11, Patrocle-Ménoetios 2033-03-03. Déjà survolés : Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/lucy/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1275,9 +1504,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "OSIRIS-APEX reuses the spacecraft that brought back samples of asteroid Bennu to study Apophis, a stony asteroid that passes about 32,000 km from Earth's surface in April 2029. It will observe how Earth's gravity changes the asteroid's orbit, spin and surface, then fly low and fire its thrusters to stir up dust and rocks and reveal the material beneath. This helps understand asteroids that come close to Earth.",
+        "fr": "OSIRIS-APEX réutilise la sonde qui a rapporté des échantillons de l'astéroïde Bénou pour étudier Apophis, un astéroïde rocheux qui passera à environ 32 000 km de la surface de la Terre en avril 2029. Elle observera comment la gravité terrestre modifie son orbite, sa rotation et sa surface, puis descendra près de lui et allumera ses propulseurs pour soulever poussière et cailloux et révéler la matière en dessous. Cela aide à comprendre les astéroïdes qui frôlent la Terre."
+      },
       "notes": {
         "en": "Former OSIRIS-REx (Bennu samples returned 2023). Earth gravity assist 2025-09-23 at 3,438 km, first of three. Planned 1.5-year stay at Apophis.",
         "fr": "Ex-OSIRIS-REx (échantillons de Bénou rapportés en 2023). Assistance gravitationnelle de la Terre le 2025-09-23 à 3 438 km, la première de trois. Séjour prévu de 18 mois auprès d'Apophis."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/osiris-apex/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1313,9 +1549,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Hera is Europe's planetary defence mission. It surveys the binary asteroid Didymos and its small moon Dimorphos, which NASA's DART spacecraft deliberately struck to change its orbit, measuring the result of the impact in detail. This turns the DART experiment into a well-understood, repeatable technique for deflecting a dangerous asteroid. Hera is also the first probe to visit a binary asteroid and tests autonomous navigation close to asteroids.",
+        "fr": "Hera est la mission européenne de défense planétaire. Elle étudie l'astéroïde double Didymos et sa petite lune Dimorphos, que la sonde DART de la NASA a percutée volontairement pour modifier son orbite, afin de mesurer en détail les effets de l'impact. L'expérience de DART devient ainsi une technique bien comprise et reproductible pour dévier un astéroïde dangereux. Hera est aussi la première sonde à visiter un astéroïde double et teste la navigation autonome près des astéroïdes."
+      },
       "notes": {
         "en": "ESA targets arrival in November 2026, a month earlier than planned (an older ESA ops page mentions an 'impulsive rendezvous' in October 2026). Second deep-space manoeuvre March 2026 (367 m/s). Six-month survey of DART's impact aftermath; releases CubeSats Milani and Juventas.",
         "fr": "L'ESA vise une arrivée en novembre 2026, un mois plus tôt que prévu (une page ESA plus ancienne mentionne un « rendez-vous impulsif » en octobre 2026). Deuxième manœuvre en espace lointain en mars 2026 (367 m/s). Étude de six mois des suites de l'impact de DART ; largage des CubeSats Milani et Juventas."
+      },
+      "website": {
+        "url": "https://www.esa.int/Space_Safety/Hera"
       },
       "verified": "2026-10-17",
       "sources": [
@@ -1348,6 +1591,10 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "Tianwen-2 is China's first mission to bring back samples from an asteroid. It studies Kamoʻoalewa, a small near-Earth asteroid that travels alongside Earth as a quasi-satellite and may be a fragment of the Moon, and returns material collected by touch-and-go and anchoring methods. It then goes on to study the main-belt comet 311P, to help understand how small bodies formed and what the early Solar System was like.",
+        "fr": "Tianwen-2 est la première mission chinoise de retour d'échantillons d'un astéroïde. Elle étudie Kamoʻoalewa, un petit astéroïde géocroiseur qui accompagne la Terre comme quasi-satellite et pourrait être un fragment de la Lune, et rapporte de la matière prélevée par contact bref et par ancrage. Elle part ensuite étudier la comète 311P de la ceinture principale, pour mieux comprendre la formation des petits corps et les débuts du Système solaire."
+      },
       "notes": {
         "en": "Rendezvous 2026-06-07 (announced by CNSA 2026-07-06). Mapping and site selection July 2026-April 2027; sample (200-1000 g) by end of April 2027, departure ~2027-04-24. Earth flyby with capsule release November 2027, then cruise to main-belt comet 311P (~2035). Launch: 2025-05-29 Beijing time (17:31 UTC on 05-28).",
         "fr": "Rendez-vous le 2026-06-07 (annoncé par la CNSA le 2026-07-06). Cartographie et choix du site juillet 2026-avril 2027 ; échantillon (200-1000 g) d'ici fin avril 2027, départ vers le 2027-04-24. Survol de la Terre avec largage de la capsule en novembre 2027, puis croisière vers la comète 311P (~2035). Lancement : 2025-05-29 heure de Pékin (17 h 31 UTC le 05-28)."
@@ -1386,9 +1633,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Hayabusa2 explored the carbon-rich asteroid Ryugu and brought samples back to Earth, to learn how the Solar System formed and where Earth's water and the organic matter linked to life came from. Its extended mission, Hayabusa2#, uses its remaining fuel to fly past asteroid Torifune, a planetary defence rehearsal, and then reach 1998 KY26, a tiny asteroid about 11 m wide that spins in about 5 minutes.",
+        "fr": "Hayabusa2 a exploré l'astéroïde carboné Ryugu et en a rapporté des échantillons sur Terre, pour comprendre la formation du Système solaire et l'origine de l'eau terrestre et des molécules organiques liées à la vie. Sa mission étendue, Hayabusa2#, utilise le carburant restant pour survoler l'astéroïde Torifune, une répétition de défense planétaire, puis rejoindre 1998 KY26, un minuscule astéroïde d'environ 11 m qui tourne sur lui-même en 5 minutes environ."
+      },
       "notes": {
         "en": "Flew past asteroid Torifune (2001 CC21) on 2026-07-05 at ~400 m, the closest flyby of any Solar System body; first laser ranging during an asteroid flyby. Earth swing-bys 2027 and 2028.",
         "fr": "Survol de l'astéroïde Torifune (2001 CC21) le 2026-07-05 à ~400 m, le survol le plus rapproché d'un corps du Système solaire ; première télémétrie laser lors d'un survol d'astéroïde. Assistances gravitationnelles de la Terre en 2027 et 2028."
+      },
+      "website": {
+        "url": "https://www.hayabusa2.jaxa.jp/en/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1420,9 +1674,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Aditya-L1 is India's first space observatory dedicated to the Sun, watching it without interruption from the L1 point, 1.5 million km from Earth towards the Sun. It studies the Sun's upper layers, the chromosphere and corona: what heats them, what triggers solar flares and coronal mass ejections, and how the solar wind forms. It also samples the particles reaching L1, to better understand space weather.",
+        "fr": "Aditya-L1 est le premier observatoire spatial indien consacré au Soleil, qu'il observe sans interruption depuis le point L1, à 1,5 million de km de la Terre en direction du Soleil. Il étudie les couches supérieures du Soleil, la chromosphère et la couronne : ce qui les chauffe, ce qui déclenche les éruptions solaires et les éjections de masse coronale, et comment se forme le vent solaire. Il analyse aussi les particules qui atteignent L1, pour mieux comprendre la météo spatiale."
+      },
       "notes": {
         "en": "Halo orbit insertion 2024-01-06. Operating: ISRO science release dated 2026-08-28; first guest-observer (AO) cycle April-June 2026. No end date published.",
         "fr": "Insertion en orbite de halo le 2024-01-06. En service : communiqué scientifique de l'ISRO daté du 2026-08-28 ; premier cycle d'appel à propositions avril-juin 2026. Aucune date de fin publiée."
+      },
+      "website": {
+        "url": "https://www.isro.gov.in/Aditya_L1.html"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1453,9 +1714,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "SOHO, a joint ESA–NASA observatory, watches the Sun without interruption from about 1.5 million km sunward of Earth. It studies the Sun from its deep interior, probed through surface vibrations, to its hot outer atmosphere (the corona) and the solar wind that flows out into space. Its images of solar storms also help forecast space weather.",
+        "fr": "SOHO, un observatoire commun de l'ESA et de la NASA, surveille le Soleil sans interruption depuis un point situé à environ 1,5 million de km de la Terre. Il étudie l'astre de son cœur, sondé grâce aux vibrations de sa surface, jusqu'à sa haute atmosphère brûlante (la couronne) et au vent solaire qui s'échappe dans l'espace. Ses images des tempêtes solaires aident aussi à prévoir la météo spatiale."
+      },
       "notes": {
         "en": "Extension endorsed by ESA's Science Programme Committee on 10-11 June 2026 (13 missions). End date of the new extension not stated in the opened source.",
         "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA les 10-11 juin 2026 (13 missions). Date de fin de la nouvelle extension non précisée dans la source consultée."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/SOHO"
       },
       "verified": "2026-10-17",
       "sources": [
@@ -1487,9 +1755,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Webb is the largest infrared space telescope ever built, designed to look back to the first stars and galaxies that formed after the Big Bang. It studies how galaxies, stars and planetary systems are born, and analyses the atmospheres of planets around other stars, including worlds that might have conditions suitable for life. It builds on the discoveries of Hubble.",
+        "fr": "Webb est le plus grand télescope spatial infrarouge jamais construit, conçu pour remonter jusqu'aux premières étoiles et galaxies apparues après le Big Bang. Il étudie la naissance des galaxies, des étoiles et des systèmes planétaires, et analyse l'atmosphère de planètes tournant autour d'autres étoiles, y compris des mondes peut-être propices à la vie. Il prolonge les découvertes de Hubble."
+      },
       "notes": {
         "en": "Arrived at L2 2022-01-24; science since July 2022. Cycle 5 began July 2026 (STScI). ESA extended its Webb participation in June 2026.",
         "fr": "Arrivé en L2 le 2022-01-24 ; science depuis juillet 2022. Cycle 5 commencé en juillet 2026 (STScI). L'ESA a prolongé sa participation à Webb en juin 2026."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/webb/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1526,9 +1801,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Gaia was built to make the most precise three-dimensional map of our galaxy, the Milky Way. By repeatedly measuring the positions, distances, motions, brightness and colours of nearly two billion stars and other objects, it helps astronomers understand how the Milky Way formed and evolved. Its catalogue is a reference used across almost all of astronomy.",
+        "fr": "Gaia a été conçu pour dresser la carte en trois dimensions la plus précise de notre galaxie, la Voie lactée. En mesurant à de nombreuses reprises la position, la distance, le mouvement, l'éclat et la couleur de près de deux milliards d'étoiles et d'autres objets, il aide à comprendre comment la Voie lactée s'est formée et a évolué. Son catalogue sert de référence à presque toute l'astronomie."
+      },
       "notes": {
         "en": "Confirmed: passivated and switched off 2025-03-27 after being moved from L2 to a heliocentric retirement orbit keeping it >10 million km from Earth for at least a century. Final legacy catalogue not before end of 2030. Not trackable (no ephemeris updates).",
         "fr": "Confirmé : passivé et éteint le 2025-03-27 après avoir quitté L2 pour une orbite héliocentrique de retraite qui le maintient à plus de 10 millions de km de la Terre pendant au moins un siècle. Catalogue final pas avant fin 2030. Plus suivi (pas de mise à jour d'éphémérides)."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1564,9 +1846,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Euclid is investigating dark energy and dark matter, the mysterious components that make up most of the Universe. It is mapping billions of galaxies over more than a third of the sky, looking back about 10 billion years, to see how cosmic structures grew and how the expansion of the Universe has changed over time. This tests how gravity behaves on the largest scales.",
+        "fr": "Euclid enquête sur l'énergie noire et la matière noire, les composantes mystérieuses qui forment l'essentiel de l'Univers. Il cartographie des milliards de galaxies sur plus d'un tiers du ciel, en remontant environ 10 milliards d'années dans le passé, pour suivre la croissance des grandes structures et l'évolution de l'expansion de l'Univers. Il teste ainsi le comportement de la gravité aux plus grandes échelles."
+      },
       "notes": {
         "en": "Quick release Q2 (Galactic Bulge) on 2026-06-24; complete DR1 mid-2027. Still in its prime science phase (not part of the June 2026 extension round).",
         "fr": "Publication rapide Q2 (bulbe galactique) le 2026-06-24 ; DR1 complète mi-2027. Toujours en phase scientifique nominale (hors du cycle d'extension de juin 2026)."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Euclid"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1598,9 +1887,16 @@
       "ephemeris": "none",
       "norad": 100532,
       "lowOrbit": false,
+      "goals": {
+        "en": "Roman is an infrared space telescope with a field of view more than 100 times larger than Hubble's. It will survey light from about a billion galaxies to study dark energy, carry out a census of planets across the Milky Way, and test a coronagraph that blocks starlight to photograph planets and the dusty discs where planets form.",
+        "fr": "Roman est un télescope spatial infrarouge dont le champ de vision est plus de 100 fois plus large que celui de Hubble. Il observera la lumière d'environ un milliard de galaxies pour étudier l'énergie noire, recensera les planètes de la Voie lactée et testera un coronographe qui masque la lumière des étoiles pour photographier des planètes et les disques de poussière où elles se forment."
+      },
       "notes": {
         "en": "Launched 2026-08-30 on a Falcon Heavy; three-month, ~1.6 million km cruise to an orbit around Sun-Earth L2. The Wide Field Instrument (300-megapixel infrared camera) was activated during commissioning; the Coronagraph Instrument took its first light on 2026-09-22 and its guidance system was checked on 2026-09-30. Science operations expected to begin in early 2027. No Horizons match found yet (deep-space-candidate audit); add horizonsId once one appears.",
         "fr": "Lancé le 2026-08-30 sur une Falcon Heavy ; croisière de trois mois (~1,6 million de km) vers une orbite autour du point L2 Soleil-Terre. L'instrument à grand champ (caméra infrarouge de 300 mégapixels) a été activé pendant la mise en service ; le coronographe a pris sa première lumière le 2026-09-22 et son système de guidage a été vérifié le 2026-09-30. Opérations scientifiques prévues au début de 2027. Aucune correspondance Horizons trouvée pour l'instant (audit deep-space-candidate) ; ajouter horizonsId dès qu'elle apparaîtra."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/roman-space-telescope/"
       },
       "verified": "2026-10-03",
       "sources": [
@@ -1627,9 +1923,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "DART was the first test of planetary defence: could a spacecraft deliberately crashing into an asteroid change its path? It targeted Dimorphos, a small moon about 160 m wide orbiting the larger asteroid Didymos, which posed no threat to Earth. Measuring how much the impact changed Dimorphos's orbit shows how a dangerous asteroid could one day be deflected.",
+        "fr": "DART a été le premier essai de défense planétaire, pour vérifier si un engin spatial projeté volontairement contre un astéroïde peut modifier sa trajectoire. Sa cible était Dimorphos, une petite lune d'environ 160 m qui tourne autour de l'astéroïde Didymos, sans aucun danger pour la Terre. Mesurer la modification de son orbite montre comment on pourrait un jour dévier un astéroïde menaçant."
+      },
       "notes": {
         "en": "Kinetic impact on Dimorphos 2022-09-26 (launch 2021-11-23 PST). Aftermath to be surveyed by ESA's Hera from late 2026. Show only as a historical marker, no trajectory after impact.",
         "fr": "Impact cinétique sur Dimorphos le 2022-09-26 (lancement le 2021-11-23 heure du Pacifique). Suites étudiées par Hera (ESA) à partir de fin 2026. À afficher seulement comme repère historique, sans trajectoire après l'impact."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/dart/"
       },
       "verified": "2026-09-27",
       "sources": ["https://science.nasa.gov/mission/dart/"]
@@ -1657,9 +1960,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "IMAP maps the heliosphere, the giant bubble blown by the solar wind around the solar system, and its boundary with interstellar space, by catching neutral atoms that fly in from that frontier. It also studies how the Sun accelerates particles and measures interstellar dust. From its post near Sun–Earth L1 it sends real-time solar wind data that improve space-weather forecasts.",
+        "fr": "IMAP cartographie l'héliosphère, l'immense bulle que le vent solaire gonfle autour du système solaire, et sa frontière avec l'espace interstellaire, en captant des atomes neutres venus de cette limite. Il étudie aussi comment le Soleil accélère les particules et mesure la poussière interstellaire. Depuis le point L1 Soleil-Terre, il transmet en temps réel des données sur le vent solaire qui améliorent les prévisions de météo spatiale."
+      },
       "notes": {
         "en": "Entered final L1 orbit 2026-01-10; science mission began 2026-02-01. Maps the heliosphere boundary. All 10 instruments collecting data; as of August 2026, science data from 7 of them has been released. Launched with Carruthers and SWFO-L1.",
         "fr": "Orbite finale en L1 atteinte le 2026-01-10 ; mission scientifique depuis le 2026-02-01. Cartographie la frontière de l'héliosphère. Les 10 instruments collectent des données ; en août 2026, les données scientifiques de 7 d'entre eux ont été publiées. Lancé avec Carruthers et SWFO-L1."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/imap/"
       },
       "verified": "2026-10-17",
       "sources": [
@@ -1691,9 +2001,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "Carruthers studies the exosphere, the outermost layer of Earth's atmosphere, made of hydrogen that glows faintly in ultraviolet light (the geocorona). Watching the whole Earth from far away, it measures the shape, size and density of this layer, how solar storms reshape it, and how hydrogen from water vapour low in the atmosphere reaches such extreme altitudes.",
+        "fr": "Carruthers étudie l'exosphère, la couche la plus externe de l'atmosphère terrestre, faite d'hydrogène qui brille faiblement en ultraviolet (la géocouronne). En observant toute la Terre de loin, il mesure la forme, la taille et la densité de cette couche, la façon dont les tempêtes solaires la modifient, et comment l'hydrogène issu de la vapeur d'eau des basses couches monte jusqu'à des altitudes extrêmes."
+      },
       "notes": {
         "en": "Reached L1 orbit 2026-01-08; 24-month primary mission started 2026-03-01 (to ~March 2028). Images Earth's hydrogen exosphere in ultraviolet.",
         "fr": "Orbite en L1 atteinte le 2026-01-08 ; mission principale de 24 mois depuis le 2026-03-01 (jusqu'à ~mars 2028). Image l'exosphère d'hydrogène de la Terre en ultraviolet."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/carruthers-geocorona-observatory/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1718,9 +2035,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "SOLAR-1 is NOAA's first satellite dedicated full-time to operational space-weather monitoring. From Sun–Earth L1 it watches the Sun with a coronagraph for eruptions heading towards Earth and measures the solar wind and its magnetic field, sending data to forecasters within minutes. Early warnings help protect power grids, communication and navigation systems, satellites and astronauts.",
+        "fr": "SOLAR-1 est le premier satellite de la NOAA entièrement consacré à la surveillance opérationnelle de la météo spatiale. Depuis le point L1 Soleil-Terre, il guette avec un coronographe les éruptions dirigées vers la Terre et mesure le vent solaire et son champ magnétique, en transmettant ses données aux prévisionnistes en quelques minutes. Ces alertes précoces aident à protéger les réseaux électriques, les télécommunications, la navigation, les satellites et les astronautes."
+      },
       "notes": {
         "en": "Final L1 burn 2026-01-23, renamed SOLAR-1. NOAA said operational service would begin in spring 2026; a secondary search result reports full operations from 2026-06-10 (not confirmed on an opened NOAA page).",
         "fr": "Dernière manœuvre en L1 le 2026-01-23, renommé SOLAR-1. La NOAA annonçait un service opérationnel au printemps 2026 ; un résultat secondaire indique un fonctionnement complet depuis le 2026-06-10 (non confirmé sur une page NOAA consultée)."
+      },
+      "website": {
+        "url": "https://www.nesdis.noaa.gov/OPPA/swfo-L1.php"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1750,9 +2074,16 @@
         "futureDays": 365
       },
       "lowOrbit": false,
+      "goals": {
+        "en": "STEREO used two nearly identical spacecraft, one ahead of Earth and one behind it in orbit around the Sun, to give the first stereoscopic views of the Sun. It was built to understand what triggers coronal mass ejections (huge solar eruptions), how they are structured and how they travel through the solar system, where energetic particles are accelerated, and how the solar wind is organised.",
+        "fr": "STEREO reposait sur deux engins presque identiques, l'un en avance et l'autre en retard sur la Terre autour du Soleil, pour obtenir les premières vues en relief du Soleil. La mission vise à comprendre ce qui déclenche les éjections de masse coronale (d'énormes éruptions solaires), leur structure et leur trajet dans le système solaire, l'origine des particules énergétiques et l'organisation du vent solaire."
+      },
       "notes": {
         "en": "STEREO-A remains active; STEREO-B lost in 2014. Earth-trailing/leading heliocentric orbit, useful for side views of the Sun.",
         "fr": "STEREO-A reste actif ; STEREO-B perdu en 2014. Orbite héliocentrique proche de celle de la Terre, utile pour voir le Soleil de côté."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/stereo/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1781,9 +2112,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "NEO Surveyor will be NASA's first space telescope built for planetary defence. Its infrared detectors will find dark asteroids and comets that are hard to see in visible light but glow as the Sun warms them, including those coming from the Sun's direction where ground telescopes cannot look. Its data will also help scientists learn how the solar system evolved.",
+        "fr": "NEO Surveyor sera le premier télescope spatial de la NASA conçu pour la défense planétaire. Ses détecteurs infrarouges repéreront des astéroïdes et des comètes sombres, difficiles à voir en lumière visible mais qui rayonnent quand le Soleil les chauffe, y compris ceux qui arrivent depuis la direction du Soleil, inobservable depuis le sol. Ses données aideront aussi à comprendre l'évolution du système solaire."
+      },
       "notes": {
         "en": "Launch NET September 2027. Not displayed in 3D until launched.",
         "fr": "Lancement au plus tôt en septembre 2027. Pas d'affichage 3D avant le lancement."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/neo-surveyor/"
       },
       "verified": "2026-09-27",
       "sources": ["https://science.nasa.gov/mission/neo-surveyor/"]
@@ -1809,9 +2147,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "The Emirates Mission to the Asteroid Belt plans to send the MBR Explorer spacecraft past seven asteroids of the main belt between Mars and Jupiter, then land on the last one, Justitia. It will study their surface composition, geology, density and temperatures to learn about the origin and evolution of water-rich asteroids, and whether asteroids could one day supply resources for future missions.",
+        "fr": "La mission émiratie vers la ceinture d'astéroïdes prévoit d'envoyer la sonde MBR Explorer survoler sept astéroïdes de la ceinture principale, entre Mars et Jupiter, puis se poser sur le dernier, Justitia. Elle étudiera leur composition, leur géologie, leur densité et leur température pour comprendre l'origine et l'évolution des astéroïdes riches en eau, et savoir s'ils pourraient un jour fournir des ressources aux missions futures."
+      },
       "notes": {
         "en": "Six main-belt asteroid flybys and a lander at a seventh ~2034; gravity assists at Venus, Earth, Mars. Other sources give March 2028.",
         "fr": "Six survols d'astéroïdes de la ceinture principale et un atterrisseur sur un septième vers 2034 ; assistances de Vénus, de la Terre et de Mars. D'autres sources indiquent mars 2028."
+      },
+      "website": {
+        "url": "https://space.gov.ae/en/projects-and-initiatives/space-exploration/emirates-mission-to-the-asteroid-belt"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1839,9 +2184,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "DESTINY+ is a JAXA technology and science mission. It will demonstrate electric propulsion and high-speed flyby techniques that could make deep-space exploration cheaper and more frequent, then fly past the asteroid Phaethon, the source of the Geminid meteor shower, to image it. Its German-built dust analyser will study interplanetary dust, which brings carbon and organic matter to Earth.",
+        "fr": "DESTINY+ est une mission technologique et scientifique de la JAXA. Elle doit démontrer la propulsion électrique et des techniques de survol à grande vitesse capables de rendre l'exploration lointaine moins coûteuse et plus fréquente, puis survoler l'astéroïde Phaéton, à l'origine des étoiles filantes des Géminides, pour le photographier. Son analyseur de poussières, fourni par l'Allemagne, étudiera la poussière interplanétaire qui apporte carbone et matière organique sur Terre."
+      },
       "notes": {
         "en": "Moved from Epsilon S (2025) to H3 (FY2028) after the 2023 Epsilon S motor test failure. Phaethon flyby FY2030; Apophis observation 2029 also planned.",
         "fr": "Passée d'Epsilon S (2025) à H3 (exercice 2028) après l'échec d'essai moteur d'Epsilon S en 2023. Survol de Phaéton en exercice 2030 ; observation d'Apophis en 2029 aussi prévue."
+      },
+      "website": {
+        "url": "https://destiny.isas.jaxa.jp/"
       },
       "verified": "2026-09-27",
       "sources": ["https://destiny.isas.jaxa.jp/2024-10-15-15-26"]
@@ -1867,9 +2219,16 @@
       },
       "ephemeris": "none",
       "lowOrbit": false,
+      "goals": {
+        "en": "Comet Interceptor aims to be the first mission to visit a pristine comet, one arriving for the first time from the far edge of the solar system and still carrying material unchanged since the planets formed. The spacecraft will wait in space until a suitable target is found, then split into three craft to observe the comet from several directions at once and build a 3D picture of it.",
+        "fr": "Comet Interceptor veut être la première mission à visiter une comète vierge, qui arrive pour la première fois des confins du système solaire et conserve une matière inchangée depuis la formation des planètes. L'engin attendra dans l'espace qu'une cible adaptée soit découverte, puis se séparera en trois sondes pour observer la comète sous plusieurs angles à la fois et en reconstituer une image en 3D."
+      },
       "notes": {
         "en": "Three spacecraft (main + two probes, one from JAXA). Target not yet selected by design.",
         "fr": "Trois engins (principal + deux sondes, dont une de la JAXA). Cible volontairement non choisie à l'avance."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"
       },
       "verified": "2026-09-27",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"]

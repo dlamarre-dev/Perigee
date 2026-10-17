@@ -68,7 +68,7 @@ export const GLOSSARY = {
   },
   ephemerisWindow: {
     en: 'An ephemeris is a table giving the position and speed of an object at regular times. This is the period covered by the table downloaded from JPL Horizons: inside it, the position is interpolated between the table’s values and is very accurate; outside it, it is estimated from the laws of orbits and shown as approximate.',
-    fr: 'Des éphémérides sont une table donnant la position et la vitesse d’un objet à intervalles réguliers. C’est la période couverte par la table téléchargée de JPL Horizons : à l’intérieur, la position est interpolée entre les valeurs de la table et est très précise ; en dehors, elle est estimée à partir des lois des orbites et affichée comme approximative.',
+    fr: 'Des éphémérides sont une table donnant la position et la vitesse d’un objet à intervalles réguliers. C’est la période couverte par la table téléchargée de JPL Horizons : à l’intérieur, la position est interpolée entre les valeurs de la table et est très précise; en dehors, elle est estimée à partir des lois des orbites et affichée comme approximative.',
   },
   radius: {
     en: 'The distance from the centre of the body to its surface, averaged over the whole surface, since no body is a perfect sphere.',
@@ -100,7 +100,7 @@ export const GLOSSARY = {
   },
   speedSun: {
     en: 'The speed of the object relative to the Sun (“helio” means Sun). The Earth itself travels around the Sun at about 30 km/s; the closer to the Sun, the faster objects move.',
-    fr: 'La vitesse de l’objet par rapport au Soleil (« hélio » veut dire Soleil). La Terre elle-même tourne autour du Soleil à environ 30 km/s ; plus un objet est proche du Soleil, plus il va vite.',
+    fr: 'La vitesse de l’objet par rapport au Soleil (« hélio » veut dire Soleil). La Terre elle-même tourne autour du Soleil à environ 30 km/s; plus un objet est proche du Soleil, plus il va vite.',
   },
   speedPlanet: {
     en: 'How fast the moon moves around its planet, measured from the planet’s centre.',
@@ -128,11 +128,11 @@ export const GLOSSARY = {
   },
   spectralType: {
     en: 'A code sorting stars by the light they give off, which depends on their surface temperature. The letters go from the hottest (O, blue) to the coolest (M, red): O, B, A, F, G, K, M; a digit refines the class. The Roman numeral gives the size: V for a main-sequence star like the Sun (G2V), III for a giant, I for a supergiant.',
-    fr: 'Un code qui classe les étoiles selon la lumière qu’elles émettent, qui dépend de la température de leur surface. Les lettres vont de la plus chaude (O, bleue) à la plus froide (M, rouge) : O, B, A, F, G, K, M ; un chiffre affine la classe. Le chiffre romain indique la taille : V pour une étoile de la séquence principale comme le Soleil (G2V), III pour une géante, I pour une supergéante.',
+    fr: 'Un code qui classe les étoiles selon la lumière qu’elles émettent, qui dépend de la température de leur surface. Les lettres vont de la plus chaude (O, bleue) à la plus froide (M, rouge) : O, B, A, F, G, K, M; un chiffre affine la classe. Le chiffre romain indique la taille : V pour une étoile de la séquence principale comme le Soleil (G2V), III pour une géante, I pour une supergéante.',
   },
   magnitude: {
     en: 'How bright the star looks from the Earth. The scale runs backwards: the lower the number, the brighter the star. Each step of 1 means about 2.5 times brighter. Sirius, the brightest star at night, is −1.5; the faintest stars seen with the naked eye are about 6.',
-    fr: 'L’éclat de l’étoile vue depuis la Terre. L’échelle va à l’envers : plus le nombre est petit, plus l’étoile est brillante. Chaque écart de 1 correspond à un éclat environ 2,5 fois plus grand. Sirius, l’étoile la plus brillante de la nuit, est à −1,5 ; les plus faibles visibles à l’œil nu sont vers 6.',
+    fr: 'L’éclat de l’étoile vue depuis la Terre. L’échelle va à l’envers : plus le nombre est petit, plus l’étoile est brillante. Chaque écart de 1 correspond à un éclat environ 2,5 fois plus grand. Sirius, l’étoile la plus brillante de la nuit, est à −1,5; les plus faibles visibles à l’œil nu sont vers 6.',
   },
   lightYear: {
     en: 'Stars are so far away that their distance is given in light-years: the distance light travels in one year, about 9 460 billion kilometres. The light we see from a star 100 light-years away left it 100 years ago.',

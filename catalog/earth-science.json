@@ -11,10 +11,15 @@
       "launchDate": "1998-11-20",
       "status": "active",
       "purpose": { "en": "Crewed orbital laboratory", "fr": "Laboratoire orbital habité" },
+      "goals": {
+        "en": "The station exists to let people live and work in space continuously, so that scientists can run experiments impossible on the ground, where weightlessness changes how bodies, fluids, flames and materials behave. It also tests the technologies and studies the health effects needed for long journeys to the Moon and Mars, and shows that many nations can build and run a complex project together.",
+        "fr": "La station permet à des équipages de vivre et de travailler dans l'espace sans interruption, pour mener des expériences impossibles au sol : en apesanteur, le corps humain, les liquides, les flammes et les matériaux se comportent autrement. Elle sert aussi à tester les technologies et à étudier les effets sur la santé des longs voyages vers la Lune et Mars, tout en montrant que de nombreux pays peuvent bâtir et exploiter ensemble un projet complexe."
+      },
       "notes": {
         "en": "Permanently crewed since November 2000, the station hosts research in biology, physics, materials and Earth observation. Its first module, Zarya, was launched on 20 November 1998.",
         "fr": "Occupée en permanence depuis novembre 2000, la station accueille des recherches en biologie, en physique, sur les matériaux et en observation de la Terre. Son premier module, Zarya, a été lancé le 20 novembre 1998."
       },
+      "website": { "url": "https://www.nasa.gov/international-space-station/" },
       "verified": "2026-10-03",
       "sources": ["https://www.nasa.gov/international-space-station/"]
     },
@@ -30,10 +35,15 @@
         "en": "Optical/UV/near-IR space telescope",
         "fr": "Télescope spatial optique, UV et proche IR"
       },
+      "goals": {
+        "en": "Hubble was built to see the Universe above the blurring of Earth's atmosphere, with sharp images in visible, ultraviolet and near-infrared light. One of its founding goals was to measure how fast the Universe is expanding; it also studies how galaxies, stars and planets form and evolve, black holes, and the atmospheres of planets around other stars, and its observations contributed to the discovery of dark energy.",
+        "fr": "Hubble a été conçu pour observer l'Univers au-dessus de l'atmosphère terrestre, qui brouille les images, en lumière visible, ultraviolette et proche infrarouge. L'un de ses objectifs fondateurs était de mesurer la vitesse d'expansion de l'Univers; il étudie aussi la formation et l'évolution des galaxies, des étoiles et des planètes, les trous noirs et l'atmosphère de planètes d'autres étoiles, et ses observations ont contribué à la découverte de l'énergie sombre."
+      },
       "notes": {
         "en": "Launched by Space Shuttle Discovery and serviced five times by astronauts. Since June 2024 it observes in one-gyro mode to save its remaining gyroscopes, which limits some targets but keeps science going.",
         "fr": "Lancé par la navette Discovery et réparé cinq fois par des astronautes. Depuis juin 2024, il observe avec un seul gyroscope pour ménager les autres, ce qui limite certaines cibles sans arrêter la science."
       },
+      "website": { "url": "https://science.nasa.gov/mission/hubble/" },
       "verified": "2026-10-03",
       "sources": [
         "https://science.nasa.gov/mission/hubble/",
@@ -52,10 +62,15 @@
         "en": "Polar magnetosphere and aurora observatory",
         "fr": "Étude de la magnétosphère polaire et des aurores"
       },
+      "goals": {
+        "en": "Polar was meant to understand how energy and charged particles from the solar wind enter Earth's magnetic shield and pour down over the polar regions. By watching the whole auroral oval from above while sampling the plasma it crossed, it helped explain what powers aurorae and magnetic storms, which can disturb satellites, radio links and power grids.",
+        "fr": "Polar devait comprendre comment l'énergie et les particules chargées du vent solaire pénètrent dans le bouclier magnétique de la Terre et se déversent au-dessus des régions polaires. En observant d'en haut l'ovale auroral entier tout en analysant le plasma traversé, il a aidé à expliquer ce qui alimente les aurores et les orages magnétiques, capables de perturber satellites, liaisons radio et réseaux électriques."
+      },
       "notes": {
         "en": "Part of the International Solar-Terrestrial Physics programme, Polar imaged aurorae and measured particles and fields over the poles. The mission ended in April 2008 and the spacecraft was switched off; it remains in orbit.",
         "fr": "Membre du programme International Solar-Terrestrial Physics, Polar a photographié les aurores et mesuré particules et champs au-dessus des pôles. La mission a pris fin en avril 2008 et l'engin a été éteint ; il reste en orbite."
       },
+      "website": { "url": "https://science.nasa.gov/mission/polar/" },
       "verified": "2026-10-03",
       "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1996-013A"]
     },
@@ -74,10 +89,15 @@
         "en": "Submillimetre telescope (water, oxygen in clouds)",
         "fr": "Télescope submillimétrique (eau, oxygène des nuages)"
       },
+      "goals": {
+        "en": "SWAS set out to understand how giant clouds of gas and dust in our galaxy cool down enough to collapse and form new stars. Water, molecular oxygen and carbon were expected to be the main coolants, but their signals are absorbed by water vapour in Earth's atmosphere, so they had to be measured from space to test models of interstellar chemistry and star birth.",
+        "fr": "SWAS devait comprendre comment les immenses nuages de gaz et de poussière de notre galaxie se refroidissent assez pour s'effondrer et former de nouvelles étoiles. L'eau, l'oxygène moléculaire et le carbone devaient être les principaux agents de ce refroidissement, mais la vapeur d'eau de l'atmosphère terrestre absorbe leurs signaux : il fallait donc les mesurer depuis l'espace pour mettre à l'épreuve les modèles de chimie interstellaire et de naissance des étoiles."
+      },
       "notes": {
         "en": "A Small Explorer that studied water, molecular oxygen and carbon in interstellar clouds. Science ended in 2004; it was briefly reactivated in 2005 to watch the Deep Impact comet collision, then put back into hibernation.",
         "fr": "Petit satellite Explorer qui a étudié l'eau, l'oxygène moléculaire et le carbone des nuages interstellaires. Sa mission scientifique a pris fin en 2004 ; il a été brièvement réactivé en 2005 pour observer l'impact de Deep Impact sur une comète, puis remis en hibernation."
       },
+      "website": { "url": "https://science.nasa.gov/mission/swas/" },
       "verified": "2026-10-03",
       "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1998-071A"]
     },
@@ -90,13 +110,18 @@
       "launchDate": "1999-07-23",
       "status": "active",
       "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "goals": {
+        "en": "Chandra was built to study the hottest and most violent places in the Universe, which shine in X-rays that Earth's atmosphere blocks. Its very sharp X-ray images let astronomers study black holes, exploded stars, neutron stars and the hot gas filling clusters of galaxies, helping to trace the structure and evolution of the Universe.",
+        "fr": "Chandra a été conçu pour étudier les régions les plus chaudes et les plus violentes de l'Univers, qui brillent en rayons X, arrêtés par l'atmosphère terrestre. Ses images X très fines permettent d'étudier les trous noirs, les étoiles qui ont explosé, les étoiles à neutrons et le gaz brûlant des amas de galaxies, afin de retracer la structure et l'évolution de l'Univers."
+      },
       "notes": {
         "en": "NASA's flagship X-ray observatory, on a highly elliptical orbit reaching about a third of the way to the Moon. Proposed for cancellation, it was funded again by Congress in the FY2026 budget (January 2026) and keeps observing.",
         "fr": "Grand observatoire de rayons X de la NASA, sur une orbite très elliptique qui s'éloigne jusqu'au tiers environ de la distance de la Lune. Menacé d'annulation, il a été refinancé par le Congrès dans le budget 2026 (janvier 2026) et poursuit ses observations."
       },
+      "website": { "url": "https://science.nasa.gov/mission/chandra/" },
       "verified": "2026-10-03",
       "sources": [
-        "https://science.nasa.gov/mission/chandra-x-ray-observatory/",
+        "https://science.nasa.gov/mission/chandra/",
         "https://aas.org/posts/news/2026/01/congress-passes-fiscal-year-2026-spending-bills-nsf-nasa-and-doe"
       ]
     },
@@ -109,10 +134,15 @@
       "launchDate": "1999-12-10",
       "status": "active",
       "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "goals": {
+        "en": "XMM-Newton was designed to collect as much X-ray light as possible from faint, distant sources, in order to understand the hot and energetic Universe. It probes the hearts of galaxies and the surroundings of black holes, follows stars through every stage of their lives, catches sudden events such as gamma-ray bursts, and studies how matter behaves in extreme conditions.",
+        "fr": "XMM-Newton a été conçu pour recueillir le plus possible de rayons X provenant de sources faibles et lointaines, afin de comprendre l'Univers chaud et énergétique. Il sonde le cœur des galaxies et les abords des trous noirs, suit les étoiles à toutes les étapes de leur vie, capte des événements soudains comme les sursauts gamma et étudie le comportement de la matière dans des conditions extrêmes."
+      },
       "notes": {
         "en": "ESA's X-ray Multi-Mirror Mission, with three X-ray telescopes and an optical/UV monitor, on a 48-hour elliptical orbit. Still observing more than 25 years after launch.",
         "fr": "Mission X-ray Multi-Mirror de l'ESA, dotée de trois télescopes à rayons X et d'un moniteur optique et UV, sur une orbite elliptique de 48 heures. Toujours en service plus de 25 ans après son lancement."
       },
+      "website": { "url": "https://www.esa.int/Science_Exploration/Space_Science/XMM-Newton" },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/XMM-Newton"]
     },
@@ -128,10 +158,15 @@
         "en": "Earth observation (land, oceans, atmosphere)",
         "fr": "Observation de la Terre (sols, océans, atmosphère)"
       },
+      "goals": {
+        "en": "Terra was built to understand how Earth is changing and what those changes mean for life, by observing together how the atmosphere, land, ice, oceans and the planet's energy balance interact to shape the climate. Its long, consistent records also serve practical needs: tracking wildfires, volcanic eruptions and air pollution, monitoring crops and food security, and improving climate models.",
+        "fr": "Terra a été conçu pour comprendre comment la Terre change et ce que ces changements signifient pour la vie, en observant ensemble l'atmosphère, les terres, les glaces, les océans et le bilan énergétique de la planète, qui façonnent le climat. Ses longues séries de mesures cohérentes servent aussi à des besoins concrets : suivre les feux de forêt, les éruptions volcaniques et la pollution de l'air, surveiller les cultures et la sécurité alimentaire, et améliorer les modèles climatiques."
+      },
       "notes": {
         "en": "Flagship of NASA's Earth Observing System, with Japanese and Canadian instruments. Drifting to an earlier overpass time with less power, it switched off MOPITT in April 2025, but MODIS, MISR, CERES and ASTER's visible camera still operate.",
         "fr": "Satellite phare du système d'observation de la Terre de la NASA, avec des instruments japonais et canadiens. Son heure de passage dérive et sa puissance diminue : MOPITT a été éteint en avril 2025, mais MODIS, MISR, CERES et la caméra visible d'ASTER fonctionnent toujours."
       },
+      "website": { "url": "https://terra.nasa.gov/" },
       "verified": "2026-10-03",
       "sources": ["https://terra.nasa.gov/"]
     },
@@ -147,10 +182,15 @@
         "en": "Upper atmosphere (mesosphere, thermosphere)",
         "fr": "Haute atmosphère (mésosphère, thermosphère)"
       },
-      "notes": {
-        "en": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics: studies how the Sun and human activity affect the gateway between Earth's atmosphere and space. Still listed as an active NASA mission after more than 20 years.",
-        "fr": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics : étudie l'influence du Soleil et des activités humaines sur la zone de transition entre l'atmosphère terrestre et l'espace. Toujours une mission active de la NASA après plus de 20 ans."
+      "goals": {
+        "en": "TIMED was the first mission to survey in depth the mesosphere and lower thermosphere, a layer too high for balloons and too low for most satellites, where the Sun's energy first enters Earth's environment. It aims to measure how this energy moves through the region and how it changes over the solar cycle, because this layer affects satellite drag, radio communications and our understanding of long-term climate change.",
+        "fr": "TIMED a été la première mission à étudier en détail la mésosphère et la basse thermosphère, une couche trop haute pour les ballons et trop basse pour la plupart des satellites, où l'énergie du Soleil pénètre d'abord dans l'environnement terrestre. Elle vise à mesurer comment cette énergie y circule et comment elle varie au fil du cycle solaire, car cette couche influe sur le freinage des satellites, les communications radio et la compréhension de l'évolution du climat."
       },
+      "notes": {
+        "en": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics. Still listed as an active NASA mission after more than 20 years.",
+        "fr": "Thermosphere Ionosphere Mesosphere Energetics and Dynamics. Toujours une mission active de la NASA après plus de 20 ans."
+      },
+      "website": { "url": "https://science.nasa.gov/mission/timed/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/timed/"]
     },
@@ -165,6 +205,10 @@
       "purpose": {
         "en": "Ocean wind radiometer and solar CME imager",
         "fr": "Radiomètre des vents marins et imageur d'éjections solaires"
+      },
+      "goals": {
+        "en": "Coriolis was a US military experiment meant to prove that a passive microwave radiometer can measure from space not only the speed but also the direction of winds over the sea, a technique planned for future weather satellites and useful for naval forecasts. Its second instrument, SMEI, aimed to track clouds of solar material travelling towards Earth to improve warnings of solar storms.",
+        "fr": "Coriolis était une expérience militaire américaine destinée à prouver qu'un radiomètre micro-ondes passif peut mesurer depuis l'espace non seulement la vitesse, mais aussi la direction du vent au-dessus de la mer, une technique prévue pour de futurs satellites météo et utile aux prévisions de la marine. Son second instrument, SMEI, devait suivre les nuages de matière solaire se dirigeant vers la Terre pour mieux prévoir les tempêtes solaires."
       },
       "notes": {
         "en": "Carried WindSat, a polarimetric radiometer measuring ocean-surface wind speed and direction, and the SMEI solar imager (off since 2011). WindSat data production stopped in October 2020; the satellite is listed as inactive since December 2020.",
@@ -185,10 +229,15 @@
       "launchDate": "2003-01-25",
       "status": "ended",
       "purpose": { "en": "Solar irradiance measurement", "fr": "Mesure de l'éclairement solaire" },
+      "goals": {
+        "en": "SORCE was designed to measure precisely how much energy the Sun sends to Earth, both in total and wavelength by wavelength from X-rays to infrared. Because sunlight drives Earth's climate, these measurements help separate natural solar variations from human-caused change, extend a record begun in 1979, and show how solar ultraviolet light affects the ozone layer.",
+        "fr": "SORCE a été conçu pour mesurer avec précision l'énergie que le Soleil envoie à la Terre, au total et longueur d'onde par longueur d'onde, des rayons X à l'infrarouge. Comme la lumière solaire gouverne le climat terrestre, ces mesures aident à distinguer les variations naturelles du Soleil des changements dus aux humains, à prolonger une série commencée en 1979 et à comprendre l'effet des ultraviolets solaires sur la couche d'ozone."
+      },
       "notes": {
         "en": "Solar Radiation and Climate Experiment: measured the Sun's total and spectral irradiance, a key input for climate studies. Science ended in February 2020 and the spacecraft was decommissioned; it remains in orbit.",
         "fr": "Solar Radiation and Climate Experiment : a mesuré l'éclairement solaire total et spectral, une donnée clé pour l'étude du climat. La mission scientifique a pris fin en février 2020 et le satellite a été désactivé ; il reste en orbite."
       },
+      "website": { "url": "https://lasp.colorado.edu/sorce/" },
       "verified": "2026-10-03",
       "sources": [
         "https://lasp.colorado.edu/sorce/",
@@ -204,10 +253,15 @@
       "launchDate": "2003-06-30",
       "status": "ended",
       "purpose": { "en": "Stellar oscillation photometry", "fr": "Photométrie des oscillations stellaires" },
+      "goals": {
+        "en": "MOST was built to measure the ages of stars in our galaxy by detecting tiny, regular flickers in their brightness. These vibrations work like seismic waves: they reveal what a star is made of and how it is built inside, which tells how old it is. The mission also showed that a very small, low-cost satellite could do front-line astronomy.",
+        "fr": "MOST a été conçu pour mesurer l'âge des étoiles de notre galaxie en détectant d'infimes variations régulières de leur éclat. Ces vibrations agissent comme des ondes sismiques : elles révèlent la composition et la structure interne d'une étoile, et donc son âge. La mission a aussi montré qu'un très petit satellite peu coûteux pouvait faire de l'astronomie de pointe."
+      },
       "notes": {
         "en": "Microvariability and Oscillations of Stars, Canada's first space telescope (53 kg, nicknamed the 'Humble Space Telescope'). CSA funding ended in 2014; operated afterwards by Microsatellite Systems Canada until a failure ended it in 2019.",
         "fr": "Microvariabilité et oscillations stellaires, premier télescope spatial canadien (53 kg). Le financement de l'ASC a pris fin en 2014 ; exploité ensuite par Microsatellite Systems Canada jusqu'à une panne qui y a mis fin en 2019."
       },
+      "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/most/" },
       "verified": "2026-10-03",
       "sources": ["https://www.asc-csa.gc.ca/eng/satellites/most/"]
     },
@@ -223,10 +277,15 @@
         "en": "Ozone-layer and atmospheric chemistry",
         "fr": "Couche d'ozone et chimie atmosphérique"
       },
+      "goals": {
+        "en": "SCISAT was launched to help scientists understand why the ozone layer, which shields life from the Sun's ultraviolet rays, thins over Canada and the Arctic, by tracking the chemical processes that control it. Its measurements help check that the Montreal Protocol is working and follow the replacement chemicals; the mission has since widened to climate change, air quality and pollution.",
+        "fr": "SCISAT a été lancé pour aider les scientifiques à comprendre pourquoi la couche d'ozone, qui protège la vie des rayons ultraviolets du Soleil, s'amincit au-dessus du Canada et de l'Arctique, en suivant les processus chimiques qui la gouvernent. Ses mesures aident à vérifier l'efficacité du Protocole de Montréal et à suivre les produits de remplacement; la mission s'est depuis élargie au changement climatique, à la qualité de l'air et à la pollution."
+      },
       "notes": {
         "en": "Atmospheric Chemistry Experiment: measures ozone and dozens of trace gases by watching sunrises and sunsets through the atmosphere. Designed for 2 years, it has operated for more than 20; the science team still released new data products in 2026.",
         "fr": "Atmospheric Chemistry Experiment : mesure l'ozone et des dizaines de gaz traces en observant les levers et couchers de Soleil à travers l'atmosphère. Conçu pour 2 ans, il fonctionne depuis plus de 20 ans ; l'équipe scientifique publiait encore de nouveaux produits en 2026."
       },
+      "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/scisat/about.asp" },
       "verified": "2026-10-03",
       "sources": ["https://www.asc-csa.gc.ca/eng/satellites/scisat/about.asp", "https://databace.scisat.ca/"]
     },
@@ -242,10 +301,15 @@
         "en": "Gamma-ray burst observatory (gamma, X, UV)",
         "fr": "Observatoire des sursauts gamma (gamma, X, UV)"
       },
+      "goals": {
+        "en": "Swift was built to catch gamma-ray bursts, the most powerful explosions in the Universe, born when massive stars collapse or neutron stars merge, and to study their fading glow before it disappears. Understanding these bursts sheds light on how black holes form and, because they are visible from very far away, on the young Universe; Swift also watches many other sudden events in the sky.",
+        "fr": "Swift a été conçu pour capter les sursauts gamma, les explosions les plus puissantes de l'Univers, nées de l'effondrement d'étoiles massives ou de la fusion d'étoiles à neutrons, et pour étudier leur lueur avant qu'elle ne s'éteigne. Comprendre ces sursauts éclaire la formation des trous noirs et, comme ils sont visibles de très loin, l'Univers jeune; Swift surveille aussi bien d'autres phénomènes soudains du ciel."
+      },
       "notes": {
         "en": "Detects gamma-ray bursts and swings within minutes to observe them in X-rays and UV. A commercial reboost attempt (Katalyst LINK) was called off in August 2026; Swift resumed full science in September 2026 and is expected to re-enter in late 2026.",
         "fr": "Détecte les sursauts gamma et pivote en quelques minutes pour les observer en rayons X et en UV. Une tentative commerciale de rehaussement d'orbite (Katalyst LINK) a été abandonnée en août 2026 ; Swift a repris toute sa science en septembre 2026 et devrait rentrer dans l'atmosphère d'ici la fin de 2026."
       },
+      "website": { "url": "https://science.nasa.gov/mission/swift/" },
       "verified": "2026-10-03",
       "sources": [
         "https://science.nasa.gov/blogs/swift/2026/09/25/nasas-swift-powers-on-third-instrument-restarts-automated-slewing/",
@@ -264,12 +328,20 @@
         "en": "Solar observatory (magnetic fields, corona)",
         "fr": "Observatoire solaire (champs magnétiques, couronne)"
       },
+      "goals": {
+        "en": "Hinode was built to understand how the Sun's magnetic fields are created and move, and how they carry energy up from the visible surface to heat the outer atmosphere, the corona, to millions of degrees. It also aims to find what triggers solar flares and coronal mass ejections, the eruptions behind the space weather that can affect satellites and power grids on Earth.",
+        "fr": "Hinode a été conçu pour comprendre comment les champs magnétiques du Soleil naissent et se déplacent, et comment ils transportent l'énergie de la surface visible jusqu'à l'atmosphère extérieure, la couronne, chauffée à des millions de degrés. Il cherche aussi ce qui déclenche les éruptions solaires et les éjections de masse coronale, à l'origine de la météo spatiale qui peut perturber satellites et réseaux électriques sur Terre."
+      },
       "notes": {
         "en": "Japanese solar observatory with optical, X-ray and EUV telescopes built with US and UK partners, studying the Sun's magnetic fields and the heating of the corona. Still operating after nearly 20 years.",
         "fr": "Observatoire solaire japonais doté de télescopes optique, X et UV extrême construits avec des partenaires américains et britanniques ; il étudie les champs magnétiques du Soleil et le chauffage de la couronne. Toujours en service après près de 20 ans."
       },
+      "website": { "url": "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hinode.html" },
       "verified": "2026-10-03",
-      "sources": ["https://global.jaxa.jp/projects/sas/hinode/", "https://hinode.nao.ac.jp/en/"]
+      "sources": [
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hinode.html",
+        "https://hinode.nao.ac.jp/en/"
+      ]
     },
     {
       "id": "shijian-6-02a",
@@ -283,9 +355,13 @@
         "en": "Space environment research (officially)",
         "fr": "Étude de l'environnement spatial (officiellement)"
       },
+      "goals": {
+        "en": "According to official Chinese descriptions, the Shijian-6 pairs were built to probe the space environment around Earth, measure radiation and its effects on spacecraft, and record the physical conditions of near-Earth space, knowledge needed to design more reliable satellites. Their full purpose is not publicly documented, and some analysts believe they also test electronic-intelligence technology.",
+        "fr": "Selon les descriptions officielles chinoises, les paires Shijian-6 ont été conçues pour sonder l'environnement spatial autour de la Terre, mesurer les radiations et leurs effets sur les engins spatiaux et enregistrer les conditions physiques de l'espace proche, des connaissances utiles pour concevoir des satellites plus fiables. Leur rôle exact n'est pas documenté publiquement, et certains analystes pensent qu'elles testent aussi des technologies de renseignement électronique."
+      },
       "notes": {
-        "en": "Second pair of the Shijian-6 series, officially measuring the space environment and radiation effects; some analysts suspect a signals-intelligence role. No official statement on its current status: listed as unknown.",
-        "fr": "Deuxième paire de la série Shijian-6, chargée officiellement de mesurer l'environnement spatial et les effets des radiations ; certains analystes y voient un rôle de renseignement électronique. Aucune information officielle sur son état actuel : statut inconnu."
+        "en": "Second pair of the Shijian-6 series. No official statement on its current status: listed as unknown.",
+        "fr": "Deuxième paire de la série Shijian-6. Aucune information officielle sur son état actuel : statut inconnu."
       },
       "verified": "2026-10-03",
       "sources": [
@@ -305,9 +381,13 @@
         "en": "Space environment research (officially)",
         "fr": "Étude de l'environnement spatial (officiellement)"
       },
+      "goals": {
+        "en": "According to official Chinese descriptions, the Shijian-6 pairs were built to probe the space environment around Earth, measure radiation and its effects on spacecraft, and record the physical conditions of near-Earth space, knowledge needed to design more reliable satellites. Their full purpose is not publicly documented, and some analysts believe they also test electronic-intelligence technology.",
+        "fr": "Selon les descriptions officielles chinoises, les paires Shijian-6 ont été conçues pour sonder l'environnement spatial autour de la Terre, mesurer les radiations et leurs effets sur les engins spatiaux et enregistrer les conditions physiques de l'espace proche, des connaissances utiles pour concevoir des satellites plus fiables. Leur rôle exact n'est pas documenté publiquement, et certains analystes pensent qu'elles testent aussi des technologies de renseignement électronique."
+      },
       "notes": {
-        "en": "Companion of Shijian-6 02A, launched on the same rocket; officially a space-environment satellite, suspected by analysts of signals-intelligence work. No official statement on its current status: listed as unknown.",
-        "fr": "Compagnon de Shijian-6 02A, lancé par la même fusée ; officiellement un satellite d'étude de l'environnement spatial, soupçonné par des analystes de faire du renseignement électronique. Aucune information officielle sur son état actuel : statut inconnu."
+        "en": "Companion of Shijian-6 02A, launched on the same rocket. No official statement on its current status: listed as unknown.",
+        "fr": "Compagnon de Shijian-6 02A, lancé par la même fusée. Aucune information officielle sur son état actuel : statut inconnu."
       },
       "verified": "2026-10-03",
       "sources": [
@@ -327,10 +407,15 @@
       "launchDate": "2008-06-11",
       "status": "active",
       "purpose": { "en": "Gamma-ray space telescope", "fr": "Télescope spatial à rayons gamma" },
+      "goals": {
+        "en": "Fermi was built to explore the most extreme and energetic places in the universe, such as black holes that launch powerful jets, pulsars and the explosions behind gamma-ray bursts. Scientists also use it to find out where cosmic rays come from, to test theories of gravity and to search for signs of dark matter.",
+        "fr": "Fermi a été conçu pour explorer les lieux les plus extrêmes et les plus énergétiques de l'Univers, comme les trous noirs qui projettent de puissants jets, les pulsars et les explosions à l'origine des sursauts gamma. Les scientifiques s'en servent aussi pour découvrir d'où viennent les rayons cosmiques, mettre à l'épreuve les théories de la gravitation et chercher des traces de matière noire."
+      },
       "notes": {
         "en": "Launched as GLAST and renamed after physicist Enrico Fermi; its Large Area Telescope maps the whole gamma-ray sky every three hours, and its burst monitor catches gamma-ray bursts. Still operating.",
         "fr": "Lancé sous le nom de GLAST puis renommé en l'honneur du physicien Enrico Fermi ; son grand télescope cartographie tout le ciel gamma toutes les trois heures et son moniteur détecte les sursauts gamma. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/fermi/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/fermi/"]
     },
@@ -349,10 +434,15 @@
         "en": "Solar observatory (continuous full-disc imaging)",
         "fr": "Observatoire solaire (images continues du disque)"
       },
+      "goals": {
+        "en": "SDO was built to understand where solar activity comes from: how the Sun's magnetic field is generated and how it releases energy in flares and coronal mass ejections. By watching the Sun's interior, atmosphere and energy output at the same time, it helps scientists learn to predict the space weather that can disturb satellites, radio links and power grids on Earth.",
+        "fr": "SDO a été conçu pour comprendre l'origine de l'activité solaire, c'est-à-dire comment naît le champ magnétique du Soleil et comment il libère son énergie lors des éruptions et des éjections de masse coronale. En observant à la fois l'intérieur du Soleil, son atmosphère et l'énergie qu'il émet, il aide les scientifiques à prévoir la météo spatiale, qui peut perturber les satellites, les liaisons radio et les réseaux électriques sur Terre."
+      },
       "notes": {
         "en": "From an inclined geosynchronous orbit, SDO images the full Sun in many wavelengths every few seconds and maps its magnetic field, feeding space-weather forecasts. Still operating.",
         "fr": "Depuis une orbite géosynchrone inclinée, SDO photographie le Soleil entier dans plusieurs longueurs d'onde toutes les quelques secondes et cartographie son champ magnétique, au service de la météo spatiale. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/sdo/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/sdo/"]
     },
@@ -368,10 +458,15 @@
         "en": "Radar altimetry of ice sheets and sea ice",
         "fr": "Altimétrie radar des calottes et de la banquise"
       },
-      "notes": {
-        "en": "ESA Earth Explorer that measures changes in the thickness of polar ice sheets and Arctic sea ice with a radar altimeter. Still operating, well beyond its planned 3.5-year mission.",
-        "fr": "Satellite Earth Explorer de l'ESA qui mesure, par altimétrie radar, l'évolution de l'épaisseur des calottes polaires et de la banquise arctique. Toujours en service, bien au-delà de sa mission prévue de 3 ans et demi."
+      "goals": {
+        "en": "CryoSat was designed to find out how fast polar ice is thinning or thickening, a key sign of climate change. Precise measurements of floating sea ice and of the edges of the Greenland and Antarctic ice sheets show how much ice is being lost, how much this adds to sea-level rise, and how melting may change ocean circulation and climate.",
+        "fr": "CryoSat a été conçu pour mesurer à quelle vitesse les glaces polaires s'amincissent ou s'épaississent, un indicateur essentiel du changement climatique. Des mesures précises de la banquise et des bords des calottes du Groenland et de l'Antarctique révèlent la quantité de glace perdue, sa part dans la hausse du niveau des mers et l'effet possible de la fonte sur la circulation océanique et le climat."
       },
+      "notes": {
+        "en": "ESA Earth Explorer carrying a radar altimeter. Still operating, well beyond its planned 3.5-year mission.",
+        "fr": "Satellite Earth Explorer de l’ESA équipé d’un altimètre radar. Toujours en service, bien au-delà de sa mission prévue de 3 ans et demi."
+      },
+      "website": { "url": "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat" },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat"]
     },
@@ -387,9 +482,16 @@
         "en": "Earth-imaging technology demonstrator",
         "fr": "Démonstrateur technologique d'imagerie terrestre"
       },
+      "goals": {
+        "en": "X-SAT was a technology project to show that Singapore could design, build and operate a satellite of its own. It aimed to develop a low-cost microsatellite able to take Earth images and process them on board in near real time, to build up the country's skills and facilities in satellite engineering, and to encourage university research in the field.",
+        "fr": "X-SAT était un projet technologique destiné à montrer que Singapour pouvait concevoir, construire et exploiter son propre satellite. Il visait à mettre au point un microsatellite peu coûteux, capable de photographier la Terre et de traiter ses images à bord presque en temps réel, à développer les compétences et les installations du pays en ingénierie spatiale, et à stimuler la recherche universitaire dans ce domaine."
+      },
       "notes": {
         "en": "Singapore's first locally built satellite (106 kg), from Nanyang Technological University with DSO National Laboratories. Last reported operational well past its 3-year design life; no recent official status, so listed as unknown.",
         "fr": "Premier satellite construit à Singapour (106 kg), par l'Université technologique Nanyang avec DSO National Laboratories. Signalé en fonctionnement bien au-delà de sa durée de vie prévue de 3 ans ; faute d'état officiel récent, statut inconnu."
+      },
+      "website": {
+        "url": "https://www.ntu.edu.sg/sarc/research-capabilities/satellites/x-sat-micro-satellite"
       },
       "verified": "2026-10-03",
       "sources": [
@@ -409,10 +511,15 @@
         "en": "Water-cycle microwave radiometer (AMSR2)",
         "fr": "Radiomètre micro-ondes du cycle de l'eau (AMSR2)"
       },
+      "goals": {
+        "en": "GCOM-W belongs to a Japanese programme that watches, over many years, how water moves between the oceans, the atmosphere and the land, and how this cycle is changing as the climate warms. Its long, continuous records are fed into weather and climate models to improve forecasts and to predict how global warming will affect rain, snow and sea ice.",
+        "fr": "GCOM-W fait partie d'un programme japonais qui suit, sur de longues années, la circulation de l'eau entre les océans, l'atmosphère et les terres, et la façon dont ce cycle évolue avec le réchauffement. Ses mesures continues alimentent les modèles météorologiques et climatiques afin d'améliorer les prévisions et d'anticiper les effets du réchauffement sur la pluie, la neige et la banquise."
+      },
       "notes": {
         "en": "Global Change Observation Mission – Water: its AMSR2 radiometer measures rainfall, water vapour, sea-surface temperature, sea ice and soil moisture day and night. Still operating in good health past its 5-year design life.",
         "fr": "Global Change Observation Mission – Water : son radiomètre AMSR2 mesure jour et nuit les précipitations, la vapeur d'eau, la température de la mer, la banquise et l'humidité des sols. Toujours en service et en bon état, au-delà de sa durée de vie prévue de 5 ans."
       },
+      "website": { "url": "https://www.eorc.jaxa.jp/AMSR/satellite/gcom-w_en.html" },
       "verified": "2026-10-03",
       "sources": ["https://www.eorc.jaxa.jp/AMSR/satellite/gcom-w_en.html"]
     },
@@ -425,10 +532,15 @@
       "launchDate": "2012-06-13",
       "status": "active",
       "purpose": { "en": "High-energy X-ray space telescope", "fr": "Télescope spatial à rayons X durs" },
+      "goals": {
+        "en": "NuSTAR was built to observe the universe in high-energy X-rays, the light given off by matter heated to extreme temperatures near black holes and in exploding stars. Its goals include finding black holes hidden behind dust and gas, measuring how fast black holes spin, and learning how massive stars explode by mapping the radioactive elements they leave behind.",
+        "fr": "NuSTAR a été conçu pour observer l'Univers en rayons X de haute énergie, la lumière émise par la matière chauffée à des températures extrêmes près des trous noirs et dans les étoiles qui explosent. Il cherche notamment à repérer des trous noirs cachés derrière la poussière et le gaz, à mesurer la vitesse de rotation des trous noirs et à comprendre comment explosent les étoiles massives en cartographiant les éléments radioactifs qu'elles laissent derrière elles."
+      },
       "notes": {
         "en": "Nuclear Spectroscopic Telescope Array, the first telescope to focus high-energy X-rays, using optics on a 10-metre deployable mast. Studies black holes, neutron stars and supernova remnants; still operating.",
         "fr": "Nuclear Spectroscopic Telescope Array, premier télescope à focaliser les rayons X de haute énergie, grâce à un mât déployable de 10 mètres. Étudie les trous noirs, les étoiles à neutrons et les restes de supernova ; toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/nustar/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/nustar/"]
     },
@@ -444,10 +556,15 @@
         "en": "Asteroid and space-object surveillance",
         "fr": "Surveillance des astéroïdes et des objets spatiaux"
       },
-      "notes": {
-        "en": "Near-Earth Object Surveillance Satellite, a suitcase-sized Canadian telescope that tracks asteroids, comets and satellites in high orbits, and also observes exoplanet transits. Its guest-observer programme ran into 2026.",
-        "fr": "Satellite de surveillance des objets géocroiseurs, petit télescope canadien de la taille d'une valise qui suit astéroïdes, comètes et satellites en orbite haute, et observe aussi des transits d'exoplanètes. Son programme d'observateurs invités se poursuivait en 2026."
+      "goals": {
+        "en": "NEOSSat was built to find and follow asteroids and comets that could one day pass close to Earth, looking near the Sun where ground telescopes cannot search. It also helps Canada keep watch on satellites and space debris to reduce the risk of collisions, and lets astronomers confirm exoplanets by catching the slight dimming of a star when a planet passes in front of it.",
+        "fr": "NEOSSat a été conçu pour repérer et suivre les astéroïdes et les comètes qui pourraient un jour passer près de la Terre, en scrutant les abords du Soleil, inaccessibles aux télescopes au sol. Il aide aussi le Canada à surveiller satellites et débris spatiaux pour réduire les risques de collision, et permet aux astronomes de confirmer des exoplanètes en détectant la légère baisse d'éclat d'une étoile quand une planète passe devant elle."
       },
+      "notes": {
+        "en": "Near-Earth Object Surveillance Satellite, a suitcase-sized Canadian space telescope. Its guest-observer programme ran into 2026.",
+        "fr": "Satellite de surveillance des objets géocroiseurs, petit télescope spatial canadien de la taille d’une valise. Son programme d’observateurs invités se poursuivait en 2026."
+      },
+      "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/neossat/" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.asc-csa.gc.ca/eng/satellites/neossat/",
@@ -466,10 +583,15 @@
         "en": "Bright-star photometry nanosatellite",
         "fr": "Nanosatellite de photométrie d'étoiles brillantes"
       },
+      "goals": {
+        "en": "Built by TU Graz, BRITE-Austria set out to prove that Austria could develop, launch and operate a satellite of its own. Scientifically, it serves the goal of the BRITE-Constellation: measuring tiny changes in the brightness of the sky's brightest stars, whose vibrations reveal their hidden interiors and show how massive stars evolve and enrich the galaxy with chemical elements.",
+        "fr": "Construit par l'Université technique de Graz, BRITE-Austria devait prouver que l'Autriche pouvait développer, lancer et exploiter son propre satellite. Sur le plan scientifique, il sert l'objectif de la constellation BRITE, qui mesure d'infimes variations d'éclat des étoiles les plus brillantes du ciel. Ces vibrations révèlent l'intérieur caché des étoiles massives et montrent comment elles évoluent et enrichissent la Galaxie en éléments chimiques."
+      },
       "notes": {
         "en": "Austria's first satellite and one of the six 7-kg BRITE-Constellation nanosatellites that monitor the brightness of the brightest stars (blue filter). Last reported as one of the three still operating; no recent official update, so listed as unknown.",
         "fr": "Premier satellite autrichien et l'un des six nanosatellites de 7 kg de la constellation BRITE, qui suivent l'éclat des étoiles les plus brillantes (filtre bleu). Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
       },
+      "website": { "url": "https://www.tugraz.at/en/institute/iks/space-missions/brite-austria-tugsat-1" },
       "verified": "2026-10-03",
       "sources": [
         "https://brite-constellation.at/constellation/basic_information/",
@@ -485,10 +607,15 @@
       "launchDate": "2013-06-28",
       "status": "active",
       "purpose": { "en": "Solar UV imaging spectrograph", "fr": "Spectrographe imageur solaire UV" },
+      "goals": {
+        "en": "IRIS was built to tackle a long-standing puzzle: why the Sun's outer atmosphere, the corona, is millions of degrees hotter than its visible surface. By following how matter and energy travel through the thin layers in between, it helps explain how the Sun heats its atmosphere, feeds the solar wind and sets off the flares and eruptions that drive space weather.",
+        "fr": "IRIS a été conçu pour résoudre une vieille énigme : pourquoi la couronne, l'atmosphère externe du Soleil, est-elle des millions de degrés plus chaude que sa surface visible? En suivant le trajet de la matière et de l'énergie à travers les fines couches intermédiaires, il aide à comprendre comment le Soleil chauffe son atmosphère, alimente le vent solaire et déclenche les éruptions à l'origine de la météo spatiale."
+      },
       "notes": {
         "en": "Interface Region Imaging Spectrograph: observes the chromosphere and transition region, the layers where energy flows from the Sun's surface into its hot corona. Still operating.",
         "fr": "Interface Region Imaging Spectrograph : observe la chromosphère et la région de transition, les couches où l'énergie passe de la surface du Soleil à sa couronne brûlante. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/iris/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/iris/"]
     },
@@ -501,10 +628,15 @@
       "launchDate": "2013-09-14",
       "status": "ended",
       "purpose": { "en": "Planetary EUV space telescope", "fr": "Télescope spatial UV extrême planétaire" },
+      "goals": {
+        "en": "Hisaki was designed to study how planets lose their atmospheres to space and how the solar wind strips gas away, to help explain why Venus, Earth and Mars turned out so differently. It also watched the ring of plasma that Jupiter's volcanic moon Io feeds around the planet, to understand how energy moves through Jupiter's vast magnetic environment.",
+        "fr": "Hisaki a été conçu pour étudier comment les planètes perdent leur atmosphère dans l'espace et comment le vent solaire arrache leurs gaz, afin de comprendre pourquoi Vénus, la Terre et Mars ont évolué si différemment. Il a aussi observé l'anneau de plasma qu'alimente Io, la lune volcanique de Jupiter, pour comprendre comment l'énergie circule dans l'immense environnement magnétique de la planète."
+      },
       "notes": {
         "en": "The first space telescope dedicated to observing planets (Venus, Mars, Jupiter's Io torus) in extreme ultraviolet, launched on the first Epsilon rocket. JAXA ended operations in December 2023 after ten years; it remains in orbit.",
         "fr": "Premier télescope spatial consacré à l'observation des planètes (Vénus, Mars, tore d'Io autour de Jupiter) en ultraviolet extrême, lancé par la première fusée Epsilon. La JAXA a mis fin à son exploitation en décembre 2023, après dix ans ; il reste en orbite."
       },
+      "website": { "url": "https://www.isas.jaxa.jp/home/sprint-a/index_en.html" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.isas.jaxa.jp/home/sprint-a/index_en.html",
@@ -523,10 +655,15 @@
         "en": "Ionosphere and space-weather research",
         "fr": "Étude de l'ionosphère et de la météo spatiale"
       },
+      "goals": {
+        "en": "The e-POP instruments were designed to study space storms in fine detail, along with the charged particles that escape from the upper atmosphere into space. The aim is to understand space weather and how it disrupts radio communications, GPS navigation and other technologies. CASSIOPE also served to demonstrate Canada's first multi-purpose small-satellite platform.",
+        "fr": "Les instruments e-POP ont été conçus pour étudier en détail les tempêtes spatiales et les particules chargées qui s'échappent de la haute atmosphère vers l'espace. Le but est de mieux comprendre la météo spatiale et ses effets sur les radiocommunications, la navigation GPS et d'autres technologies. CASSIOPE a aussi servi à démontrer la première plateforme canadienne de petit satellite polyvalent."
+      },
       "notes": {
         "en": "Canadian satellite carrying the e-POP plasma instruments, which joined ESA's Swarm mission as Swarm-Echo in 2018. Routine science ended after a reaction-wheel failure in December 2021; limited data collection continued, with an end of life planned for December 2025, unconfirmed.",
         "fr": "Satellite canadien portant les instruments de plasma e-POP, intégré en 2018 à la mission Swarm de l'ESA sous le nom de Swarm-Echo. Les opérations scientifiques régulières ont cessé après une panne de roue de réaction en décembre 2021 ; une collecte limitée s'est poursuivie, avec une fin de vie prévue en décembre 2025, non confirmée."
       },
+      "website": { "url": "https://epop.phys.ucalgary.ca/" },
       "verified": "2026-10-03",
       "sources": [
         "https://epop.phys.ucalgary.ca/routine-cassiope-swarm-echo-science-operations-come-to-an-end/",
@@ -545,10 +682,15 @@
         "en": "Infrared astronomy and Earth-observation tech",
         "fr": "Astronomie infrarouge et technologies d'observation"
       },
+      "goals": {
+        "en": "STSAT-3 aimed to give Korea its own infrared view of space and to test technologies for its future satellites. Its infrared camera was meant to map the glowing hydrogen gas along the plane of our galaxy and to measure the faint infrared background, the combined glow of distant galaxies, while its spectrometer was to monitor changes in Earth's environment.",
+        "fr": "STSAT-3 devait offrir à la Corée son propre regard infrarouge sur l'espace et tester des technologies pour ses futurs satellites. Sa caméra infrarouge visait à cartographier l'hydrogène lumineux le long du plan de notre galaxie et à mesurer le faible fond infrarouge, la lueur cumulée des galaxies lointaines, tandis que son spectromètre devait suivre l'évolution de l'environnement terrestre."
+      },
       "notes": {
         "en": "Korean Science and Technology Satellite 3, carrying an infrared space telescope and a compact imaging spectrometer. Korea declared its observation mission complete in December 2015; it remains in orbit.",
         "fr": "Satellite coréen de science et technologie no 3, doté d'un télescope spatial infrarouge et d'un spectromètre imageur compact. La Corée a déclaré sa mission d'observation terminée en décembre 2015 ; il reste en orbite."
       },
+      "website": { "url": "https://satrec.kaist.ac.kr/e_02_07.php" },
       "verified": "2026-10-03",
       "sources": ["https://www.eoportal.org/satellite-missions/stsat-3"]
     },
@@ -564,10 +706,15 @@
         "en": "Earth's magnetic field mapping",
         "fr": "Cartographie du champ magnétique terrestre"
       },
+      "goals": {
+        "en": "Swarm B and its two twins set out to separate the different sources of Earth's magnetic field, from the liquid core and the crust to the oceans and the electric currents high above us, to understand how the field is generated and why it is weakening in some regions. This field shields us from cosmic radiation and solar particles, so the data also serve space-weather research and the magnetic models used for navigation.",
+        "fr": "Swarm B et ses deux jumeaux cherchent à distinguer les différentes sources du champ magnétique terrestre, du noyau liquide et de la croûte jusqu'aux océans et aux courants électriques de la haute atmosphère, pour comprendre comment ce champ naît et pourquoi il s'affaiblit dans certaines régions. Ce bouclier nous protège du rayonnement cosmique et des particules solaires, et ses données servent aussi à la météo spatiale et aux modèles magnétiques utilisés pour la navigation."
+      },
       "notes": {
         "en": "One of the three Swarm satellites measuring Earth's magnetic field from the core, crust and oceans to the ionosphere. Swarm B flies alone in a higher orbit than the A/C pair. Still operating.",
         "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre, du noyau, de la croûte et des océans jusqu'à l'ionosphère. Swarm B vole seul, sur une orbite plus haute que la paire A/C. Toujours en service."
       },
+      "website": { "url": "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm" },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
     },
@@ -583,10 +730,15 @@
         "en": "Earth's magnetic field mapping",
         "fr": "Cartographie du champ magnétique terrestre"
       },
+      "goals": {
+        "en": "The Swarm mission sets out to separate the different sources of Earth's magnetic field, from the liquid core and the crust to the oceans and the electric currents high above us, to understand how the field is generated and why it is weakening in some regions. This field shields us from cosmic radiation and solar particles, so the data also serve space-weather research and the magnetic models used for navigation.",
+        "fr": "La mission Swarm cherche à distinguer les différentes sources du champ magnétique terrestre, du noyau liquide et de la croûte jusqu'aux océans et aux courants électriques de la haute atmosphère, pour comprendre comment ce champ naît et pourquoi il s'affaiblit dans certaines régions. Ce bouclier nous protège du rayonnement cosmique et des particules solaires, et ses données servent aussi à la météo spatiale et aux modèles magnétiques utilisés pour la navigation."
+      },
       "notes": {
         "en": "One of the three Swarm satellites measuring Earth's magnetic field and the ionosphere. Swarm A flies side by side with Swarm C to measure field gradients. Still operating.",
         "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre et l'ionosphère. Swarm A vole côte à côte avec Swarm C pour mesurer les gradients du champ. Toujours en service."
       },
+      "website": { "url": "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm" },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
     },
@@ -602,10 +754,15 @@
         "en": "Earth's magnetic field mapping",
         "fr": "Cartographie du champ magnétique terrestre"
       },
+      "goals": {
+        "en": "The Swarm mission sets out to separate the different sources of Earth's magnetic field, from the liquid core and the crust to the oceans and the electric currents high above us, to understand how the field is generated and why it is weakening in some regions. This field shields us from cosmic radiation and solar particles, so the data also serve space-weather research and the magnetic models used for navigation.",
+        "fr": "La mission Swarm cherche à distinguer les différentes sources du champ magnétique terrestre, du noyau liquide et de la croûte jusqu'aux océans et aux courants électriques de la haute atmosphère, pour comprendre comment ce champ naît et pourquoi il s'affaiblit dans certaines régions. Ce bouclier nous protège du rayonnement cosmique et des particules solaires, et ses données servent aussi à la météo spatiale et aux modèles magnétiques utilisés pour la navigation."
+      },
       "notes": {
         "en": "One of the three Swarm satellites measuring Earth's magnetic field and the ionosphere. Swarm C flies side by side with Swarm A to measure field gradients. Still operating.",
         "fr": "L'un des trois satellites Swarm qui mesurent le champ magnétique terrestre et l'ionosphère. Swarm C vole côte à côte avec Swarm A pour mesurer les gradients du champ. Toujours en service."
       },
+      "website": { "url": "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm" },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/Swarm"]
     },
@@ -621,10 +778,15 @@
         "en": "Bright-star photometry nanosatellite",
         "fr": "Nanosatellite de photométrie d'étoiles brillantes"
       },
+      "goals": {
+        "en": "BRITE-Toronto shares the goal of the BRITE-Constellation: measuring tiny brightness variations of the sky's brightest and most luminous stars, which are hard to monitor precisely through Earth's turbulent atmosphere. These vibrations reveal the hidden interiors of massive stars, the ancestors of supernovae that forged many of the elements found in planets like Earth.",
+        "fr": "BRITE-Toronto partage l'objectif de la constellation BRITE : mesurer d'infimes variations d'éclat des étoiles les plus brillantes et les plus lumineuses du ciel, difficiles à suivre avec précision à travers l'atmosphère turbulente de la Terre. Ces vibrations révèlent l'intérieur caché des étoiles massives, ancêtres des supernovas qui ont forgé une grande partie des éléments dont sont faites des planètes comme la Terre."
+      },
       "notes": {
         "en": "Canadian member of the BRITE-Constellation (red filter), built by the University of Toronto's Space Flight Laboratory. Last reported as one of the three still operating; its builder now lists it as a legacy mission and no recent official update exists, so listed as unknown.",
         "fr": "Membre canadien de la constellation BRITE (filtre rouge), construit par le Space Flight Laboratory de l'Université de Toronto. Signalé comme l'un des trois encore actifs, mais son constructeur le classe parmi ses missions passées et aucune mise à jour officielle récente n'existe : statut inconnu."
       },
+      "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/brite/" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.asc-csa.gc.ca/eng/satellites/brite/",
@@ -643,10 +805,15 @@
       "launchDate": "2014-07-02",
       "status": "active",
       "purpose": { "en": "Atmospheric CO₂ measurement", "fr": "Mesure du CO₂ atmosphérique" },
+      "goals": {
+        "en": "OCO-2 was built to find out where carbon dioxide, the main gas behind human-caused climate change, enters and leaves the atmosphere: which regions release it, which forests, oceans or soils absorb it, and how this changes with the seasons. The faint glow of photosynthesis it also measures helps track plant health, droughts and crop yields.",
+        "fr": "OCO-2 doit établir où le dioxyde de carbone, principal gaz responsable du réchauffement climatique d'origine humaine, entre dans l'atmosphère et où il en sort : quelles régions en émettent, quelles forêts, quels océans ou sols l'absorbent, et comment cela varie au fil des saisons. La faible lueur de la photosynthèse qu'il mesure aussi aide à suivre la santé des plantes, les sécheresses et les récoltes."
+      },
       "notes": {
         "en": "Maps carbon dioxide in the atmosphere and plant fluorescence from space. Threatened with termination in 2025, it kept operating; in August 2026 NASA selected Caltech to run OCO-2 and OCO-3 for up to five years.",
         "fr": "Cartographie depuis l'espace le dioxyde de carbone de l'atmosphère et la fluorescence des plantes. Menacé d'arrêt en 2025, il a continué de fonctionner ; en août 2026, la NASA a confié à Caltech l'exploitation d'OCO-2 et d'OCO-3 pour un maximum de cinq ans."
       },
+      "website": { "url": "https://ocov2.jpl.nasa.gov/" },
       "verified": "2026-10-03",
       "sources": [
         "https://ocov2.jpl.nasa.gov/",
@@ -665,10 +832,15 @@
         "en": "Bright-star photometry nanosatellite",
         "fr": "Nanosatellite de photométrie d'étoiles brillantes"
       },
+      "goals": {
+        "en": "BRITE-Heweliusz and its sister nanosatellites watch the brightest stars in the sky, mostly hot and massive ones, measuring tiny changes in their brightness over long periods. These changes reveal how the stars vibrate, rotate and blow off winds, telling astronomers about their interiors and evolution; massive stars matter because they forge many chemical elements and scatter them into space.",
+        "fr": "BRITE-Heweliusz et ses nanosatellites jumeaux observent les étoiles les plus brillantes du ciel, surtout des étoiles chaudes et massives, en mesurant d'infimes variations de leur éclat sur de longues durées. Ces variations révèlent comment les étoiles vibrent, tournent et perdent de la matière par leurs vents, ce qui renseigne sur leur intérieur et leur évolution; les étoiles massives comptent, car elles fabriquent de nombreux éléments chimiques et les dispersent dans l'espace."
+      },
       "notes": {
         "en": "Polish member of the BRITE-Constellation (red filter), named after astronomer Johannes Hevelius. Last reported as one of the three still operating; no recent official update, so listed as unknown.",
         "fr": "Membre polonais de la constellation BRITE (filtre rouge), nommé en l'honneur de l'astronome Johannes Hevelius. Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
       },
+      "website": { "url": "https://brite-constellation.at/" },
       "verified": "2026-10-03",
       "sources": [
         "https://brite-constellation.at/constellation/basic_information/",
@@ -687,10 +859,15 @@
         "en": "Magnetic reconnection in Earth's magnetosphere",
         "fr": "Reconnexion magnétique dans la magnétosphère"
       },
+      "goals": {
+        "en": "MMS was built to understand magnetic reconnection, in which magnetic field lines from the Sun and the Earth break and reconnect, suddenly turning magnetic energy into heat and fast-moving particles. By catching it in action, the mission seeks to learn what triggers it, how electrons drive it and how it accelerates particles, knowledge that helps explain space weather near Earth and similar events across the universe.",
+        "fr": "MMS doit élucider la reconnexion magnétique, phénomène par lequel des lignes de champ magnétique du Soleil et de la Terre se rompent puis se reconnectent, transformant brusquement l'énergie magnétique en chaleur et en particules rapides. En la prenant sur le fait, la mission cherche à savoir ce qui la déclenche, quel rôle y jouent les électrons et comment elle accélère les particules, des connaissances qui éclairent la météo spatiale autour de la Terre et des phénomènes semblables ailleurs dans l'Univers."
+      },
       "notes": {
         "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/mms/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
@@ -706,10 +883,15 @@
         "en": "Magnetic reconnection in Earth's magnetosphere",
         "fr": "Reconnexion magnétique dans la magnétosphère"
       },
+      "goals": {
+        "en": "MMS was built to understand magnetic reconnection, in which magnetic field lines from the Sun and the Earth break and reconnect, suddenly turning magnetic energy into heat and fast-moving particles. By catching it in action, the mission seeks to learn what triggers it, how electrons drive it and how it accelerates particles, knowledge that helps explain space weather near Earth and similar events across the universe.",
+        "fr": "MMS doit élucider la reconnexion magnétique, phénomène par lequel des lignes de champ magnétique du Soleil et de la Terre se rompent puis se reconnectent, transformant brusquement l'énergie magnétique en chaleur et en particules rapides. En la prenant sur le fait, la mission cherche à savoir ce qui la déclenche, quel rôle y jouent les électrons et comment elle accélère les particules, des connaissances qui éclairent la météo spatiale autour de la Terre et des phénomènes semblables ailleurs dans l'Univers."
+      },
       "notes": {
         "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/mms/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
@@ -725,10 +907,15 @@
         "en": "Magnetic reconnection in Earth's magnetosphere",
         "fr": "Reconnexion magnétique dans la magnétosphère"
       },
+      "goals": {
+        "en": "MMS was built to understand magnetic reconnection, in which magnetic field lines from the Sun and the Earth break and reconnect, suddenly turning magnetic energy into heat and fast-moving particles. By catching it in action, the mission seeks to learn what triggers it, how electrons drive it and how it accelerates particles, knowledge that helps explain space weather near Earth and similar events across the universe.",
+        "fr": "MMS doit élucider la reconnexion magnétique, phénomène par lequel des lignes de champ magnétique du Soleil et de la Terre se rompent puis se reconnectent, transformant brusquement l'énergie magnétique en chaleur et en particules rapides. En la prenant sur le fait, la mission cherche à savoir ce qui la déclenche, quel rôle y jouent les électrons et comment elle accélère les particules, des connaissances qui éclairent la météo spatiale autour de la Terre et des phénomènes semblables ailleurs dans l'Univers."
+      },
       "notes": {
         "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/mms/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
@@ -744,10 +931,15 @@
         "en": "Magnetic reconnection in Earth's magnetosphere",
         "fr": "Reconnexion magnétique dans la magnétosphère"
       },
+      "goals": {
+        "en": "MMS was built to understand magnetic reconnection, in which magnetic field lines from the Sun and the Earth break and reconnect, suddenly turning magnetic energy into heat and fast-moving particles. By catching it in action, the mission seeks to learn what triggers it, how electrons drive it and how it accelerates particles, knowledge that helps explain space weather near Earth and similar events across the universe.",
+        "fr": "MMS doit élucider la reconnexion magnétique, phénomène par lequel des lignes de champ magnétique du Soleil et de la Terre se rompent puis se reconnectent, transformant brusquement l'énergie magnétique en chaleur et en particules rapides. En la prenant sur le fait, la mission cherche à savoir ce qui la déclenche, quel rôle y jouent les électrons et comment elle accélère les particules, des connaissances qui éclairent la météo spatiale autour de la Terre et des phénomènes semblables ailleurs dans l'Univers."
+      },
       "notes": {
         "en": "One of four identical spacecraft flying in a tight tetrahedron on a highly elliptical orbit to study magnetic reconnection, the explosive release of energy behind aurorae and space weather. Still operating.",
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
+      "website": { "url": "https://science.nasa.gov/mission/mms/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
@@ -763,10 +955,15 @@
         "en": "Multi-wavelength space observatory (UV to X)",
         "fr": "Observatoire spatial multilongueur d'onde (UV à X)"
       },
+      "goals": {
+        "en": "AstroSat was designed to study the most energetic objects in the universe in several kinds of light at once: neutron stars and black holes paired with ordinary stars, the magnetic fields of neutron stars, star-forming regions in other galaxies and X-ray sources that flare up briefly. It was also meant to carry out a limited deep survey of the sky in ultraviolet light.",
+        "fr": "AstroSat a été conçu pour étudier les objets les plus énergétiques de l'Univers dans plusieurs types de lumière à la fois : étoiles à neutrons et trous noirs associés à des étoiles ordinaires, champs magnétiques des étoiles à neutrons, régions de formation d'étoiles dans d'autres galaxies et sources X qui s'allument brièvement. Il devait aussi réaliser un relevé profond, mais limité, du ciel en ultraviolet."
+      },
       "notes": {
         "en": "India's first dedicated space observatory, observing simultaneously in ultraviolet, optical and X-rays. Designed for 5 years, it completed 10 years of operations in September 2025 and is still delivering data.",
         "fr": "Premier observatoire spatial indien, qui observe simultanément en ultraviolet, en visible et en rayons X. Conçu pour 5 ans, il a franchi le cap des 10 ans d'exploitation en septembre 2025 et fournit toujours des données."
       },
+      "website": { "url": "https://www.isro.gov.in/AstroSat.html" },
       "verified": "2026-10-03",
       "sources": ["https://www.isro.gov.in/Celebrating_Ten_years_of_AstroSat.html"]
     },
@@ -782,10 +979,15 @@
         "en": "Cosmic-ray and dark-matter detector",
         "fr": "Détecteur de rayons cosmiques et de matière noire"
       },
+      "goals": {
+        "en": "DAMPE hunts for signs of dark matter, the invisible material that makes up most of the mass in the universe, by looking for unexpected features in the energies of cosmic electrons and gamma rays. It also aims to learn where the most energetic cosmic rays come from and how they travel through our galaxy, and to open new discoveries in high-energy gamma-ray astronomy.",
+        "fr": "DAMPE traque des indices de la matière noire, cette matière invisible qui représente l'essentiel de la masse de l'Univers, en cherchant des anomalies dans l'énergie des électrons et des rayons gamma cosmiques. Il vise aussi à comprendre d'où viennent les rayons cosmiques les plus énergétiques et comment ils voyagent dans notre galaxie, et à ouvrir la voie à de nouvelles découvertes en astronomie gamma de haute énergie."
+      },
       "notes": {
         "en": "Dark Matter Particle Explorer, nicknamed Wukong after the Monkey King: measures high-energy cosmic-ray electrons, protons and gamma rays in search of dark-matter signatures. Designed for 3 years, still operating after 10.",
         "fr": "Dark Matter Particle Explorer, surnommé Wukong d'après le Roi des singes : mesure les électrons, protons et rayons gamma cosmiques de haute énergie à la recherche de signatures de matière noire. Conçu pour 3 ans, toujours en service après 10 ans."
       },
+      "website": { "url": "https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html" },
       "verified": "2026-10-03",
       "sources": ["https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html"]
     },
@@ -801,10 +1003,15 @@
         "en": "Student Earth-imaging nanosatellite",
         "fr": "Nanosatellite étudiant d'imagerie terrestre"
       },
+      "goals": {
+        "en": "PISAT's main goal was educational: to give engineering students and teachers hands-on experience of designing, building and testing a real satellite to space-industry standards, with ISRO's guidance. Its camera was meant to show that a small university-built nanosatellite can take pictures of the Earth for remote-sensing applications.",
+        "fr": "PISAT avait d'abord un but pédagogique : permettre à des étudiants et à des enseignants en ingénierie de concevoir, construire et tester un vrai satellite selon les normes de l'industrie spatiale, avec l'accompagnement de l'ISRO. Sa caméra devait montrer qu'un petit nanosatellite universitaire peut photographier la Terre pour des applications de télédétection."
+      },
       "notes": {
         "en": "5-kg imaging nanosatellite (80 m resolution) built by students of PES University, Bengaluru, with ISRO support, launched on PSLV-C35. No recent official status: listed as unknown.",
         "fr": "Nanosatellite d'imagerie de 5 kg (résolution de 80 m) construit par des étudiants de l'Université PES de Bengaluru avec l'appui de l'ISRO, lancé par PSLV-C35. Aucun état officiel récent : statut inconnu."
       },
+      "website": { "url": "https://www.isro.gov.in/Stud_pisat.html" },
       "verified": "2026-10-03",
       "sources": ["https://news.pes.edu/10125/", "https://www.eoportal.org/satellite-missions/pisat"]
     },
@@ -817,10 +1024,15 @@
       "launchDate": "2017-06-15",
       "status": "active",
       "purpose": { "en": "X-ray space telescope", "fr": "Télescope spatial à rayons X" },
+      "goals": {
+        "en": "Insight-HXMT was built to study how matter behaves in the extreme gravity and magnetic fields around black holes and neutron stars, by observing X-rays from binary star systems. It also scans the plane of the Milky Way to discover new sources that suddenly brighten and to monitor known variable ones, and it watches for gamma-ray bursts, the most powerful explosions in the universe.",
+        "fr": "Insight-HXMT a été construit pour étudier le comportement de la matière dans la gravité et les champs magnétiques extrêmes qui entourent trous noirs et étoiles à neutrons, en observant les rayons X des systèmes d'étoiles doubles. Il balaie aussi le plan de la Voie lactée pour découvrir de nouvelles sources qui s'illuminent soudain et suivre les sources variables connues, et il guette les sursauts gamma, les explosions les plus puissantes de l'Univers."
+      },
       "notes": {
         "en": "Hard X-ray Modulation Telescope, China's first X-ray astronomy satellite, studying black holes, neutron stars and gamma-ray bursts. Still operating: its Cycle 9 call for observations was issued in May 2026.",
         "fr": "Hard X-ray Modulation Telescope, premier satellite chinois d'astronomie X, qui étudie trous noirs, étoiles à neutrons et sursauts gamma. Toujours en service : son 9e appel à observations a été publié en mai 2026."
       },
+      "website": { "url": "https://hxmt.nssdc.ac.cn/" },
       "verified": "2026-10-03",
       "sources": [
         "https://hxmt.nssdc.ac.cn/",
@@ -839,9 +1051,16 @@
         "en": "University technology and Earth-imaging satellite",
         "fr": "Satellite universitaire technologique et d'imagerie"
       },
+      "goals": {
+        "en": "Flying Laptop was built mainly to test new small-satellite technologies, developed by doctoral students with industry partners, in real space conditions, and to train students in building and operating a spacecraft. Its cameras study how the Earth's surface reflects sunlight when seen from different angles, and the mission also tested whether ships can be tracked from space by combining images with their radio position signals.",
+        "fr": "Flying Laptop devait surtout tester en conditions réelles de nouvelles technologies pour petits satellites, mises au point par des doctorants avec des industriels, et former des étudiants à la construction et à l'exploitation d'un engin spatial. Ses caméras étudient comment la surface terrestre renvoie la lumière du Soleil selon l'angle de vue, et la mission a aussi évalué le suivi des navires depuis l'espace en combinant images et signaux radio de position."
+      },
       "notes": {
-        "en": "110-kg small satellite of the University of Stuttgart demonstrating new technologies (laser downlink, on-board computing) and imaging the Earth; also used for teaching. Last reported working well years after launch; no recent official status, so listed as unknown.",
-        "fr": "Petit satellite de 110 kg de l'Université de Stuttgart qui démontre de nouvelles technologies (liaison laser, calcul à bord) et photographie la Terre ; il sert aussi à l'enseignement. Signalé en bon état des années après son lancement, sans état officiel récent : statut inconnu."
+        "en": "110-kg small satellite of the University of Stuttgart; its demonstrations include a laser downlink and on-board computing. Last reported working well years after launch; no recent official status, so listed as unknown.",
+        "fr": "Petit satellite de 110 kg de l’Université de Stuttgart, qui a notamment démontré une liaison laser et le calcul à bord. Signalé en bon état des années après son lancement, sans état officiel récent : statut inconnu."
+      },
+      "website": {
+        "url": "https://www.irs.uni-stuttgart.de/en/research/satellitetechnology-and-instruments/smallsatelliteprogram/flying-laptop/"
       },
       "verified": "2026-10-03",
       "sources": [
@@ -861,10 +1080,15 @@
         "en": "Ionosphere and seismo-electromagnetic research",
         "fr": "Étude de l'ionosphère et électromagnétisme sismique"
       },
+      "goals": {
+        "en": "CSES-1 aims to find out whether earthquakes are preceded or accompanied by measurable disturbances in the ionosphere, the electrically charged upper layer of the atmosphere, and in the particles of Earth's radiation belts. Understanding such links could improve knowledge of how the solid Earth, the atmosphere and the ionosphere are coupled; its data also serve to study space weather and the Sun's influence on near-Earth space.",
+        "fr": "CSES-1 cherche à savoir si les séismes sont précédés ou accompagnés de perturbations mesurables dans l'ionosphère, couche haute et électriquement chargée de l'atmosphère, et dans les particules des ceintures de radiation terrestres. Comprendre ces liens éclairerait le couplage entre la Terre solide, l'atmosphère et l'ionosphère; ses données servent aussi à étudier la météo spatiale et l'influence du Soleil sur l'environnement proche de la Terre."
+      },
       "notes": {
         "en": "China Seismo-Electromagnetic Satellite, built with Italian instruments, monitors electromagnetic fields and particles in the ionosphere, including possible links with earthquakes. Since June 2025 it flies with its successor CSES-2 as a pair.",
         "fr": "China Seismo-Electromagnetic Satellite, doté d'instruments italiens, surveille les champs électromagnétiques et les particules de l'ionosphère, y compris leurs liens possibles avec les séismes. Depuis juin 2025, il vole en tandem avec son successeur CSES-2."
       },
+      "website": { "url": "https://www.cseslimadou.it/" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.eoportal.org/satellite-missions/cses",
@@ -883,10 +1107,15 @@
         "en": "Radio-spectrum monitoring nanosatellite",
         "fr": "Nanosatellite de surveillance du spectre radio"
       },
+      "goals": {
+        "en": "SALSAT was built to find out how the radio frequencies used by satellites and radio amateurs are actually occupied around the world, and where interference occurs, so that this limited resource can be shared more efficiently and sustainably. It also tested on-board processing of its measurements with a small neural network and a wear-free attitude control system based on a magnetic fluid.",
+        "fr": "SALSAT doit montrer comment les fréquences radio utilisées par les satellites et les radioamateurs sont réellement occupées dans le monde, et où surviennent les interférences, afin de partager plus efficacement et plus durablement cette ressource limitée. Il a aussi testé le traitement à bord de ses mesures par un petit réseau de neurones et un système de contrôle d'attitude sans usure, fondé sur un fluide magnétique."
+      },
       "notes": {
         "en": "Spectrum Analysis Satellite of TU Berlin: maps the use of VHF, UHF and S-band frequencies around the world to detect interference; its data fed an open-access world map published in 2024. No recent official status: listed as unknown.",
         "fr": "Spectrum Analysis Satellite de la TU Berlin : cartographie l'utilisation des fréquences VHF, UHF et bande S dans le monde pour repérer les interférences ; ses données ont alimenté une carte mondiale en libre accès publiée en 2024. Aucun état officiel récent : statut inconnu."
       },
+      "website": { "url": "https://www.tu.berlin/en/raumfahrttechnik/research/current-projects/salsat" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.tu.berlin/en/news/reports/salsat-mission",
@@ -905,10 +1134,15 @@
       "launchDate": "2021-12-09",
       "status": "active",
       "purpose": { "en": "X-ray polarimetry space telescope", "fr": "Télescope spatial de polarimétrie X" },
-      "notes": {
-        "en": "Measures the polarisation of X-rays from black holes, neutron stars and supernova remnants, revealing their geometry and magnetic fields; built with the Italian Space Agency. Still operating.",
-        "fr": "Mesure la polarisation des rayons X émis par les trous noirs, les étoiles à neutrons et les restes de supernova, ce qui révèle leur géométrie et leurs champs magnétiques ; construit avec l'Agence spatiale italienne. Toujours en service."
+      "goals": {
+        "en": "IXPE was built to measure, for the first time across many kinds of cosmic objects, the polarisation of X-rays, that is the direction in which their light vibrates. This reveals the shape and magnetic fields of places too small or too distant to be imaged, such as the surroundings of black holes, pulsars, the jets of active galaxies and the remains of exploded stars, and shows how their X-rays are produced.",
+        "fr": "IXPE a été construit pour mesurer, pour la première fois sur de nombreux types d'objets cosmiques, la polarisation des rayons X, c'est-à-dire la direction dans laquelle vibre leur lumière. Elle révèle la forme et les champs magnétiques de régions trop petites ou trop lointaines pour être photographiées, comme les abords des trous noirs, les pulsars, les jets des galaxies actives et les restes d'étoiles explosées, et indique comment leurs rayons X sont produits."
       },
+      "notes": {
+        "en": "Built with the Italian Space Agency. Still operating.",
+        "fr": "Construit avec l’Agence spatiale italienne. Toujours en service."
+      },
+      "website": { "url": "https://science.nasa.gov/mission/ixpe/" },
       "verified": "2026-10-03",
       "sources": ["https://science.nasa.gov/mission/ixpe/"]
     },
@@ -924,10 +1158,15 @@
         "en": "Solar wind–magnetosphere interaction imaging",
         "fr": "Imagerie de l'interaction vent solaire-magnétosphère"
       },
+      "goals": {
+        "en": "SMILE aims to understand how Earth's magnetic shield reacts to the solar wind, the stream of particles blowing from the Sun. It will study what happens where the solar wind strikes that shield, what triggers the sudden disturbances called substorms on Earth's night side, and how magnetic storms grow and fade, with the hope of one day warning of dangerous space weather days, rather than about an hour, in advance.",
+        "fr": "SMILE veut comprendre comment le bouclier magnétique de la Terre réagit au vent solaire, le flot de particules soufflé par le Soleil. La mission étudiera ce qui se passe là où le vent solaire frappe ce bouclier, ce qui déclenche les brusques perturbations appelées sous-orages du côté nuit, et comment les orages magnétiques naissent et s'éteignent, dans l'espoir de prévoir un jour les tempêtes spatiales dangereuses plusieurs jours à l'avance, au lieu d'environ une heure."
+      },
       "notes": {
         "en": "Solar wind Magnetosphere Ionosphere Link Explorer, a joint ESA–Chinese Academy of Sciences mission taking the first global X-ray images of Earth's magnetosphere. Reached its 121,000 km-apogee orbit on 20 June 2026; science was to begin in September 2026 after commissioning.",
         "fr": "Solar wind Magnetosphere Ionosphere Link Explorer, mission conjointe de l'ESA et de l'Académie chinoise des sciences qui prend les premières images X globales de la magnétosphère terrestre. Arrivé sur son orbite (apogée de 121 000 km) le 20 juin 2026 ; la science devait commencer en septembre 2026, après la mise en service."
       },
+      "website": { "url": "https://www.esa.int/Science_Exploration/Space_Science/Smile" },
       "verified": "2026-10-03",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Smile",

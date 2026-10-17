@@ -153,6 +153,20 @@ export type Manifest = z.infer<typeof ManifestSchema>;
 
 const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i);
 const localized = z.object({ en: z.string(), fr: z.string() });
+
+/**
+ * Main page of a mission, shown first among its links. `lang` (ISO 639-1) only when the page exists neither in
+ * English nor in French: the link then shows it, e.g. "cnsa.gov.cn (zh)".
+ */
+export const WebsiteSchema = z.object({
+  url: z.url().startsWith('https://'),
+  lang: z
+    .string()
+    .regex(/^[a-z]{2}$/)
+    .refine((l) => l !== 'en' && l !== 'fr', 'omit lang for English or French pages')
+    .optional(),
+});
+export type Website = z.infer<typeof WebsiteSchema>;
 const iso2 = z.string().regex(/^[a-z]{2}$/);
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 /** ISO date at the precision the source gives: YYYY, YYYY-MM or YYYY-MM-DD. */
@@ -200,7 +214,10 @@ export const MissionSchema = z.object({
   /** Low orbiters are hidden when extrapolated more than 7 days beyond their window (CLAUDE.md §5.2). */
   lowOrbit: z.boolean().default(true),
   color: hexColor.optional(),
+  /** Main objectives of the mission, for students (shown before the notes on its current state). */
+  goals: localized.optional(),
   notes: localized.optional(),
+  website: WebsiteSchema.optional(),
   verified: isoDate,
   sources: z.array(z.url()).min(1),
 });
@@ -544,7 +561,10 @@ export const EarthScienceSatelliteSchema = z.object({
   launchDate: isoDate.optional(),
   status: MissionStatusSchema,
   purpose: localized,
+  /** Main objectives of the mission, for students (shown before the notes). */
+  goals: localized.optional(),
   notes: localized.optional(),
+  website: WebsiteSchema.optional(),
   verified: isoDate,
   sources: z.array(z.url()).min(1),
 });

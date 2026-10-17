@@ -1,6 +1,15 @@
 import type { ImageEntry, ModelEntry } from '../data/schemas';
 import type { I18n } from '../i18n';
-import { h, panelToggle, setPanelCollapsed, setText, sidePanel, syncRows } from './dom';
+import {
+  h,
+  panelToggle,
+  setPanelCollapsed,
+  setText,
+  sidePanel,
+  sourceItems,
+  syncRows,
+  type WebsiteLink,
+} from './dom';
 import type { GlossaryTerm } from '../i18n/glossary';
 import { enableDefinitions, labelDefinitions } from './Glossary';
 import { ModelPreview, type PreviewSubject } from './ModelPreview';
@@ -12,7 +21,11 @@ export interface DetailContent {
   readonly badge?: { readonly text: string; readonly state: BadgeState };
   /** The optional third item names a glossary term for a label whose text alone is ambiguous. */
   readonly rows: readonly (readonly [label: string, value: string, term?: GlossaryTerm])[];
+  /** Main objectives of a mission, shown before the notes. */
+  readonly goals?: string;
   readonly notes?: string;
+  /** The mission's main page, listed first among the sources. */
+  readonly website?: WebsiteLink;
   readonly sources?: readonly string[];
   readonly footnote?: string;
   /** Show the Follow button. */
@@ -38,6 +51,7 @@ export class DetailPanel {
   private readonly title = h('h2', { class: 'panel-title', id: 'detail-title', tabindex: -1 });
   private readonly badge = h('p', { class: 'freshness' });
   private readonly fields = h('dl', { class: 'fields' });
+  private readonly goals = h('p', { class: 'small goals' });
   private readonly notes = h('p', { class: 'small' });
   private readonly sourcesTitle = h('h3', { class: 'results-title' });
   private readonly sources = h('ul', { class: 'sources small' });
@@ -71,6 +85,7 @@ export class DetailPanel {
         this.preview.element,
         this.badge,
         this.fields,
+        this.goals,
         this.notes,
         this.sourcesTitle,
         this.sources,
@@ -114,19 +129,20 @@ export class DetailPanel {
       this.badge.dataset['state'] = content.badge.state;
     }
     syncRows(this.fields, content.rows, this.define);
+    this.goals.hidden = !content.goals;
+    setText(this.goals, content.goals ?? '');
     this.notes.hidden = !content.notes;
     setText(this.notes, content.notes ?? '');
     // Rebuild the links only when they change, so keyboard focus survives live updates.
-    const key = (content.sources ?? []).join('|');
+    const websiteLabel = this.i18n.t('info.missionPage');
+    const sources = content.sources ?? [];
+    const w = content.website;
+    const key = [w?.url, w?.lang, websiteLabel, ...sources].join('|');
     if (key !== this.lastSourcesKey) {
       this.lastSourcesKey = key;
-      this.sources.replaceChildren(
-        ...(content.sources ?? []).map((url) =>
-          h('li', {}, [h('a', { href: url, target: '_blank', rel: 'noopener' }, [new URL(url).hostname])]),
-        ),
-      );
+      this.sources.replaceChildren(...sourceItems(sources, w, websiteLabel));
     }
-    this.sourcesTitle.hidden = !content.sources?.length;
+    this.sourcesTitle.hidden = !sources.length && !w;
     setText(this.footnote, content.footnote ?? '');
     this.follow.hidden = !content.followable;
     this.action.hidden = !content.action;

@@ -2213,6 +2213,8 @@ class SolarView implements View {
       badge,
       rows,
       ...(notes ? { notes } : {}),
+      ...(m.goals ? { goals: m.goals[i18n.lang] } : {}),
+      ...(m.website ? { website: m.website } : {}),
       sources: m.sources,
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,

@@ -313,6 +313,7 @@ export const en = {
   'info.notes': 'Notes',
   'info.purpose': 'Mission',
   'info.catalogName': 'Catalogue name',
+  'info.missionPage': 'mission page',
   'info.sources': 'Sources',
   'info.verified': 'Checked {date}',
 

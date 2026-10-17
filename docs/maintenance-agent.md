@@ -23,7 +23,9 @@ to do anything unless you explicitly ask for help.
      by COSPAR designation, then by name); use it only when the match clearly is this spacecraft. Without a
      match, add the entry with `"ephemeris": "none"` (listed, not drawn) and say so in the report. Also
      fill in `sampling` following CLAUDE.md §4.3, `norad`, the EN and FR names, the agency, the country,
-     the launch date, `status`, `sources` and `verified`. If it does not belong (a relay test, a failed
+     the launch date, `status`, `goals` (2–3 sentences on the mission's main objectives, for students, EN and
+     FR), `website` (the mission's main official page, fetched to check it loads; `lang` only when it exists
+     neither in English nor in French), `sources` and `verified`. If it does not belong (a relay test, a failed
      launch…), note why in the report.
    - `launch-site-code`: either add a site to `catalog/launch-sites.json` (verified coordinates with
      sources) or add the code to `unplacedSatcatCodes` with a reason. The official list of codes is
@@ -56,8 +58,8 @@ to do anything unless you explicitly ask for help.
      each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),
      the payload name and sources. Satellites carrying the operator's name are already covered by `nameRules`.
    - `earth-science-member`: a new member of the CelesTrak `science` group. Add it to `catalog/earth-science.json`
-     with the name the public knows (acronym in parentheses), agency, country, launch date, status, purpose, notes,
-     official sources and `verified`. Stale `earth-science:<id>` items are re-verified like missions (status,
+     with the name the public knows (acronym in parentheses), agency, country, launch date, status, purpose,
+     `goals` and `website` (as for missions), notes, official sources and `verified`. Stale `earth-science:<id>` items are re-verified like missions (status,
      notes, sources).
    - `moon-anchor`: run `npm run moons:anchor` (three Horizons requests per listed moon, a few seconds apart),
      then `npm run test` (the moons test compares positions with Horizons). It rewrites the epoch angles, the
@@ -94,8 +96,8 @@ to do anything unless you explicitly ask for help.
   under "Needs a human".
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
 - Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
-  typography: a non-breaking space before `:`). Every text a visitor reads (names, `note`, `notes`, `orbit`,
-  `purpose`…) has both an `en` and an `fr` value, including source notes on landing sites; translate when
+  typography: a non-breaking space before `:`). Every text a visitor reads (names, `note`, `notes`, `goals`,
+  `orbit`, `purpose`…) has both an `en` and an `fr` value, including source notes on landing sites; translate when
   adding or editing one.
 - Budget: stop after about 25 researched items (re-verifications included); carry the rest over to next week in
   the report.
