@@ -168,6 +168,21 @@ test('bright stars are named on demand, selectable from the list and by their na
   await expect(sirius).toHaveClass(/label-selected/);
   await info.getByRole('button', { name: 'Close' }).click();
   await expect(info).toBeHidden();
+  // Click once the camera has finished turning: the label stays put over two reads (a slow CI runner could still
+  // be gliding, and the click then missed the moving label).
+  let last = '';
+  await expect
+    .poll(
+      async () => {
+        const b = await sirius.boundingBox();
+        const key = b ? `${Math.round(b.x)},${Math.round(b.y)}` : '';
+        const still = key !== '' && key === last;
+        last = key;
+        return still;
+      },
+      { intervals: [300], timeout: 15_000 },
+    )
+    .toBe(true);
   const box = await sirius.boundingBox();
   if (!box) throw new Error('no label');
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
