@@ -22,7 +22,15 @@ import { SimClock } from '../astro/time';
 import { DEG_TO_RAD } from '../astro/constants';
 import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
-import { heightAboveKm, keepOutside, orbitStateLookingFrom, type OrbitState } from '../camera/orbitMath';
+import {
+  heightAboveKm,
+  keepOutside,
+  keepOutsideByTranslation,
+  orbitStateLookingFrom,
+  type OrbitLimits,
+  type OrbitState,
+} from '../camera/orbitMath';
+import { GuardianGrid } from '../render/GuardianGrid';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { SkyMesh } from '../render/SkyMesh';
@@ -30,6 +38,7 @@ import { createStarfield } from '../render/starfield';
 import { configureKtx2 } from '../render/textures';
 import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
+import { SettingsDialog } from '../ui/SettingsDialog';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setSimTime } from '../render/simTime';
 import { setPreviewFrameRate } from '../ui/ModelPreview';
@@ -218,11 +227,15 @@ function main(): void {
     },
   });
   renderer.scene.add(sky.mesh, stars);
+  // Faces of the cube the camera cannot leave, shown as it comes near one (src/render/GuardianGrid.ts).
+  const guardian = new GuardianGrid();
+  renderer.scene.add(guardian.group);
 
   const placeholderHome: OrbitState = orbitStateLookingFrom([0, 0, 0], [1, 0, 0], [0, 0, 1], 20_000);
   const controls = new QuaternionOrbitControls(renderer.canvas, {
     limits: { minDistanceKm: 1, maxDistanceKm: 1e7 },
     home: placeholderHome,
+    fovYRad: (renderer.camera.fov * Math.PI) / 180,
   });
   isIdle = () => clock.paused && !controls.moving && performance.now() - lastInputMs > 1500;
 
@@ -352,6 +365,16 @@ function main(): void {
     });
   }
 
+  /**
+   * Camera limits of the current view: its distances, the cube enclosing its sphere of motion (the camera never
+   * leaves it), and the closest approach around a pivot moved away from the body (Alt + drag).
+   */
+  const cameraLimits = (limits: OrbitLimits): OrbitLimits => ({
+    ...limits,
+    boundsHalfKm: view?.limits.maxDistanceKm ?? limits.maxDistanceKm,
+    pivotMinDistanceKm: FOLLOW_MIN_DISTANCE_KM,
+  });
+
   // Follow mode, shared by all views.
   let followEnd: (() => void) | undefined;
   /** Surface radius of the followed object (0 for a spacecraft), for the altimeter. */
@@ -359,7 +382,7 @@ function main(): void {
   const endFollow = (): void => {
     const cb = followEnd;
     followEnd = undefined;
-    if (view) controls.setLimits(view.limits);
+    if (view) controls.setLimits(cameraLimits(view.limits));
     cb?.();
   };
   const follow: FollowApi = {
@@ -369,9 +392,12 @@ function main(): void {
       if (controls.following) follow.stop();
       followEnd = onEnd;
       followSurfaceKm = options.surfaceRadiusKm ?? 0;
+      // The followed object is the pivot: its own closest approach applies (a 3D model's few metres, a planet's
+      // 1.05 radii), not the generic one for a point in space.
+      const followMinKm = options.minDistanceKm ?? FOLLOW_MIN_DISTANCE_KM;
       controls.setLimits({
-        minDistanceKm: options.minDistanceKm ?? FOLLOW_MIN_DISTANCE_KM,
-        maxDistanceKm: view.limits.maxDistanceKm,
+        ...cameraLimits({ minDistanceKm: followMinKm, maxDistanceKm: view.limits.maxDistanceKm }),
+        pivotMinDistanceKm: followMinKm,
       });
       controls.setFollow(scenePosition);
       // Look at the object from above (radially outward from the body) unless told otherwise, north up.
@@ -397,6 +423,15 @@ function main(): void {
   };
 
   const about = new About(i18n, import.meta.env.BASE_URL);
+  const settings = new SettingsDialog(i18n, {
+    qualityChoice: qualityState.choice,
+    detectedTier: qualityState.detected.tier,
+    onQualityChange: (choice) => {
+      storeChoice(choice);
+      // Applied from startup (MSAA, textures and models are chosen once): reload in place, view and camera kept.
+      reloadKeepingView();
+    },
+  });
   const report = new ReportDialog(i18n);
   const timeControl = new TimeControl(clock, i18n, syncUrl);
 
@@ -434,55 +469,44 @@ function main(): void {
   }
   phone.addEventListener('change', updateBottomInset);
   window.addEventListener('resize', updateBottomInset);
-  const toolbar = new Toolbar(
-    i18n,
-    viewId,
-    frame,
-    {
-      onViewChange: (id) => void switchView(id),
-      // `music` is created below; the menu can only be used once the page is running.
-      onSoundtrack: () => music.toggleOpen(),
-      onRecenter: () => {
-        follow.stop();
-        controls.reset();
-      },
-      onFrameChange: (mode) => {
-        const date = clock.nowUtc();
-        if (view) {
-          // Re-express the camera in the other frame so the view does not jump.
-          const bodyQ = view.bodyOrientation(date);
-          const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
-          const s = controls.state;
-          controls.setState({
-            targetKm: quatRotate(q, s.targetKm),
-            distanceKm: s.distanceKm,
-            orientation: quatNormalize(quatMultiply(q, s.orientation)),
-          });
-        }
-        frame = mode;
-        controls.setHome(homeState(date));
-        syncUrl();
-      },
-      onLangChange: (lang) => {
-        explicitLang = lang;
-        i18n.setLang(lang);
-        syncUrl();
-      },
-      onAbout: () => about.open(),
-      onReport: () => report.open(),
-      onPhoto: () => void takePhoto(),
-      onQualityChange: (choice) => {
-        storeChoice(choice);
-        // Applied from startup (MSAA, textures and models are chosen once): reload in place, view and camera kept.
-        reloadKeepingView();
-      },
-      onTogglePanel: () => {
-        if (panelToggle) toolbar.setPanelOpen(panelToggle());
-      },
+  const toolbar = new Toolbar(i18n, viewId, frame, {
+    onViewChange: (id) => void switchView(id),
+    // `music` is created below; the menu can only be used once the page is running.
+    onSoundtrack: () => music.toggleOpen(),
+    onRecenter: () => {
+      follow.stop();
+      controls.reset();
     },
-    qualityState.choice,
-    qualityState.detected.tier,
-  );
+    onFrameChange: (mode) => {
+      const date = clock.nowUtc();
+      if (view) {
+        // Re-express the camera in the other frame so the view does not jump.
+        const bodyQ = view.bodyOrientation(date);
+        const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
+        const s = controls.state;
+        controls.setState({
+          targetKm: quatRotate(q, s.targetKm),
+          distanceKm: s.distanceKm,
+          orientation: quatNormalize(quatMultiply(q, s.orientation)),
+        });
+      }
+      frame = mode;
+      controls.setHome(homeState(date));
+      syncUrl();
+    },
+    onLangChange: (lang) => {
+      explicitLang = lang;
+      i18n.setLang(lang);
+      syncUrl();
+    },
+    onAbout: () => about.open(),
+    onReport: () => report.open(),
+    onPhoto: () => void takePhoto(),
+    onSettings: () => settings.open(),
+    onTogglePanel: () => {
+      if (panelToggle) toolbar.setPanelOpen(panelToggle());
+    },
+  });
   // The panels follow a bar as soon as it changes size (menu opened, date row, new layout level).
   const barObserver = new ResizeObserver(() => updateBottomInset());
   barObserver.observe(toolbar.element);
@@ -506,6 +530,7 @@ function main(): void {
     updateNotice,
     offline,
     about.element,
+    settings.element,
     toast,
     report.element,
   );
@@ -628,7 +653,7 @@ function main(): void {
         throw err;
       });
       view = factory({ ...host, initialParams: params });
-      controls.setLimits(view.limits);
+      controls.setLimits(cameraLimits(view.limits));
       timeControl.setMaxRate(view.maxRate ?? MAX_ABS_RATE, view.maxRateHint ? i18n.t(view.maxRateHint) : '');
       const home = homeState(clock.nowUtc());
       controls.setHome(home);
@@ -758,10 +783,16 @@ ${
       wasFollowing = controls.following;
       // Never inside a planet, moon or the Sun: the camera slides along the surface instead.
       const obstacles = v.cameraObstacles?.() ?? [];
-      if (obstacles.length) controls.constrain(keepOutside(controls.state, obstacles, CAMERA_CLEARANCE_KM));
+      // A pan (Alt + drag) slides along a body by translation; a rotation or a zoom re-aims round the pivot.
+      const panned = controls.takePanned();
+      if (obstacles.length) {
+        const keep = panned ? keepOutsideByTranslation : keepOutside;
+        controls.constrain(keep(controls.state, obstacles, CAMERA_CLEARANCE_KM));
+      }
       controls.applyTo(renderer.camera);
       const originKm: Vec3 = controls.cameraPositionKm;
       v.placeOrigin(originKm);
+      guardian.update(originKm, controls.limits.boundsHalfKm);
       // Height above the nearest drawn surface, for the near clipping plane.
       const altitudeKm = obstacles.length
         ? Math.min(...obstacles.map((o) => heightAboveKm(originKm, o)))

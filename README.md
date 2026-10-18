@@ -7,7 +7,7 @@ working offline once visited.
 
 **→ [Open Perigee](https://perigee.info/)**
 
-![The Earth view: some 16,700 active satellites around the Earth, with the filter panel and the time bar](docs/images/hero.jpg)
+![The Earth view: some 16,600 active satellites around the Earth, with the filter panel and the time bar](docs/images/hero.jpg)
 
 > Educational use only — not intended for navigation or conjunction assessment.
 
@@ -54,7 +54,9 @@ working offline once visited.
 </table>
 
 Click any object to open its panel: identifiers (NORAD, COSPAR, Horizons), operator, country, launch date,
-status, orbit, and where its position comes from. Positions that are **extrapolated** beyond their data, or
+status, orbit, and where its position comes from. Probes, orbiters and science satellites also say what their
+mission is for, in a short paragraph for students, and link their mission's own page first. Underlined field
+names (spectral type, eccentricity, ephemeris window…) open a short definition. Positions that are **extrapolated** beyond their data, or
 based on **stale** elements, are drawn dimmed or dashed and flagged in the panel.
 
 ### Up close
@@ -62,6 +64,9 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 - **3D models**: the ISS, Hubble, the Mars rovers and some 30 other spacecraft (NASA 3D Resources) replace their
   marker when you come close; follow one and the camera comes to a few times its size. Their attitude is
   illustrative.
+- **Pictures**: some 120 probes, landing sites, launch sites and science satellites without a 3D model show a
+  photo, a view from orbit or an artist's impression (Wikimedia Commons, NASA, LROC), each with its author and
+  licence; click it to see it larger.
 - **Bodies**: NASA and USGS maps of the planets and their moons, the giants and a few small bodies drawn with
   their real flattening, irregular moons from their shape models, Saturn's, Uranus' and Neptune's rings. The
   Sun can be selected too: its main figures, its rotation and the day's active regions.
@@ -79,8 +84,11 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 ## Using it
 
-- **Rotate**: left-drag, or the arrow keys. **Roll**: right-drag, two-finger twist, or Q/E.
+- **Rotate**: left-drag, one finger, or the arrow keys. **Roll**: right-drag, a two-finger twist, or Q/E.
 - **Zoom**: mouse wheel, pinch, or +/−. **Reset**: R or the _Recenter_ button.
+- **Move the view**: Alt-drag (Option-drag on a Mac), Alt + arrows, or drag three fingers; you then turn and zoom
+  around the new point. The camera stays inside a cube around the view, whose faces light up as a grid when you
+  come near them.
 - **Select**: click an object, or pick it in the side panel list. **Follow**: double-click it, or press F.
 - **Time**: pause, run at ×1 to ×100,000 (×10,000 in the Earth view), go back to _Now_, or jump to any date.
 - **Frame**: body-fixed (the body stays still) or inertial (the body turns, orbits stay fixed).
@@ -90,13 +98,35 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   it last downloaded (a badge tells you when you are offline).
 - **Time zone**: dates and times are shown in your computer's time zone; click the zone name in the time bar
   to pick UTC or any other zone.
-- **Quality and effects**: the site picks a rendering quality for your device (High, Medium or Saver) and adapts
-  its resolution as it runs. The sparkle button in the top bar (_Quality & effects_ in the phone menu) lets you
-  choose another quality and, at High, switch each immersive effect on or off.
+- **Settings**: the site picks a rendering quality for your device (High, Medium or Saver) and adapts its
+  resolution as it runs. The gear button in the top bar (_Settings_ in the phone menu) lets you choose another
+  quality, switch each immersive effect on or off at High, and shows every control, drawn for your device.
 - **Photo**: the camera button downloads the 3D view as two PNG images, one as shown (labels included, without
   the panels) and one with the objects only, titled with the followed object and the date.
 - **Updates**: a tab left open learns about new data and new versions of the site within 15 minutes and offers
   to refresh (or refreshes by itself when you come back to it), keeping your view, selection and camera.
+
+### Controls
+
+The settings window draws the controls for the device you use: a mouse and a keyboard with Alt on Windows and
+Linux, Option on a Mac, or the touch gestures on a phone or a tablet.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/controls-windows.jpg" alt="Mouse and keyboard controls on Windows and Linux: left drag turns, Alt + drag moves the view, click selects, double-click follows, the wheel zooms, right drag rolls; arrows turn, Alt + arrows move, Q and E roll, + and − zoom, F follows, R resets, Esc closes"></td>
+    <td width="50%"><img src="docs/images/controls-mac.jpg" alt="The same controls on a Mac, with the Option key"></td>
+  </tr>
+  <tr>
+    <td><b>Windows and Linux</b>: mouse and keyboard, with Alt.</td>
+    <td><b>macOS</b>: the same, with Option.</td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/images/controls-touch.jpg" alt="Touch controls: drag one finger to turn, tap to select, double tap to follow, pinch to zoom, turn two fingers to roll, drag three fingers to move the view"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><b>Touch screens</b>: one finger turns, two fingers zoom and roll, three fingers move the view.</td>
+  </tr>
+</table>
 
 ### Sharing a view
 

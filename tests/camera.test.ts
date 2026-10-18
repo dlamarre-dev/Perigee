@@ -5,10 +5,19 @@ import {
   arcballRotationVector,
   cameraPositionKm,
   easeDistanceKm,
+  flyOrbit,
   heightAboveKm,
   interpolateOrbit,
+  clampDistanceAt,
+  distanceToCubeKm,
+  isFiniteState,
+  keepInCube,
+  keepInCubeByTranslation,
   keepOutside,
+  keepOutsideByTranslation,
   orbitStateLookingFrom,
+  panBy,
+  panVector,
   quatAngleBetween,
   quatFromAxisAngle,
   quatNorm,
@@ -189,5 +198,118 @@ describe('keepOutside', () => {
     expect(length(sub(cameraPositionKm(out), moon.centreKm))).toBeCloseTo(100.002, 6);
     const under = orbitStateLookingFrom([mars - 0.3, 0, 0], [1, 0, 0], [0, 0, 1], 0.05);
     expect(keepOutside(under, [lowGround], 0)).toBe(under);
+  });
+});
+
+describe('pan (Alt + drag) and the cube bound', () => {
+  const fov = (45 * Math.PI) / 180;
+
+  it('the point under the pointer at the pivot depth follows the pointer', () => {
+    // Camera frame: dragging right moves the camera left (−x), so the scene follows the pointer.
+    const heightPx = 800;
+    const v = panVector(100, 0, 4 * R, fov, heightPx);
+    const kmPerPx = (2 * 4 * R * Math.tan(fov / 2)) / heightPx;
+    expect(v[0]).toBeCloseTo(-100 * kmPerPx, 9);
+    expect(v[1]).toBe(0);
+    // Dragging down moves the camera up (+y in the camera frame).
+    expect(panVector(0, 50, 4 * R, fov, heightPx)[1]).toBeGreaterThan(0);
+  });
+
+  it('panBy moves pivot and camera together, orientation and distance unchanged', () => {
+    const moved = panBy(equatorView, [100, -50, 0]);
+    expect(moved.distanceKm).toBe(equatorView.distanceKm);
+    expect(moved.orientation).toBe(equatorView.orientation);
+    const shift = sub(cameraPositionKm(moved), cameraPositionKm(equatorView));
+    expect(length(shift)).toBeCloseTo(Math.hypot(100, 50), 9);
+    expect(length(sub(moved.targetKm, equatorView.targetKm))).toBeCloseTo(Math.hypot(100, 50), 9);
+  });
+
+  it('many pans keep a unit quaternion', () => {
+    let s = equatorView;
+    for (let i = 0; i < 100_000; i++) s = panBy(s, [Math.sin(i), Math.cos(i), 0]);
+    expect(quatNorm(s.orientation)).toBeCloseTo(1, 12);
+  });
+
+  it('a pan stops at the cube wall and slides along it, pivot and camera both inside', () => {
+    const half = 10 * R;
+    for (const pan of [
+      [20 * R, 20 * R, 0],
+      [-30 * R, 5 * R, 0],
+      [0, -40 * R, 0],
+    ] as Vec3[]) {
+      const s = keepInCubeByTranslation(panBy(equatorView, pan), half);
+      for (const p of [cameraPositionKm(s), s.targetKm]) {
+        for (const c of p) expect(Math.abs(c)).toBeLessThanOrEqual(half * (1 + 1e-12));
+      }
+      expect(s.distanceKm).toBe(equatorView.distanceKm);
+    }
+    const s = keepInCubeByTranslation(panBy(equatorView, [20 * R, 20 * R, 0]), half);
+    expect(distanceToCubeKm(cameraPositionKm(s), half)).toBeCloseTo(0, 6);
+  });
+
+  it('zooming out round an off-centre pivot is capped at the wall, the pivot never moved', () => {
+    const half = 10 * R;
+    const off = { ...equatorView, targetKm: [5 * R, 0, 0] as Vec3, distanceKm: 50 * R };
+    const capped = keepInCube(off, half, 10);
+    // Looking along −x from +x: the wall at +10 R is 5 R behind the pivot.
+    expect(capped?.distanceKm).toBeCloseTo(5 * R, 6);
+    expect(capped?.targetKm).toBe(off.targetKm);
+    const inside = { ...off, distanceKm: 2 * R };
+    expect(keepInCube(inside, half, 10)).toBe(inside);
+  });
+
+  it('a move that would need a distance below the minimum is refused, never a zero distance', () => {
+    const half = 10 * R;
+    // Pivot on the wall, camera behind it outside the cube (the case that gave NaN).
+    const onWall = { ...equatorView, targetKm: [half, 0, 0] as Vec3, distanceKm: 3 * R };
+    expect(keepInCube(onWall, half, 10)).toBeUndefined();
+    const outsidePivot = { ...equatorView, targetKm: [2 * half, 0, 0] as Vec3 };
+    expect(keepInCube(outsidePivot, half, 10)).toBeUndefined();
+    expect(isFiniteState({ ...equatorView, distanceKm: 0 })).toBe(false);
+    expect(isFiniteState({ ...equatorView, targetKm: [NaN, 0, 0] })).toBe(false);
+    expect(isFiniteState(equatorView)).toBe(true);
+  });
+
+  it('panning into a body pushes the camera out by translation, the view not re-aimed', () => {
+    const earth = { centreKm: [0, 0, 0] as Vec3, radiusKm: R };
+    const into = { ...equatorView, targetKm: [-3.5 * R, 0, 0] as Vec3 };
+    const out = keepOutsideByTranslation(into, [earth], 0.002);
+    expect(length(cameraPositionKm(out))).toBeCloseTo(R + 0.002, 6);
+    expect(out.orientation).toBe(into.orientation);
+    expect(out.distanceKm).toBe(into.distanceKm);
+  });
+
+  it('around a point in space the pivot minimum replaces the body minimum', () => {
+    const l = { ...limits, pivotMinDistanceKm: 10 };
+    expect(clampDistanceAt(1, [0, 0, 0], l)).toBe(limits.minDistanceKm);
+    expect(clampDistanceAt(1, [2 * R, 0, 0], l)).toBe(10);
+    expect(clampDistanceAt(1e12, [2 * R, 0, 0], l)).toBe(limits.maxDistanceKm);
+  });
+});
+
+describe('glide towards a followed object', () => {
+  it('ends exactly on the destination and keeps the object at a steady angle while zooming in', () => {
+    const from = equatorView;
+    // An object 6 800 km from the centre, reached at 0.27 km (the ISS's model distance).
+    const objectKm: Vec3 = [0, 6800, 0];
+    const to = orbitStateLookingFrom(objectKm, [0, 1, 0], [0, 0, 1], 0.27);
+    const end = flyOrbit(from, to, 1);
+    expect(end.distanceKm).toBeCloseTo(0.27, 12);
+    expect(length(sub(end.targetKm, objectKm))).toBeLessThan(1e-9);
+    expect(flyOrbit(from, to, 0).targetKm).toEqual(from.targetKm);
+    // Seen from the camera, the object's offset from the pivot never grows relative to the distance (with a plain
+    // lerp it reached ~30 000 times the distance near the end: the object shrank, then jumped back).
+    let previousRatio = Infinity;
+    for (let i = 0; i <= 200; i++) {
+      const s = flyOrbit(from, to, i / 200);
+      const ratio = length(sub(s.targetKm, objectKm)) / s.distanceKm;
+      expect(ratio).toBeLessThanOrEqual(previousRatio * (1 + 1e-9));
+      previousRatio = ratio;
+    }
+  });
+
+  it('moves the pivot linearly when the distance barely changes (a pan or a turn)', () => {
+    const to = { ...equatorView, targetKm: [100, 0, 0] as Vec3 };
+    expect(flyOrbit(equatorView, to, 0.5).targetKm[0]).toBeCloseTo(50, 9);
   });
 });

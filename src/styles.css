@@ -76,6 +76,11 @@ body,
   cursor: grabbing;
 }
 
+/* Alt (Option) held: a drag moves the view instead of turning it. */
+.viewport canvas.pan-ready {
+  cursor: move;
+}
+
 .viewport canvas:focus-visible:not(.pointer-focus) {
   outline: 1px solid var(--accent);
   outline-offset: -1px;
@@ -920,64 +925,27 @@ h2[tabindex='-1']:focus {
   }
 }
 
-/* Visual effects: a sparkle icon in the top bar ("Effects" in the phone menu) opening a list of switches. */
-.effects-group {
-  position: relative;
-}
-
-.effects-button {
+/* Settings (quality, effects, controls): a gear icon in the top bar ("Settings" in the phone menu). */
+.settings-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
-.effects-icon {
+.settings-icon {
   width: 20px;
   height: 20px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M10 3.5l1.6 5.2 5.2 1.6-5.2 1.6L10 17.1l-1.6-5.2-5.2-1.6 5.2-1.6z'/%3E%3Cpath d='M17.5 14l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'/%3E%3C/svg%3E")
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M19.45 10.49 L21.92 10.70 L21.92 13.30 L19.45 13.51 L18.33 16.20 L19.93 18.09 L18.09 19.93 L16.20 18.33 L13.51 19.45 L13.30 21.92 L10.70 21.92 L10.49 19.45 L7.80 18.33 L5.91 19.93 L4.07 18.09 L5.67 16.20 L4.55 13.51 L2.08 13.30 L2.08 10.70 L4.55 10.49 L5.67 7.80 L4.07 5.91 L5.91 4.07 L7.80 5.67 L10.49 4.55 L10.70 2.08 L13.30 2.08 L13.51 4.55 L16.20 5.67 L18.09 4.07 L19.93 5.91 L18.33 7.80 Z'/%3E%3Ccircle cx='12' cy='12' r='3.4'/%3E%3C/svg%3E")
     center / 20px no-repeat;
 }
 
-.effects-popover {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: max-content;
-  max-width: min(320px, calc(100vw - 2 * var(--gutter)));
-  padding: 10px 12px;
-  border: 1px solid var(--line-strong);
-  background: linear-gradient(var(--panel-top), var(--panel-bottom));
-  font-size: 13px;
-  white-space: normal;
-}
-
-/* Below the button, outside the top bar (see Toolbar.setEffectsOpen). */
-.effects-popover.floating {
-  position: fixed;
-  z-index: 7;
-}
-
-.effects-popover[hidden] {
-  display: none;
-}
-
-.effect-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.effects-note {
-  margin: 2px 0 0;
-}
-
 @media (min-width: 641px) and (min-height: 501px) {
-  .effects-button {
+  .settings-button {
     padding: 0 6px;
   }
 
-  .effects-text {
+  .settings-text {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -987,17 +955,327 @@ h2[tabindex='-1']:focus {
   }
 }
 
-/* In the "☰" menu the switches open in place, under the button. */
-.toolbar[data-fit^='menu'] .effects-group {
+/* Settings window (src/ui/SettingsDialog.ts), in About's frame: quality and effects, then the controls drawn
+   like a game menu. Each action has its colour, shared by the lit keys, the mouse parts and the legends. */
+.settings {
+  --act-rotate: #5ad7ff;
+  --act-pan: #ffb454;
+  --act-roll: #c792ff;
+  --act-zoom: #6ee7a0;
+  --act-select: #e8f1f8;
+  --act-follow: #ff8fb1;
+  --act-reset: #a8b8ff;
+  --act-close: #9db0c2;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: min(880px, calc(100% - 2 * var(--gutter)));
+}
+
+.settings .effect-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.settings .effects-note {
+  margin: 4px 0 0;
+}
+
+.settings [data-action='rotate'] {
+  --act: var(--act-rotate);
+}
+.settings [data-action='pan'] {
+  --act: var(--act-pan);
+}
+.settings [data-action='roll'] {
+  --act: var(--act-roll);
+}
+.settings [data-action='zoom'] {
+  --act: var(--act-zoom);
+}
+.settings [data-action='select'] {
+  --act: var(--act-select);
+}
+.settings [data-action='follow'] {
+  --act: var(--act-follow);
+}
+.settings [data-action='reset'] {
+  --act: var(--act-reset);
+}
+.settings [data-action='close'] {
+  --act: var(--act-close);
+}
+
+.controls {
+  display: grid;
+  gap: 18px;
+}
+
+.controls-block h4 {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Mouse: the left button's callouts on the left, the wheel's and the right button's on the right. */
+.mouse-map {
+  display: grid;
+  grid-template-columns: 1fr 110px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+
+.mouse-figure svg {
+  display: block;
   width: 100%;
 }
 
-.toolbar[data-fit^='menu'] .effects-popover {
-  width: auto;
-  max-width: none;
+.mouse-figure .part {
+  stroke-width: 2;
+  fill-opacity: 0.22;
+}
+
+.mouse-figure .part.rotate {
+  stroke: var(--act-rotate);
+  fill: var(--act-rotate);
+}
+
+.mouse-figure .part.roll {
+  stroke: var(--act-roll);
+  fill: var(--act-roll);
+}
+
+.mouse-figure .part.zoom {
+  stroke: var(--act-zoom);
+  fill: var(--act-zoom);
+  fill-opacity: 0.45;
+}
+
+.callout-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.callout {
+  position: relative;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: rgb(255 255 255 / 3%);
+}
+
+/* A leader line from the callout towards the mouse, as in game menus. */
+.callout::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  border-top: 1px solid var(--line-strong);
+}
+
+.callout.left::after {
+  right: -15px;
+}
+
+.callout.right::after {
+  left: -15px;
+}
+
+.callout-part {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.settings .callout ul,
+.settings .key-legend,
+.settings .gestures {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.callout li,
+.key-legend li {
+  margin: 3px 0;
+  padding-left: 9px;
+  border-left: 3px solid var(--act);
+  font-size: 13px;
+}
+
+.callout .binding,
+.gestures .binding {
+  color: var(--act);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Keyboard: the keys in use lit in their action's colour, the others dim. */
+.keyboard-map {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.main-keys {
+  flex: 1 1 auto;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.arrow-keys {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 4px;
+  width: 112px;
+}
+
+.key-row {
+  display: flex;
+  gap: 4px;
+}
+
+.key {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgb(255 255 255 / 2%);
+  color: rgb(220 232 242 / 35%);
+  font-family: var(--font-display);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.key.on {
+  border-color: var(--act);
+  background: color-mix(in srgb, var(--act) 18%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--act) 45%, transparent);
+  color: var(--act);
+  font-weight: 700;
+}
+
+.key.spacer {
+  visibility: hidden;
+}
+
+.settings .key-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 2px 18px;
+  margin-top: 12px;
+}
+
+.key-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.key-legend .caps {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.settings kbd {
+  display: inline-block;
+  min-width: 22px;
+  padding: 1px 5px;
+  border: 1px solid var(--act, var(--line-strong));
+  border-radius: 3px;
+  color: var(--act, var(--text));
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Touch gestures: one card per gesture. */
+.gestures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 10px;
+}
+
+.gestures li {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--act);
+  background: rgb(255 255 255 / 3%);
+  font-size: 13px;
+  text-align: center;
+}
+
+.gesture-figure svg {
+  width: 64px;
+  height: 64px;
+  fill: color-mix(in srgb, var(--act) 35%, transparent);
+  stroke: var(--act);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gesture-figure .ring {
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+
+/* Narrow windows: the mouse's callouts stack under it; the keyboard keeps its proportions, smaller. */
+@media (max-width: 720px) {
+  .mouse-map {
+    grid-template-columns: 90px 1fr;
+  }
+
+  .mouse-map .callout.left {
+    grid-column: 2;
+  }
+
+  .mouse-map .mouse-figure {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+  }
+
+  .mouse-map .callout-stack {
+    grid-column: 2;
+  }
+
+  .callout::after {
+    display: none;
+  }
+
+  .keyboard-map {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .arrow-keys {
+    align-self: flex-end;
+  }
+
+  .key {
+    height: 24px;
+    font-size: 9px;
+  }
 }
 
 .notice {
@@ -1468,7 +1746,7 @@ h2[tabindex='-1']:focus {
   }
 }
 
-/* Quality heads the effects popover (Toolbar), set apart from the switches below it. */
+/* Quality heads the settings window, set apart from the effect switches below it. */
 .quality-row {
   display: flex;
   align-items: center;
@@ -1929,6 +2207,7 @@ body.music-open .altimeter {
 
   .mobile-only {
     display: inline-flex;
+    align-items: center;
     justify-content: center;
   }
 

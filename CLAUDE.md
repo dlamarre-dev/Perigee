@@ -281,6 +281,14 @@ the "up" vector and causes gimbal lock at the poles).
 - Left drag: **arcball** rotation around the centre — axis = `(Δy, Δx, 0)` expressed in the camera frame,
   angle ∝ displacement; `orientation = orientation · q(axis, angle)`, then normalise.
 - Right drag or two-finger twist: **roll** around the view axis (camera z).
+- Alt (Option) + left drag, Alt + arrows, or a three-finger drag (past a 12 px dead zone; two fingers only pinch
+  and twist, a pinch moving their midpoint enough to pan by mistake): **pan** the pivot
+  (`panVector`/`panBy`, the point under the pointer follows it); the pivot stays there on release, zoom, rotation
+  and the altimeter (plain distance) are relative to it, following stops (no glide back). Around a pivot away from
+  the body centre the closest approach is `pivotMinDistanceKm`. The camera never leaves the cube enclosing the
+  view's maximum-distance sphere (`boundsHalfKm`: a pan slides along the wall, a zoom or a turn is capped there);
+  a pan into a body pushes the camera out by translation (`keepOutsideByTranslation`). A cyan "guardian" grid
+  (`src/render/GuardianGrid.ts`, camera-relative patches) fades in on a face within 10 % of it.
 - Rotation slows near the central body's surface (`OrbitLimits.surfaceRadiusKm`, default minimum distance / 1.02;
   the solar view gives the Sun's radius, its closest approach being 1.5 radii).
 - Wheel / pinch: **logarithmic** zoom (`distance *= exp(k·Δ)`), min bound (body radius × 1.02) and max bound
@@ -335,11 +343,14 @@ the "up" vector and causes gimbal lock at the poles).
   below high; 30 fps when idle on low) and the preview rate. Adaptive resolution (`src/render/adaptiveResolution.ts`)
   steps the pixel ratio down by 0.25 while the median frame is slow and back up when it keeps the display's pace
   (5 s warm-up, ceiling after an up/down bounce); screen-sized points are given in CSS px and scaled by the shared
-  `PIXEL_RATIO_UNIFORM`. The visitor can force a tier at the head of the quality and effects popover (sparkle
-  button in the top bar, "Quality & effects" in the phone menu; remembered, reload in place); `?quality=` overrides for tests; `?debug=perf` shows the tier,
+  `PIXEL_RATIO_UNIFORM`. The visitor can force a tier at the head of the settings window (gear
+  button in the top bar, "Settings" in the phone menu, `src/ui/SettingsDialog.ts`, centred like About; remembered,
+  reload in place). The same window then draws the controls like a game menu: a mouse and a keyboard with the keys in
+  use lit in each action's colour (⌥ option on a Mac, Alt elsewhere), or the touch gestures only on a touch-only
+  device; nothing is configurable; `?quality=` overrides for tests; `?debug=perf` shows the tier,
   reasons, GPU and frame rate; problem reports carry the tier. `tools/perf/bench.ts` measures main-thread cost
   per view (`--throttle 4` to approach a phone).
-- **Immersive effects** (high tier only; each switchable live in the quality and effects popover, remembered
+- **Immersive effects** (high tier only; each switchable live in the settings window, remembered
   per browser in `perigee-effects`; `src/render/effects.ts`, shared strength uniforms, no rebuild):
   - *Relief*: normal maps (east/north/up, linear UASTC KTX2 `normal-*`, ≤ 4k) from elevation models (Moon LOLA,
     Mars MOLA MEGDR, Mercury MESSENGER, Ceres Dawn; `tools/textures/normals.ts`, uncompressed int16 GeoTIFFs read
@@ -484,6 +495,7 @@ npm run data:fetch     # runs the pipeline locally — WARNING: respect the Cele
                        # do not run in a loop; prefer `npm run data:pull`
 npm run data:pull      # downloads the latest published `data` branch (normal development use)
 npm run textures       # offline texture pre-processing (downloads NASA sources, writes public/textures/)
+npx tsx tools/screenshots/readme.ts docs/images   # README screenshots (dev server, data:pull, a GPU)
 ```
 
 ## 12. Required reference tests

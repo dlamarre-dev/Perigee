@@ -50,6 +50,116 @@ export interface OrbitLimits {
    * closest approach of the Earth, Moon and Mars views). The Sun keeps the camera farther (1.5 radii).
    */
   readonly surfaceRadiusKm?: number;
+  /**
+   * Half-size of the cube the camera never leaves (the view's maximum distance: the cube enclosing the sphere of
+   * motion). Undefined: unbounded.
+   */
+  readonly boundsHalfKm?: number;
+  /**
+   * Closest approach when the pivot is not the body centre (moved with Alt + drag): the body-radius minimum
+   * would forbid zooming in on a point in space; bodies stay protected by the camera obstacles.
+   */
+  readonly pivotMinDistanceKm?: number;
+}
+
+/** A pivot farther than this from the scene origin is a point in space, not the central body. */
+const PIVOT_AT_CENTRE_KM = 1;
+
+/** Closest camera distance for this pivot: the body minimum around the centre, `pivotMinDistanceKm` elsewhere. */
+export function minDistanceFor(targetKm: Vec3, limits: OrbitLimits): number {
+  return limits.pivotMinDistanceKm !== undefined && length(targetKm) > PIVOT_AT_CENTRE_KM
+    ? limits.pivotMinDistanceKm
+    : limits.minDistanceKm;
+}
+
+/** clampDistance with the pivot's own minimum (see `minDistanceFor`). */
+export function clampDistanceAt(distanceKm: number, targetKm: Vec3, limits: OrbitLimits): number {
+  return Math.min(limits.maxDistanceKm, Math.max(minDistanceFor(targetKm, limits), distanceKm));
+}
+
+/**
+ * Translation for a drag with Alt held (pixels, +y down), in the camera frame: the point under the pointer at
+ * the pivot's depth follows the pointer.
+ */
+export function panVector(
+  dxPx: number,
+  dyPx: number,
+  distanceKm: number,
+  fovYRad: number,
+  viewportHeightPx: number,
+): Vec3 {
+  const kmPerPx = (2 * distanceKm * Math.tan(fovYRad / 2)) / Math.max(1, viewportHeightPx);
+  return [-dxPx * kmPerPx, dyPx * kmPerPx, 0];
+}
+
+/** Moves the pivot (and the camera with it) by a camera-frame vector; orientation and distance unchanged. */
+export function panBy(state: OrbitState, panCam: Vec3): OrbitState {
+  return { ...state, targetKm: add(state.targetKm, quatRotate(state.orientation, panCam)) };
+}
+
+/** Translates the whole state (pivot and camera) by a scene-frame vector. */
+function translate(state: OrbitState, deltaKm: Vec3): OrbitState {
+  return { ...state, targetKm: add(state.targetKm, deltaKm) };
+}
+
+/**
+ * After a pan: pivot and camera, translated together, are both kept inside the cube (the pan stops at the wall and
+ * slides along it). The translation is the smallest one, per axis, that brings both back in.
+ */
+export function keepInCubeByTranslation(state: OrbitState, halfKm: number): OrbitState {
+  const cam = cameraPositionKm(state);
+  const t = state.targetKm;
+  const delta = [0, 1, 2].map((i) => {
+    const c = cam[i] ?? 0;
+    const p = t[i] ?? 0;
+    const lo = Math.max(-halfKm - c, -halfKm - p);
+    const hi = Math.min(halfKm - c, halfKm - p);
+    // lo > hi only for a segment longer than the cube: centre it.
+    return lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, 0));
+  });
+  return delta.every((d) => d === 0)
+    ? state
+    : translate(state, [delta[0] ?? 0, delta[1] ?? 0, delta[2] ?? 0]);
+}
+
+/**
+ * After a zoom, a rotation or a glide, the pivot unchanged: a camera leaving the cube has its distance capped where
+ * the line of sight behind it crosses the wall (zooming out stops there). Undefined when that cap would bring it
+ * closer than `minDistanceKm` to the pivot, or the pivot is outside: the caller then refuses the move.
+ */
+export function keepInCube(state: OrbitState, halfKm: number, minDistanceKm: number): OrbitState | undefined {
+  const cam = cameraPositionKm(state);
+  if (Math.abs(cam[0]) <= halfKm && Math.abs(cam[1]) <= halfKm && Math.abs(cam[2]) <= halfKm) return state;
+  const t = state.targetKm;
+  if (Math.abs(t[0]) > halfKm || Math.abs(t[1]) > halfKm || Math.abs(t[2]) > halfKm) return undefined;
+  const back = quatRotate(state.orientation, [0, 0, 1]);
+  let exitKm = Infinity;
+  for (let i = 0; i < 3; i++) {
+    const b = back[i] ?? 0;
+    const p = t[i] ?? 0;
+    if (Math.abs(b) > 1e-12) exitKm = Math.min(exitKm, ((b > 0 ? halfKm : -halfKm) - p) / b);
+  }
+  return exitKm >= minDistanceKm ? { ...state, distanceKm: Math.min(state.distanceKm, exitKm) } : undefined;
+}
+
+/** All numbers of the state are finite (a guard against a degenerate step). */
+export function isFiniteState(state: OrbitState): boolean {
+  const q = state.orientation;
+  return (
+    state.targetKm.every(Number.isFinite) &&
+    Number.isFinite(state.distanceKm) &&
+    state.distanceKm > 0 &&
+    [q.x, q.y, q.z, q.w].every(Number.isFinite)
+  );
+}
+
+/** Distance from the camera to the nearest face of the cube (km; 0 on a face). */
+export function distanceToCubeKm(cameraKm: Vec3, halfKm: number): number {
+  return Math.min(
+    halfKm - Math.abs(cameraKm[0]),
+    halfKm - Math.abs(cameraKm[1]),
+    halfKm - Math.abs(cameraKm[2]),
+  );
 }
 
 export function cameraPositionKm(state: OrbitState): Vec3 {
@@ -118,6 +228,25 @@ export function interpolateOrbit(a: OrbitState, b: OrbitState, t: number): Orbit
     targetKm: lerp(a.targetKm, b.targetKm, t),
     distanceKm: Math.exp(Math.log(a.distanceKm) + (Math.log(b.distanceKm) - Math.log(a.distanceKm)) * t),
     orientation: quatSlerp(a.orientation, b.orientation, t),
+  };
+}
+
+/**
+ * A glide (fly-to) step: distance log-lerped and orientation slerped as `interpolateOrbit`, but the pivot closes in
+ * on its destination in proportion to the remaining zoom, like a zoom towards a point. With a plain lerp the camera
+ * reached the object's distance while still aiming kilometres away from it: the object shrank, then grew back
+ * suddenly (a zoom in–zoom out bounce). Without much zoom (a pan or a turn), the pivot moves linearly.
+ */
+export function flyOrbit(a: OrbitState, b: OrbitState, t: number): OrbitState {
+  const s = Math.min(1, Math.max(0, t));
+  const logRatio = Math.log(b.distanceKm / a.distanceKm);
+  const distanceKm = a.distanceKm * Math.exp(logRatio * s);
+  // Share of the pivot's path still to cover: 1 at the start, 0 at the end, following the distance.
+  const left = Math.abs(logRatio) < 0.1 ? 1 - s : (distanceKm - b.distanceKm) / (a.distanceKm - b.distanceKm);
+  return {
+    targetKm: lerp(b.targetKm, a.targetKm, Math.min(1, Math.max(0, left))),
+    distanceKm,
+    orientation: quatSlerp(a.orientation, b.orientation, s),
   };
 }
 
@@ -211,6 +340,27 @@ export function keepOutside(
       distanceKm,
       orientation: quatNormalize(quatMultiply(rotationBetween(from, to), s.orientation)),
     };
+  }
+  return s;
+}
+
+/**
+ * keepOutside for a pan: a camera pushed into an obstacle is moved out along the surface normal together with its
+ * pivot (a translation, no re-aiming), so panning into a planet slides along it.
+ */
+export function keepOutsideByTranslation(
+  state: OrbitState,
+  obstacles: readonly CameraObstacle[],
+  clearanceKm: number,
+): OrbitState {
+  let s = state;
+  for (const o of obstacles) {
+    const rel = sub(cameraPositionKm(s), o.centreKm);
+    const r = length(rel);
+    if (r >= o.radiusKm + clearanceKm || r === 0) continue;
+    const dir = scale(rel, 1 / r);
+    const floorKm = (o.surfaceKm?.(dir) ?? o.radiusKm) + clearanceKm;
+    if (r < floorKm) s = translate(s, scale(dir, floorKm - r));
   }
   return s;
 }

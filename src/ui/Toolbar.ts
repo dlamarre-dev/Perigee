@@ -1,7 +1,5 @@
 import { VIEW_IDS, type FrameMode, type ViewId } from '../app/urlState';
 import { LANGS, type I18n, type Lang, type MessageKey } from '../i18n';
-import { EFFECT_NAMES, effectPrefs, setEffectEnabled, type EffectName } from '../render/effects';
-import { QUALITY_CHOICES, quality, type QualityChoice, type QualityTier } from '../render/quality';
 import { h } from './dom';
 import { fitLevels, onOneRow, watchFit } from './fit';
 
@@ -13,8 +11,8 @@ export interface ToolbarCallbacks {
   readonly onAbout: () => void;
   readonly onReport: () => void;
   readonly onPhoto: () => void;
-  /** Quality setting chosen in the menu (the page reloads to apply it). */
-  readonly onQualityChange: (choice: QualityChoice) => void;
+  /** Settings window: quality, effects and controls (src/ui/SettingsDialog.ts). */
+  readonly onSettings: () => void;
   readonly onTogglePanel: () => void;
   /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
   readonly onSoundtrack: () => void;
@@ -40,8 +38,8 @@ const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
 };
 
 /**
- * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, quality and effects,
- * photo, about, report.
+ * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, settings (quality,
+ * effects, controls), photo, about, report.
  * When room runs short it degrades step by step instead of wrapping (`data-fit`, src/ui/fit.ts): short labels
  * ("Solar", "?", "@"), then everything but the title and the view tabs folds into a "☰" menu, the tabs on the
  * title's row, or below it when even that does not fit. Phones start at the menu.
@@ -66,33 +64,11 @@ export class Toolbar {
   };
   private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons: HTMLButtonElement[];
-  private readonly qualityLabel = h('label', { class: 'group-label quality-label', for: 'quality-select' });
-  private readonly qualitySelect = h('select', { class: 'input quality-select', id: 'quality-select' });
-  /**
-   * Quality and visual effects: a sparkle icon on large screens, a text entry in the phone menu; opens the
-   * quality choice followed by the effect switches.
-   */
-  private readonly effectsText = h('span', { class: 'effects-text' });
-  private readonly effectsButton = h(
-    'button',
-    {
-      type: 'button',
-      class: 'btn effects-button',
-      'aria-expanded': 'false',
-      'aria-controls': 'effects-popover',
-    },
-    [h('span', { class: 'effects-icon', 'aria-hidden': 'true' }), this.effectsText],
-  );
-  private readonly effectsNote = h('p', { class: 'effects-note muted small' });
-  private readonly effectLabels = new Map<EffectName, HTMLElement>();
-  private readonly effectsPopover = h('div', {
-    class: 'effects-popover',
-    id: 'effects-popover',
-    role: 'group',
-  });
-  private readonly effectsGroup = h('div', { class: 'effects-group' }, [
-    this.effectsButton,
-    this.effectsPopover,
+  /** Settings (quality, effects, controls): a gear icon on large screens, "Settings" in the phone menu. */
+  private readonly settingsText = h('span', { class: 'settings-text' });
+  private readonly settings = h('button', { type: 'button', class: 'btn settings-button' }, [
+    h('span', { class: 'settings-icon', 'aria-hidden': 'true' }),
+    this.settingsText,
   ]);
   private readonly about = h('button', { type: 'button', class: 'btn' });
   private readonly report = h('button', { type: 'button', class: 'btn' });
@@ -127,9 +103,6 @@ export class Toolbar {
     initialView: ViewId,
     initialFrame: FrameMode,
     callbacks: ToolbarCallbacks,
-    qualityChoice: QualityChoice = 'auto',
-    /** Tier detected for this device, shown next to "Auto". */
-    private readonly detectedTier: QualityTier = 'high',
   ) {
     this.frame = initialFrame;
     this.view = initialView;
@@ -167,29 +140,7 @@ export class Toolbar {
     });
     this.langGroup.append(...this.langButtons);
 
-    this.qualitySelect.append(...QUALITY_CHOICES.map((c) => h('option', { value: c })));
-    this.qualitySelect.value = qualityChoice;
-    this.qualitySelect.addEventListener('change', () =>
-      callbacks.onQualityChange(this.qualitySelect.value as QualityChoice),
-    );
-
-    this.effectsPopover.append(h('div', { class: 'quality-row' }, [this.qualityLabel, this.qualitySelect]));
-    const effectsOn = quality().immersiveEffects;
-    const prefs = effectPrefs();
-    for (const name of EFFECT_NAMES) {
-      const id = `effect-${name}`;
-      const box = h('input', { type: 'checkbox', id, checked: prefs[name], disabled: !effectsOn });
-      box.addEventListener('change', () => setEffectEnabled(name, box.checked));
-      const label = h('label', { for: id });
-      this.effectLabels.set(name, label);
-      this.effectsPopover.append(h('div', { class: 'effect-row' }, [box, label]));
-    }
-    this.effectsNote.hidden = effectsOn;
-    this.effectsPopover.append(this.effectsNote);
-    this.effectsPopover.hidden = true;
-    this.effectsButton.addEventListener('click', () =>
-      this.setEffectsOpen(this.effectsPopover.hidden === true),
-    );
+    this.settings.addEventListener('click', callbacks.onSettings);
 
     this.soundtrack.addEventListener('click', callbacks.onSoundtrack);
     this.menu.append(
@@ -197,7 +148,7 @@ export class Toolbar {
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
-      this.effectsGroup,
+      this.settings,
       this.photo,
       this.soundtrack,
       this.about,
@@ -212,27 +163,16 @@ export class Toolbar {
     this.menuButton.addEventListener('click', () => this.setMenuOpen(!this.menuOpen));
     // Any action in the menu closes it (phones); Escape and outside clicks too.
     this.menu.addEventListener('click', (e) => {
-      const button = (e.target as HTMLElement).closest('button');
-      if (button && button !== this.effectsButton) this.setMenuOpen(false);
+      if ((e.target as HTMLElement).closest('button')) this.setMenuOpen(false);
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !this.effectsPopover.hidden) {
-        this.setEffectsOpen(false);
-        this.effectsButton.focus();
-      } else if (e.key === 'Escape' && this.menuOpen) {
+      if (e.key === 'Escape' && this.menuOpen) {
         this.setMenuOpen(false);
         this.menuButton.focus();
       }
     });
     document.addEventListener('pointerdown', (e) => {
       if (this.menuOpen && !this.element.contains(e.target as Node)) this.setMenuOpen(false);
-      const target = e.target as Node;
-      if (
-        !this.effectsPopover.hidden &&
-        !this.effectsGroup.contains(target) &&
-        !this.effectsPopover.contains(target)
-      )
-        this.setEffectsOpen(false);
     });
 
     i18n.onChange(() => this.renderLabels());
@@ -256,35 +196,9 @@ export class Toolbar {
         el.scrollWidth <= el.clientWidth + 1,
     );
     if (!level.startsWith('menu') && this.menuOpen) this.setMenuOpen(false);
-    // The floating switches are placed once, under the button: place them again when the bar is laid out again
-    // (the first fit can land after a click on a slow page, and fonts or a resize can move the button).
-    if (!this.effectsPopover.hidden) this.setEffectsOpen(true);
-  }
-
-  /**
-   * In the "☰" menu the switches open in place, under the button. On the bar they float below it, outside the
-   * bar: its chamfered corners (clip-path) would cut off anything drawn past its edges, clicks included.
-   */
-  private setEffectsOpen(open: boolean): void {
-    const inMenu = (this.element.dataset['fit'] ?? '').startsWith('menu');
-    const pop = this.effectsPopover;
-    if (open && !inMenu) {
-      const r = this.effectsButton.getBoundingClientRect();
-      pop.classList.add('floating');
-      pop.style.top = `${r.bottom + 8}px`;
-      pop.style.right = `${Math.max(8, window.innerWidth - r.right)}px`;
-      this.element.after(pop);
-    } else if (open || pop.parentElement !== this.effectsGroup) {
-      pop.classList.remove('floating');
-      pop.style.top = pop.style.right = '';
-      this.effectsGroup.append(pop);
-    }
-    pop.hidden = !open;
-    this.effectsButton.setAttribute('aria-expanded', String(open));
   }
 
   private setMenuOpen(open: boolean): void {
-    if (!open) this.setEffectsOpen(false);
     this.menuOpen = open;
     this.element.classList.toggle('menu-open', open);
     this.menuButton.setAttribute('aria-expanded', String(open));
@@ -311,22 +225,12 @@ export class Toolbar {
   private renderLabels(): void {
     const t = this.i18n.t.bind(this.i18n);
     this.title.textContent = t('app.brand');
-    this.qualityLabel.textContent = t('toolbar.quality');
     this.photoText.textContent = t('toolbar.photo');
     this.photo.title = t('toolbar.photo.hint');
     this.photo.setAttribute('aria-label', t('toolbar.photo.hint'));
-    this.effectsText.textContent = t('toolbar.effects');
-    this.effectsButton.title = t('toolbar.effects.hint');
-    this.effectsButton.setAttribute('aria-label', t('toolbar.effects.hint'));
-    this.effectsPopover.setAttribute('aria-label', t('toolbar.effects.hint'));
-    this.effectsNote.textContent = t('effects.highOnly');
-    for (const [name, label] of this.effectLabels) label.textContent = t(`effects.${name}`);
-    const detected = t(`quality.${this.detectedTier}`);
-    this.qualitySelect.title = this.i18n.format('toolbar.quality.hint', { tier: detected });
-    for (const option of this.qualitySelect.options) {
-      const c = option.value as QualityChoice;
-      option.textContent = t(`quality.${c}`);
-    }
+    this.settingsText.textContent = t('toolbar.settings');
+    this.settings.title = t('toolbar.settings.hint');
+    this.settings.setAttribute('aria-label', t('toolbar.settings.hint'));
     this.viewGroup.setAttribute('aria-label', t('toolbar.view'));
     for (const id of VIEW_IDS) {
       // Short label on phones (CSS picks one), full one elsewhere and for assistive technologies.
