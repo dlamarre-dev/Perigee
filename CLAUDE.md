@@ -37,7 +37,8 @@ Cross-cutting features:
 
 1. **Client-side computation.** The data pipeline (GitHub Actions) only *fetches, validates, reformats and
    compresses* raw data. It never computes a position. SGP4, interpolation, frame changes, planetary rotations:
-   everything happens in the browser.
+   everything happens in the browser — or, for the MCP server (`mcp/`), on the user's machine, with the same code
+   and the same published data.
 2. **Public data only**, with visible attribution (see §9).
 3. **Respect the providers.** The user's browser **never** contacts CelesTrak or Horizons directly. See §4 for why.
    The only third-party request the app makes on its own is the "Report" form (`src/ui/ReportDialog.ts`), sent to
@@ -331,7 +332,11 @@ the "up" vector and causes gimbal lock at the poles).
   with optional `details` from the engine, `set`, `snapshot` from photo mode, `ping`; events `ready`, `view`,
   `selection`, `time`). Views select in place through `View.selectId`. Documented in `public/llms.txt`; the build
   also writes `api/catalog.json`, `images.json`, `glossary.json`, `interface.json` and `llms-full.txt` from the
-  catalogues (`src/engine/apiDocs.ts`, Vite plugin `apiDocuments`; no positions).
+  catalogues (`src/engine/apiDocs.ts`, Vite plugin `apiDocuments`; no positions). MCP server `mcp/` (npm
+  `perigee-mcp`, own semver, stdio, `@modelcontextprotocol/sdk`): tools `perigee_find`, `_object` (optional image),
+  `_state`, `_distance`, `_distance_series`, `_view` (links, iframe), `_define`, `_about` in `mcp/src/tools.ts`
+  (shared with a hosted endpoint); disk cache keyed by content hash (`mcp/src/diskCache.ts`); bundled by
+  `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).
@@ -492,6 +497,7 @@ Rules:
 │  ├─ ui/              # panels, filters, time control
 │  ├─ data/            # manifest loading, cache, zod schemas shared with pipeline/
 │  └─ i18n/
+├─ mcp/                # MCP server (npm perigee-mcp) over the headless engine src/engine/
 └─ tests/              # vitest (reference values), playwright
 ```
 
@@ -508,6 +514,7 @@ npm run data:fetch     # runs the pipeline locally — WARNING: respect the Cele
                        # do not run in a loop; prefer `npm run data:pull`
 npm run data:pull      # downloads the latest published `data` branch (normal development use)
 npm run textures       # offline texture pre-processing (downloads NASA sources, writes public/textures/)
+npm run mcp:build      # bundles the MCP server into mcp/dist/perigee-mcp.js
 npx tsx tools/screenshots/readme.ts docs/images   # README screenshots (dev server, data:pull, a GPU)
 ```
 

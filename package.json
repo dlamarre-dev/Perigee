@@ -24,7 +24,8 @@
     "data:pull": "tsx pipeline/pull.ts",
     "data:audit": "tsx pipeline/run.ts audit",
     "icons": "tsx tools/icons/make-icons.ts",
-    "moons:anchor": "tsx tools/moons/anchor.ts"
+    "moons:anchor": "tsx tools/moons/anchor.ts",
+    "mcp:build": "vite build -c mcp/vite.config.ts"
   },
   "dependencies": {
     "@fontsource/rajdhani": "^5.3.0",
@@ -39,6 +40,7 @@
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
     "@gltf-transform/functions": "^4.5.1",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@playwright/test": "^1.63.0",
     "@types/draco3dgltf": "^1.4.3",
     "@types/node": "^26.6.3",

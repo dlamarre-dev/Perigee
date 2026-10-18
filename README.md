@@ -147,6 +147,18 @@ The address bar always describes what you see, so a link reproduces it:
 | `hide=<id>,<id>`                               | Missions not drawn in the Moon, Mars and solar-system views (unticked in the panel)                                                                     |
 | `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                                                       |
 
+## For AI assistants
+
+- **MCP server**: [`perigee-mcp`](mcp/README.md) (`npx -y perigee-mcp`) gives an assistant positions, distances,
+  mission facts, definitions and embeddable views, each computed value with its provenance (model, data source and
+  age, typical accuracy).
+- **Embed mode**: `?embed=1` shows the 3D view alone in an `<iframe>` (`ui=panel,time` keeps the information panel
+  or the time bar, `follow=1` follows the selection); the page around it drives it and takes PNG snapshots with
+  `postMessage` (protocol `perigee:v1`).
+- **Documents**: [`llms.txt`](https://perigee.info/llms.txt), [`llms-full.txt`](https://perigee.info/llms-full.txt)
+  and [`api/interface.json`](https://perigee.info/api/interface.json) (with `catalog.json`, `images.json`,
+  `glossary.json`).
+
 ## Data and credits
 
 Satellite elements come from [CelesTrak](https://celestrak.org) (T.S. Kelso); spacecraft ephemerides from

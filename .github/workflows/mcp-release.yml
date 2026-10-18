@@ -1,0 +1,40 @@
+# Publishes the MCP server (mcp/, npm package perigee-mcp) when a tag mcp-v<version> is pushed, through npm trusted
+# publishing (OIDC: no npm token stored in GitHub; provenance attached automatically). The trusted publisher is set
+# on npmjs.com for this repository and this file name (docs/mcp-publishing.md).
+name: MCP release
+
+on:
+  push:
+    tags: ['mcp-v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Tag matches mcp/package.json
+        run: |
+          version=$(node -p "require('./mcp/package.json').version")
+          test "mcp-v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME does not match $version"; exit 1; }
+      - run: npm run typecheck
+      - run: npx vitest run tests/engine.test.ts tests/mcp.test.ts
+      - run: npm run mcp:build
+      # A version already on npm (the first one is published by hand) is not published again.
+      - name: Already published?
+        id: published
+        run: |
+          version=$(node -p "require('./mcp/package.json').version")
+          if npm view "perigee-mcp@$version" version >/dev/null 2>&1; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.published.outputs.skip != 'true'
+        run: npm publish --access public
+        working-directory: mcp

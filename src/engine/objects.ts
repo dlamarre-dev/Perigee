@@ -59,7 +59,7 @@ export type ObjectRef =
 
 export class UnknownObjectError extends Error {
   constructor(id: string) {
-    super(`Unknown object "${id}": use find() to look it up by name`);
+    super(`Unknown object "${id}": look it up by name with find (MCP: perigee_find)`);
     this.name = 'UnknownObjectError';
   }
 }
