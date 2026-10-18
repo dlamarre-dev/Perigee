@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import type { Plugin } from 'vite';
+import { runnerImport, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 // GitHub Pages serves the site under /<repo>/. Override with PERIGEE_BASE=/ for a custom domain.
@@ -86,13 +86,56 @@ function versionFile(): Plugin {
   };
 }
 
+/**
+ * Machine documentation (src/engine/apiDocs.ts): api/catalog.json, images.json, glossary.json, interface.json and
+ * llms-full.txt, generated from the catalogues at build time (served from memory by the dev server). Links point
+ * to the public site (PERIGEE_SITE overrides it).
+ */
+function apiDocuments(): Plugin {
+  const site = process.env['PERIGEE_SITE'] ?? 'https://perigee.info/';
+  // Loaded through Vite's module runner (TypeScript and JSON imports), not bundled into this config.
+  const documents = async (): Promise<Record<string, string>> => {
+    const { module } = await runnerImport<typeof import('./src/engine/apiDocs')>('/src/engine/apiDocs.ts', {
+      configFile: false,
+      logLevel: 'error',
+    });
+    return module.buildApiDocuments(site, buildStamp, readFileSync(join('public', 'llms.txt'), 'utf8'));
+  };
+  const types: Record<string, string> = { json: 'application/json', txt: 'text/plain' };
+  return {
+    name: 'perigee-api-documents',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const path = req.url?.split('?')[0]?.slice(base.length);
+        if (!path || !(path.startsWith('api/') || path === 'llms-full.txt')) return next();
+        documents().then(
+          (docs) => {
+            const body = docs[path];
+            if (!body) return next();
+            res.setHeader(
+              'Content-Type',
+              `${types[path.split('.').pop() ?? ''] ?? 'text/plain'}; charset=utf-8`,
+            );
+            res.end(body);
+          },
+          (err: unknown) => next(err),
+        );
+      });
+    },
+    async generateBundle() {
+      for (const [fileName, source] of Object.entries(await documents()))
+        this.emitFile({ type: 'asset', fileName, source });
+    },
+  };
+}
+
 export default defineConfig({
   base,
   define: {
     __PERIGEE_BUILD__: JSON.stringify(buildStamp),
     __PERIGEE_ASSETS__: JSON.stringify(assetVersions()),
   },
-  plugins: [basisTranscoder(), versionFile()],
+  plugins: [basisTranscoder(), versionFile(), apiDocuments()],
   build: {
     target: 'es2022',
     sourcemap: true,

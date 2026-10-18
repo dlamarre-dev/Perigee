@@ -12,6 +12,7 @@ import { SUN_RADIUS_KM } from '../astro/planets';
 import { length, sub, type Vec3 } from '../astro/vec3';
 import { en, fr } from '../i18n';
 import { GLOSSARY, LABEL_TERMS, type GlossaryTerm } from '../i18n/glossary';
+import { LICENCES } from '../data/licences';
 import { PublishedData, type DataOptions } from './data';
 import {
   catalogs,
@@ -152,7 +153,8 @@ export class Engine {
               large: `${this.data.baseUrl}images/${image.id}-large.webp`,
               kind: image.kind,
               credit: image.credit,
-              licence: image.licence,
+              licence: LICENCES[image.licence].name,
+              licenceUrl: LICENCES[image.licence].url,
               source: image.sources[0],
             },
           }

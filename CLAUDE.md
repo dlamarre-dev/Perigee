@@ -329,7 +329,9 @@ the "up" vector and causes gimbal lock at the poles).
   (`?embed=1`, `ui=panel,time` to keep the info panel or the time bar, `follow=1`) shows the 3D view alone with a
   link to the full app; a framed page answers the `perigee:v1` postMessage API (`src/app/embedApi.ts`: `get`
   with optional `details` from the engine, `set`, `snapshot` from photo mode, `ping`; events `ready`, `view`,
-  `selection`, `time`). Views select in place through `View.selectId`. Documented in `public/llms.txt`.
+  `selection`, `time`). Views select in place through `View.selectId`. Documented in `public/llms.txt`; the build
+  also writes `api/catalog.json`, `images.json`, `glossary.json`, `interface.json` and `llms-full.txt` from the
+  catalogues (`src/engine/apiDocs.ts`, Vite plugin `apiDocuments`; no positions).
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

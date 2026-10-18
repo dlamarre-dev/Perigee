@@ -31,6 +31,14 @@ The embedding page can drive it with `postMessage` (protocol `perigee:v1`, any o
 - `snapshot`: `{ kind: 'shown' | 'objects' }` returns a PNG data URL of the 3D view (as shown with labels, or the objects only) and its title.
 - Events posted to the parent: `ready`, `view`, `selection`, `time`, each with the state.
 
+## Machine-readable documents
+
+- [Interface](https://perigee.info/api/interface.json): ids, URL parameters, the embed API (JSON Schema of `set`), data states, models and their typical accuracy, freshness and attribution.
+- [Catalogue](https://perigee.info/api/catalog.json): every curated object (missions, featured Earth science satellites, planets, moons, landing and launch sites, named stars) in English and French, with goals, status, identifiers, sources, `verified` dates, an image and `view`/`embed` links.
+- [Images](https://perigee.info/api/images.json): the catalogue's photographs and illustrations with credit, licence and source page.
+- [Glossary](https://perigee.info/api/glossary.json): student-level definitions (EN/FR) of the terms shown in the panels.
+- [Full text](https://perigee.info/llms-full.txt): this file followed by the whole catalogue and glossary in plain English.
+
 ## How it works
 
 - Positions: SGP4/SDP4 (satellite.js) for Earth satellites, cubic Hermite interpolation of JPL Horizons state vectors for spacecraft, two-body extrapolation beyond the published window (shown as extrapolated), astronomy-engine (VSOP87) for the planets.
