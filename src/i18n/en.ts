@@ -423,7 +423,7 @@ export const en = {
   'music.frameTitle': 'SoundCloud player: NASA Explorers: Apollo Soundtrack',
   'music.note': 'Player by SoundCloud, loaded only once opened.',
   'app.canvasLabel':
-    '3D view. Drag or use the arrow keys to rotate, Alt (Option) + drag or Alt + arrows to move the view, Q/E to roll, +/− to zoom, R to reset, F to follow the selection. Objects are listed in the side panel.',
+    '3D view. Drag or use the arrow keys or WASD to rotate, Alt (Option) + drag or Alt + arrows to move the view, Q/E to roll, +/− to zoom, R to reset, F to follow the selection. Objects are listed in the side panel.',
   'app.offline': 'Offline — showing cached data',
   'app.updateReady': 'A new version of Perigee is available.',
   'app.dataReady': 'Newer data are available.',

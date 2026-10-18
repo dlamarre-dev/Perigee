@@ -84,9 +84,10 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 ## Using it
 
-- **Rotate**: left-drag, one finger, or the arrow keys. **Roll**: right-drag, a two-finger twist, or Q/E.
+- **Rotate**: left-drag, one finger, the arrow keys or WASD. **Roll**: right-drag, a two-finger twist, or Q/E.
+  Letter keys work by position: on an AZERTY keyboard they are ZQSD and A/E, and the settings window shows them so.
 - **Zoom**: mouse wheel, pinch, or +/−. **Reset**: R or the _Recenter_ button.
-- **Move the view**: Alt-drag (Option-drag on a Mac), Alt + arrows, or drag three fingers; you then turn and zoom
+- **Move the view**: Alt-drag (Option-drag on a Mac), Alt + arrows or WASD, or drag three fingers; you then turn and zoom
   around the new point. The camera stays inside a cube around the view, whose faces light up as a grid when you
   come near them.
 - **Select**: click an object, or pick it in the side panel list. **Follow**: double-click it, or press F.
@@ -113,7 +114,7 @@ Linux, Option on a Mac, or the touch gestures on a phone or a tablet.
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/images/controls-windows.jpg" alt="Mouse and keyboard controls on Windows and Linux: left drag turns, Alt + drag moves the view, click selects, double-click follows, the wheel zooms, right drag rolls; arrows turn, Alt + arrows move, Q and E roll, + and − zoom, F follows, R resets, Esc closes"></td>
+    <td width="50%"><img src="docs/images/controls-windows.jpg" alt="Mouse and keyboard controls on Windows and Linux: left drag turns, Alt + drag moves the view, click selects, double-click follows, the wheel zooms, right drag rolls; arrows or WASD turn, Alt + arrows move, Q and E roll, + and − zoom, F follows, R resets, Esc closes"></td>
     <td width="50%"><img src="docs/images/controls-mac.jpg" alt="The same controls on a Mac, with the Option key"></td>
   </tr>
   <tr>

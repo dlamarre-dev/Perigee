@@ -39,6 +39,7 @@ import { configureKtx2 } from '../render/textures';
 import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
 import { SettingsDialog } from '../ui/SettingsDialog';
+import { watchKeyboardLayout } from '../ui/keyboardLayout';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setSimTime } from '../render/simTime';
 import { setPreviewFrameRate } from '../ui/ModelPreview';
@@ -423,6 +424,8 @@ function main(): void {
   };
 
   const about = new About(i18n, import.meta.env.BASE_URL);
+  // Labels of the letter keys for the controls drawn in the settings window (AZERTY, QWERTZ…).
+  watchKeyboardLayout();
   const settings = new SettingsDialog(i18n, {
     qualityChoice: qualityState.choice,
     detectedTier: qualityState.detected.tier,
@@ -679,12 +682,12 @@ function main(): void {
     const rect = renderer.canvas.getBoundingClientRect();
     view.click(e.clientX - rect.left, e.clientY - rect.top, double);
   };
-  // F: follow the selection / stop following (same guards as the camera keys).
+  // F: follow the selection / stop following (same guards as the camera keys; by position, like them).
   window.addEventListener('keydown', (e) => {
     const target = e.target as HTMLElement | null;
     if (target && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)))
       return;
-    if (e.ctrlKey || e.metaKey || e.altKey || e.key.toLowerCase() !== 'f') return;
+    if (e.ctrlKey || e.metaKey || e.altKey || e.code !== 'KeyF') return;
     e.preventDefault();
     view?.toggleFollow();
   });

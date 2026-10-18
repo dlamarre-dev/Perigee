@@ -434,7 +434,7 @@ export const fr: Messages = {
   'music.frameTitle': 'Lecteur SoundCloud : NASA Explorers: Apollo Soundtrack',
   'music.note': 'Lecteur fourni par SoundCloud, chargé seulement à l’ouverture.',
   'app.canvasLabel':
-    'Vue 3D. Glissez ou utilisez les flèches pour tourner, Alt (Option) + glisser ou Alt + flèches pour déplacer la vue, Q/E pour le roulis, +/− pour zoomer, R pour réinitialiser, F pour suivre la sélection. Les objets sont listés dans le panneau latéral.',
+    'Vue 3D. Glissez ou utilisez les flèches ou ZQSD (WASD en QWERTY) pour tourner, Alt (Option) + glisser ou Alt + flèches pour déplacer la vue, A/E (Q/E en QWERTY) pour le roulis, +/− pour zoomer, R pour réinitialiser, F pour suivre la sélection. Les objets sont listés dans le panneau latéral.',
   'app.offline': 'Hors ligne — données en cache',
   'app.updateReady': 'Une nouvelle version de Périgée est disponible.',
   'app.dataReady': 'Des données plus récentes sont disponibles.',

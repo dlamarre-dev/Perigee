@@ -8,6 +8,7 @@ import type { I18n, MessageKey } from '../i18n';
 import { EFFECT_NAMES, effectPrefs, setEffectEnabled, type EffectName } from '../render/effects';
 import { QUALITY_CHOICES, quality, type QualityChoice, type QualityTier } from '../render/quality';
 import { h, scrollingDialog } from './dom';
+import { keyLabel, onKeyboardLayoutChange } from './keyboardLayout';
 
 /** Action groups of the controls: each has its colour on the keyboard and in the legends. */
 type Action = 'rotate' | 'pan' | 'roll' | 'zoom' | 'select' | 'follow' | 'reset' | 'close';
@@ -26,7 +27,11 @@ function detectPlatform(): Platform {
   return { mac: /mac|iphone|ipad|ipod/i.test(name), touchOnly: coarse && !fine };
 }
 
-/** A key of the drawn keyboard: its cap, its width (in key units) and the action it triggers, if any. */
+/**
+ * A key of the drawn keyboard: its cap, its width (in key units) and the action it triggers, if any. Letter and
+ * digit keys are drawn by physical position (`code`) and named as printed on the visitor's keyboard
+ * (src/ui/keyboardLayout.ts): the camera reads them by position, so W A S D is Z Q S D on AZERTY.
+ */
 interface Key {
   readonly cap: string;
   readonly width?: number;
@@ -35,22 +40,38 @@ interface Key {
   readonly name?: string;
 }
 
+/** Actions of the keys read by position. */
+const CODE_ACTIONS: Readonly<Record<string, Action>> = {
+  KeyW: 'rotate',
+  KeyA: 'rotate',
+  KeyS: 'rotate',
+  KeyD: 'rotate',
+  KeyQ: 'roll',
+  KeyE: 'roll',
+  KeyR: 'reset',
+  KeyF: 'follow',
+};
+
 function keyboardRows(mac: boolean): Key[][] {
-  const letters = (s: string, actions: Record<string, Action> = {}): Key[] =>
-    [...s].map((c) => ({ cap: c, ...(actions[c] ? { action: actions[c] } : {}) }));
+  // + and − are read by the character typed: lit where this keyboard prints them (− on 6 on AZERTY).
+  const keys = (codes: string[]): Key[] =>
+    codes.map((code) => {
+      const cap = keyLabel(code);
+      const action = CODE_ACTIONS[code] ?? (['-', '+', '='].includes(cap) ? 'zoom' : undefined);
+      return { cap: cap === '-' ? '−' : cap, ...(action ? { action } : {}) };
+    });
+  const letters = (s: string, prefix = 'Key'): string[] => [...s].map((c) => `${prefix}${c}`);
   const alt: Key = mac
     ? { cap: '⌥ option', width: 1.5, action: 'pan', name: 'Option' }
     : { cap: 'Alt', width: 1.5, action: 'pan' };
   return [
     [
       { cap: 'Esc', width: 1.25, action: 'close' },
-      ...letters('1234567890'),
-      { cap: '−', action: 'zoom', name: 'minus' },
-      { cap: '+ =', action: 'zoom', name: 'plus' },
+      ...keys([...letters('1234567890', 'Digit'), 'Minus', 'Equal']),
     ],
-    [{ cap: 'Tab', width: 1.5 }, ...letters('QWERTYUIOP', { Q: 'roll', E: 'roll', R: 'reset' })],
-    [{ cap: '', width: 1.75 }, ...letters('ASDFGHJKL', { F: 'follow' })],
-    [{ cap: '⇧', width: 2.25, name: 'Shift' }, ...letters('ZXCVBNM')],
+    [{ cap: 'Tab', width: 1.5 }, ...keys(letters('QWERTYUIOP'))],
+    [{ cap: '', width: 1.75 }, ...keys([...letters('ASDFGHJKL'), 'Semicolon'])],
+    [{ cap: '⇧', width: 2.25, name: 'Shift' }, ...keys(letters('ZXCVBNM'))],
     mac
       ? [
           { cap: 'control', width: 1.5 },
@@ -143,6 +164,8 @@ export class SettingsDialog {
       if (e.target === this.element) this.element.close();
     });
     i18n.onChange(() => this.render());
+    // The keyboard's labels arrive late (layout map) or are learned as the visitor types.
+    onKeyboardLayoutChange(() => this.renderControls());
     this.render();
   }
 
@@ -242,13 +265,17 @@ export class SettingsDialog {
       ),
     ]);
     const kbd = (cap: string): HTMLElement => h('kbd', {}, [cap]);
+    // W A S D as printed on this keyboard (Z Q S D on AZERTY), in the order up, left, down, right.
+    const wasdCaps = ['KeyW', 'KeyA', 'KeyS', 'KeyD'].map(keyLabel);
+    const wasd = wasdCaps.map(kbd);
+    const wasdText = wasdCaps.join('');
     const legend: [(HTMLElement | string)[], Action, MessageKey][] = [
-      [[kbd('←'), kbd('↑'), kbd('↓'), kbd('→')], 'rotate', 'controls.rotate'],
-      [[kbd(this.altCap), '+', kbd('←↑↓→')], 'pan', 'controls.pan'],
-      [[kbd('Q'), kbd('E')], 'roll', 'controls.roll'],
+      [[kbd('←↑↓→'), '/', ...wasd], 'rotate', 'controls.rotate'],
+      [[kbd(this.altCap), '+', kbd('←↑↓→'), '/', kbd(wasdText)], 'pan', 'controls.pan'],
+      [[kbd(keyLabel('KeyQ')), kbd(keyLabel('KeyE'))], 'roll', 'controls.roll'],
       [[kbd('+'), kbd('−')], 'zoom', 'controls.zoom'],
-      [[kbd('F')], 'follow', 'controls.followKey'],
-      [[kbd('R')], 'reset', 'controls.reset'],
+      [[kbd(keyLabel('KeyF'))], 'follow', 'controls.followKey'],
+      [[kbd(keyLabel('KeyR'))], 'reset', 'controls.reset'],
       [[kbd('Esc')], 'close', 'controls.close'],
     ];
     return h('section', { class: 'controls-block' }, [

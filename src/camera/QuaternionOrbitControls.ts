@@ -77,12 +77,38 @@ const TOUCH_PAN_GAIN = 1;
 /** Three-finger drag: no pan until the fingers' centroid moved this far. */
 const TOUCH_PAN_DEAD_PX = 12;
 
-/** Alt + arrow: screen direction of the view's move (x right, y down). */
-const PAN_KEYS: Readonly<Record<string, readonly [number, number]>> = {
-  ArrowLeft: [-1, 0],
-  ArrowRight: [1, 0],
-  ArrowUp: [0, -1],
-  ArrowDown: [0, 1],
+type Direction = 'left' | 'right' | 'up' | 'down';
+
+/**
+ * Direction keys: the arrows, and W A S D by physical position (`code`), so they sit under the same fingers on
+ * every layout (Z Q S D on AZERTY). Letters are read by position too for roll (Q/E: A/E on AZERTY) and reset (R).
+ */
+const ARROWS: Readonly<Record<string, Direction>> = {
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+};
+const WASD: Readonly<Record<string, Direction>> = { KeyW: 'up', KeyA: 'left', KeyS: 'down', KeyD: 'right' };
+
+function directionOf(e: KeyboardEvent): Direction | undefined {
+  return ARROWS[e.key] ?? WASD[e.code];
+}
+
+/** Alt + direction: screen direction of the view's move (x right, y down). */
+const PAN_KEYS: Readonly<Record<Direction, readonly [number, number]>> = {
+  left: [-1, 0],
+  right: [1, 0],
+  up: [0, -1],
+  down: [0, 1],
+};
+
+/** Rotation for a direction key, in the camera frame (x: pitch, y: yaw). */
+const TURN_KEYS: Readonly<Record<Direction, Vec3>> = {
+  left: [0, KEY_ROTATE_RAD, 0],
+  right: [0, -KEY_ROTATE_RAD, 0],
+  up: [KEY_ROTATE_RAD, 0, 0],
+  down: [-KEY_ROTATE_RAD, 0, 0],
 };
 
 function prefersReducedMotion(): boolean {
@@ -488,9 +514,10 @@ export class QuaternionOrbitControls {
     if (e.key === 'Alt') this.setAltHeld(true);
     if (target && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)))
       return;
-    const panKey = PAN_KEYS[e.key];
+    const direction = directionOf(e);
+    const panKey = direction && PAN_KEYS[direction];
     if (e.altKey && !e.ctrlKey && !e.metaKey && panKey) {
-      // Alt + arrows: the view moves the way the arrow points (the content the other way).
+      // Alt + arrows (or W A S D): the view moves the way the arrow points (the content the other way).
       const stepPx = this.element.clientHeight * KEY_PAN_FRACTION;
       this.panPx(-panKey[0] * stepPx, -panKey[1] * stepPx);
       this.pannedWithAlt = true;
@@ -500,46 +527,18 @@ export class QuaternionOrbitControls {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
     // Rotation vector in the camera frame (x: pitch, y: yaw, z: roll), eased in update().
-    let turn: Vec3 | undefined;
-    switch (e.key) {
-      case 'ArrowLeft':
-        turn = [0, KEY_ROTATE_RAD, 0];
-        break;
-      case 'ArrowRight':
-        turn = [0, -KEY_ROTATE_RAD, 0];
-        break;
-      case 'ArrowUp':
-        turn = [KEY_ROTATE_RAD, 0, 0];
-        break;
-      case 'ArrowDown':
-        turn = [-KEY_ROTATE_RAD, 0, 0];
-        break;
-      case 'q':
-      case 'Q':
-        // roll(s, a) turns about the view axis by −a.
-        turn = [0, 0, -KEY_ROLL_RAD];
-        break;
-      case 'e':
-      case 'E':
-        turn = [0, 0, KEY_ROLL_RAD];
-        break;
-      case '+':
-      case '=':
-        this.zoomBy(-ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
-        e.preventDefault();
-        return;
-      case '-':
-      case '_':
-        this.zoomBy(ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
-        e.preventDefault();
-        return;
-      case 'r':
-      case 'R':
-        this.reset();
-        e.preventDefault();
-        return;
-      default:
-        return;
+    let turn: Vec3 | undefined = direction && TURN_KEYS[direction];
+    // roll(s, a) turns about the view axis by −a.
+    if (e.code === 'KeyQ') turn = [0, 0, -KEY_ROLL_RAD];
+    if (e.code === 'KeyE') turn = [0, 0, KEY_ROLL_RAD];
+    if (e.code === 'KeyR') {
+      this.reset();
+      e.preventDefault();
+      return;
+    }
+    if (!turn) {
+      this.onZoomKey(e);
+      return;
     }
     e.preventDefault();
     this.fly = undefined;
@@ -550,6 +549,24 @@ export class QuaternionOrbitControls {
     }
     const p = this.pendingKeyTurn;
     this.pendingKeyTurn = [p[0] + turn[0], p[1] + turn[1], p[2] + turn[2]];
+  }
+
+  /** + and − zoom (read by the character typed: where they sit differs between layouts). */
+  private onZoomKey(e: KeyboardEvent): void {
+    switch (e.key) {
+      case '+':
+      case '=':
+        this.zoomBy(-ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
+        e.preventDefault();
+        return;
+      case '-':
+      case '_':
+        this.zoomBy(ZOOM_KEY_STEP, ZOOM_SMOOTH_S);
+        e.preventDefault();
+        return;
+      default:
+        return;
+    }
   }
 
   private onKeyUp(e: KeyboardEvent): void {
