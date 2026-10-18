@@ -204,6 +204,11 @@ export class Toolbar {
     this.menuButton.setAttribute('aria-expanded', String(open));
   }
 
+  setFrame(frame: FrameMode): void {
+    this.frame = frame;
+    this.renderState();
+  }
+
   setView(view: ViewId): void {
     this.view = view;
     this.renderLabels();

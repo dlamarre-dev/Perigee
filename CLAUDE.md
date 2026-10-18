@@ -322,6 +322,14 @@ the "up" vector and causes gimbal lock at the poles).
   sprite hidden except the starfield and the Sun's halo, `keepInPhoto`). Title (file name and PNG iTXt `Title`):
   brand, followed object (else the view's body), displayed date and time in the display zone. A toast confirms (3 s).
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
+- Machine interface (for AI teaching assistants): `src/engine/` is a headless engine (no DOM or WebGL) over the
+  published data and the same `src/astro` models: `find`, `describe`, `state`, `distance`, `series`, `define`,
+  `viewUrl`, `about`; every answer carries its provenance (`src/engine/provenance.ts`: model, sources, fetch time,
+  element age, validity window, data state, typical accuracy) and the educational-use disclaimer. Embed mode
+  (`?embed=1`, `ui=panel,time` to keep the info panel or the time bar, `follow=1`) shows the 3D view alone with a
+  link to the full app; a framed page answers the `perigee:v1` postMessage API (`src/app/embedApi.ts`: `get`
+  with optional `details` from the engine, `set`, `snapshot` from photo mode, `ping`; events `ready`, `view`,
+  `selection`, `time`). Views select in place through `View.selectId`. Documented in `public/llms.txt`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

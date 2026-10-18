@@ -15,6 +15,21 @@ Site: https://perigee.info/ (English: `?lang=en`, French: `?lang=fr`). It is a s
 
 URL parameters: `view` (`moon`, `mars`, `solar`; Earth by default), `lang` (`en`, `fr`), `sel` (selected object: a NORAD catalogue number such as `25544` for the ISS, a mission id, `site:<id>` for a landing site, or a planet id such as `jupiter`), `t` (ISO 8601 UTC instant, e.g. `2026-10-08T15:00:00Z`), `rate` (time multiplier, `0` pauses), `frame` (`inertial`).
 Example: https://perigee.info/?lang=en&view=moon&sel=site:apollo-11
+More: `sel` also takes `moon:<id>` (moons in the solar view, e.g. `moon:titan`), `star:<id>` (named stars, with `stars=1`), `sun`, and `moon` in the Earth view; `follow=1` follows the selected object.
+
+## For AI assistants and lesson pages: embed mode
+
+Add `embed=1` to show the 3D view alone (no bars or panels) in an iframe, with a corner link to the full app; `ui=panel` keeps the selected object's information panel, `ui=time` the time bar (`ui=panel,time` for both).
+
+    <iframe src="https://perigee.info/?embed=1&lang=en&view=solar&sel=mars&follow=1&t=2026-12-01T00:00:00Z&rate=0" width="800" height="500" style="border:0" allow="fullscreen" title="Perigee: Mars"></iframe>
+
+The embedding page can drive it with `postMessage` (protocol `perigee:v1`, any origin, replies to the caller's origin):
+
+- Request: `{ type: 'perigee:v1', id, method, params }`; reply: `{ type: 'perigee:v1', id, ok, result | error }`.
+- `get`: view, `sel`, simulation `time` (ISO UTC), `live`, `rate`, `frame`, `lang`, `following`, `url` (the same view in the full app). `{ details: true }` adds the selected object's facts (goals, status, sources, image with credit and licence) and its position with provenance: model, data source, fetch time, element age, validity window, data state (`fresh`, `interpolated`, `stale`, `extrapolated`, `hidden`, `modelled`, `none`) and typical accuracy.
+- `set`: any of `view`, `sel` (null clears), `time` (ISO or `now`), `rate`, `frame`, `lang`, `follow`.
+- `snapshot`: `{ kind: 'shown' | 'objects' }` returns a PNG data URL of the 3D view (as shown with labels, or the objects only) and its title.
+- Events posted to the parent: `ready`, `view`, `selection`, `time`, each with the state.
 
 ## How it works
 

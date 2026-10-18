@@ -929,14 +929,22 @@ export class PlanetaryView implements View {
       this.refreshLabels();
     }
     const sel = p.get('sel');
-    if (!sel) return;
+    if (sel) this.selectId(sel);
+  }
+
+  selectId(sel: string | undefined): boolean {
+    if (sel === undefined) {
+      this.select(undefined);
+      return true;
+    }
     if (sel.startsWith('site:')) {
       const site = this.sites.find((s) => s.id === sel.slice(5));
       if (site) this.select({ kind: 'site', site }, { frame: true });
-    } else {
-      const mission = this.missions.find((m) => m.id === sel);
-      if (mission) this.select({ kind: 'mission', mission }, { frame: true });
+      return site !== undefined;
     }
+    const mission = this.missions.find((m) => m.id === sel);
+    if (mission) this.select({ kind: 'mission', mission }, { frame: true });
+    return mission !== undefined;
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {

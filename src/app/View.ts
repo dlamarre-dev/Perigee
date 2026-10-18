@@ -121,6 +121,11 @@ export interface View {
   click(xCss: number, yCss: number, double: boolean): void;
   /** Keyboard F: follow the selected object, or stop following (no-op without a selection). */
   toggleFollow(): void;
+  /**
+   * Selects an object by its `sel` URL value (undefined clears the selection), as a link would; false when the
+   * view does not know it. Used by the embed API (./embedApi.ts).
+   */
+  selectId(sel: string | undefined): boolean;
   writeUrl(params: URLSearchParams): void;
   /** Hashes of the published data this view loaded (src/app/updates.ts keys), to detect newer data. */
   dataVersions?(): ReadonlyMap<string, string>;

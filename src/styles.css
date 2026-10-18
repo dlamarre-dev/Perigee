@@ -2372,3 +2372,36 @@ body.music-open .altimeter {
     display: none;
   }
 }
+
+/* Embed mode (?embed=1): the 3D view alone; `ui=panel` keeps the info panel, `ui=time` the time bar. */
+.embed .toolbar,
+.embed .altimeter,
+.embed .music,
+.embed .update-notice,
+.embed .side-panel.filters,
+.embed:not(.embed-panel) .side-panel.info,
+.embed:not(.embed-time) .time-control {
+  display: none !important;
+}
+
+.embed-credit {
+  position: absolute;
+  z-index: 5;
+  right: 8px;
+  bottom: calc(var(--timebar-space, 0px) + 8px);
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--panel-bottom);
+  color: var(--accent);
+  font-family: Rajdhani, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.embed-credit:hover,
+.embed-credit:focus-visible {
+  color: var(--accent-strong);
+}

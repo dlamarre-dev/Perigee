@@ -1632,25 +1632,36 @@ class SolarView implements View {
 
   private restoreFromUrl(p: URLSearchParams): void {
     const sel = p.get('sel');
-    if (!sel) return;
+    if (sel) this.selectId(sel);
+  }
+
+  selectId(sel: string | undefined): boolean {
+    if (sel === undefined) {
+      this.select(undefined);
+      return true;
+    }
     if (sel === 'sun') {
       this.select({ kind: 'sun' }, { frame: true });
-      return;
+      return true;
     }
     const planet = PLANETS.find((x) => x.id === sel);
     if (planet) {
       this.select({ kind: 'planet', planet }, { frame: true });
-      return;
+      return true;
     }
     const mission = this.missions.find((m) => m.id === sel);
     if (mission) {
       this.select({ kind: 'mission', mission }, { frame: true });
-      return;
+      return true;
     }
     const moon = this.moons.find((m) => `moon:${m.moon.id}` === sel)?.moon;
-    if (moon) this.select({ kind: 'moon', moon }, { frame: true });
+    if (moon) {
+      this.select({ kind: 'moon', moon }, { frame: true });
+      return true;
+    }
     const star = this.stars.find((s) => `star:${s.star.id}` === sel)?.star;
     if (star) this.select({ kind: 'star', star }, { frame: true });
+    return star !== undefined;
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {

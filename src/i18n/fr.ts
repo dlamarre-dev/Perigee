@@ -186,6 +186,7 @@ export const fr: Messages = {
   'photo.title': '{brand} — {subject} — {date}',
   'photo.objectsOnly': '(objets seulement)',
   'photo.saved': 'Deux images téléchargées : la vue et les objets seulement',
+  'embed.open': 'Ouvrir dans Périgée ↗',
   'photo.failed': 'La photo n’a pas pu être créée',
   'panel.collapse': 'Replier ou déplier le panneau',
   'solar.moonCount': '{n} lunes',

@@ -68,6 +68,8 @@ import {
   type UpdateKind,
 } from './updates';
 import type { FollowApi, View, ViewFactory, ViewHost } from './View';
+import type { Engine } from '../engine';
+import { EmbedApi, engineIdOf, type EmbedState, type SetParams } from './embedApi';
 
 const UI_REFRESH_S = 0.25;
 /** A pointer that moved less than this between down and up is a click, not a drag. */
@@ -148,6 +150,13 @@ function main(): void {
   let explicitLang: Lang | undefined = url.lang;
   let frame: FrameMode = url.frame;
   let viewId: ViewId = url.view;
+  // Embed mode (?embed=1, for an iframe): the 3D view alone, with the parts listed in `ui` (panel, time) and a
+  // link to the full app. The embed API (./embedApi.ts) answers whenever the page is framed.
+  const embed = startParams.get('embed') === '1';
+  const embedUi = new Set((startParams.get('ui') ?? '').split(','));
+  document.documentElement.classList.toggle('embed', embed);
+  document.documentElement.classList.toggle('embed-panel', embed && embedUi.has('panel'));
+  document.documentElement.classList.toggle('embed-time', embed && embedUi.has('time'));
 
   // Canonical URL: language and view only (as in public/sitemap.xml), so the countless shared links with a
   // selection, a time or filters fold into one page per view and language.
@@ -270,14 +279,31 @@ function main(): void {
         view?.writeUrl(p);
         // Test hooks, a forced quality tier and the perf overlay survive the URL rewrites (and update reloads).
         if (startParams.has('e2e')) p.set('e2e', '');
-        for (const key of ['quality', 'debug']) {
+        for (const key of ['quality', 'debug', 'embed', 'ui']) {
           const value = startParams.get(key);
           if (value) p.set(key, value);
         }
       },
     );
     history.replaceState(null, '', `${window.location.pathname}${search}${window.location.hash}`);
+    updateEmbedLink();
+    embedApi?.changed();
   };
+
+  // The full app showing the same thing (the embed's corner link and the API's `url`).
+  const fullAppUrl = (): string => {
+    const p = new URLSearchParams(window.location.search);
+    for (const key of ['embed', 'ui', 'e2e']) p.delete(key);
+    const query = p.toString();
+    return new URL(`${import.meta.env.BASE_URL}${query ? `?${query}` : ''}`, window.location.origin).href;
+  };
+  const embedLink = h('a', { class: 'embed-credit', target: '_blank', rel: 'noopener' });
+  function updateEmbedLink(): void {
+    if (!embed) return;
+    embedLink.href = fullAppUrl();
+    embedLink.textContent = i18n.t('embed.open');
+  }
+  let embedApi: EmbedApi | undefined;
 
   const notice = h('p', { class: 'notice', role: 'status', hidden: true });
   // Short confirmations (photo saved): shown for 3 s.
@@ -453,9 +479,11 @@ function main(): void {
     document.documentElement.style.setProperty(name, value);
   };
   function updateBottomInset(): void {
+    // A bar hidden by the embed mode takes no room.
+    const timeShown = timeControl.element.offsetParent !== null;
     const timeRect = timeControl.element.getBoundingClientRect();
-    setCssPx('--timebar-h', timeRect.height);
-    setCssPx('--timebar-space', window.innerHeight - timeRect.top);
+    setCssPx('--timebar-h', timeShown ? timeRect.height : 0);
+    setCssPx('--timebar-space', timeShown ? window.innerHeight - timeRect.top : 0);
     setCssPx('--toolbar-bottom', toolbar.element.getBoundingClientRect().bottom);
     if (!phone.matches) {
       renderer.setBottomInset(0);
@@ -480,23 +508,7 @@ function main(): void {
       follow.stop();
       controls.reset();
     },
-    onFrameChange: (mode) => {
-      const date = clock.nowUtc();
-      if (view) {
-        // Re-express the camera in the other frame so the view does not jump.
-        const bodyQ = view.bodyOrientation(date);
-        const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
-        const s = controls.state;
-        controls.setState({
-          targetKm: quatRotate(q, s.targetKm),
-          distanceKm: s.distanceKm,
-          orientation: quatNormalize(quatMultiply(q, s.orientation)),
-        });
-      }
-      frame = mode;
-      controls.setHome(homeState(date));
-      syncUrl();
-    },
+    onFrameChange: (mode) => changeFrame(mode),
     onLangChange: (lang) => {
       explicitLang = lang;
       i18n.setLang(lang);
@@ -510,6 +522,25 @@ function main(): void {
       if (panelToggle) toolbar.setPanelOpen(panelToggle());
     },
   });
+  function changeFrame(mode: FrameMode): void {
+    if (mode === frame) return;
+    const date = clock.nowUtc();
+    if (view) {
+      // Re-express the camera in the other frame so the view does not jump.
+      const bodyQ = view.bodyOrientation(date);
+      const q = mode === 'inertial' ? bodyQ : quatConjugate(bodyQ);
+      const s = controls.state;
+      controls.setState({
+        targetKm: quatRotate(q, s.targetKm),
+        distanceKm: s.distanceKm,
+        orientation: quatNormalize(quatMultiply(q, s.orientation)),
+      });
+    }
+    frame = mode;
+    toolbar.setFrame(mode);
+    controls.setHome(homeState(date));
+    syncUrl();
+  }
   // The panels follow a bar as soon as it changes size (menu opened, date row, new layout level).
   const barObserver = new ResizeObserver(() => updateBottomInset());
   barObserver.observe(toolbar.element);
@@ -537,6 +568,10 @@ function main(): void {
     toast,
     report.element,
   );
+  if (embed) {
+    app.append(embedLink);
+    i18n.onChange(updateEmbedLink);
+  }
   app.querySelector('.loading')?.remove();
 
   const host: ViewHost = {
@@ -630,7 +665,7 @@ function main(): void {
   let switching = Promise.resolve();
   let requestedView: ViewId = viewId;
   let firstView = true;
-  async function switchView(id: ViewId): Promise<void> {
+  async function switchView(id: ViewId, viewParams?: URLSearchParams): Promise<void> {
     requestedView = id;
     const run = switching.then(async () => {
       if (id !== requestedView) return;
@@ -642,7 +677,7 @@ function main(): void {
       host.setPanelToggle(undefined);
       showNotice(undefined);
       // The page's URL parameters (selection, filters…) apply to the first view only.
-      const params = firstView && id === url.view ? startParams : new URLSearchParams();
+      const params = viewParams ?? (firstView && id === url.view ? startParams : new URLSearchParams());
       firstView = false;
       viewId = id;
       updateCanonical();
@@ -668,7 +703,9 @@ function main(): void {
     switching = run.catch((err: unknown) => console.error(err));
     await run;
   }
-  void switchView(viewId);
+  // ?follow=1: follow the selection once it has a position (as after an update reload).
+  if (startParams.get('follow') === '1') resumeFollowUntilMs = Date.now() + 20_000;
+  void switchView(viewId).then(() => embedApi?.ready());
 
   // Clicks: select (click) and follow (double-click); drags are not clicks.
   let downAt: { x: number; y: number } | undefined;
@@ -719,28 +756,31 @@ ${
   // the bodies and models only. Named after the followed object (else the view's body) and the displayed
   // date, in the display time zone.
   let photoBusy = false;
+  function capturePhoto(): { title: string; shown: HTMLCanvasElement; objects: HTMLCanvasElement } {
+    const followed = follow.active
+      ? app.querySelector('.info:not([hidden]) .panel-title')?.textContent?.trim()
+      : undefined;
+    const title = i18n.format('photo.title', {
+      brand: i18n.t('app.brand'),
+      subject: followed || i18n.t(VIEW_LABELS[viewId]),
+      date: i18n.dateTime(clock.nowUtc(), true),
+    });
+    renderer.renderNow();
+    const shown = copyCanvas(renderer.canvas);
+    drawLabels(shown, app, renderer.canvas.getBoundingClientRect());
+    const restore = hideOverlays(renderer.scene);
+    try {
+      renderer.renderNow();
+    } finally {
+      restore();
+    }
+    return { title, shown, objects: copyCanvas(renderer.canvas) };
+  }
   async function takePhoto(): Promise<void> {
     if (photoBusy || !view) return;
     photoBusy = true;
     try {
-      const followed = follow.active
-        ? app.querySelector('.info:not([hidden]) .panel-title')?.textContent?.trim()
-        : undefined;
-      const title = i18n.format('photo.title', {
-        brand: i18n.t('app.brand'),
-        subject: followed || i18n.t(VIEW_LABELS[viewId]),
-        date: i18n.dateTime(clock.nowUtc(), true),
-      });
-      renderer.renderNow();
-      const shown = copyCanvas(renderer.canvas);
-      drawLabels(shown, app, renderer.canvas.getBoundingClientRect());
-      const restore = hideOverlays(renderer.scene);
-      try {
-        renderer.renderNow();
-      } finally {
-        restore();
-      }
-      const objects = copyCanvas(renderer.canvas);
+      const { title, shown, objects } = capturePhoto();
       await downloadPng(shown, title);
       await downloadPng(objects, `${title} ${i18n.t('photo.objectsOnly')}`);
       showToast(i18n.t('photo.saved'));
@@ -750,6 +790,80 @@ ${
     } finally {
       photoBusy = false;
     }
+  }
+
+  // Embed API: only when framed by another page.
+  if (window.parent !== window) {
+    const embedState = (): EmbedState => {
+      const p = new URLSearchParams();
+      view?.writeUrl(p);
+      return {
+        view: viewId,
+        sel: p.get('sel'),
+        time: clock.nowUtc().toISOString(),
+        live: clock.isLive(),
+        rate: clock.rate,
+        frame,
+        lang: i18n.lang,
+        following: follow.active,
+        url: fullAppUrl(),
+      };
+    };
+    let engine: Promise<Engine> | undefined;
+    embedApi = new EmbedApi(
+      {
+        state: embedState,
+        async set(params: SetParams) {
+          if (params.lang && params.lang !== i18n.lang) {
+            explicitLang = params.lang;
+            i18n.setLang(params.lang);
+          }
+          if (params.time === 'now') clock.goLive();
+          else if (params.time) clock.jumpTo(new Date(params.time));
+          if (params.rate !== undefined) clock.setRate(params.rate);
+          if (params.frame) changeFrame(params.frame);
+          const targetView = params.view ?? viewId;
+          if (targetView !== viewId || params.sel !== undefined) {
+            const sel = params.sel ?? undefined;
+            // Same view: select in place; another view, or an object it does not know: build the view with it.
+            if (targetView !== viewId || !view?.selectId(sel)) {
+              const p = new URLSearchParams();
+              if (sel) p.set('sel', sel);
+              await switchView(targetView, p);
+            }
+          }
+          if (params.follow === false) follow.stop();
+          if (params.follow) resumeFollowUntilMs = Date.now() + 20_000;
+          timeControl.update();
+          syncUrl();
+        },
+        async snapshot(kind) {
+          if (!view) throw new Error('The view is not ready');
+          if (photoBusy) throw new Error('A snapshot is already being taken');
+          photoBusy = true;
+          try {
+            const shot = capturePhoto();
+            return { title: shot.title, dataUrl: shot[kind].toDataURL('image/png') };
+          } finally {
+            photoBusy = false;
+          }
+        },
+        async details(state) {
+          if (!state.sel) return undefined;
+          engine ??= import('../engine').then((m) =>
+            m.createEngine({ baseUrl: new URL(import.meta.env.BASE_URL, window.location.origin).href }),
+          );
+          const e = await engine;
+          const id = engineIdOf(state.view, state.sel);
+          const [facts, position] = await Promise.all([
+            e.describe(id, state.lang),
+            e.state(id, new Date(state.time)).catch((err: unknown) => ({ error: String(err) })),
+          ]);
+          return { id, facts, position };
+        },
+      },
+      window.parent,
+    );
   }
 
   // Frame loop

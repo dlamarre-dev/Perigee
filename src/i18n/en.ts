@@ -179,6 +179,7 @@ export const en = {
   'photo.title': '{brand} — {subject} — {date}',
   'photo.objectsOnly': '(objects only)',
   'photo.saved': 'Two images downloaded: the view and the objects only',
+  'embed.open': 'Open in Perigee ↗',
   'photo.failed': 'The photo could not be created',
   'panel.collapse': 'Collapse or expand the panel',
   'solar.moonCount': '{n} moons',

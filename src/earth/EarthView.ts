@@ -313,6 +313,34 @@ class EarthView implements View {
     this.infoPanel.following = started;
   }
 
+  selectId(sel: string | undefined): boolean {
+    if (sel === undefined) {
+      this.select(undefined);
+      this.selectSite(undefined);
+      this.selectMoon(false);
+      return true;
+    }
+    if (sel === 'moon') {
+      this.selectMoon(true);
+      return true;
+    }
+    if (sel.startsWith('site:')) {
+      const site = this.launchSites.find((x) => x.id === sel.slice(5));
+      if (site) this.selectSite(site);
+      return site !== undefined;
+    }
+    if (!/^\d+$/.test(sel)) return false;
+    const norad = Number(sel);
+    // Before the satellites have loaded, the loader selects it.
+    if (!this.catalog) {
+      this.selectedNorad = norad;
+      return true;
+    }
+    const obj = this.catalog.byNorad.get(norad);
+    if (obj) this.select(obj, { frame: true });
+    return obj !== undefined;
+  }
+
   private select(
     obj: SatObject | undefined,
     options: { follow?: boolean; focus?: boolean; frame?: boolean } = {},
