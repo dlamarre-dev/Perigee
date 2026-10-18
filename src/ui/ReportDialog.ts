@@ -107,7 +107,7 @@ export class ReportDialog {
     const radios = REPORT_TYPES.map((type, i) => {
       const id = `report-type-${type}`;
       const input = h('input', { type: 'radio', name: 'report-type', id, value: type, checked: i === 0 });
-      const label = h('label', { for: id });
+      const label = h('label', { for: id, class: 'btn' });
       this.typeInputs.set(type, input);
       this.typeLabels.set(type, label);
       return h('span', { class: 'report-type' }, [input, label]);

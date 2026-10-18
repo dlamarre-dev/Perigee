@@ -202,7 +202,15 @@ body,
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-btn)), calc(100% - var(--cut-btn)) 100%, 0 100%);
+  /* The cut polygon reaches 1 px past the box: a button laid at a fractional pixel position (most are) had the
+     anti-aliased clip edge slice its right border, which then looked fainter than the others. */
+  clip-path: polygon(
+    -1px -1px,
+    calc(100% + 1px) -1px,
+    calc(100% + 1px) calc(100% - var(--cut-btn)),
+    calc(100% - var(--cut-btn)) calc(100% + 1px),
+    -1px calc(100% + 1px)
+  );
   transition:
     background 120ms,
     border-color 120ms,
@@ -506,19 +514,17 @@ h2[tabindex='-1']:focus {
   pointer-events: none;
 }
 
-.report-type label {
-  display: inline-block;
-  padding: 4px 10px;
-  border: 1px solid var(--line-strong);
-  color: var(--text);
-  cursor: pointer;
-  letter-spacing: 0.06em;
+/* The report types are bevelled buttons (.btn); the checked one looks pressed. */
+.report-type label.btn {
+  display: inline-flex;
+  align-items: center;
 }
 
-.report-type input:checked + label {
+.report-type input:checked + label.btn {
   border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--accent-strong);
+  background: linear-gradient(180deg, #7fe3ff, var(--accent));
+  color: var(--on-accent);
+  text-shadow: none;
 }
 
 .report-type input:focus-visible + label {
@@ -563,6 +569,7 @@ h2[tabindex='-1']:focus {
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   margin-top: 12px;
 }
 
@@ -2149,7 +2156,15 @@ body.music-open .info {
   text-align: right;
   white-space: nowrap;
   box-shadow: var(--accent-glow);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-btn)), calc(100% - var(--cut-btn)) 100%, 0 100%);
+  /* The cut polygon reaches 1 px past the box: a button laid at a fractional pixel position (most are) had the
+     anti-aliased clip edge slice its right border, which then looked fainter than the others. */
+  clip-path: polygon(
+    -1px -1px,
+    calc(100% + 1px) -1px,
+    calc(100% + 1px) calc(100% - var(--cut-btn)),
+    calc(100% - var(--cut-btn)) calc(100% + 1px),
+    -1px calc(100% + 1px)
+  );
 }
 
 /* Room for the altimeter: the details panel sits to its left. */
