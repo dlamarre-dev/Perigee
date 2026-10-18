@@ -91,8 +91,17 @@ const ARROWS: Readonly<Record<string, Direction>> = {
 };
 const WASD: Readonly<Record<string, Direction>> = { KeyW: 'up', KeyA: 'left', KeyS: 'down', KeyD: 'right' };
 
+/**
+ * Physical position of a letter key ("KeyF"). Some events carry none (`code` empty: Android's on-screen keyboard,
+ * assistive tools, synthetic events): the typed letter stands in for it then.
+ */
+export function letterCode(e: KeyboardEvent): string {
+  if (e.code) return e.code;
+  return /^[a-z]$/i.test(e.key) ? `Key${e.key.toUpperCase()}` : '';
+}
+
 function directionOf(e: KeyboardEvent): Direction | undefined {
-  return ARROWS[e.key] ?? WASD[e.code];
+  return ARROWS[e.key] ?? WASD[letterCode(e)];
 }
 
 /** Alt + direction: screen direction of the view's move (x right, y down). */
@@ -529,9 +538,10 @@ export class QuaternionOrbitControls {
     // Rotation vector in the camera frame (x: pitch, y: yaw, z: roll), eased in update().
     let turn: Vec3 | undefined = direction && TURN_KEYS[direction];
     // roll(s, a) turns about the view axis by −a.
-    if (e.code === 'KeyQ') turn = [0, 0, -KEY_ROLL_RAD];
-    if (e.code === 'KeyE') turn = [0, 0, KEY_ROLL_RAD];
-    if (e.code === 'KeyR') {
+    const code = letterCode(e);
+    if (code === 'KeyQ') turn = [0, 0, -KEY_ROLL_RAD];
+    if (code === 'KeyE') turn = [0, 0, KEY_ROLL_RAD];
+    if (code === 'KeyR') {
       this.reset();
       e.preventDefault();
       return;

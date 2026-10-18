@@ -21,7 +21,7 @@ import {
 import { SimClock } from '../astro/time';
 import { DEG_TO_RAD } from '../astro/constants';
 import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
-import { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
+import { letterCode, QuaternionOrbitControls } from '../camera/QuaternionOrbitControls';
 import {
   heightAboveKm,
   keepOutside,
@@ -687,7 +687,7 @@ function main(): void {
     const target = e.target as HTMLElement | null;
     if (target && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)))
       return;
-    if (e.ctrlKey || e.metaKey || e.altKey || e.code !== 'KeyF') return;
+    if (e.ctrlKey || e.metaKey || e.altKey || letterCode(e) !== 'KeyF') return;
     e.preventDefault();
     view?.toggleFollow();
   });
