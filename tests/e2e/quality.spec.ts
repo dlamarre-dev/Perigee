@@ -9,9 +9,11 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
 }) => {
   await page.goto('./?lang=en&view=moon');
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'low');
-  // Quality heads the effects popover.
-  const openPopover = (): Promise<void> =>
-    page.getByRole('button', { name: 'Quality and visual effects' }).click();
+  // Quality heads the settings window (gear button).
+  const openPopover = async (): Promise<void> => {
+    await page.getByRole('button', { name: /^Settings/ }).click();
+    await expect(page.locator('dialog.settings')).toBeVisible();
+  };
   await openPopover();
   const select = page.getByLabel('Quality', { exact: true });
   await expect(select.locator('option:checked')).toHaveText('Auto');
@@ -20,6 +22,7 @@ test('auto detects the low tier on a software GPU; the menu choice is remembered
   await expect(page.locator('.toolbar')).toHaveCSS('backdrop-filter', 'none');
 
   await Promise.all([page.waitForEvent('load'), select.selectOption('medium')]);
+  // The page reloads: the window is closed again.
   await expect(page.locator('html')).toHaveAttribute('data-quality', 'medium');
   await expect(page).toHaveURL(/view=moon/);
   await openPopover();
@@ -109,7 +112,7 @@ test.describe('immersive effects', () => {
       if (r.url().includes('/textures/earth/clouds-')) cloudRequests++;
     });
     await page.goto('./?lang=en&view=earth&quality=high');
-    await page.getByRole('button', { name: 'Quality and visual effects' }).click();
+    await page.getByRole('button', { name: /^Settings/ }).click();
     const clouds = page.getByLabel('Earth clouds (illustrative)');
     await expect(clouds).toBeEnabled();
     await expect(clouds).toBeChecked();
@@ -117,7 +120,7 @@ test.describe('immersive effects', () => {
     await clouds.uncheck();
     await expect.poll(() => page.evaluate(() => localStorage.getItem('perigee-effects'))).toBe('-clouds');
     await page.reload();
-    await page.getByRole('button', { name: 'Quality and visual effects' }).click();
+    await page.getByRole('button', { name: /^Settings/ }).click();
     await expect(page.getByLabel('Earth clouds (illustrative)')).not.toBeChecked();
     await page.waitForTimeout(2000);
     expect(errors).toEqual([]);
@@ -125,7 +128,7 @@ test.describe('immersive effects', () => {
 
   test('are greyed out below the high tier', async ({ page }) => {
     await page.goto('./?lang=fr&view=solar&quality=medium');
-    await page.getByRole('button', { name: 'Qualité et effets visuels' }).click();
+    await page.getByRole('button', { name: /^Réglages/ }).click();
     await expect(page.getByLabel('Relief')).toBeDisabled();
     await expect(page.getByText('Disponible en qualité élevée seulement.')).toBeVisible();
   });
