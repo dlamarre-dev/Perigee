@@ -24,6 +24,27 @@
       "sources": ["https://www.nasa.gov/international-space-station/"]
     },
     {
+      "id": "tiangong",
+      "norad": 48274,
+      "name": { "en": "Tiangong space station (CSS)", "fr": "Station spatiale Tiangong (CSS)" },
+      "agency": "CMSA",
+      "country": "cn",
+      "launchDate": "2021-04-29",
+      "status": "active",
+      "purpose": { "en": "Crewed orbital laboratory", "fr": "Laboratoire orbital habité" },
+      "goals": {
+        "en": "China's space station lets crews live and work in orbit for months at a time, to run experiments in weightlessness in life sciences, physics, materials and astronomy, and to test the technologies and study the health effects of long stays in space. It is also a step towards China's crewed missions to the Moon.",
+        "fr": "La station spatiale chinoise permet à des équipages de vivre et de travailler en orbite pendant des mois, pour mener des expériences en apesanteur en sciences de la vie, en physique, sur les matériaux et en astronomie, et pour tester les technologies et étudier les effets sur la santé des longs séjours dans l'espace. C'est aussi une étape vers les missions habitées chinoises vers la Lune."
+      },
+      "notes": {
+        "en": "Tiangong (“heavenly palace”) is called CSS (TIANHE) in the satellite catalogue, after its core module Tianhe, launched on 29 April 2021. The laboratory modules Wentian and Mengtian joined it in July and October 2022. Crews of three, flown on Shenzhou spacecraft, take turns about every six months.",
+        "fr": "Tiangong (« palais céleste ») s'appelle CSS (TIANHE) dans le catalogue des satellites, d'après son module central Tianhe, lancé le 29 avril 2021. Les modules laboratoires Wentian et Mengtian l'ont rejoint en juillet et en octobre 2022. Des équipages de trois, transportés par des vaisseaux Shenzhou, se relaient environ tous les six mois."
+      },
+      "website": { "url": "https://en.cmse.gov.cn/" },
+      "verified": "2026-10-19",
+      "sources": ["https://en.cmse.gov.cn/", "https://en.wikipedia.org/wiki/Tiangong_space_station"]
+    },
+    {
       "id": "hubble",
       "norad": 20580,
       "name": { "en": "Hubble Space Telescope (HST)", "fr": "Télescope spatial Hubble (HST)" },
