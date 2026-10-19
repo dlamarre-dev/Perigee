@@ -8,6 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { ManifestSchema, type DatasetKey, type EphemerisEntry, type Manifest } from '../src/data/schemas';
+import { SHARD_COUNT, shardOf, shardPath } from '../src/data/shards';
 
 export const MIN_RATIO_VS_PREVIOUS = 0.5;
 
@@ -32,6 +33,10 @@ export interface DatasetToWrite {
   readonly fetchedAt: Date;
   readonly count: number;
   readonly payload: unknown;
+  /** Split copies of an array payload by NORAD number, for the machine interfaces (src/data/shards.ts). */
+  readonly shards?: { readonly path: string; readonly norad: (record: never) => number };
+  /** Text index written next to the dataset (earth.gp names). */
+  readonly names?: { readonly path: string; readonly text: string };
 }
 
 /** Checks every dataset against the guard first, then writes all of them or none. */
@@ -53,6 +58,12 @@ export async function publishDatasets(
     const file = join(dataDir, d.path);
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, gz);
+    if (d.shards) await writeShards(dataDir, d.shards.path, d.payload as never[], d.shards.norad);
+    if (d.names) {
+      const namesFile = join(dataDir, d.names.path);
+      await mkdir(dirname(namesFile), { recursive: true });
+      await writeFile(namesFile, gzipSync(Buffer.from(d.names.text), { level: 9 }));
+    }
     next.datasets[d.key] = {
       path: d.path,
       source: d.source,
@@ -60,6 +71,8 @@ export async function publishDatasets(
       count: d.count,
       bytes: gz.byteLength,
       sha256: createHash('sha256').update(gz).digest('hex'),
+      ...(d.shards ? { shards: { count: SHARD_COUNT, path: d.shards.path } } : {}),
+      ...(d.names ? { names: d.names.path } : {}),
     };
     console.log(`wrote ${d.path}: ${d.count} records, ${(gz.byteLength / 1024).toFixed(0)} KiB`);
   }
@@ -67,6 +80,22 @@ export async function publishDatasets(
   ManifestSchema.parse(next);
   await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
   return next;
+}
+
+/** Writes the SHARD_COUNT split copies of a record list (every shard, empty ones included). */
+async function writeShards(
+  dataDir: string,
+  template: string,
+  records: readonly never[],
+  norad: (record: never) => number,
+): Promise<void> {
+  const shards: never[][] = Array.from({ length: SHARD_COUNT }, () => []);
+  for (const r of records) shards[shardOf(norad(r), SHARD_COUNT)]?.push(r);
+  for (const [i, list] of shards.entries()) {
+    const file = join(dataDir, shardPath(template, i));
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, gzipSync(Buffer.from(JSON.stringify(list)), { level: 9 }));
+  }
 }
 
 /** Records which CelesTrak supplemental GP sets fed the last earth.gp (manifest `supplemental`). */

@@ -5,6 +5,7 @@
  */
 import { EphemerisTable } from '../astro/hermite';
 import { gunzipJson } from '../data/decode';
+import { shardOf, shardPath } from '../data/shards';
 import {
   ManifestSchema,
   OmmListSchema,
@@ -34,6 +35,13 @@ export interface DataOptions {
   readonly manifestTtlMs?: number;
 }
 
+async function gunzipText(bytes: Uint8Array): Promise<string> {
+  const stream = new Blob([bytes as Uint8Array<ArrayBuffer>])
+    .stream()
+    .pipeThrough(new DecompressionStream('gzip'));
+  return new Response(stream).text();
+}
+
 export class DataError extends Error {
   constructor(message: string) {
     super(message);
@@ -50,6 +58,8 @@ export class PublishedData {
   private readonly tables = new Map<string, Promise<EphemerisTable>>();
   private gp: { hash: string; data: Promise<readonly Omm[]> } | undefined;
   private satcat: { hash: string; data: Promise<readonly SatcatRecord[]> } | undefined;
+  private readonly shardLists = new Map<string, Promise<readonly unknown[]>>();
+  private namesValue: { key: string; text: Promise<{ raw: string; upper: string }> } | undefined;
 
   constructor(options: DataOptions = {}) {
     this.baseUrl = options.baseUrl ?? 'https://perigee.info/';
@@ -120,6 +130,92 @@ export class PublishedData {
       this.satcat = { hash: entry.sha256, data };
     }
     return { entry, records: await this.satcat.data };
+  }
+
+  /**
+   * Records of one shard of a sharded dataset (src/data/shards.ts), cached by content hash: a request about one
+   * satellite decodes a few dozen records instead of the whole file.
+   */
+  private shard<T>(
+    entry: DatasetEntry,
+    shards: NonNullable<DatasetEntry['shards']>,
+    norad: number,
+    parse: (raw: unknown) => readonly T[],
+  ): Promise<readonly T[]> {
+    const path = shardPath(shards.path, shardOf(norad, shards.count));
+    const key = `${path}@${entry.sha256}`;
+    let list = this.shardLists.get(key);
+    if (!list) {
+      list = this.bytes({ path, sha256: entry.sha256 }).then(async (buf) =>
+        parse(await gunzipJson(new Uint8Array(buf))),
+      );
+      list.catch(() => this.shardLists.delete(key));
+      this.shardLists.set(key, list);
+    }
+    return list as Promise<readonly T[]>;
+  }
+
+  /** One active satellite's elements (undefined if not in the active set), from its shard when published. */
+  async satelliteElements(norad: number): Promise<{ entry: DatasetEntry; omm: Omm | undefined }> {
+    const entry = (await this.manifest()).datasets['earth.gp'];
+    if (!entry) throw new DataError('The satellite elements are not published');
+    const list = entry.shards
+      ? await this.shard(entry, entry.shards, norad, (raw) => OmmListSchema.parse(raw))
+      : (await this.gpElements()).omm;
+    return { entry, omm: list.find((o) => o.NORAD_CAT_ID === norad) };
+  }
+
+  /** One satellite's SATCAT record, from its shard when published (undefined if unpublished or unknown). */
+  async satcatRecord(norad: number): Promise<SatcatRecord | undefined> {
+    const entry = (await this.manifest()).datasets['earth.satcat'];
+    if (!entry) return undefined;
+    const list = entry.shards
+      ? await this.shard(entry, entry.shards, norad, (raw) => SatcatListSchema.parse(raw))
+      : ((await this.satcatRecords())?.records ?? []);
+    return list.find((r) => r.NORAD_CAT_ID === norad);
+  }
+
+  /**
+   * Active satellites whose name contains the query, or whose NORAD or COSPAR id is it (case-insensitive), from
+   * the name index when published (a text scan, no parsing), else from the whole elements file.
+   */
+  async searchSatellites(
+    query: string,
+    limit: number,
+  ): Promise<{ norad: number; name: string; cospar: string }[]> {
+    const q = query.trim().toUpperCase();
+    const entry = (await this.manifest()).datasets['earth.gp'];
+    if (!entry || !q) return [];
+    const matches = (n: string, name: string, cospar: string): boolean =>
+      name.toUpperCase().includes(q) || n === q || cospar.toUpperCase() === q;
+    const out: { norad: number; name: string; cospar: string }[] = [];
+    if (!entry.names) {
+      for (const o of (await this.gpElements()).omm) {
+        if (out.length >= limit) break;
+        if (matches(String(o.NORAD_CAT_ID), o.OBJECT_NAME, o.OBJECT_ID))
+          out.push({ norad: o.NORAD_CAT_ID, name: o.OBJECT_NAME, cospar: o.OBJECT_ID });
+      }
+      return out;
+    }
+    const key = `${entry.names}@${entry.sha256}`;
+    if (this.namesValue?.key !== key) {
+      const text = this.bytes({ path: entry.names, sha256: entry.sha256 }).then(async (buf) => {
+        const raw = await gunzipText(new Uint8Array(buf));
+        return { raw, upper: raw.toUpperCase() };
+      });
+      text.catch(() => (this.namesValue = undefined));
+      this.namesValue = { key, text };
+    }
+    const { raw, upper } = await this.namesValue.text;
+    for (let i = upper.indexOf(q); i >= 0 && out.length < limit; i = upper.indexOf(q, i)) {
+      const start = upper.lastIndexOf('\n', i) + 1;
+      let end = upper.indexOf('\n', i);
+      if (end < 0) end = upper.length;
+      const [n = '', name = '', cospar = ''] = raw.slice(start, end).split('\t');
+      if (matches(n, name, cospar)) out.push({ norad: Number(n), name, cospar });
+      i = end;
+    }
+    return out;
   }
 
   /** A state-vector table (mission or moon), keyed by its content hash. */

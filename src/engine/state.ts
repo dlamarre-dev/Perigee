@@ -22,6 +22,7 @@ import {
 } from '../astro/track';
 import { add, scale, type Vec3 } from '../astro/vec3';
 import { makeSatrec, propagateTeme } from '../earth/sgp4';
+import type { Omm } from '../data/schemas';
 import type { PublishedData } from './data';
 import type { ObjectRef } from './objects';
 import {
@@ -102,6 +103,13 @@ function temeToEqj(v: Vec3, date: Date): Vec3 {
 }
 
 /** Position of every object, heliocentric EQJ, with where it comes from. */
+/** SGP4 initialisation is the costly part: done once per element set (a series propagates the same one). */
+const satrecs = new WeakMap<Omm, ReturnType<typeof makeSatrec>>();
+function satrecOf(omm: Omm): ReturnType<typeof makeSatrec> {
+  if (!satrecs.has(omm)) satrecs.set(omm, makeSatrec(omm));
+  return satrecs.get(omm);
+}
+
 export async function helioState(ref: ObjectRef, date: Date, data: PublishedData): Promise<HelioState> {
   const tdbJd = utcToTdbJd(date);
   switch (ref.kind) {
@@ -244,8 +252,7 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
     }
 
     case 'satellite': {
-      const { entry, omm } = await data.gpElements();
-      const elements = omm.find((o) => o.NORAD_CAT_ID === ref.norad);
+      const { entry, omm: elements } = await data.satelliteElements(ref.norad);
       if (!elements)
         return {
           state: undefined,
@@ -269,7 +276,7 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
       };
       const model: ModelId = supgp ? 'sgp4-supgp' : 'sgp4-gp';
       const sources = supgp ? [CELESTRAK_SUPGP, CELESTRAK] : [CELESTRAK];
-      const satrec = makeSatrec(elements);
+      const satrec = satrecOf(elements);
       const teme = satrec ? propagateTeme(satrec, date) : undefined;
       if (!teme)
         return {

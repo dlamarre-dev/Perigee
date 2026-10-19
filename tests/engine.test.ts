@@ -198,3 +198,61 @@ describe('engine misc', () => {
     await expect(engine.state('nonexistent-probe')).rejects.toThrow(/Unknown object/);
   });
 });
+
+describe('engine on sharded data (hosted endpoint budget)', () => {
+  type Rec = { NORAD_CAT_ID: number; OBJECT_NAME: string; OBJECT_ID: string };
+  const omm = JSON.parse(readFileSync('tests/fixtures/omm-sample.json', 'utf8')) as Rec[];
+  const count = 4;
+  const shardFiles: Record<string, Buffer> = {};
+  for (let k = 0; k < count; k++)
+    shardFiles[`data/earth/gp-active/${k}.json.gz`] = gzipSync(
+      JSON.stringify(omm.filter((o) => o.NORAD_CAT_ID % count === k)),
+    );
+  const sharded = {
+    ...manifest,
+    datasets: {
+      'earth.gp': {
+        ...manifest.datasets['earth.gp'],
+        shards: { count, path: 'earth/gp-active/{shard}.json.gz' },
+        names: 'earth/gp-names.txt.gz',
+      },
+    },
+  };
+  const shardedFiles: Record<string, Buffer> = {
+    'data/manifest.json': Buffer.from(JSON.stringify(sharded)),
+    'data/earth/gp-names.txt.gz': gzipSync(
+      omm.map((o) => `${o.NORAD_CAT_ID}\t${o.OBJECT_NAME}\t${o.OBJECT_ID}`).join('\n'),
+    ),
+    ...shardFiles,
+  };
+  const paths: string[] = [];
+  const shardedFetch: FetchLike = async (url) => {
+    const path = new URL(url).pathname.slice(1);
+    paths.push(path);
+    const body = shardedFiles[path];
+    return {
+      ok: body !== undefined,
+      status: body ? 200 : 404,
+      arrayBuffer: async () =>
+        body
+          ? (body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength) as ArrayBuffer)
+          : new ArrayBuffer(0),
+    };
+  };
+  const shardedEngine = createEngine({ baseUrl: 'https://example.test/', fetch: shardedFetch });
+
+  it('reads only the satellite’s shard', async () => {
+    const s = await shardedEngine.state('25544', '2026-09-26T10:00:00Z');
+    expect(s.altitudeKm).toBeGreaterThan(370);
+    expect(paths).toEqual(['data/manifest.json', `data/earth/gp-active/${25544 % count}.json.gz`]);
+    const missing = await shardedEngine.state('99999', '2026-09-26T10:00:00Z');
+    expect(missing.provenance[0]?.state).toBe('none');
+  });
+
+  it('searches names in the index, by name, NORAD or COSPAR id', async () => {
+    expect((await shardedEngine.find('zarya')).map((f) => f.id)).toContain('25544');
+    expect((await shardedEngine.find('100830')).map((f) => f.id)).toEqual(['100830']);
+    expect((await shardedEngine.find('1998-067a')).map((f) => f.id)).toContain('25544');
+    expect(paths.filter((p) => p === 'data/earth/gp.json.gz')).toEqual([]);
+  });
+});

@@ -37,8 +37,9 @@ Cross-cutting features:
 
 1. **Client-side computation.** The data pipeline (GitHub Actions) only *fetches, validates, reformats and
    compresses* raw data. It never computes a position. SGP4, interpolation, frame changes, planetary rotations:
-   everything happens in the browser — or, for the MCP server (`mcp/`), on the user's machine, with the same code
-   and the same published data.
+   everything happens in the browser — or, for the machine interfaces, on their host: the MCP server (`mcp/`) on
+   the user's machine and its hosted endpoint (`workers/mcp/`, Cloudflare Workers), with the same code and the same
+   published data, never contacting the providers.
 2. **Public data only**, with visible attribution (see §9).
 3. **Respect the providers.** The user's browser **never** contacts CelesTrak or Horizons directly. See §4 for why.
    The only third-party request the app makes on its own is the "Report" form (`src/ui/ReportDialog.ts`), sent to
@@ -46,7 +47,8 @@ Cross-cutting features:
    (`index.html`, `perigeeinfo.goatcounter.com`: cookie-less, privacy-friendly analytics).
    Both are named in the About dialog and described, with what stays in browser storage and SoundCloud's
    music player (loaded only when its panel opens), in the static privacy pages `public/privacy.html` (EN) and
-   `public/confidentialite.html` (FR): update them whenever the site starts sending or storing something new.
+   `public/confidentialite.html` (FR), with the MCP server and its hosted endpoint: update them whenever the site
+   starts sending or storing something new.
 4. **No mission list hardcoded in the code.** Missions, their IDs and statuses live in `catalog/*.json`,
    versioned and changed through PRs — by the maintainer or by the weekly maintenance agent, whose PRs
    auto-merge only when CI (including `catalog-guard`) passes (§8).
@@ -337,6 +339,14 @@ the "up" vector and causes gimbal lock at the poles).
   `_state`, `_distance`, `_distance_series`, `_view` (links, iframe), `_define`, `_about` in `mcp/src/tools.ts`
   (shared with a hosted endpoint); disk cache keyed by content hash (`mcp/src/diskCache.ts`); bundled by
   `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
+  Hosted endpoint `workers/mcp/` (Cloudflare Worker, `docs/mcp-hosted.md`): the same tools over stateless
+  Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, request logs off, per-IP rate limit
+  (60/min, binding `LIMITER`); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
+  the bundle). To fit the free plan's 10 ms of CPU per request, the pipeline also writes `earth.gp` and
+  `earth.satcat` split by NORAD number (256 shards, `src/data/shards.ts`; manifest entry fields `shards` and, for
+  gp, `names`: a tab-separated text index NORAD, name, COSPAR), so the engine decodes one shard (~65 records) instead of the
+  whole file; new manifest information goes in extra entry fields, never new dataset keys (older clients' zod
+  `partialRecord` rejects unknown keys). The Worker caps distance series at 100 samples.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).
@@ -448,7 +458,8 @@ Rules:
   **not** overwrite the previous version; the action fails. A failed scheduled run only warns (providers have
   occasional outages); `data-pipeline.yml` opens or comments an issue when the previous run of the same workflow
   failed too (two in a row).
-- Output: `data/earth/gp-active.json.gz`, `data/earth/satcat.json.gz`, `data/ephem/<mission>.bin`
+- Output: `data/earth/gp-active.json.gz` (+ `gp-active/<shard>.json.gz`, `gp-names.txt.gz`),
+  `data/earth/satcat.json.gz` (+ `satcat/<shard>.json.gz`), `data/ephem/<mission>.bin`
   (compact Float64: t_TDB, x, y, z, vx, vy, vz), `data/sun/regions.json.gz` (NOAA SWPC
   `services.swpc.noaa.gov/json/solar_regions.json`, ~30 days of region reports) + `data/manifest.json`
   (timestamp, source, object count, hash).
@@ -498,6 +509,7 @@ Rules:
 │  ├─ data/            # manifest loading, cache, zod schemas shared with pipeline/
 │  └─ i18n/
 ├─ mcp/                # MCP server (npm perigee-mcp) over the headless engine src/engine/
+├─ workers/mcp/        # hosted MCP endpoint (Cloudflare Worker), same tools
 └─ tests/              # vitest (reference values), playwright
 ```
 

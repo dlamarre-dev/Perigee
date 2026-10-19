@@ -80,6 +80,16 @@
         mirrored on the same site.
       </p>
 
+      <h2>AI assistants (MCP server)</h2>
+      <p>
+        AI assistants can query Perigee through its MCP server. The <code>perigee-mcp</code> package runs on
+        your own computer and only downloads Perigee’s published data from this site. The hosted version, run
+        on <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare</a> Workers, receives the questions
+        the assistant’s service sends it (object names, dates); it keeps no logs, and the sending address is
+        only used, for a minute, to limit how many requests one address can make. Neither version knows who
+        you are.
+      </p>
+
       <h2>What stays on your device</h2>
       <p>
         The site keeps a few settings in your browser. They never leave it, and you can clear them with the

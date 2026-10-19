@@ -121,17 +121,10 @@ export class Engine {
   async find(query: string, limit = 10): Promise<FoundObject[]> {
     const found = findInCatalogs(query);
     if (found.length < limit && query.trim().length >= 2) {
-      const q = query.trim().toUpperCase();
-      const { omm } = await this.data.gpElements();
-      for (const o of omm) {
+      for (const s of await this.data.searchSatellites(query, limit + found.length)) {
         if (found.length >= limit) break;
-        if (found.some((f) => f.id === String(o.NORAD_CAT_ID))) continue;
-        if (o.OBJECT_NAME.toUpperCase().includes(q) || String(o.NORAD_CAT_ID) === q || o.OBJECT_ID === q)
-          found.push({
-            id: String(o.NORAD_CAT_ID),
-            kind: 'satellite',
-            name: { en: o.OBJECT_NAME, fr: o.OBJECT_NAME },
-          });
+        if (found.some((f) => f.id === String(s.norad))) continue;
+        found.push({ id: String(s.norad), kind: 'satellite', name: { en: s.name, fr: s.name } });
       }
     }
     return found.slice(0, limit);
@@ -184,12 +177,10 @@ export class Engine {
         };
       }
       case 'satellite': {
-        const [{ omm, entry }, satcat] = await Promise.all([
-          this.data.gpElements(),
-          this.data.satcatRecords(),
+        const [{ omm: o, entry }, sc] = await Promise.all([
+          this.data.satelliteElements(ref.norad),
+          this.data.satcatRecord(ref.norad),
         ]);
-        const o = omm.find((x) => x.NORAD_CAT_ID === ref.norad);
-        const sc = satcat?.records.find((r) => r.NORAD_CAT_ID === ref.norad);
         const c = ref.curated;
         return {
           ...base,

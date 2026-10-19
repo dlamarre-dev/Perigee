@@ -29,7 +29,10 @@ import {
   SatcatListSchema,
   SupGpRecordSchema,
   type Groups,
+  type Omm,
+  type SatcatRecord,
 } from '../src/data/schemas';
+import { nameLine } from '../src/data/shards';
 import {
   candidateItems,
   checkCelestrakGroups,
@@ -187,6 +190,11 @@ async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
       fetchedAt,
       count: merged.omm.length,
       payload: merged.omm,
+      shards: { path: 'earth/gp-active/{shard}.json.gz', norad: (o: Omm) => o.NORAD_CAT_ID },
+      names: {
+        path: 'earth/gp-names.txt.gz',
+        text: merged.omm.map((o) => nameLine(o.NORAD_CAT_ID, o.OBJECT_NAME, o.OBJECT_ID)).join('\n'),
+      },
     },
   ]);
   await mkdir(dirname(join(dataDir, SUPGP_SETS_PATH)), { recursive: true });
@@ -259,6 +267,7 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
       fetchedAt,
       count: records.length,
       payload: records,
+      shards: { path: 'earth/satcat/{shard}.json.gz', norad: (r: SatcatRecord) => r.NORAD_CAT_ID },
     },
     {
       key: 'earth.groups',

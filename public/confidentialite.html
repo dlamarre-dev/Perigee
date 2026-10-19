@@ -84,6 +84,17 @@
         NOAA) : les données sont copiées sur le site lui-même.
       </p>
 
+      <h2>Assistants d’IA (serveur MCP)</h2>
+      <p>
+        Les assistants d’IA peuvent interroger Périgée par son serveur MCP. Le paquet
+        <code>perigee-mcp</code> fonctionne sur votre propre ordinateur et ne télécharge que les données
+        publiées par ce site. La version hébergée, exécutée par
+        <a href="https://www.cloudflare.com/fr-fr/privacypolicy/">Cloudflare</a> Workers, reçoit les questions
+        que lui envoie le service de l’assistant (noms d’objets, dates) ; elle ne garde aucun journal, et
+        l’adresse d’envoi ne sert, pendant une minute, qu’à limiter le nombre de requêtes d’une même adresse.
+        Aucune des deux versions ne sait qui vous êtes.
+      </p>
+
       <h2>Ce qui reste sur votre appareil</h2>
       <p>
         Le site garde quelques réglages dans votre navigateur. Ils n’en sortent jamais, et vous pouvez les

@@ -16,6 +16,8 @@ export interface ToolOptions {
   readonly version: string;
   /** Fetches a catalogue image (WebP) for `include_image`; omitted: images are only linked. */
   readonly fetchImage?: (url: string) => Promise<Uint8Array>;
+  /** Most samples of a distance series (default 1000; the hosted endpoint's CPU budget allows fewer). */
+  readonly maxSeriesSteps?: number;
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
@@ -65,6 +67,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     { instructions: INSTRUCTIONS },
   );
   const readOnly = { readOnlyHint: true, openWorldHint: true } as const;
+  const maxSteps = options.maxSeriesSteps ?? 1000;
 
   server.registerTool(
     'perigee_find',
@@ -141,12 +144,18 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
         to: id,
         start: z.string().describe('ISO 8601 UTC start.'),
         end: z.string().describe('ISO 8601 UTC end.'),
-        steps: z.number().int().min(1).max(1000).optional().describe('Number of intervals (default 50).'),
+        steps: z
+          .number()
+          .int()
+          .min(1)
+          .max(maxSteps)
+          .optional()
+          .describe(`Number of intervals (default 50, at most ${maxSteps}).`),
       },
       annotations: readOnly,
     },
     guard(async ({ from, to, start, end, steps }) =>
-      json(await engine.series(from, to, start, end, steps ?? 50)),
+      json(await engine.series(from, to, start, end, Math.min(steps ?? 50, maxSteps))),
     ),
   );
 

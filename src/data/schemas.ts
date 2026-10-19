@@ -92,6 +92,14 @@ export const DatasetEntrySchema = z.object({
   count: z.number().int().nonnegative(),
   bytes: z.number().int().nonnegative(),
   sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  /**
+   * Machine interfaces (src/data/shards.ts): the same records split by NORAD number into `count` files at `path`
+   * ("{shard}" replaced), written with the dataset, so its sha256 versions them too. Extra fields, so older clients
+   * that do not know them still read the manifest.
+   */
+  shards: z.object({ count: z.number().int().positive(), path: z.string() }).optional(),
+  /** earth.gp: gzip text index of every record, one tab-separated "NORAD NAME COSPAR" line each (name searches). */
+  names: z.string().optional(),
 });
 export type DatasetEntry = z.infer<typeof DatasetEntrySchema>;
 

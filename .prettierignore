@@ -8,3 +8,4 @@ test-results/
 package-lock.json
 CLAUDE.md
 public/shapes/
+.wrangler/

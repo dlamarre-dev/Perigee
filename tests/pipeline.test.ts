@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -37,6 +38,28 @@ describe('publishDatasets', () => {
     expect(onDisk.datasets['earth.gp']?.sha256).toMatch(/^[0-9a-f]{64}$/);
     const payload = JSON.parse(gunzipSync(await readFile(join(dir, 'earth/gp-active.json.gz'))).toString());
     expect(payload).toHaveLength(10);
+  });
+
+  it('writes split copies by NORAD number and a name index for the machine interfaces', async () => {
+    const manifest = await publishDatasets(dir, [
+      {
+        ...dataset(600),
+        shards: {
+          path: 'earth/gp-active/{shard}.json.gz',
+          norad: (o: { NORAD_CAT_ID: number }) => o.NORAD_CAT_ID,
+        },
+        names: { path: 'earth/gp-names.txt.gz', text: '1\tA\t1957-001A' },
+      },
+    ]);
+    const entry = ManifestSchema.parse(manifest).datasets['earth.gp'];
+    expect(entry?.shards).toEqual({ count: 256, path: 'earth/gp-active/{shard}.json.gz' });
+    expect(entry?.names).toBe('earth/gp-names.txt.gz');
+    const shard = (k: number): { NORAD_CAT_ID: number }[] =>
+      JSON.parse(gunzipSync(readFileSync(join(dir, `earth/gp-active/${k}.json.gz`))).toString());
+    // 600 records: shard 88 holds 88, 344 and 600; every record lands in exactly one shard.
+    expect(shard(88).map((o) => o.NORAD_CAT_ID)).toEqual([88, 344, 600]);
+    expect(Array.from({ length: 256 }, (_, k) => shard(k).length).reduce((a, b) => a + b, 0)).toBe(600);
+    expect(gunzipSync(await readFile(join(dir, 'earth/gp-names.txt.gz'))).toString()).toBe('1\tA\t1957-001A');
   });
 
   it('refuses a dataset below 50 % of the previous one and keeps the old file', async () => {

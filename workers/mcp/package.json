@@ -1,0 +1,19 @@
+{
+  "name": "perigee-mcp-worker",
+  "private": true,
+  "description": "Hosted MCP endpoint of Perigee (Cloudflare Workers). Bundles ../../src/engine and ../../mcp/src with the root dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir dist"
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20261001.1": true
+  }
+}
