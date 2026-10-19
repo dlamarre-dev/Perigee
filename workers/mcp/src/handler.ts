@@ -69,6 +69,19 @@ export async function handle(request: Request, options: HandlerOptions): Promise
     });
   }
   if (url.pathname !== '/mcp') return jsonResponse({ error: 'Not found: the MCP endpoint is /mcp' }, 404);
+  // Stateless: no stream of server notifications. A GET (or a session DELETE) gets 405, as the Streamable HTTP
+  // transport specifies; answering GET with an event stream that closes at once made clients reconnect in a loop
+  // (thousands of requests an hour from one Claude Code session).
+  if (request.method !== 'POST')
+    return withCors(
+      new Response(
+        `${JSON.stringify({ jsonrpc: '2.0', id: null, error: { code: -32000, message: 'Method not allowed: POST JSON-RPC to /mcp (stateless server, no event stream)' } })}\n`,
+        {
+          status: 405,
+          headers: { Allow: 'POST, OPTIONS', 'Content-Type': 'application/json; charset=utf-8' },
+        },
+      ),
+    );
 
   const started = Date.now();
   const cf = (request as Request & { cf?: { country?: string; colo?: string } }).cf;

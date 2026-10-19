@@ -37,6 +37,20 @@ describe('hosted MCP endpoint', () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
   });
 
+  it('refuses GET and DELETE with 405 (no event stream), so clients do not reconnect in a loop', async () => {
+    const entries: unknown[] = [];
+    for (const method of ['GET', 'DELETE']) {
+      const res = await handle(
+        new Request('https://mcp.example/mcp', { method, headers: { Accept: 'text/event-stream' } }),
+        options({ log: (e) => entries.push(e) }),
+      );
+      expect(res.status).toBe(405);
+      expect(res.headers.get('Allow')).toBe('POST, OPTIONS');
+      expect(res.headers.get('Content-Type')).not.toMatch(/event-stream/);
+    }
+    expect(entries).toEqual([]);
+  });
+
   it('answers CORS preflights and unknown paths', async () => {
     expect(
       (await handle(new Request('https://mcp.example/mcp', { method: 'OPTIONS' }), options())).status,
