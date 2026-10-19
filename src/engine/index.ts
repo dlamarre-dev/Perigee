@@ -26,6 +26,7 @@ import {
 import { ACCURACY, ASTRONOMY_ENGINE, CELESTRAK, DISCLAIMER, SIMBAD, type Provenance } from './provenance';
 import { EVENT_KINDS, eventsBetween, type EventKind } from './events';
 import { skyFrom } from './sky';
+import { describeView } from './describeView';
 import { compassPoint, degrees, radians, round } from './ground';
 import {
   groundPoint,
@@ -732,6 +733,15 @@ export class Engine {
     });
     const q = term ? fold(term.trim()) : '';
     return entries.filter((e) => !q || e.all.some((s) => s.includes(q))).map(({ all: _all, ...e }) => e);
+  }
+
+  /**
+   * A Perigee link or embed URL in words (alternative text and a description for lesson notes): view, selected
+   * object and how reliable its position is, date and speed of time, frame, filters, what is hidden.
+   */
+  describeView(link: string, lang: Lang = 'en', timeZone?: string): Promise<Record<string, unknown>> {
+    if (timeZone) new Intl.DateTimeFormat('en', { timeZone }); // throws on an unknown zone
+    return describeView(this, link, lang, timeZone).then((r) => ({ ...r, disclaimer: DISCLAIMER }));
   }
 
   /** Link to the view showing an object (optionally at a date, followed, embedded). */

@@ -204,6 +204,53 @@ describe('engine passes', () => {
   });
 });
 
+describe('engine view descriptions', () => {
+  it('describes an embed of a satellite in English', async () => {
+    const d = await engine.describeView(
+      'https://perigee.info/?embed=1&sel=25544&follow=1&t=2026-09-26T10:00:00Z&rate=60&frame=inertial',
+      'en',
+    );
+    expect(d['altText']).toBe(
+      'Perigee 3D Earth view on 26 September 2026 at 10:00 UTC, following International Space Station (ISS).',
+    );
+    const text = String(d['description']);
+    expect(text).toMatch(/km up/);
+    expect(text).toMatch(/computed from recent orbital elements/);
+    expect(text).toMatch(/1 minute per second \(×60\)/);
+    expect(text).toMatch(/Inertial frame/);
+    expect(text).toMatch(/Embedded view without bars or panels/);
+    expect(d['url']).toBe(
+      'https://example.test/?sel=25544&follow=1&t=2026-09-26T10%3A00%3A00Z&rate=60&frame=inertial',
+    );
+  });
+
+  it('describes filters, scales and hidden missions in French', async () => {
+    const earth = await engine.describeView('?op=spacex&reg=LEO&q=starlink&ls=0', 'fr', 'America/Toronto');
+    expect(String(earth['description'])).toContain(
+      'Seuls les satellites répondant à ces filtres sont affichés : opérateur SpaceX ; orbites LEO ; recherche « starlink ».',
+    );
+    expect(String(earth['description'])).toContain('Les sites de lancement sont masqués.');
+    const solar = await engine.describeView(
+      '?view=solar&sel=mars&log=1&hide=juno&t=2026-12-01T00:00:00Z&rate=0',
+      'fr',
+    );
+    const text = String(solar['description']);
+    expect(text).toMatch(/Objet sélectionné : Mars, à 1,6\d ua du Soleil/);
+    expect(text).toMatch(/échelle logarithmique/);
+    expect(text).toMatch(/Missions masquées : Juno\./);
+    expect(text).toMatch(/temps arrêté/);
+  });
+
+  it('names a landing site and says when a position is unknown', async () => {
+    const site = await engine.describeView('?view=moon&sel=site:apollo-11', 'en');
+    expect(String(site['description'])).toMatch(/Apollo 11, crewed landing site, 1969-07-20/);
+    const lost = await engine.describeView('?view=solar&sel=voyager-1&t=2026-11-30T00:00:00Z', 'en');
+    expect(String(lost['description'])).toMatch(/unknown at this date/);
+    const bad = await engine.describeView('?sel=nonexistent-probe', 'en');
+    expect(String(bad['description'])).toMatch(/not recognised/);
+  });
+});
+
 describe('engine misc', () => {
   it('builds view links', () => {
     expect(

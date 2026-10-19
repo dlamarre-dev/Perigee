@@ -106,6 +106,7 @@ describe('MCP server', () => {
       'perigee_distance',
       'perigee_distance_series',
       'perigee_view',
+      'perigee_describe_view',
       'perigee_define',
       'perigee_about',
     ]);
@@ -199,6 +200,15 @@ describe('MCP server', () => {
     expect((st.structured['operators'] as { rows: { id: string; total: number }[] }).rows).toEqual([
       expect.objectContaining({ id: 'spacex', total: 1 }),
     ]);
+  });
+
+  it('puts a view link into words', async () => {
+    const r = await call('perigee_describe_view', {
+      url: 'https://perigee.info/?view=solar&sel=mars',
+      lang: 'fr',
+    });
+    expect(String(r.structured['altText'])).toMatch(/^Vue 3D de Périgée : vue du Système solaire/);
+    expect(String(r.structured['description'])).toMatch(/Mars/);
   });
 
   it('describes its sources and models', async () => {

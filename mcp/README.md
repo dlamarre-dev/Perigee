@@ -41,6 +41,7 @@ minute per address). Claude.ai: Settings → Connectors → Add custom connector
 | `perigee_distance`        | Distance between two objects at a date (km, au) and light time                                                                                                                                |
 | `perigee_distance_series` | Distances over a period, with the closest and farthest samples                                                                                                                                |
 | `perigee_view`            | Link to the 3D view, and an `<iframe>` of the live view for a lesson page (the page can drive it and take PNG snapshots with the `perigee:v1` messages)                                       |
+| `perigee_describe_view`   | A Perigee link or embed in words: one-sentence alternative text and a description for lesson notes (view, object and reliability of its position, date, speed of time, frame, filters)        |
 | `perigee_define`          | Student-level definitions (EN/FR) of apogee, inclination, NORAD number, ephemeris window…                                                                                                     |
 | `perigee_about`           | Data sources and fetch times, models and their typical accuracy, attribution                                                                                                                  |
 

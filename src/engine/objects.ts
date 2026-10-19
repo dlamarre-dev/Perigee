@@ -12,6 +12,7 @@ import moonSitesJson from '../../catalog/landing-sites/moon.json';
 import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
 import starsJson from '../../catalog/stars.json';
+import operatorsJson from '../../catalog/operators.json';
 import { PLANETS, type PlanetInfo } from '../astro/planets';
 import {
   EarthScienceCatalogSchema,
@@ -20,6 +21,7 @@ import {
   LaunchSitesSchema,
   MissionsCatalogSchema,
   MoonsCatalogSchema,
+  OperatorsCatalogSchema,
   StarsCatalogSchema,
   type EarthScienceSatellite,
   type ImageEntry,
@@ -39,6 +41,7 @@ export const catalogs = {
   marsSites: LandingSitesSchema.parse(marsSitesJson).sites,
   launchSites: LaunchSitesSchema.parse(launchSitesJson).sites,
   images: ImagesCatalogSchema.parse(imagesJson).images,
+  operators: OperatorsCatalogSchema.parse(operatorsJson),
 };
 
 /** A resolved object. Satellites carry only their number here; their elements are fetched on demand. */

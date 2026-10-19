@@ -158,6 +158,7 @@ function interfaceDoc(site: string, header: object): object {
         'perigee_distance',
         'perigee_distance_series',
         'perigee_view',
+        'perigee_describe_view',
         'perigee_define',
         'perigee_about',
       ],

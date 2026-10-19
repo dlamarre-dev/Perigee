@@ -360,7 +360,9 @@ the "up" vector and causes gimbal lock at the poles).
   oppositions, conjunctions and elongations, missions' `nextEvent`) use astronomy-engine only; the Worker caps
   events at 31 days. `perigee_stats` reads `data/earth/stats.json.gz` (manifest top-level `stats`), counts written by
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
-  enhancement: a failure only warns). perigee-mcp 1.0.0 has 13 tools.
+  enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
+  into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.0 has 14 tools.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

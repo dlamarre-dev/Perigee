@@ -25,7 +25,7 @@ export interface ToolOptions {
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
-Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_sky for what is in the sky from a place, perigee_events for Moon phases, eclipses, oppositions and mission milestones, perigee_stats for counts of active satellites, perigee_view for a link or an embeddable live 3D view, perigee_define for student-level definitions.
+Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_sky for what is in the sky from a place, perigee_events for Moon phases, eclipses, oppositions and mission milestones, perigee_stats for counts of active satellites, perigee_view for a link or an embeddable live 3D view (perigee_describe_view puts one into words, e.g. for alternative text), perigee_define for student-level definitions.
 Always tell the student how reliable a number is: quote the provenance (model, data state, data age, typical accuracy) and the sources. Positions are for education, not navigation.`;
 
 const lang = z.enum(['en', 'fr']).optional().describe('Language of names and texts (default en).');
@@ -387,6 +387,26 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
         note: 'Pictures of the 3D view are taken by the browser showing the embed (snapshot); the server cannot render them.',
       });
     }),
+  );
+
+  server.registerTool(
+    'perigee_describe_view',
+    {
+      title: 'Describe a view',
+      description:
+        'Turns a Perigee link or embed URL (from perigee_view or a shared link) into words: a one-sentence alternative text for the image or iframe, and a description for lesson notes (which view, the selected object, where it is and how reliable its position is, the date and speed of time, the frame, the filters and what is hidden). The camera framing is not in the link.',
+      inputSchema: {
+        url: z
+          .string()
+          .min(1)
+          .max(2000)
+          .describe('A Perigee URL, e.g. https://perigee.info/?view=solar&sel=mars'),
+        lang,
+        time_zone: timeZone,
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ url, lang: l, time_zone }) => json(await engine.describeView(url, l ?? 'en', time_zone))),
   );
 
   server.registerTool(

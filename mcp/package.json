@@ -1,6 +1,6 @@
 {
   "name": "perigee-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server for Perigee: positions, distances, mission facts and embeddable 3D views of the objects orbiting the Earth, the Moon, Mars and the Sun, with provenance and accuracy, for AI teaching assistants.",
   "license": "MIT",
   "type": "module",
