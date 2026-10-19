@@ -22,7 +22,7 @@ Claude Desktop (`claude_desktop_config.json`) or any MCP client that starts serv
 
 Claude Code: `claude mcp add perigee -- npx -y perigee-mcp`. Node.js 20 or later.
 
-**Hosted, nothing to install**: the same tools at `https://perigee-mcp.perigeeinfo.workers.dev/mcp` (Streamable HTTP, no account, 60 requests per
+**Hosted, nothing to install**: the same tools at `https://perigee-mcp.perigeeinfo.workers.dev/mcp` (Streamable HTTP, no account, 300 requests per
 minute per address). Claude.ai: Settings → Connectors → Add custom connector with that URL; Claude Code:
 `claude mcp add --transport http perigee https://perigee-mcp.perigeeinfo.workers.dev/mcp`. Distance series are limited to 100 samples, pass searches to 3 days and event searches to 31 days there.
 

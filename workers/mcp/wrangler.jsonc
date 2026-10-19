@@ -10,6 +10,7 @@
   // No request logs: the endpoint keeps nothing about its callers.
   "observability": { "enabled": false },
   "vars": { "PERIGEE_SITE": "https://perigee.info/" },
-  // Per-IP limit (in memory at Cloudflare, nothing stored): 60 MCP requests per minute.
-  "ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }],
+  // Per-IP limit (in memory at Cloudflare, nothing stored). Cloudflare counts loosely: at 60 a minute, MCP clients
+  // (several requests per tool call) were refused after two or three requests; 300 leaves room for them.
+  "ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 300, "period": 60 } }],
 }

@@ -5,7 +5,7 @@ services that cannot start a local server (Claude.ai custom connectors, web-base
 MCP server per request, JSON responses), reads Perigee's published data from https://perigee.info/ like the npm
 package, keeps the raw files in the data centre's Cache API by content hash and the parsed datasets in memory, and
 never contacts CelesTrak or Horizons. Request logs are off; the caller's IP address is only used by the per-IP rate
-limiter (60 requests per minute, in memory at Cloudflare).
+limiter (300 requests per minute, in memory at Cloudflare; Cloudflare counts loosely, and 60 refused MCP clients after two or three requests).
 
 Deployed at <https://perigee-mcp.perigeeinfo.workers.dev> (account subdomain `perigeeinfo`): `GET /` describes the
 server; `/mcp` is the MCP endpoint (POST; CORS open).

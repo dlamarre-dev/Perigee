@@ -342,7 +342,7 @@ the "up" vector and causes gimbal lock at the poles).
   Hosted endpoint `workers/mcp/` (Cloudflare Worker, https://perigee-mcp.perigeeinfo.workers.dev/mcp,
   `docs/mcp-hosted.md`): the same tools over stateless
   Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, request logs off, per-IP rate limit
-  (60/min, binding `LIMITER`); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
+  (300/min, binding `LIMITER`: Cloudflare counts loosely, 60/min refused MCP clients after a few requests); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
   the bundle). To fit the free plan's 10 ms of CPU per request, the pipeline also writes `earth.gp` and
   `earth.satcat` split by NORAD number (256 shards, `src/data/shards.ts`; manifest entry fields `shards` and, for
   gp, `names`: a tab-separated text index NORAD, name, COSPAR), so the engine decodes one shard (~65 records) instead of the
