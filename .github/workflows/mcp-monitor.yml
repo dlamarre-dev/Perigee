@@ -37,6 +37,7 @@ jobs:
           set +e
           npx tsx workers/mcp/monitor.ts > report.md
           code=$?
+          cat report.md
           cat report.md >> "$GITHUB_STEP_SUMMARY"
           echo "code=$code" >> "$GITHUB_OUTPUT"
           if [ "$code" = "1" ]; then echo "::warning::The monitor could not read Cloudflare's analytics (token permission Account Analytics: Read?)"; fi
