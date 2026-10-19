@@ -1267,6 +1267,16 @@
       "sources": [
         "https://commons.wikimedia.org/wiki/File:Artist_view_of_Chang%27e_7_lunar_mission_post_launch_01.png"
       ]
+    },
+    {
+      "id": "norad-48274",
+      "target": "norad:48274",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/2/25/Chinese_Tiangong_Space_Station.jpg",
+      "credit": "Shujianyang",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-19",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Chinese_Tiangong_Space_Station.jpg"]
     }
   ]
 }
