@@ -344,7 +344,10 @@ the "up" vector and causes gimbal lock at the poles).
   Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, a usage line per request in Workers Logs
   (`workers/mcp/src/usageLog.ts`: tool, object id, outcome, duration, client, country; never IP addresses or
   coordinates; Cloudflare's invocation logs off since they record headers), per-IP rate limit
-  (300/min, binding `LIMITER`: Cloudflare counts loosely, 60/min refused MCP clients after a few requests); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
+  (60 units/min, binding `LIMITER`; a tool call costs 1–4, `TOOL_COST`; batches ≤ 4 messages, each charged), circuit
+  breaker `PERIGEE_MCP_DISABLED_TOOLS` (dashboard variable, `keep_vars`; `*` pauses the endpoint), hourly alerts
+  (`workers/mcp/monitor.ts`, `mcp-monitor.yml`: quota share, CPU-limit and error spikes; playbook in
+  `docs/mcp-hosted.md`); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
   the bundle). To fit the free plan's 10 ms of CPU per request, the pipeline also writes `earth.gp` and
   `earth.satcat` split by NORAD number (256 shards, `src/data/shards.ts`; manifest entry fields `shards` and, for
   gp, `names`: a tab-separated text index NORAD, name, COSPAR), so the engine decodes one shard (~65 records) instead of the
@@ -364,7 +367,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.3 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.4 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;

@@ -148,7 +148,7 @@ The hosted limits keep each request within the free plan's 10 ms of CPU (see [`m
   dependencies external) into `mcp/dist/perigee-mcp.js`.
 - Released by pushing a `mcp-v<version>` tag: `.github/workflows/mcp-release.yml` checks the version, runs the
   engine and MCP tests, builds and publishes through npm trusted publishing with provenance
-  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.1.3: 14 tools).
+  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.1.4: 14 tools).
 
 ## Hosted endpoint (`workers/mcp/`)
 
@@ -162,7 +162,7 @@ sequenceDiagram
   participant P as perigee.info/data
   C->>W: POST /mcp (JSON-RPC, stateless)
   W->>L: limit(caller address)
-  L-->>W: allowed (300/min) or 429
+  L-->>W: allowed (60 units/min) or 429
   W->>M: tool call → engine
   M->>K: file by content hash (if not parsed yet)
   K-->>M: hit, or miss →
@@ -177,8 +177,10 @@ sequenceDiagram
 - `src/handler.ts`: `GET /` describes the server; `GET` or `DELETE /mcp` get 405 (no event stream); `POST /mcp` runs a new MCP server per request with
   `enableJsonResponse` (no sessions); CORS open; bodies over 64 KB refused; the Worker's tool limits.
 - `src/usageLog.ts`: the usage entry (below).
-- `wrangler.jsonc`: `workers.dev` route, rate limit (300 requests a minute per address: Cloudflare counts loosely,
-  60 refused clients after two or three requests), Workers Logs with invocation logs off.
+- `wrangler.jsonc`: `workers.dev` route, rate limit (60 units a minute per address, a tool call costing 1 to 4:
+  `TOOL_COST` in `handler.ts`; batches of at most 4 messages, each charged), `keep_vars` (the circuit breaker
+  variable lives in the dashboard), Workers Logs with invocation logs off.
+- Abuse protections, alerts (`monitor.ts`, hourly `mcp-monitor.yml`) and the playbook: [`mcp-hosted.md`](mcp-hosted.md#abuse-and-availability).
 - Deployed by `.github/workflows/mcp-worker.yml` on pushes touching the Worker, the MCP tools, the engine, the astro
   code or the catalogues (and by hand); without the Cloudflare secrets it only checks the bundle.
 

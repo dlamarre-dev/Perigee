@@ -22,10 +22,29 @@ export interface HandlerOptions {
   readonly log?: (entry: UsageEntry) => void;
   /** Rank of this request in its isolate (1: a cold start). */
   readonly isolateRequest?: number;
+  /**
+   * Circuit breaker (Worker variable PERIGEE_MCP_DISABLED_TOOLS): tool names or name ends switched off, e.g.
+   * ["series", "passes"]; ["*"] closes the endpoint (503) without running anything (docs/mcp-hosted.md, playbook).
+   */
+  readonly disabledTools?: readonly string[];
 }
 
 /** Largest accepted request body (a tool call is a few hundred bytes). */
 const MAX_BODY_BYTES = 64 * 1024;
+/** JSON-RPC batches (older MCP revisions) are limited to this many messages. */
+export const MAX_BATCH = 4;
+
+/**
+ * Rate-limit units of a tool call, about its CPU cost: the limiter counts each unit, so a request of an expensive
+ * tool (or a batch) costs more of a caller's budget than a definition lookup. Unlisted tools and other messages: 1.
+ */
+export const TOOL_COST: Readonly<Record<string, number>> = {
+  perigee_distance_series: 4,
+  perigee_passes: 3,
+  perigee_events: 3,
+  perigee_sky: 2,
+  perigee_find: 2,
+};
 
 const CORS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -83,17 +102,48 @@ export async function handle(request: Request, options: HandlerOptions): Promise
       ),
     );
 
+  // Circuit breaker, fully open: nothing runs (the request still counts in Cloudflare's daily quota).
+  if (options.disabledTools?.includes('*'))
+    return jsonResponse(
+      {
+        jsonrpc: '2.0',
+        id: null,
+        error: {
+          code: -32000,
+          message:
+            'The hosted Perigee server is paused for maintenance. Use the local server: npx -y perigee-mcp',
+        },
+      },
+      503,
+      { 'Retry-After': '3600' },
+    );
+
   const started = Date.now();
   const cf = (request as Request & { cf?: { country?: string; colo?: string } }).cf;
   const agent = agentOf(request.headers.get('User-Agent'));
-  const requestBody =
-    options.log && request.method === 'POST'
-      ? await request
-          .clone()
-          .json()
-          .catch(() => undefined)
-      : undefined;
+  const declared = Number(request.headers.get('Content-Length') ?? '0');
+  const text = declared > MAX_BODY_BYTES ? '' : await request.clone().text();
+  if (declared > MAX_BODY_BYTES || text.length > MAX_BODY_BYTES)
+    return jsonResponse(
+      { jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Request too large' } },
+      413,
+    );
+  let requestBody: unknown;
+  try {
+    requestBody = JSON.parse(text);
+  } catch {
+    requestBody = undefined;
+  }
   const calls = callsOf(requestBody);
+  if (Array.isArray(requestBody) && requestBody.length > MAX_BATCH)
+    return jsonResponse(
+      {
+        jsonrpc: '2.0',
+        id: null,
+        error: { code: -32600, message: `Batches are limited to ${MAX_BATCH} messages` },
+      },
+      400,
+    );
   const log = (status: number, outcome: Partial<UsageEntry> = {}): void =>
     options.log?.({
       evt: 'mcp',
@@ -109,21 +159,21 @@ export async function handle(request: Request, options: HandlerOptions): Promise
 
   if (options.limiter) {
     const key = request.headers.get('CF-Connecting-IP') ?? 'unknown';
-    const { success } = await options.limiter.limit({ key });
-    if (!success) log(429, { rateLimited: true });
-    if (!success)
+    // One unit per message, more for the expensive tools (TOOL_COST): batches and costly calls count in full.
+    const units = Math.max(
+      1,
+      calls.reduce((n, c) => n + (c.tool ? (TOOL_COST[c.tool] ?? 1) : 1), 0),
+    );
+    let allowed = true;
+    for (let i = 0; i < units && allowed; i++) allowed = (await options.limiter.limit({ key })).success;
+    if (!allowed) log(429, { rateLimited: true });
+    if (!allowed)
       return jsonResponse(
         { jsonrpc: '2.0', id: null, error: { code: -32000, message: 'Too many requests: wait a minute' } },
         429,
         { 'Retry-After': '60' },
       );
   }
-  const length = Number(request.headers.get('Content-Length') ?? '0');
-  if (length > MAX_BODY_BYTES)
-    return jsonResponse(
-      { jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Request too large' } },
-      413,
-    );
 
   const server = createPerigeeServer(options.engine(), {
     version: options.version,
@@ -131,6 +181,7 @@ export async function handle(request: Request, options: HandlerOptions): Promise
     maxSeriesSteps: 100,
     maxPassDays: 3,
     maxEventDays: 31,
+    ...(options.disabledTools?.length ? { disabledTools: options.disabledTools } : {}),
     ...(options.fetchImage ? { fetchImage: options.fetchImage } : {}),
   });
   // No session id generator: stateless mode, one server per request.

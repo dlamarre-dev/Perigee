@@ -18,5 +18,14 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "tests", "tools", "pipeline", "mcp/src", "workers/mcp/src", "*.ts"]
+  "include": [
+    "src",
+    "tests",
+    "tools",
+    "pipeline",
+    "mcp/src",
+    "workers/mcp/src",
+    "workers/mcp/monitor.ts",
+    "*.ts"
+  ]
 }

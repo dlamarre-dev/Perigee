@@ -15,7 +15,11 @@
     "logs": { "enabled": true, "invocation_logs": false, "head_sampling_rate": 1 },
   },
   "vars": { "PERIGEE_SITE": "https://perigee.info/" },
-  // Per-IP limit (in memory at Cloudflare, nothing stored). Cloudflare counts loosely: at 60 a minute, MCP clients
-  // (several requests per tool call) were refused after two or three requests; 300 leaves room for them.
-  "ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 300, "period": 60 } }],
+  // Variables set in the dashboard survive deployments: the circuit breaker PERIGEE_MCP_DISABLED_TOOLS lives there
+  // (docs/mcp-hosted.md, playbook), so switching a tool off needs no commit.
+  "keep_vars": true,
+  // Per-address budget (in memory at Cloudflare, nothing stored): 60 units a minute, a tool call costing 1 to 4
+  // (handler.ts TOOL_COST). One address cannot then use up the free plan's 100,000 daily requests in a day. The
+  // refusals seen at 60 a minute on 2026-10-19 came from a client looping on GET /mcp from the same address.
+  "ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }],
 }

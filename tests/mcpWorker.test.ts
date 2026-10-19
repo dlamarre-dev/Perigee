@@ -3,6 +3,7 @@ import { createEngine } from '../src/engine';
 import type { FetchLike } from '../src/engine/data';
 import { handle, type HandlerOptions } from '../workers/mcp/src/handler';
 import { agentOf, callsOf, type UsageEntry } from '../workers/mcp/src/usageLog';
+import { matchTools } from '../mcp/src/tools';
 
 // Planet answers need no published data: a fetch that fails proves it.
 const noData: FetchLike = async () => ({
@@ -206,5 +207,84 @@ describe('usage log of the hosted endpoint', () => {
     expect(callsOf([{ method: 'notifications/initialized' }, 'junk'])).toEqual([
       { method: 'notifications/initialized' },
     ]);
+  });
+});
+
+describe('abuse protections of the hosted endpoint', () => {
+  const call = (id: number, name: string, args: Record<string, unknown> = {}) => ({
+    jsonrpc: '2.0',
+    id,
+    method: 'tools/call',
+    params: { name, arguments: args },
+  });
+  const counting = () => {
+    const keys: string[] = [];
+    return {
+      keys,
+      limiter: { limit: async ({ key }: { key: string }) => (keys.push(key), { success: true }) },
+    };
+  };
+
+  it('charges expensive tools and every message of a batch to the caller', async () => {
+    const cheap = counting();
+    await handle(rpc(call(1, 'perigee_define', { term: 'apogee' })), options({ limiter: cheap.limiter }));
+    expect(cheap.keys).toHaveLength(1);
+    const costly = counting();
+    await handle(
+      rpc(
+        call(2, 'perigee_distance_series', {
+          from: 'earth',
+          to: 'mars',
+          start: '2026-01-01T00:00:00Z',
+          end: '2026-06-01T00:00:00Z',
+        }),
+      ),
+      options({ limiter: costly.limiter }),
+    );
+    expect(costly.keys).toHaveLength(4);
+    const batch = counting();
+    await handle(
+      rpc([
+        call(3, 'perigee_define'),
+        call(4, 'perigee_define'),
+        call(5, 'perigee_sky', { latitude: 0, longitude: 0 }),
+      ]),
+      options({ limiter: batch.limiter }),
+    );
+    expect(batch.keys).toHaveLength(4);
+  });
+
+  it('refuses batches over the limit', async () => {
+    const res = await handle(rpc([1, 2, 3, 4, 5].map((i) => call(i, 'perigee_define'))), options());
+    expect(res.status).toBe(400);
+  });
+
+  it('switches tools off, or the whole endpoint, from the circuit breaker', async () => {
+    const list = await handle(
+      rpc({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+      options({ disabledTools: ['series', 'perigee_passes'] }),
+    );
+    const names = ((await list.json()) as { result: { tools: { name: string }[] } }).result.tools.map(
+      (t) => t.name,
+    );
+    expect(names).not.toContain('perigee_distance_series');
+    expect(names).not.toContain('perigee_passes');
+    expect(names).toContain('perigee_distance');
+    const blocked = await handle(
+      rpc(call(2, 'perigee_passes', { id: '25544', latitude: 0, longitude: 0 })),
+      options({ disabledTools: ['passes'] }),
+    );
+    const body = (await blocked.json()) as { result?: { isError?: boolean }; error?: unknown };
+    expect(body.result?.isError === true || body.error !== undefined).toBe(true);
+    const paused = await handle(rpc(call(3, 'perigee_define')), options({ disabledTools: ['*'] }));
+    expect(paused.status).toBe(503);
+    expect(paused.headers.get('Retry-After')).toBe('3600');
+  });
+
+  it('matches tool names by full name or name end', () => {
+    const names = ['perigee_distance', 'perigee_distance_series', 'perigee_passes'];
+    expect(matchTools(names, ['series'])).toEqual(['perigee_distance_series']);
+    expect(matchTools(names, [' distance '])).toEqual(['perigee_distance']);
+    expect(matchTools(names, ['*'])).toEqual(names);
   });
 });

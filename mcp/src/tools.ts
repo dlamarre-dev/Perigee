@@ -4,7 +4,7 @@
  * fetch time, element age, validity window, data state, typical accuracy) and the educational-use disclaimer.
  * Data come from Perigee's published files (https://perigee.info/data/); CelesTrak and Horizons are never contacted.
  */
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer, type RegisteredTool } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import type { Engine } from '../../src/engine';
@@ -22,6 +22,11 @@ export interface ToolOptions {
   readonly maxPassDays?: number;
   /** Longest event search, days (default 366; fewer on the hosted endpoint). */
   readonly maxEventDays?: number;
+  /**
+   * Tools switched off (the hosted endpoint's circuit breaker): full names or their ends ("series" for
+   * perigee_distance_series). They leave tools/list, and calls to them get an error naming the local server.
+   */
+  readonly disabledTools?: readonly string[];
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
@@ -70,6 +75,18 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     { name: SERVER_NAME, version: options.version },
     { instructions: INSTRUCTIONS },
   );
+  // Every tool registered below, so that the disabled ones can be switched off at the end.
+  const registered = new Map<string, RegisteredTool>();
+  const registerTool = server.registerTool.bind(server) as unknown as (
+    name: string,
+    config: unknown,
+    cb: unknown,
+  ) => RegisteredTool;
+  server.registerTool = ((name: string, config: unknown, cb: unknown) => {
+    const tool = registerTool(name, config, cb);
+    registered.set(name, tool);
+    return tool;
+  }) as typeof server.registerTool;
   const readOnly = { readOnlyHint: true, openWorldHint: true } as const;
   const maxSteps = options.maxSeriesSteps ?? 1000;
   const maxPassDays = options.maxPassDays ?? 10;
@@ -432,5 +449,14 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     guard(async () => json(await engine.about())),
   );
 
+  for (const name of matchTools([...registered.keys()], options.disabledTools ?? []))
+    registered.get(name)?.disable();
   return server;
+}
+
+/** Tool names matching a list of full names or name ends ("series", "passes"); "*" matches every tool. */
+export function matchTools(names: readonly string[], patterns: readonly string[]): string[] {
+  const wanted = patterns.map((p) => p.trim().toLowerCase()).filter(Boolean);
+  if (wanted.includes('*')) return [...names];
+  return names.filter((n) => wanted.some((w) => n === w || n.endsWith(`_${w}`)));
 }

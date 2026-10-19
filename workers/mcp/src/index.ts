@@ -9,6 +9,8 @@ import { handle, type RateLimiter } from './handler';
 
 interface Env {
   readonly PERIGEE_SITE?: string;
+  /** Circuit breaker, set in the dashboard (Settings → Variables): "series,passes", or "*" to pause everything. */
+  readonly PERIGEE_MCP_DISABLED_TOOLS?: string;
   readonly LIMITER?: RateLimiter;
 }
 
@@ -46,12 +48,15 @@ export default {
       version: mcpPackage.version,
       engine: () => (engine ??= createEngine({ baseUrl: site, fetch: get, cache: new EdgeCache() })),
       fetchImage: async (url) => {
+        // Only the site's own images (the engine builds these URLs from the catalogue): no other egress.
+        if (!url.startsWith(`${site}images/`)) throw new Error(`Image outside ${site}images/: ${url}`);
         const res = await get(url);
         if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
         return new Uint8Array(await res.arrayBuffer());
       },
       limiter: env.LIMITER,
       isolateRequest: ++served,
+      disabledTools: (env.PERIGEE_MCP_DISABLED_TOOLS ?? '').split(',').filter((t) => t.trim()),
       // Workers Logs index the fields of a logged object (wrangler.jsonc: invocation logs off, no IP addresses).
       log: (entry) => console.log(entry),
     });

@@ -7,7 +7,7 @@ package, keeps the raw files in the data centre's Cache API by content hash and 
 never contacts CelesTrak or Horizons. It writes one usage line per request to Workers Logs (tool, object id, outcome,
 duration, client name, country; never the IP address or place coordinates; see
 [machine-interface.md](machine-interface.md#observability)); the caller's IP address is only used by the per-IP rate
-limiter (300 requests per minute, in memory at Cloudflare; Cloudflare counts loosely, and 60 refused MCP clients after two or three requests).
+limiter (60 units a minute per address, in memory at Cloudflare; see [Abuse and availability](#abuse-and-availability)).
 
 Deployed at <https://perigee-mcp.perigeeinfo.workers.dev> (account subdomain `perigeeinfo`): `GET /` describes the
 server; `/mcp` is the MCP endpoint (POST; CORS open).
@@ -71,3 +71,51 @@ and data centre (Cache API), not per request.
 The usage log, the dashboard queries and the load-test tool (`npm run mcp:load`) are described in
 [machine-interface.md](machine-interface.md#observability). Workers Logs must stay with invocation logs off
 (`wrangler.jsonc`): those record request headers, IP addresses included.
+
+## Abuse and availability
+
+The free plan allows **100,000 requests a day** for the whole endpoint; beyond, Cloudflare answers error 1027 to
+everyone until 00:00 UTC. Every request counts, refused ones included. The protections aim at keeping one caller
+from taking the service down, at seeing trouble early, and at reacting in minutes without a commit.
+
+| Protection         | Setting                                                                           | Effect                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Per-address budget | 60 units a minute (`wrangler.jsonc`, binding `LIMITER`)                           | One address sends at most 86,400 requests a day: it alone cannot use up the quota.             |
+| Cost per tool      | `TOOL_COST` (`handler.ts`): series 4, passes 3, events 3, sky 2, find 2, others 1 | Hammering the most expensive tools exhausts the budget sooner.                                 |
+| Batches            | at most 4 JSON-RPC messages, each charged (`MAX_BATCH`)                           | A batch cannot bypass the per-request count.                                                   |
+| Work per call      | series ≤ 100 samples, passes ≤ 3 days, events ≤ 31 days                           | Each call stays within 10 ms of CPU.                                                           |
+| Body size          | 64 KB                                                                             |                                                                                                |
+| Egress             | images only from `https://perigee.info/images/`; data only from perigee.info      | The Worker fetches nothing else.                                                               |
+| Alerts             | `mcp-monitor.yml`, hourly                                                         | An issue when today's requests pass 70 % of the quota, or on CPU-limit (1102) or error spikes. |
+| Logs               | one line per request, ≤ 1 line per invocation                                     | Bounded by the request quota (100,000) below the logs' 200,000 a day.                          |
+
+What these do not cover:
+
+- **Many addresses** (a botnet, IPv6 addresses rotated within a range): the budget is per address. Cloudflare's rate
+  limiting binding only counts over 10 or 60 seconds, so a daily per-address limit would need a Durable Object
+  counter (more latency, its own quota): not done.
+- **Shared addresses**: AI services (Claude.ai…) call from a few server addresses shared by all their users; if
+  their users are refused (429 in the logs with their `agent`), raise the budget.
+- **CORS is open** (`*`) so browser-based MCP clients work; a web page could make its visitors' browsers call the
+  endpoint, each counted at its own address.
+
+### Playbook
+
+When `mcp-monitor.yml` opens an issue, or users report failures:
+
+1. **Look.** The issue gives today's requests, the quota share and the last hour's statuses. Dashboard →
+   Workers & Pages → perigee-mcp → **Metrics** (requests, errors, CPU) and **Observability → Logs**: group by
+   `calls[0].tool`, `agent`, `country`, `rateLimited` to see who and what.
+2. **Switch off the expensive tools** (seconds, no commit): dashboard → perigee-mcp → **Settings → Variables and
+   Secrets** → add or edit the text variable `PERIGEE_MCP_DISABLED_TOOLS` = `series,passes,events,sky` (tool names or
+   their ends) → Deploy. They leave the tool list and calls to them fail; the others keep working. The variable
+   survives deployments (`keep_vars`).
+3. **Pause the endpoint** if the quota is about to run out: `PERIGEE_MCP_DISABLED_TOOLS` = `*`. Every call is then
+   answered at once with 503 and a pointer to the local server (`npx -y perigee-mcp`); requests still count, but
+   cost nothing. The quota resets at 00:00 UTC.
+4. **Tighten the budget** if one address or a few are the cause: lower `limit` in `wrangler.jsonc` (or raise
+   `TOOL_COST`) and push (the `MCP worker` workflow deploys in a minute).
+5. **If it keeps happening**: the Workers Paid plan (5 USD a month: 10 million requests a month, no daily cap,
+   30 s of CPU) moves the wall far away; moving the perigee.info DNS zone to Cloudflare would also allow WAF rate
+   limiting rules (longer windows, per-country rules) on a custom domain.
+6. **Afterwards**: remove the variable (or set it empty), note what happened in the issue and close it.

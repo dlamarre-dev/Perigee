@@ -1,0 +1,56 @@
+# Hourly check of the hosted MCP endpoint (workers/mcp/monitor.ts): today's requests against the free plan's daily
+# quota, requests stopped by the CPU limit, error spikes. An alert opens an issue assigned to the maintainer (or
+# comments the open one, at most every 6 hours). Needs CLOUDFLARE_API_TOKEN with "Account Analytics: Read" and
+# CLOUDFLARE_ACCOUNT_ID; without them the job only warns. Playbook: docs/mcp-hosted.md#playbook.
+name: MCP monitor
+
+on:
+  schedule:
+    - cron: '41 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: mcp-monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check the endpoint's usage
+        id: check
+        run: |
+          set +e
+          npx tsx workers/mcp/monitor.ts > report.md
+          code=$?
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "1" ]; then echo "::warning::The monitor could not read Cloudflare's analytics (token permission Account Analytics: Read?)"; fi
+          exit 0
+      - name: Open or comment the alert issue
+        if: steps.check.outputs.code == '2'
+        run: |
+          title="Hosted MCP endpoint: usage alert"
+          existing=$(gh issue list --state open --label mcp-endpoint --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            last=$(gh issue view "$existing" --json comments,createdAt --jq '([.createdAt] + [.comments[].createdAt]) | max')
+            age=$(( $(date +%s) - $(date -d "$last" +%s) ))
+            if [ "$age" -ge 21600 ]; then gh issue comment "$existing" --body-file report.md; fi
+          else
+            gh label create mcp-endpoint --color D93F0B --force >/dev/null
+            gh issue create --title "$title" --label mcp-endpoint --assignee "${{ github.repository_owner }}" --body-file report.md
+          fi
