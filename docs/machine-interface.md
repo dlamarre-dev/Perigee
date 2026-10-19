@@ -174,7 +174,7 @@ sequenceDiagram
 
 - `src/index.ts`: one engine per isolate (parsed shards, index and tables stay in memory), `EdgeCache` on
   `caches.default` keyed by content hash (a week), the request counter for cold starts, the logger.
-- `src/handler.ts`: `GET /` describes the server; `/mcp` runs a new MCP server per request with
+- `src/handler.ts`: `GET /` describes the server; `GET` or `DELETE /mcp` get 405 (no event stream); `POST /mcp` runs a new MCP server per request with
   `enableJsonResponse` (no sessions); CORS open; bodies over 64 KB refused; the Worker's tool limits.
 - `src/usageLog.ts`: the usage entry (below).
 - `wrangler.jsonc`: `workers.dev` route, rate limit (300 requests a minute per address: Cloudflare counts loosely,
@@ -265,11 +265,12 @@ change to what the endpoint receives or keeps.
 
 ## Troubleshooting
 
-| Symptom                                             | Cause and action                                                                                                                          |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| HTTP 429 "Too many requests"                        | per-address limit; the client sends many requests at once. Raise `limit` in `wrangler.jsonc` if real clients hit it.                      |
-| Error 1102 / 503 from Cloudflare                    | a request exceeded the free plan's CPU. Check the tool in the logs and the Worker's limits; the paid plan removes the constraint.         |
-| `perigee_stats`: "not published yet"                | no GP or SATCAT run since the stats code was deployed; it appears after the next run.                                                     |
-| Old satellite positions (`dataFetchedAt` hours old) | the GP pipeline failed or GitHub skipped its schedule; see Actions → Data — CelesTrak GP. Never retry in a loop (CelesTrak policy).       |
-| `perigee_find` misses a well-known name             | CelesTrak names it differently (e.g. Tiangong is "CSS (TIANHE)"); add the satellite to `catalog/earth-science.json` with its known names. |
-| npm publish 403 "OIDC permission denied"            | the trusted publisher lacks the publish permission ([`mcp-publishing.md`](mcp-publishing.md)).                                            |
+| Symptom                                                   | Cause and action                                                                                                                          |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Many `GET /mcp` lines, status 200, `ms: 0` (before 1.1.2) | a client reconnecting to an event stream the stateless server closed at once; `GET` and `DELETE /mcp` now get 405, which stops the loop.  |
+| HTTP 429 "Too many requests"                              | per-address limit; the client sends many requests at once. Raise `limit` in `wrangler.jsonc` if real clients hit it.                      |
+| Error 1102 / 503 from Cloudflare                          | a request exceeded the free plan's CPU. Check the tool in the logs and the Worker's limits; the paid plan removes the constraint.         |
+| `perigee_stats`: "not published yet"                      | no GP or SATCAT run since the stats code was deployed; it appears after the next run.                                                     |
+| Old satellite positions (`dataFetchedAt` hours old)       | the GP pipeline failed or GitHub skipped its schedule; see Actions → Data — CelesTrak GP. Never retry in a loop (CelesTrak policy).       |
+| `perigee_find` misses a well-known name                   | CelesTrak names it differently (e.g. Tiangong is "CSS (TIANHE)"); add the satellite to `catalog/earth-science.json` with its known names. |
+| npm publish 403 "OIDC permission denied"                  | the trusted publisher lacks the publish permission ([`mcp-publishing.md`](mcp-publishing.md)).                                            |
