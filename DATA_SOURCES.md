@@ -130,6 +130,15 @@ and 4.0, and the attribution-only government licences GODL-India and KOGL Type 1
 resized (720 × 540 px at most in the panel, 1600 × 1200 px in the enlarged view; WebP, `tools/images/`), never cropped or retouched; the panel names its kind, its
 author (linked to its source page) and its licence (linked to the licence text).
 
+## Machine interfaces (MCP server)
+
+Positions come from the same published data and models as the app. Ground points name the country or sea below an
+Earth satellite from [Natural Earth](https://www.naturalearthdata.com/) 1:110m admin-0 countries and marine
+polygons (public domain; names in English and French; `tools/geo/fetch-regions.ts` → `src/engine/regions.json`).
+Satellite passes use SGP4 with the published elements and a low-precision solar position (Astronomical Almanac).
+The MCP SDK is [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) (MIT); the hosted
+endpoint runs on Cloudflare Workers.
+
 ## Offline cache (M5)
 
 The service worker (`public/sw.js`) caches same-origin files only (build assets, data files, textures) with the

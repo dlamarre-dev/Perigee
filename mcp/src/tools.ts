@@ -18,10 +18,12 @@ export interface ToolOptions {
   readonly fetchImage?: (url: string) => Promise<Uint8Array>;
   /** Most samples of a distance series (default 1000; the hosted endpoint's CPU budget allows fewer). */
   readonly maxSeriesSteps?: number;
+  /** Longest pass search, days (default 10; fewer on the hosted endpoint). */
+  readonly maxPassDays?: number;
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
-Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state / perigee_distance / perigee_distance_series for computed values, perigee_view for a link or an embeddable live 3D view, perigee_define for student-level definitions.
+Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_view for a link or an embeddable live 3D view, perigee_define for student-level definitions.
 Always tell the student how reliable a number is: quote the provenance (model, data state, data age, typical accuracy) and the sources. Positions are for education, not navigation.`;
 
 const lang = z.enum(['en', 'fr']).optional().describe('Language of names and texts (default en).');
@@ -68,6 +70,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
   );
   const readOnly = { readOnlyHint: true, openWorldHint: true } as const;
   const maxSteps = options.maxSeriesSteps ?? 1000;
+  const maxPassDays = options.maxPassDays ?? 10;
 
   server.registerTool(
     'perigee_find',
@@ -107,7 +110,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Position and velocity',
       description:
-        'Position (km, ICRF/J2000 equatorial axes) and velocity (km/s) of an object at a date, relative to a centre (default: the body it orbits or stands on), with distance, altitude above the centre, speed, light time and provenance.',
+        'Position (km, ICRF/J2000 equatorial axes) and velocity (km/s) of an object at a date, relative to a centre (default: the body it orbits or stands on), with distance, altitude above the centre, speed, light time, whether it is in sunlight, and provenance. Around the Earth, the Moon or Mars it also gives the ground point below it (latitude, longitude; on the Earth the country or sea, e.g. "over Brazil", "over the Indian Ocean").',
       inputSchema: {
         id,
         date,
@@ -119,6 +122,70 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       annotations: readOnly,
     },
     guard(async ({ id: objectId, date: d, centre }) => json(await engine.state(objectId, d, centre))),
+  );
+
+  server.registerTool(
+    'perigee_orbit',
+    {
+      title: 'Orbit',
+      description:
+        'Orbit of an object: perigee and apogee altitudes (periapsis/apoapsis), period, inclination, eccentricity, semi-major axis. Earth satellites: the mean elements of their published element set, with the orbit regime (LEO, MEO, GEO, HEO); other objects: instantaneous two-body elements around their centre at a date (default: the body they orbit; inclination on its equator, on the ecliptic around the Sun).',
+      inputSchema: {
+        id,
+        date,
+        centre: z
+          .string()
+          .optional()
+          .describe('Body the orbit is around, e.g. "sun" for a planet or a probe.'),
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ id: objectId, date: d, centre }) => json(await engine.orbit(objectId, d, centre))),
+  );
+
+  server.registerTool(
+    'perigee_passes',
+    {
+      title: 'Satellite passes over a place',
+      description: `When an Earth satellite (ISS = 25544, Tiangong = 48274, Hubble = 20580, or any NORAD number) passes over a place: rise, highest point and set times with direction (azimuth, compass point) and elevation, and whether it can be seen with the naked eye (sunlit satellite, dark sky) and when. Give the place's latitude and longitude (degrees, east positive) and, for local times, its IANA time zone. Up to ${maxPassDays} days ahead.`,
+      inputSchema: {
+        id,
+        latitude: z.number().min(-90).max(90).describe('Observer latitude, degrees (north positive).'),
+        longitude: z.number().min(-180).max(360).describe('Observer longitude, degrees (east positive).'),
+        height_m: z.number().min(-500).max(9000).optional().describe('Observer height above sea level, m.'),
+        start: date,
+        days: z.number().min(0.05).max(maxPassDays).optional().describe('Search length in days (default 3).'),
+        min_elevation: z
+          .number()
+          .min(0)
+          .max(80)
+          .optional()
+          .describe('Lowest culmination kept and lowest elevation counted as visible, degrees (default 10).'),
+        time_zone: z
+          .string()
+          .max(64)
+          .optional()
+          .describe('IANA time zone for local times, e.g. "America/Toronto".'),
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ id: objectId, latitude, longitude, height_m, start, days, min_elevation, time_zone }) =>
+      json(
+        await engine.passes(
+          objectId,
+          {
+            latDeg: latitude,
+            lonDeg: longitude,
+            ...(height_m !== undefined ? { heightM: height_m } : {}),
+            ...(start ? { start } : {}),
+            ...(days !== undefined ? { days } : {}),
+            ...(min_elevation !== undefined ? { minElevationDeg: min_elevation } : {}),
+            ...(time_zone ? { timeZone: time_zone } : {}),
+          },
+          maxPassDays,
+        ),
+      ),
+    ),
   );
 
   server.registerTool(

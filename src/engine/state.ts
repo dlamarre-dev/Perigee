@@ -48,6 +48,9 @@ export interface HelioState {
   /** Undefined when the object has no position at that date (hidden, no public ephemeris). */
   readonly state: StateVector | undefined;
   readonly provenance: Provenance;
+  /** Earth satellites: the SGP4 state in TEME (for Earth-fixed ground points) and the elements used. */
+  readonly teme?: StateVector;
+  readonly omm?: Omm;
 }
 
 function provenance(
@@ -105,9 +108,54 @@ function temeToEqj(v: Vec3, date: Date): Vec3 {
 /** Position of every object, heliocentric EQJ, with where it comes from. */
 /** SGP4 initialisation is the costly part: done once per element set (a series propagates the same one). */
 const satrecs = new WeakMap<Omm, ReturnType<typeof makeSatrec>>();
-function satrecOf(omm: Omm): ReturnType<typeof makeSatrec> {
+export function satrecOf(omm: Omm): ReturnType<typeof makeSatrec> {
   if (!satrecs.has(omm)) satrecs.set(omm, makeSatrec(omm));
   return satrecs.get(omm);
+}
+
+/**
+ * An Earth satellite's published elements, their SGP4 initialisation and the provenance of positions computed from
+ * them at `date` (for answers that propagate them themselves, such as pass searches).
+ */
+export async function satelliteElementsAt(
+  norad: number,
+  date: Date,
+  data: PublishedData,
+): Promise<{ omm?: Omm; satrec?: NonNullable<ReturnType<typeof makeSatrec>>; provenance: Provenance }> {
+  const { entry, omm: elements } = await data.satelliteElements(norad);
+  if (!elements)
+    return {
+      provenance: provenance(
+        'sgp4-gp',
+        'Not among the active satellites published by CelesTrak.',
+        'none',
+        [CELESTRAK],
+        {
+          dataFetchedAt: entry.fetchedAt,
+        },
+      ),
+    };
+  const supgp = elements.SOURCE !== undefined;
+  const epochMs = Date.parse(`${elements.EPOCH}Z`);
+  const ageDays = (date.getTime() - epochMs) / MS_PER_DAY;
+  const satrec = satrecOf(elements);
+  return {
+    omm: elements,
+    ...(satrec ? { satrec } : {}),
+    provenance: provenance(
+      supgp ? 'sgp4-supgp' : 'sgp4-gp',
+      supgp
+        ? `SGP4 from CelesTrak's fit to the operator's ephemerides (${elements.SOURCE}).`
+        : 'SGP4 from CelesTrak general perturbations elements (US Space Force tracking).',
+      satrec ? (Math.abs(ageDays) > STALE_AFTER_DAYS ? 'stale' : 'fresh') : 'none',
+      supgp ? [CELESTRAK_SUPGP, CELESTRAK] : [CELESTRAK],
+      {
+        dataFetchedAt: entry.fetchedAt,
+        elementEpoch: new Date(epochMs).toISOString(),
+        elementAgeDays: ageDays,
+      },
+    ),
+  };
 }
 
 export async function helioState(ref: ObjectRef, date: Date, data: PublishedData): Promise<HelioState> {
@@ -252,57 +300,27 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
     }
 
     case 'satellite': {
-      const { entry, omm: elements } = await data.satelliteElements(ref.norad);
-      if (!elements)
+      const s = await satelliteElementsAt(ref.norad, date, data);
+      const teme = s.satrec ? propagateTeme(s.satrec, date) : undefined;
+      if (!s.omm || !teme)
         return {
           state: undefined,
-          provenance: provenance(
-            'sgp4-gp',
-            'Not among the active satellites published by CelesTrak.',
-            'none',
-            [CELESTRAK],
-            {
-              dataFetchedAt: entry.fetchedAt,
-            },
-          ),
-        };
-      const supgp = elements.SOURCE !== undefined;
-      const epochMs = Date.parse(`${elements.EPOCH}Z`);
-      const ageDays = (date.getTime() - epochMs) / MS_PER_DAY;
-      const meta = {
-        dataFetchedAt: entry.fetchedAt,
-        elementEpoch: new Date(epochMs).toISOString(),
-        elementAgeDays: ageDays,
-      };
-      const model: ModelId = supgp ? 'sgp4-supgp' : 'sgp4-gp';
-      const sources = supgp ? [CELESTRAK_SUPGP, CELESTRAK] : [CELESTRAK];
-      const satrec = satrecOf(elements);
-      const teme = satrec ? propagateTeme(satrec, date) : undefined;
-      if (!teme)
-        return {
-          state: undefined,
-          provenance: provenance(
-            model,
-            'SGP4 failed for these elements (decayed or invalid).',
-            'none',
-            sources,
-            meta,
-          ),
+          provenance: s.omm
+            ? {
+                ...s.provenance,
+                state: 'none',
+                method: 'SGP4 failed for these elements (decayed or invalid).',
+              }
+            : s.provenance,
         };
       return {
+        teme,
+        omm: s.omm,
         state: sum(planetHelio('earth', date), {
           posKm: temeToEqj(teme.posKm, date),
           velKmS: temeToEqj(teme.velKmS, date),
         }),
-        provenance: provenance(
-          model,
-          supgp
-            ? `SGP4 from CelesTrak's fit to the operator's ephemerides (${elements.SOURCE}).`
-            : 'SGP4 from CelesTrak general perturbations elements (US Space Force tracking).',
-          Math.abs(ageDays) > STALE_AFTER_DAYS ? 'stale' : 'fresh',
-          sources,
-          meta,
-        ),
+        provenance: s.provenance,
       };
     }
 

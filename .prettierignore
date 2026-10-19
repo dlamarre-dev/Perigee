@@ -9,3 +9,4 @@ package-lock.json
 CLAUDE.md
 public/shapes/
 .wrangler/
+src/engine/regions.json

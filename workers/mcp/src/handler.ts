@@ -86,6 +86,7 @@ export async function handle(request: Request, options: HandlerOptions): Promise
     version: options.version,
     // A Worker request has little CPU (10 ms on the free plan): each sample of a satellite costs an SGP4 run.
     maxSeriesSteps: 100,
+    maxPassDays: 3,
     ...(options.fetchImage ? { fetchImage: options.fetchImage } : {}),
   });
   // No session id generator: stateless mode, one server per request.

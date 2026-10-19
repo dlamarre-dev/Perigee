@@ -19,7 +19,8 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'node20',
     sourcemap: false,
-    minify: false,
+    // Minified: the catalogues and region outlines would otherwise be pretty-printed object literals (~1.3 MB).
+    minify: true,
     rollupOptions: {
       external: (id) => Object.keys(pkg.dependencies).some((d) => id === d || id.startsWith(`${d}/`)),
       output: { entryFileNames: 'perigee-mcp.js', format: 'es' },

@@ -150,6 +150,8 @@ function interfaceDoc(site: string, header: object): object {
         'perigee_find',
         'perigee_object',
         'perigee_state',
+        'perigee_orbit',
+        'perigee_passes',
         'perigee_distance',
         'perigee_distance_series',
         'perigee_view',

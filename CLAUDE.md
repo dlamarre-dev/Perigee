@@ -347,7 +347,13 @@ the "up" vector and causes gimbal lock at the poles).
   `earth.satcat` split by NORAD number (256 shards, `src/data/shards.ts`; manifest entry fields `shards` and, for
   gp, `names`: a tab-separated text index NORAD, name, COSPAR), so the engine decodes one shard (~65 records) instead of the
   whole file; new manifest information goes in extra entry fields, never new dataset keys (older clients' zod
-  `partialRecord` rejects unknown keys). The Worker caps distance series at 100 samples.
+  `partialRecord` rejects unknown keys). The Worker caps distance series at 100 samples and pass searches at
+  3 days. `perigee_state` adds the ground point (`src/engine/ground.ts`: WGS 84 geodetic from TEME by GMST; country
+  or sea from Natural Earth 1:110m, public domain, `tools/geo/fetch-regions.ts` → `src/engine/regions.json`; Moon
+  and Mars planetocentric) and the sunlit fraction; `perigee_orbit` gives SGP4 mean elements for Earth satellites,
+  osculating elements otherwise (`src/engine/orbitTools.ts`); `perigee_passes` (`src/engine/passes.ts`) finds rise,
+  culmination and set over a place (scan that jumps by the geometric lower bound on the time to rise, bisection,
+  golden section) and naked-eye visibility (sunlit satellite, Sun below −6°; low-precision Sun).
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

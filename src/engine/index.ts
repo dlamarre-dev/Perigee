@@ -24,7 +24,17 @@ import {
   type ObjectRef,
 } from './objects';
 import { ACCURACY, DISCLAIMER, type Provenance } from './provenance';
-import { helioState } from './state';
+import { compassPoint, degrees, radians, round } from './ground';
+import {
+  groundPoint,
+  meanOrbit,
+  osculatingOrbit,
+  sunlight,
+  type GroundPoint,
+  type OrbitDescription,
+} from './orbitTools';
+import { findPasses, type PassPoint } from './passes';
+import { helioState, satelliteElementsAt } from './state';
 
 export { DISCLAIMER, ACCURACY };
 export type { Provenance, FoundObject, ObjectRef };
@@ -46,9 +56,36 @@ export interface StateAnswer {
   readonly altitudeKm?: number;
   readonly speedKmS?: number;
   readonly lightTimeS?: number;
+  /** Surface point below the object, when the centre is the Earth, the Moon or Mars. */
+  readonly groundPoint?: GroundPoint;
+  /** Share of the Sun's disc seen from the object past the centre body (1 sunlit, 0 in its shadow). */
+  readonly sunlitFraction?: number;
   readonly provenance: readonly Provenance[];
   readonly disclaimer: string;
 }
+
+export interface OrbitAnswer extends OrbitDescription {
+  readonly id: string;
+  readonly date: string;
+  readonly provenance: readonly Provenance[];
+  readonly disclaimer: string;
+}
+
+export interface PassOptions {
+  readonly latDeg: number;
+  readonly lonDeg: number;
+  readonly heightM?: number;
+  readonly start?: Date | string;
+  /** Length of the search (days, default 3). */
+  readonly days?: number;
+  /** Lowest culmination reported, and lowest elevation counted as visible (default 10 degrees). */
+  readonly minElevationDeg?: number;
+  /** IANA time zone for local times (e.g. America/Toronto). */
+  readonly timeZone?: string;
+}
+
+/** Longest pass search (days): the elements' accuracy fades within days anyway. */
+export const MAX_PASS_DAYS = 10;
 
 export interface DistanceAnswer {
   readonly from: string;
@@ -106,6 +143,48 @@ function radiusOf(ref: ObjectRef): number | undefined {
   if (ref.kind === 'moon') return ref.moon.id === 'moon' ? MOON_RADIUS_KM : ref.moon.radiusKm;
   if (ref.kind === 'mission' && ref.mission.objectType === 'natural') return ref.mission.radiusKm;
   return undefined;
+}
+
+const zoneFormats = new Map<string, Intl.DateTimeFormat>();
+
+/**
+ * Formats instants in an IANA time zone ("2026-10-19 21:04:33"); throws on an unknown zone. The zone's offset is
+ * read once per hour of time (Intl is slow; offsets only change on the hour or half hour) and applied by hand.
+ */
+function localTime(zone: string): (ms: number) => string {
+  let format = zoneFormats.get(zone);
+  if (!format) {
+    format = new Intl.DateTimeFormat('en-CA', {
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    });
+    zoneFormats.set(zone, format);
+  }
+  const fmt = format;
+  const offsets = new Map<number, number>();
+  const offsetMs = (ms: number): number => {
+    const hour = Math.floor(ms / 3_600_000);
+    let offset = offsets.get(hour);
+    if (offset === undefined) {
+      const t = hour * 3_600_000;
+      const p = Object.fromEntries(fmt.formatToParts(new Date(t)).map((x) => [x.type, Number(x.value)]));
+      offset =
+        Date.UTC(p['year'] ?? 0, (p['month'] ?? 1) - 1, p['day'], p['hour'], p['minute'], p['second']) - t;
+      offsets.set(hour, offset);
+    }
+    return offset;
+  };
+  const two = (n: number): string => String(n).padStart(2, '0');
+  return (ms) => {
+    const d = new Date(ms + offsetMs(ms));
+    return `${d.getUTCFullYear()}-${two(d.getUTCMonth() + 1)}-${two(d.getUTCDate())} ${two(d.getUTCHours())}:${two(d.getUTCMinutes())}:${two(d.getUTCSeconds())}`;
+  };
 }
 
 function parseDate(date: Date | string | undefined): Date {
@@ -300,6 +379,12 @@ export class Engine {
     const vel = sub(a.state.velKmS, c.state.velKmS);
     const distanceKm = length(rel);
     const radius = radiusOf(centreRef);
+    // An Earth satellite's own SGP4 state gives its ground point without a frame round trip.
+    const ground = groundPoint(centreRef.id, rel, when, centreRef.id === 'earth' ? a.teme?.posKm : undefined);
+    const lit =
+      radius !== undefined && centreRef.kind !== 'sun'
+        ? sunlight(a.state.posKm, c.state.posKm, radius)
+        : undefined;
     return {
       ...answer,
       positionKm: rel,
@@ -309,6 +394,123 @@ export class Engine {
       ...(radius !== undefined ? { altitudeKm: distanceKm - radius } : {}),
       speedKmS: length(vel),
       lightTimeS: distanceKm / LIGHT_SPEED_KM_S,
+      ...(ground ? { groundPoint: ground } : {}),
+      ...(lit !== undefined ? { sunlitFraction: round(lit, 3) } : {}),
+    };
+  }
+
+  /**
+   * Orbit of an object: mean SGP4 elements for an Earth satellite; otherwise the instantaneous two-body elements
+   * around its centre (default: the body it orbits).
+   */
+  async orbit(id: string, date?: Date | string, centre?: string): Promise<OrbitAnswer> {
+    const when = parseDate(date);
+    const ref = resolve(id);
+    if (ref.kind === 'satellite' && (centre === undefined || resolve(centre).id === 'earth')) {
+      const h = await helioState(ref, when, this.data);
+      if (!h.omm) throw new Error(`No published elements for ${ref.id}: ${h.provenance.method}`);
+      return {
+        id: ref.id,
+        date: when.toISOString(),
+        ...meanOrbit(h.omm),
+        provenance: [h.provenance],
+        disclaimer: DISCLAIMER,
+      };
+    }
+    const s = await this.state(id, when, centre);
+    const centreRef = resolve(s.centre);
+    if (!s.positionKm || !s.velocityKmS)
+      throw new Error(`No position for ${ref.id} at ${s.date} (${s.provenance[0]?.state ?? 'unknown'}).`);
+    const o = osculatingOrbit(centreRef, s.positionKm, s.velocityKmS, when, radiusOf(centreRef));
+    if (!o)
+      throw new Error(
+        `Orbits are given around the Sun, the planets and the Moon, not around ${centreRef.id}.`,
+      );
+    return { id: ref.id, date: s.date, ...o, provenance: s.provenance, disclaimer: DISCLAIMER };
+  }
+
+  /** Passes of an Earth satellite over a place: rise, culmination and set, and naked-eye visibility. */
+  async passes(id: string, options: PassOptions, maxDays = MAX_PASS_DAYS): Promise<Record<string, unknown>> {
+    const ref = resolve(id);
+    if (ref.kind !== 'satellite')
+      throw new Error('Passes are computed for Earth satellites (a NORAD number).');
+    const { latDeg, lonDeg } = options;
+    if (!(Math.abs(latDeg) <= 90) || !(lonDeg >= -180 && lonDeg <= 360))
+      throw new Error('latitude must be within 90 degrees of the equator and longitude within -180 to 360');
+    const days = options.days ?? 3;
+    if (!(days > 0 && days <= maxDays)) throw new Error(`days must be between 0 and ${maxDays}`);
+    const minElevationDeg = options.minElevationDeg ?? 10;
+    if (!(minElevationDeg >= 0 && minElevationDeg < 90))
+      throw new Error('min_elevation must be between 0 and 90');
+    const zone = options.timeZone;
+    const local = zone ? localTime(zone) : undefined;
+    const start = parseDate(options.start);
+    const endMs = start.getTime() + days * 86_400_000;
+    // Propagated here directly: no heliocentric position is needed.
+    const h = await satelliteElementsAt(ref.norad, start, this.data);
+    const satrec = h.satrec;
+    if (!h.omm || !satrec) throw new Error(`No usable elements for ${ref.id}: ${h.provenance.method}`);
+    const result = findPasses({
+      satrec,
+      observer: { latRad: radians(latDeg), lonRad: radians(lonDeg), heightKm: (options.heightM ?? 0) / 1000 },
+      startMs: start.getTime(),
+      endMs,
+      minElevationRad: radians(minElevationDeg),
+      limit: 60,
+    });
+    const point = (p: PassPoint): Record<string, unknown> => ({
+      time: new Date(p.timeMs).toISOString(),
+      ...(local ? { local: local(p.timeMs) } : {}),
+      elevationDeg: degrees(p.elevationRad, 1),
+      azimuthDeg: degrees(p.azimuthRad, 1),
+      direction: compassPoint(p.azimuthRad),
+      rangeKm: Math.round(p.rangeKm),
+    });
+    const epochMs = Date.parse(`${h.omm.EPOCH}Z`);
+    return {
+      id: ref.id,
+      name: ref.curated?.name ?? { en: h.omm.OBJECT_NAME, fr: h.omm.OBJECT_NAME },
+      observer: { latDeg, lonDeg, heightM: options.heightM ?? 0 },
+      from: start.toISOString(),
+      to: new Date(endMs).toISOString(),
+      ...(zone ? { timeZone: zone } : {}),
+      minElevationDeg,
+      ...(result.alwaysAbove && result.atStart
+        ? {
+            alwaysAboveHorizon: {
+              elevationDeg: degrees(result.atStart.elevationRad, 1),
+              azimuthDeg: degrees(result.atStart.azimuthRad, 1),
+              direction: compassPoint(result.atStart.azimuthRad),
+            },
+          }
+        : {}),
+      count: result.passes.length,
+      passes: result.passes.map((p) => ({
+        rise: point(p.rise),
+        culmination: point(p.culmination),
+        set: point(p.set),
+        durationS: Math.round((p.set.timeMs - p.rise.timeMs) / 1000),
+        ...(p.inProgress ? { inProgressAtStart: true } : {}),
+        ...(p.unfinished ? { endsAfterWindow: true } : {}),
+        visibleToNakedEye: p.visible !== undefined,
+        ...(p.visible
+          ? {
+              visible: {
+                from: new Date(p.visible.fromMs).toISOString(),
+                to: new Date(p.visible.toMs).toISOString(),
+                ...(local ? { localFrom: local(p.visible.fromMs), localTo: local(p.visible.toMs) } : {}),
+                maxElevationDeg: degrees(p.visible.maxElevationRad, 1),
+              },
+            }
+          : {}),
+        sunElevationDeg: degrees(p.sunElevationRad, 1),
+        sunlitShare: round(p.sunlitShare, 2),
+      })),
+      elementAgeDaysAtEnd: round((endMs - epochMs) / 86_400_000, 2),
+      accuracy:
+        "Times to within seconds for elements a few days old (low orbits drift by roughly a second per day of element age, more during strong solar activity); azimuth and elevation to a fraction of a degree. Refraction is ignored (it lifts objects by about 0.5 degrees at the horizon). Visible to the naked eye: the satellite is sunlit while the Sun is more than 6 degrees below the observer's horizon, above the minimum elevation; brightness is not estimated.",
+      provenance: [h.provenance],
+      disclaimer: DISCLAIMER,
     };
   }
 

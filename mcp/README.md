@@ -24,20 +24,22 @@ Claude Code: `claude mcp add perigee -- npx -y perigee-mcp`. Node.js 20 or later
 
 **Hosted, nothing to install**: the same tools at `https://perigee-mcp.perigeeinfo.workers.dev/mcp` (Streamable HTTP, no account, 60 requests per
 minute per address). Claude.ai: Settings → Connectors → Add custom connector with that URL; Claude Code:
-`claude mcp add --transport http perigee https://perigee-mcp.perigeeinfo.workers.dev/mcp`. Distance series are limited to 100 samples there.
+`claude mcp add --transport http perigee https://perigee-mcp.perigeeinfo.workers.dev/mcp`. Distance series are limited to 100 samples and pass searches to 3 days there.
 
 ## Tools
 
-| Tool                      | What it returns                                                                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `perigee_find`            | Ids of objects matching a name (English or French): planets, moons, missions, any active Earth satellite (name, NORAD or COSPAR id), sites, stars       |
-| `perigee_object`          | Facts: agency, country, launch, status, mission goals, identifiers, official website, sources and verification date, image with credit and licence      |
-| `perigee_state`           | Position and velocity at a date relative to a centre, distance, altitude, speed, light time                                                             |
-| `perigee_distance`        | Distance between two objects at a date (km, au) and light time                                                                                          |
-| `perigee_distance_series` | Distances over a period, with the closest and farthest samples                                                                                          |
-| `perigee_view`            | Link to the 3D view, and an `<iframe>` of the live view for a lesson page (the page can drive it and take PNG snapshots with the `perigee:v1` messages) |
-| `perigee_define`          | Student-level definitions (EN/FR) of apogee, inclination, NORAD number, ephemeris window…                                                               |
-| `perigee_about`           | Data sources and fetch times, models and their typical accuracy, attribution                                                                            |
+| Tool                      | What it returns                                                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `perigee_find`            | Ids of objects matching a name (English or French): planets, moons, missions, any active Earth satellite (name, NORAD or COSPAR id), sites, stars           |
+| `perigee_object`          | Facts: agency, country, launch, status, mission goals, identifiers, official website, sources and verification date, image with credit and licence          |
+| `perigee_state`           | Position and velocity at a date relative to a centre, distance, altitude, speed, light time, sunlight; the ground point below (country or sea on the Earth) |
+| `perigee_orbit`           | Perigee and apogee altitudes, period, inclination, eccentricity; regime (LEO, MEO, GEO, HEO) for Earth satellites                                           |
+| `perigee_passes`          | When an Earth satellite passes over a place: rise, highest point and set with direction and elevation, naked-eye visibility, local times                    |
+| `perigee_distance`        | Distance between two objects at a date (km, au) and light time                                                                                              |
+| `perigee_distance_series` | Distances over a period, with the closest and farthest samples                                                                                              |
+| `perigee_view`            | Link to the 3D view, and an `<iframe>` of the live view for a lesson page (the page can drive it and take PNG snapshots with the `perigee:v1` messages)     |
+| `perigee_define`          | Student-level definitions (EN/FR) of apogee, inclination, NORAD number, ephemeris window…                                                                   |
+| `perigee_about`           | Data sources and fetch times, models and their typical accuracy, attribution                                                                                |
 
 Every computed answer has a `provenance` list: the model (SGP4 from CelesTrak GP or supplemental GP elements,
 Hermite interpolation of JPL Horizons vectors, two-body extrapolation, VSOP87 for planets, analytical or mean-element

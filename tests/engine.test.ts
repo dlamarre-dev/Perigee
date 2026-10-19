@@ -176,6 +176,34 @@ describe('engine probes', () => {
   });
 });
 
+describe('engine passes', () => {
+  it('gives local times that follow daylight saving (Toronto, 1 November 2026)', async () => {
+    const zone = 'America/Toronto';
+    const r = (await engine.passes('25544', {
+      latDeg: 43.65,
+      lonDeg: -79.38,
+      start: '2026-10-30T00:00:00Z',
+      days: 4,
+      timeZone: zone,
+    })) as { passes: { rise: { time: string; local: string } }[] };
+    expect(r.passes.length).toBeGreaterThan(4);
+    const intl = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: zone,
+      dateStyle: 'short',
+      timeStyle: 'medium',
+    });
+    for (const p of r.passes) expect(p.rise.local).toBe(intl.format(new Date(p.rise.time)));
+  });
+
+  it('refuses what is not an Earth satellite and bad places', async () => {
+    await expect(engine.passes('mars', { latDeg: 0, lonDeg: 0 })).rejects.toThrow(/Earth satellites/);
+    await expect(engine.passes('25544', { latDeg: 95, lonDeg: 0 })).rejects.toThrow(/latitude/);
+    await expect(
+      engine.passes('25544', { latDeg: 0, lonDeg: 0, timeZone: 'Mars/Olympus' }),
+    ).rejects.toThrow();
+  });
+});
+
 describe('engine misc', () => {
   it('builds view links', () => {
     expect(

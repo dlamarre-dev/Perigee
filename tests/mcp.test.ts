@@ -74,6 +74,8 @@ describe('MCP server', () => {
       'perigee_find',
       'perigee_object',
       'perigee_state',
+      'perigee_orbit',
+      'perigee_passes',
       'perigee_distance',
       'perigee_distance_series',
       'perigee_view',
@@ -124,6 +126,28 @@ describe('MCP server', () => {
     expect(e.isError).toBe(true);
     expect(e.content[0]?.text).toMatch(/perigee_find/);
     const bad = await call('perigee_view', { id: 'mars', date: 'soon' });
+    expect(bad.isError).toBe(true);
+  });
+
+  it('gives the ground point, the orbit and the passes of the ISS', async () => {
+    const s = await call('perigee_state', { id: '25544', date: '2026-09-26T10:00:00Z' });
+    const g = s.structured['groundPoint'] as { body: string; latDeg: number };
+    expect(g.body).toBe('earth');
+    expect(Math.abs(g.latDeg)).toBeLessThanOrEqual(52);
+    const o = await call('perigee_orbit', { id: '25544' });
+    expect(o.structured['regime']).toBe('LEO');
+    const p = await call('perigee_passes', {
+      id: '25544',
+      latitude: 45.5,
+      longitude: -73.57,
+      start: '2026-09-26T00:00:00Z',
+      days: 2,
+      time_zone: 'America/Toronto',
+    });
+    const passes = p.structured['passes'] as { rise: { local: string } }[];
+    expect(passes.length).toBeGreaterThan(2);
+    expect(passes[0]?.rise.local).toMatch(/^2026-09-2[56] \d\d:\d\d:\d\d$/);
+    const bad = await call('perigee_passes', { id: 'mars', latitude: 0, longitude: 0 });
     expect(bad.isError).toBe(true);
   });
 
