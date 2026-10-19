@@ -7,7 +7,8 @@ package, keeps the raw files in the data centre's Cache API by content hash and 
 never contacts CelesTrak or Horizons. Request logs are off; the caller's IP address is only used by the per-IP rate
 limiter (60 requests per minute, in memory at Cloudflare).
 
-Endpoints: `GET /` describes the server; `/mcp` is the MCP endpoint (POST; CORS open).
+Deployed at <https://perigee-mcp.perigeeinfo.workers.dev> (account subdomain `perigeeinfo`): `GET /` describes the
+server; `/mcp` is the MCP endpoint (POST; CORS open).
 
 ## CPU budget (free plan)
 

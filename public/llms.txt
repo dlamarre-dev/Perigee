@@ -31,6 +31,13 @@ The embedding page can drive it with `postMessage` (protocol `perigee:v1`, any o
 - `snapshot`: `{ kind: 'shown' | 'objects' }` returns a PNG data URL of the 3D view (as shown with labels, or the objects only) and its title.
 - Events posted to the parent: `ready`, `view`, `selection`, `time`, each with the state.
 
+## MCP server
+
+Perigee's tools for AI assistants: `perigee_find` (ids by name), `perigee_object` (facts, goals, sources, image with credit), `perigee_state` (position and velocity at a date), `perigee_distance` and `perigee_distance_series`, `perigee_view` (link and iframe of the live 3D view), `perigee_define` (student-level definitions, EN/FR), `perigee_about` (sources, models, accuracy). Every computed answer carries its provenance.
+
+- Hosted (Streamable HTTP, no account): https://perigee-mcp.perigeeinfo.workers.dev/mcp
+- Local (stdio, Node.js 20+): `npx -y perigee-mcp` ([npm](https://www.npmjs.com/package/perigee-mcp))
+
 ## Machine-readable documents
 
 - [Interface](https://perigee.info/api/interface.json): ids, URL parameters, the embed API (JSON Schema of `set`), data states, models and their typical accuracy, freshness and attribution.

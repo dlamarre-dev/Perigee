@@ -141,6 +141,22 @@ function interfaceDoc(site: string, header: object): object {
     ...header,
     description:
       'How machines (AI assistants, lesson pages) can use Perigee: links into the app, embed mode with a postMessage API, static catalogue documents, and the published data. Positions are computed by the client from the published data; nothing is computed on a server, and the providers (CelesTrak, JPL Horizons) are never contacted by clients.',
+    mcp: {
+      hosted: 'https://perigee-mcp.perigeeinfo.workers.dev/mcp',
+      transport: 'Streamable HTTP, stateless; no account; 60 requests per minute per address',
+      local: 'npx -y perigee-mcp (stdio, Node.js 20+)',
+      npm: 'https://www.npmjs.com/package/perigee-mcp',
+      tools: [
+        'perigee_find',
+        'perigee_object',
+        'perigee_state',
+        'perigee_distance',
+        'perigee_distance_series',
+        'perigee_view',
+        'perigee_define',
+        'perigee_about',
+      ],
+    },
     documents: {
       catalog: `${site}api/catalog.json`,
       images: `${site}api/images.json`,

@@ -149,7 +149,7 @@ The address bar always describes what you see, so a link reproduces it:
 
 ## For AI assistants
 
-- **MCP server**: [`perigee-mcp`](mcp/README.md) (`npx -y perigee-mcp`) gives an assistant positions, distances,
+- **MCP server**: [`perigee-mcp`](mcp/README.md) (`npx -y perigee-mcp`, or hosted at `https://perigee-mcp.perigeeinfo.workers.dev/mcp`) gives an assistant positions, distances,
   mission facts, definitions and embeddable views, each computed value with its provenance (model, data source and
   age, typical accuracy).
 - **Embed mode**: `?embed=1` shows the 3D view alone in an `<iframe>` (`ui=panel,time` keeps the information panel

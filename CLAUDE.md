@@ -339,7 +339,8 @@ the "up" vector and causes gimbal lock at the poles).
   `_state`, `_distance`, `_distance_series`, `_view` (links, iframe), `_define`, `_about` in `mcp/src/tools.ts`
   (shared with a hosted endpoint); disk cache keyed by content hash (`mcp/src/diskCache.ts`); bundled by
   `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
-  Hosted endpoint `workers/mcp/` (Cloudflare Worker, `docs/mcp-hosted.md`): the same tools over stateless
+  Hosted endpoint `workers/mcp/` (Cloudflare Worker, https://perigee-mcp.perigeeinfo.workers.dev/mcp,
+  `docs/mcp-hosted.md`): the same tools over stateless
   Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, request logs off, per-IP rate limit
   (60/min, binding `LIMITER`); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
   the bundle). To fit the free plan's 10 ms of CPU per request, the pipeline also writes `earth.gp` and
