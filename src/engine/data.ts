@@ -6,6 +6,7 @@
 import { EphemerisTable } from '../astro/hermite';
 import { gunzipJson } from '../data/decode';
 import { shardOf, shardPath } from '../data/shards';
+import type { SatelliteStats } from '../earth/stats';
 import {
   ManifestSchema,
   OmmListSchema,
@@ -59,6 +60,7 @@ export class PublishedData {
   private gp: { hash: string; data: Promise<readonly Omm[]> } | undefined;
   private satcat: { hash: string; data: Promise<readonly SatcatRecord[]> } | undefined;
   private readonly shardLists = new Map<string, Promise<readonly unknown[]>>();
+  private statsValue: { hash: string; data: Promise<SatelliteStats> } | undefined;
   private namesValue: { key: string; text: Promise<{ raw: string; upper: string }> } | undefined;
 
   constructor(options: DataOptions = {}) {
@@ -216,6 +218,22 @@ export class PublishedData {
       i = end;
     }
     return out;
+  }
+
+  /** Counts of the active catalogue written by the pipeline (src/earth/stats.ts), or undefined if unpublished. */
+  async stats(): Promise<{ entry: NonNullable<Manifest['stats']>; stats: SatelliteStats } | undefined> {
+    const entry = (await this.manifest()).stats;
+    if (!entry) return undefined;
+    if (this.statsValue?.hash !== entry.sha256) {
+      const data = this.bytes(entry).then(
+        async (buf) => (await gunzipJson(new Uint8Array(buf))) as SatelliteStats,
+      );
+      data.catch(() => (this.statsValue = undefined));
+      this.statsValue = { hash: entry.sha256, data };
+    }
+    const stats = await this.statsValue.data;
+    if (stats.version !== 1) throw new DataError('Unknown statistics format');
+    return { entry, stats };
   }
 
   /** A state-vector table (mission or moon), keyed by its content hash. */

@@ -353,7 +353,14 @@ the "up" vector and causes gimbal lock at the poles).
   and Mars planetocentric) and the sunlit fraction; `perigee_orbit` gives SGP4 mean elements for Earth satellites,
   osculating elements otherwise (`src/engine/orbitTools.ts`); `perigee_passes` (`src/engine/passes.ts`) finds rise,
   culmination and set over a place (scan that jumps by the geometric lower bound on the time to rise, bisection,
-  golden section) and naked-eye visibility (sunlit satellite, Sun below −6°; low-precision Sun).
+  golden section) and naked-eye visibility (sunlit satellite, Sun below −6°; low-precision Sun). `perigee_sky`
+  (`src/engine/sky.ts`: Sun and twilights, Moon phase, planets, catalogue stars, from a place) and `perigee_events`
+  (`src/engine/events.ts`: Moon phases and apsides, eclipses found only at syzygies with the Moon within 1.8° of
+  the ecliptic, local solar eclipses sampled topocentrically around the global peak, seasons, perihelion, planet
+  oppositions, conjunctions and elongations, missions' `nextEvent`) use astronomy-engine only; the Worker caps
+  events at 31 days. `perigee_stats` reads `data/earth/stats.json.gz` (manifest top-level `stats`), counts written by
+  the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
+  enhancement: a failure only warns). perigee-mcp 1.0.0 has 13 tools.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

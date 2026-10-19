@@ -146,6 +146,20 @@ export const ManifestSchema = z.object({
    * CelesTrak supplemental GP sets merged into earth.gp: when each was last downloaded, how many records it had
    * and how many replaced the GP elements.
    */
+  /**
+   * Machine interfaces: counts of the active catalogue (src/earth/stats.ts), rewritten after each GP and SATCAT run.
+   * An extra field: older clients ignore it.
+   */
+  stats: z
+    .object({
+      path: z.string(),
+      bytes: z.number().int().nonnegative(),
+      sha256: z.string().regex(/^[0-9a-f]{64}$/),
+      generatedAt: z.string(),
+      gpFetchedAt: z.string().optional(),
+      satcatFetchedAt: z.string().optional(),
+    })
+    .optional(),
   supplemental: z
     .record(
       z.string(),

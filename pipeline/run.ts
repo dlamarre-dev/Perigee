@@ -71,6 +71,7 @@ import {
   publishDatasets,
   publishEphemerides,
   publishMoonEphemerides,
+  writeStats,
   writeSupplementalInfo,
   type EphemerisToWrite,
   type MoonEphemerisToWrite,
@@ -222,6 +223,15 @@ async function readPublishedGroups(dataDir: string): Promise<Groups> {
     return GroupsSchema.parse(JSON.parse(gunzipSync(await readFile(file)).toString('utf8')));
   } catch {
     return {};
+  }
+}
+
+/** Catalogue counts for the machine interfaces: an enhancement, so a failure only warns. */
+async function updateStats(dataDir: string): Promise<void> {
+  try {
+    await writeStats(dataDir, await loadOperators());
+  } catch (err) {
+    console.warn(`::warning::stats: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
@@ -497,9 +507,11 @@ async function main(): Promise<void> {
   switch (command) {
     case 'gp':
       await runGp(dataDir, guard);
+      await updateStats(dataDir);
       break;
     case 'satcat':
       await runSatcat(dataDir, guard);
+      await updateStats(dataDir);
       break;
     case 'horizons':
       await runHorizons(dataDir);

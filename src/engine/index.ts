@@ -23,7 +23,9 @@ import {
   type FoundObject,
   type ObjectRef,
 } from './objects';
-import { ACCURACY, DISCLAIMER, type Provenance } from './provenance';
+import { ACCURACY, ASTRONOMY_ENGINE, CELESTRAK, DISCLAIMER, SIMBAD, type Provenance } from './provenance';
+import { EVENT_KINDS, eventsBetween, type EventKind } from './events';
+import { skyFrom } from './sky';
 import { compassPoint, degrees, radians, round } from './ground';
 import {
   groundPoint,
@@ -34,6 +36,7 @@ import {
   type OrbitDescription,
 } from './orbitTools';
 import { findPasses, type PassPoint } from './passes';
+import { localTime } from './timeFormat';
 import { helioState, satelliteElementsAt } from './state';
 
 export { DISCLAIMER, ACCURACY };
@@ -86,6 +89,33 @@ export interface PassOptions {
 
 /** Longest pass search (days): the elements' accuracy fades within days anyway. */
 export const MAX_PASS_DAYS = 10;
+/** Longest event search (days). */
+export const MAX_EVENT_DAYS = 366;
+
+export interface PlaceOptions {
+  readonly latDeg: number;
+  readonly lonDeg: number;
+  readonly heightM?: number;
+  readonly timeZone?: string;
+}
+
+export { EVENT_KINDS, type EventKind };
+
+function checkPlace(latDeg: number, lonDeg: number): void {
+  if (!(Math.abs(latDeg) <= 90) || !(lonDeg >= -180 && lonDeg <= 360))
+    throw new Error('latitude must be within 90 degrees of the equator and longitude within -180 to 360');
+}
+
+const SKY_PROVENANCE: Provenance = {
+  model: 'vsop87',
+  method:
+    'astronomy-engine: VSOP87 planets, its lunar theory and IAU constellation boundaries, seen from the place with standard refraction; star positions from the catalogue (SIMBAD, J2000, proper motion ignored).',
+  state: 'fresh',
+  sources: [ASTRONOMY_ENGINE, SIMBAD],
+  accuracy: {
+    note: 'Positions of the Sun, the Moon and the planets to about an arcminute; rise, set and twilight times to within a minute (refraction near the horizon varies with the weather).',
+  },
+};
 
 export interface DistanceAnswer {
   readonly from: string;
@@ -143,48 +173,6 @@ function radiusOf(ref: ObjectRef): number | undefined {
   if (ref.kind === 'moon') return ref.moon.id === 'moon' ? MOON_RADIUS_KM : ref.moon.radiusKm;
   if (ref.kind === 'mission' && ref.mission.objectType === 'natural') return ref.mission.radiusKm;
   return undefined;
-}
-
-const zoneFormats = new Map<string, Intl.DateTimeFormat>();
-
-/**
- * Formats instants in an IANA time zone ("2026-10-19 21:04:33"); throws on an unknown zone. The zone's offset is
- * read once per hour of time (Intl is slow; offsets only change on the hour or half hour) and applied by hand.
- */
-function localTime(zone: string): (ms: number) => string {
-  let format = zoneFormats.get(zone);
-  if (!format) {
-    format = new Intl.DateTimeFormat('en-CA', {
-      timeZone: zone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hourCycle: 'h23',
-    });
-    zoneFormats.set(zone, format);
-  }
-  const fmt = format;
-  const offsets = new Map<number, number>();
-  const offsetMs = (ms: number): number => {
-    const hour = Math.floor(ms / 3_600_000);
-    let offset = offsets.get(hour);
-    if (offset === undefined) {
-      const t = hour * 3_600_000;
-      const p = Object.fromEntries(fmt.formatToParts(new Date(t)).map((x) => [x.type, Number(x.value)]));
-      offset =
-        Date.UTC(p['year'] ?? 0, (p['month'] ?? 1) - 1, p['day'], p['hour'], p['minute'], p['second']) - t;
-      offsets.set(hour, offset);
-    }
-    return offset;
-  };
-  const two = (n: number): string => String(n).padStart(2, '0');
-  return (ms) => {
-    const d = new Date(ms + offsetMs(ms));
-    return `${d.getUTCFullYear()}-${two(d.getUTCMonth() + 1)}-${two(d.getUTCDate())} ${two(d.getUTCHours())}:${two(d.getUTCMinutes())}:${two(d.getUTCSeconds())}`;
-  };
 }
 
 function parseDate(date: Date | string | undefined): Date {
@@ -435,8 +423,7 @@ export class Engine {
     if (ref.kind !== 'satellite')
       throw new Error('Passes are computed for Earth satellites (a NORAD number).');
     const { latDeg, lonDeg } = options;
-    if (!(Math.abs(latDeg) <= 90) || !(lonDeg >= -180 && lonDeg <= 360))
-      throw new Error('latitude must be within 90 degrees of the equator and longitude within -180 to 360');
+    checkPlace(latDeg, lonDeg);
     const days = options.days ?? 3;
     if (!(days > 0 && days <= maxDays)) throw new Error(`days must be between 0 and ${maxDays}`);
     const minElevationDeg = options.minElevationDeg ?? 10;
@@ -571,6 +558,152 @@ export class Engine {
       ...(closest ? { closest } : {}),
       ...(farthest ? { farthest } : {}),
       provenance,
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /** The sky from a place at a date: Sun and twilights, the Moon and its phase, planets, bright named stars. */
+  sky(
+    place: PlaceOptions & { readonly date?: Date | string; readonly lang?: Lang },
+  ): Record<string, unknown> {
+    checkPlace(place.latDeg, place.lonDeg);
+    const zone = place.timeZone;
+    return {
+      ...skyFrom({
+        latDeg: place.latDeg,
+        lonDeg: place.lonDeg,
+        ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+        date: parseDate(place.date),
+        lang: place.lang ?? 'en',
+        ...(zone ? { local: localTime(zone) } : {}),
+      }),
+      ...(zone ? { timeZone: zone } : {}),
+      provenance: [SKY_PROVENANCE],
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /**
+   * Astronomical events over a period (default: the next 30 days): Moon phases and distances, eclipses (also as
+   * seen from a place, when given), equinoxes and solstices, perihelion and aphelion, planet oppositions,
+   * conjunctions and elongations, and the missions' next key events.
+   */
+  events(
+    options: {
+      readonly start?: Date | string;
+      readonly days?: number;
+      readonly lang?: Lang;
+      readonly kinds?: readonly EventKind[];
+      readonly place?: PlaceOptions;
+    } = {},
+    maxDays = MAX_EVENT_DAYS,
+  ): Record<string, unknown> {
+    const start = parseDate(options.start);
+    const days = options.days ?? 30;
+    if (!(days > 0 && days <= maxDays)) throw new Error(`days must be between 0 and ${maxDays}`);
+    const end = new Date(start.getTime() + days * 86_400_000);
+    const place = options.place;
+    if (place) checkPlace(place.latDeg, place.lonDeg);
+    const zone = place?.timeZone;
+    const events = eventsBetween({
+      start,
+      end,
+      lang: options.lang ?? 'en',
+      ...(options.kinds ? { kinds: options.kinds } : {}),
+      ...(place
+        ? {
+            observer: {
+              latDeg: place.latDeg,
+              lonDeg: place.lonDeg,
+              ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+            },
+          }
+        : {}),
+      ...(zone ? { local: localTime(zone) } : {}),
+    });
+    return {
+      from: start.toISOString(),
+      to: end.toISOString(),
+      ...(place ? { place: { latDeg: place.latDeg, lonDeg: place.lonDeg } } : {}),
+      ...(zone ? { timeZone: zone } : {}),
+      count: events.length,
+      events,
+      notes:
+        'Times in UTC (and local time when a zone is given); astronomical events from astronomy-engine to within a minute. Supermoon: full Moon nearer than 360,000 km; micromoon: farther than 405,000 km. Mission events come from the curated catalogue (verified date given); a partial date ("2026-11") is placed at the start of its overlap with the period.',
+      provenance: [SKY_PROVENANCE],
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /**
+   * Counts of the active satellites: by owner (country or organisation), operator, CelesTrak group, orbit regime,
+   * object type, launch year and low-orbit altitude band. `owner`, `operator` or `group` narrow the lists to the
+   * entries whose code or name contains the text; otherwise the `limit` largest of each are given.
+   */
+  async stats(
+    options: {
+      readonly lang?: Lang;
+      readonly owner?: string;
+      readonly operator?: string;
+      readonly group?: string;
+      readonly limit?: number;
+    } = {},
+  ): Promise<Record<string, unknown>> {
+    const published = await this.data.stats();
+    if (!published) throw new Error('The satellite statistics are not published yet.');
+    const { stats, entry } = published;
+    const lang = options.lang ?? 'en';
+    const limit = options.limit ?? 25;
+    const fold = (s: string): string =>
+      s
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase();
+    type Row = (typeof stats.owners)[number];
+    const pick = (rows: readonly Row[], filter: string | undefined) => {
+      const q = filter ? fold(filter) : undefined;
+      const kept = q
+        ? rows.filter((r) => fold(r.id) === q || fold(r.name.en).includes(q) || fold(r.name.fr).includes(q))
+        : rows.slice(0, limit);
+      return {
+        count: rows.length,
+        ...(q ? {} : { shown: kept.length }),
+        rows: kept.map((r) => ({
+          id: r.id,
+          name: r.name[lang],
+          ...(r.country ? { country: r.country } : {}),
+          total: r.total,
+          regimes: r.regimes,
+        })),
+      };
+    };
+    return {
+      asOf: stats.asOf,
+      total: stats.total,
+      regimes: stats.regimes,
+      objectTypes: stats.objectTypes,
+      owners: pick(stats.owners, options.owner),
+      operators: { ...pick(stats.operators, options.operator), withoutOperator: stats.withoutOperator },
+      groups: pick(stats.groups, options.group),
+      launchYears: stats.launchYears,
+      launchedLast30Days: stats.launchedLast30Days,
+      launchedLast365Days: stats.launchedLast365Days,
+      leoPerigeeBandsKm: stats.leoPerigeeBands,
+      staleElements: stats.staleElements,
+      supplementalElements: stats.supplementalElements,
+      notes:
+        'Active satellites as CelesTrak lists them (its "active" group: operational payloads, no debris or rocket bodies). Regimes: LEO apogee below 2000 km, GEO about one revolution a day, HEO eccentricity of 0.25 or more, MEO otherwise. Object types (SATCAT): PAY payload, R/B rocket body, DEB debris, UNK unknown. Owner codes: SATCAT (US, PRC for China, CIS for Russia, ESA…).',
+      provenance: [
+        {
+          model: 'catalogue-counts',
+          method:
+            'Counted by Perigee’s pipeline from the published CelesTrak elements, SATCAT and group lists.',
+          state: 'fresh',
+          sources: [CELESTRAK],
+          dataFetchedAt: entry.gpFetchedAt ?? stats.asOf,
+          accuracy: ACCURACY['catalogue-counts'],
+        } satisfies Provenance,
+      ],
       disclaimer: DISCLAIMER,
     };
   }

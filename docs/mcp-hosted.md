@@ -19,7 +19,10 @@ shard or the index it needs (`src/data/shards.ts`, `PublishedData.satelliteEleme
 on a desktop through the Worker handler, with a fresh engine (a new isolate) and the files already downloaded:
 satellite state or facts 2–3 ms, name search ~6 ms (1–1.5 ms once the index is loaded), planets and probes under
 2 ms, a 100-sample distance series with a satellite ~8 ms (the Worker caps series at 100 samples), satellite passes
-over a place ~5.5 ms for 3 days (the Worker caps searches at 3 days; the npm package allows 10). Waiting for a
+over a place ~5.5 ms for 3 days (the Worker caps searches at 3 days; the npm package allows 10), the sky from a
+place ~6 ms, a month of events ~5 ms (the Worker caps event searches at 31 days; the npm package allows 366),
+satellite statistics ~1 ms. The first request of a new isolate also pays the JavaScript engine's warm-up of
+astronomy-engine (tens of milliseconds); Cloudflare has tolerated it so far. Waiting for a
 download does not count as CPU. The Workers Paid plan (5 USD per month, 30 s of CPU) is only needed if Cloudflare's
 servers turn out slower than these measurements.
 

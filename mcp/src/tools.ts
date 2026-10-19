@@ -20,10 +20,12 @@ export interface ToolOptions {
   readonly maxSeriesSteps?: number;
   /** Longest pass search, days (default 10; fewer on the hosted endpoint). */
   readonly maxPassDays?: number;
+  /** Longest event search, days (default 366; fewer on the hosted endpoint). */
+  readonly maxEventDays?: number;
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
-Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_view for a link or an embeddable live 3D view, perigee_define for student-level definitions.
+Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_sky for what is in the sky from a place, perigee_events for Moon phases, eclipses, oppositions and mission milestones, perigee_stats for counts of active satellites, perigee_view for a link or an embeddable live 3D view, perigee_define for student-level definitions.
 Always tell the student how reliable a number is: quote the provenance (model, data state, data age, typical accuracy) and the sources. Positions are for education, not navigation.`;
 
 const lang = z.enum(['en', 'fr']).optional().describe('Language of names and texts (default en).');
@@ -71,6 +73,15 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
   const readOnly = { readOnlyHint: true, openWorldHint: true } as const;
   const maxSteps = options.maxSeriesSteps ?? 1000;
   const maxPassDays = options.maxPassDays ?? 10;
+  const maxEventDays = options.maxEventDays ?? 366;
+  const latitude = z.number().min(-90).max(90).describe('Observer latitude, degrees (north positive).');
+  const longitude = z.number().min(-180).max(360).describe('Observer longitude, degrees (east positive).');
+  const heightM = z.number().min(-500).max(9000).optional().describe('Observer height above sea level, m.');
+  const timeZone = z
+    .string()
+    .max(64)
+    .optional()
+    .describe('IANA time zone for local times, e.g. "Europe/Paris".');
 
   server.registerTool(
     'perigee_find',
@@ -184,6 +195,107 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
           },
           maxPassDays,
         ),
+      ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_sky',
+    {
+      title: 'The sky from a place',
+      description:
+        'What is in the sky from a place at a date (default: now): day, twilight or night; the Sun with its next rise, set and twilights; the Moon with its phase, illuminated share, rise and set; each planet with its altitude, direction, brightness (magnitude), constellation and whether it can be seen with the naked eye; and the bright named stars above the horizon. For "what can I see tonight", give the evening time.',
+      inputSchema: { latitude, longitude, height_m: heightM, date, time_zone: timeZone, lang },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    guard(({ latitude: lat, longitude: lon, height_m, date: d, time_zone, lang: l }) =>
+      json(
+        engine.sky({
+          latDeg: lat,
+          lonDeg: lon,
+          ...(height_m !== undefined ? { heightM: height_m } : {}),
+          ...(d ? { date: d } : {}),
+          ...(time_zone ? { timeZone: time_zone } : {}),
+          lang: l ?? 'en',
+        }),
+      ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_events',
+    {
+      title: 'Astronomical and mission events',
+      description: `Events over a period (default: the next 30 days, at most ${maxEventDays}): Moon phases (super and micro full Moons), lunar perigee and apogee, lunar and solar eclipses (with a place: how they look from there), equinoxes and solstices, the Earth's perihelion and aphelion, planet oppositions, conjunctions and greatest elongations, and the next key events of the missions (flybys, arrivals, launches) from Perigee's catalogue.`,
+      inputSchema: {
+        start: date,
+        days: z
+          .number()
+          .min(1)
+          .max(maxEventDays)
+          .optional()
+          .describe('Length of the period in days (default 30).'),
+        kinds: z
+          .array(z.enum(['moon', 'eclipse', 'season', 'planet', 'mission']))
+          .optional()
+          .describe('Kinds of events to include (default: all).'),
+        latitude: latitude.optional(),
+        longitude: longitude.optional(),
+        time_zone: timeZone,
+        lang,
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    guard(({ start, days, kinds, latitude: lat, longitude: lon, time_zone, lang: l }) => {
+      if ((lat === undefined) !== (lon === undefined))
+        throw new Error('Give both latitude and longitude, or neither.');
+      return json(
+        engine.events(
+          {
+            ...(start ? { start } : {}),
+            ...(days !== undefined ? { days } : {}),
+            ...(kinds ? { kinds } : {}),
+            lang: l ?? 'en',
+            ...(lat !== undefined && lon !== undefined
+              ? { place: { latDeg: lat, lonDeg: lon, ...(time_zone ? { timeZone: time_zone } : {}) } }
+              : {}),
+          },
+          maxEventDays,
+        ),
+      );
+    }),
+  );
+
+  server.registerTool(
+    'perigee_stats',
+    {
+      title: 'Satellite statistics',
+      description:
+        'Counts of the active satellites: total, by owner (country or organisation, e.g. US, PRC, CIS, ESA), by operator (SpaceX, OneWeb, Amazon Kuiper…), by CelesTrak group (constellations, navigation, weather…), by orbit regime (LEO, MEO, GEO, HEO), object type, launch year, recent launches and low-orbit altitude bands. owner, operator or group narrow a list to matching entries (code or name).',
+      inputSchema: {
+        owner: z.string().max(60).optional(),
+        operator: z.string().max(60).optional(),
+        group: z.string().max(60).optional(),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe('Largest entries listed per category (default 25).'),
+        lang,
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ owner, operator, group, limit, lang: l }) =>
+      json(
+        await engine.stats({
+          lang: l ?? 'en',
+          ...(owner ? { owner } : {}),
+          ...(operator ? { operator } : {}),
+          ...(group ? { group } : {}),
+          ...(limit !== undefined ? { limit } : {}),
+        }),
       ),
     ),
   );

@@ -136,6 +136,10 @@ Positions come from the same published data and models as the app. Ground points
 Earth satellite from [Natural Earth](https://www.naturalearthdata.com/) 1:110m admin-0 countries and marine
 polygons (public domain; names in English and French; `tools/geo/fetch-regions.ts` → `src/engine/regions.json`).
 Satellite passes use SGP4 with the published elements and a low-precision solar position (Astronomical Almanac).
+The sky from a place and astronomical events (Moon phases, eclipses, seasons, oppositions) come from
+astronomy-engine; named stars from the catalogue (SIMBAD); mission milestones from `catalog/missions.json`.
+Satellite statistics are counts of the published CelesTrak data (operators from CelesTrak groups and the curated
+name rules, owners from the SATCAT).
 The MCP SDK is [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) (MIT); the hosted
 endpoint runs on Cloudflare Workers.
 

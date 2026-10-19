@@ -6,9 +6,32 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { createPerigeeServer } from '../mcp/src/tools';
 import { createEngine } from '../src/engine';
 import type { FetchLike } from '../src/engine/data';
+import { OmmListSchema, OperatorsCatalogSchema } from '../src/data/schemas';
+import { buildCatalog } from '../src/earth/catalog';
+import { satelliteStats } from '../src/earth/stats';
 
 const gp = gzipSync(readFileSync('tests/fixtures/omm-sample.json'));
+const operators = OperatorsCatalogSchema.parse(JSON.parse(readFileSync('catalog/operators.json', 'utf8')));
+const statsGz = gzipSync(
+  JSON.stringify(
+    satelliteStats(
+      buildCatalog(
+        OmmListSchema.parse(JSON.parse(readFileSync('tests/fixtures/omm-sample.json', 'utf8'))),
+        undefined,
+        { starlink: [100830] },
+        operators,
+      ),
+      Date.parse('2026-09-26T12:00:00Z'),
+    ),
+  ),
+);
 const manifest = {
+  stats: {
+    path: 'earth/stats.json.gz',
+    bytes: statsGz.length,
+    sha256: 'c'.repeat(64),
+    generatedAt: '2026-09-26T12:00:00Z',
+  },
   version: 1,
   generatedAt: '2026-09-26T12:00:00Z',
   datasets: {
@@ -26,6 +49,7 @@ const manifest = {
 const files: Record<string, Buffer> = {
   'data/manifest.json': Buffer.from(JSON.stringify(manifest)),
   'data/earth/gp.json.gz': gp,
+  'data/earth/stats.json.gz': statsGz,
 };
 const fakeFetch: FetchLike = async (url) => {
   const body = files[new URL(url).pathname.slice(1)];
@@ -76,6 +100,9 @@ describe('MCP server', () => {
       'perigee_state',
       'perigee_orbit',
       'perigee_passes',
+      'perigee_sky',
+      'perigee_events',
+      'perigee_stats',
       'perigee_distance',
       'perigee_distance_series',
       'perigee_view',
@@ -149,6 +176,29 @@ describe('MCP server', () => {
     expect(passes[0]?.rise.local).toMatch(/^2026-09-2[56] \d\d:\d\d:\d\d$/);
     const bad = await call('perigee_passes', { id: 'mars', latitude: 0, longitude: 0 });
     expect(bad.isError).toBe(true);
+  });
+
+  it('describes the sky, the coming events and the satellite counts', async () => {
+    const sky = await call('perigee_sky', {
+      latitude: 45.5,
+      longitude: -73.57,
+      date: '2026-10-20T01:30:00Z',
+      time_zone: 'America/Toronto',
+      lang: 'fr',
+    });
+    expect(sky.structured['sky']).toBe('nuit noire');
+    expect((sky.structured['moon'] as { phase: string }).phase).toBe('gibbeuse croissante');
+    const ev = await call('perigee_events', { start: '2027-02-01T00:00:00Z', days: 30, kinds: ['planet'] });
+    expect(
+      (ev.structured['events'] as { title: string }[]).some((e) => e.title === 'Mars at opposition'),
+    ).toBe(true);
+    const half = await call('perigee_events', { latitude: 10 });
+    expect(half.isError).toBe(true);
+    const st = await call('perigee_stats', { operator: 'spacex' });
+    expect(st.structured['total']).toBe(3);
+    expect((st.structured['operators'] as { rows: { id: string; total: number }[] }).rows).toEqual([
+      expect.objectContaining({ id: 'spacex', total: 1 }),
+    ]);
   });
 
   it('describes its sources and models', async () => {

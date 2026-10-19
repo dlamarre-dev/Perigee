@@ -86,6 +86,7 @@ describe('hosted MCP endpoint', () => {
       tools.find((t) => t.name === 'perigee_distance_series')?.inputSchema.properties['steps']?.maximum,
     ).toBe(100);
     expect(tools.find((t) => t.name === 'perigee_passes')?.inputSchema.properties['days']?.maximum).toBe(3);
+    expect(tools.find((t) => t.name === 'perigee_events')?.inputSchema.properties['days']?.maximum).toBe(31);
   });
 
   it('rate-limits by caller address', async () => {

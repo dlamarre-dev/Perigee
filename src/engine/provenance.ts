@@ -16,6 +16,7 @@ export type ModelId =
   | 'moon-mean-elements'
   | 'site-coordinates'
   | 'star-catalogue'
+  | 'catalogue-counts'
   | 'origin';
 
 /**
@@ -108,6 +109,9 @@ export const ACCURACY: Readonly<Record<ModelId, { readonly typicalKm?: number; r
   },
   'star-catalogue': {
     note: 'ICRS J2000 position from SIMBAD; the distance comes from the cited literature (parallax); proper motion is ignored.',
+  },
+  'catalogue-counts': {
+    note: 'Exact counts of the active satellites in the published CelesTrak data at its fetch time. Operators come from CelesTrak groups and curated name rules (unattributed satellites are counted apart); owners are SATCAT country or organisation codes; regimes from the mean elements.',
   },
   origin: { typicalKm: 0, note: 'The reference point itself.' },
 };

@@ -6,8 +6,19 @@ import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { gzipSync } from 'node:zlib';
-import { ManifestSchema, type DatasetKey, type EphemerisEntry, type Manifest } from '../src/data/schemas';
+import { gunzipSync, gzipSync } from 'node:zlib';
+import {
+  GroupsSchema,
+  ManifestSchema,
+  OmmListSchema,
+  SatcatListSchema,
+  type DatasetKey,
+  type EphemerisEntry,
+  type Manifest,
+  type OperatorsCatalog,
+} from '../src/data/schemas';
+import { buildCatalog } from '../src/earth/catalog';
+import { satelliteStats } from '../src/earth/stats';
 import { SHARD_COUNT, shardOf, shardPath } from '../src/data/shards';
 
 export const MIN_RATIO_VS_PREVIOUS = 0.5;
@@ -80,6 +91,49 @@ export async function publishDatasets(
   ManifestSchema.parse(next);
   await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
   return next;
+}
+
+/**
+ * Counts of the active catalogue for the machine interfaces (src/earth/stats.ts), from the published elements,
+ * SATCAT and groups: data/earth/stats.json.gz and the manifest's `stats` field. Skipped while the elements are
+ * missing.
+ */
+export async function writeStats(dataDir: string, operators: OperatorsCatalog): Promise<void> {
+  const manifest = await readManifest(dataDir);
+  const gpEntry = manifest.datasets['earth.gp'];
+  if (!gpEntry) return;
+  const read = async (path: string | undefined): Promise<unknown> =>
+    path && existsSync(join(dataDir, path))
+      ? JSON.parse(gunzipSync(await readFile(join(dataDir, path))).toString('utf8'))
+      : undefined;
+  const gp = OmmListSchema.parse(await read(gpEntry.path));
+  const satcatRaw = await read(manifest.datasets['earth.satcat']?.path);
+  const groupsRaw = await read(manifest.datasets['earth.groups']?.path);
+  const catalog = buildCatalog(
+    gp,
+    satcatRaw ? SatcatListSchema.parse(satcatRaw) : undefined,
+    groupsRaw ? GroupsSchema.parse(groupsRaw) : undefined,
+    operators,
+  );
+  const stats = satelliteStats(catalog, Date.parse(gpEntry.fetchedAt));
+  const gz = gzipSync(Buffer.from(JSON.stringify(stats)), { level: 9 });
+  const path = 'earth/stats.json.gz';
+  await writeFile(join(dataDir, path), gz);
+  const satcatFetchedAt = manifest.datasets['earth.satcat']?.fetchedAt;
+  const next: Manifest = {
+    ...manifest,
+    stats: {
+      path,
+      bytes: gz.byteLength,
+      sha256: createHash('sha256').update(gz).digest('hex'),
+      generatedAt: new Date().toISOString(),
+      gpFetchedAt: gpEntry.fetchedAt,
+      ...(satcatFetchedAt ? { satcatFetchedAt } : {}),
+    },
+  };
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+  console.log(`wrote ${path}: ${stats.total} satellites counted`);
 }
 
 /** Writes the SHARD_COUNT split copies of a record list (every shard, empty ones included). */
