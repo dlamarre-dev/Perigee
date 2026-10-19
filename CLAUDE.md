@@ -364,7 +364,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.0 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.1 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
