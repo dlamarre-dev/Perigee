@@ -36,6 +36,8 @@ const USER_AGENT = `perigee-mcp-worker/${mcpPackage.version} (+https://github.co
 const get = (url: string): Promise<Response> => fetch(url, { headers: { 'User-Agent': USER_AGENT } });
 
 let engine: Engine | undefined;
+/** Requests served by this isolate (the first one is a cold start). */
+let served = 0;
 
 export default {
   fetch(request: Request, env: Env): Promise<Response> {
@@ -49,6 +51,9 @@ export default {
         return new Uint8Array(await res.arrayBuffer());
       },
       limiter: env.LIMITER,
+      isolateRequest: ++served,
+      // Workers Logs index the fields of a logged object (wrangler.jsonc: invocation logs off, no IP addresses).
+      log: (entry) => console.log(entry),
     });
   },
 };

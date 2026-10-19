@@ -90,8 +90,11 @@
         <code>perigee-mcp</code> fonctionne sur votre propre ordinateur et ne télécharge que les données
         publiées par ce site. La version hébergée, exécutée par
         <a href="https://www.cloudflare.com/fr-fr/privacypolicy/">Cloudflare</a> Workers, reçoit les questions
-        que lui envoie le service de l’assistant (noms d’objets, dates) ; elle ne garde aucun journal, et
-        l’adresse d’envoi ne sert, pendant une minute, qu’à limiter le nombre de requêtes d’une même adresse.
+        que lui envoie le service de l’assistant (noms d’objets, dates). Pour chaque requête, elle garde
+        pendant trois jours une ligne d’usage : l’outil demandé, l’objet nommé dans la question, la réussite
+        et la durée, le nom du logiciel de l’assistant et le pays du serveur qui l’a envoyée. Elle
+        n’enregistre jamais l’adresse d’envoi, ni les coordonnées d’un lieu ou les dates d’une question.
+        L’adresse d’envoi ne sert, pendant une minute, qu’à limiter le nombre de requêtes d’une même adresse.
         Aucune des deux versions ne sait qui vous êtes.
       </p>
 

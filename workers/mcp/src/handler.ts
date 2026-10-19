@@ -2,11 +2,12 @@
  * Perigee's hosted MCP endpoint (Cloudflare Worker): the tools of mcp/src/tools.ts over Streamable HTTP, stateless
  * (one server per request, JSON responses), for AI services that cannot start a local server. Same engine and
  * published data as the npm package; data files are kept in the Cache API by content hash. Visitors' addresses are
- * only used, in memory, by the per-IP rate limiter; nothing is logged.
+ * only used, in memory, by the per-IP rate limiter; the usage log (./usageLog.ts) never records them.
  */
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import type { Engine } from '../../../src/engine';
 import { createPerigeeServer } from '../../../mcp/src/tools';
+import { agentOf, callsOf, withOutcomes, type UsageEntry } from './usageLog';
 
 export interface RateLimiter {
   limit(options: { key: string }): Promise<{ success: boolean }>;
@@ -17,6 +18,10 @@ export interface HandlerOptions {
   readonly engine: () => Engine;
   readonly fetchImage?: (url: string) => Promise<Uint8Array>;
   readonly limiter?: RateLimiter | undefined;
+  /** Receives one usage entry per MCP request (Workers Logs in production). */
+  readonly log?: (entry: UsageEntry) => void;
+  /** Rank of this request in its isolate (1: a cold start). */
+  readonly isolateRequest?: number;
 }
 
 /** Largest accepted request body (a tool call is a few hundred bytes). */
@@ -65,9 +70,34 @@ export async function handle(request: Request, options: HandlerOptions): Promise
   }
   if (url.pathname !== '/mcp') return jsonResponse({ error: 'Not found: the MCP endpoint is /mcp' }, 404);
 
+  const started = Date.now();
+  const cf = (request as Request & { cf?: { country?: string; colo?: string } }).cf;
+  const agent = agentOf(request.headers.get('User-Agent'));
+  const requestBody =
+    options.log && request.method === 'POST'
+      ? await request
+          .clone()
+          .json()
+          .catch(() => undefined)
+      : undefined;
+  const calls = callsOf(requestBody);
+  const log = (status: number, outcome: Partial<UsageEntry> = {}): void =>
+    options.log?.({
+      evt: 'mcp',
+      status,
+      ms: Date.now() - started,
+      isolateRequest: options.isolateRequest ?? 0,
+      calls,
+      ...(cf?.country ? { country: cf.country } : {}),
+      ...(cf?.colo ? { colo: cf.colo } : {}),
+      ...(agent ? { agent } : {}),
+      ...outcome,
+    });
+
   if (options.limiter) {
     const key = request.headers.get('CF-Connecting-IP') ?? 'unknown';
     const { success } = await options.limiter.limit({ key });
+    if (!success) log(429, { rateLimited: true });
     if (!success)
       return jsonResponse(
         { jsonrpc: '2.0', id: null, error: { code: -32000, message: 'Too many requests: wait a minute' } },
@@ -96,7 +126,21 @@ export async function handle(request: Request, options: HandlerOptions): Promise
   });
   await server.connect(transport);
   try {
-    return withCors(await transport.handleRequest(request));
+    const response = withCors(await transport.handleRequest(request));
+    if (options.log) {
+      const json = response.headers.get('Content-Type')?.includes('application/json');
+      const responseBody = json
+        ? await response
+            .clone()
+            .json()
+            .catch(() => undefined)
+        : undefined;
+      log(response.status, { calls: withOutcomes(calls, requestBody, responseBody) });
+    }
+    return response;
+  } catch (err) {
+    log(500, { calls: calls.map((c) => ({ ...c, ok: false, error: String(err).slice(0, 120) })) });
+    throw err;
   } finally {
     void server.close();
   }

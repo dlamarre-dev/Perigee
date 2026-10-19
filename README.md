@@ -155,6 +155,8 @@ The address bar always describes what you see, so a link reproduces it:
 - **Embed mode**: `?embed=1` shows the 3D view alone in an `<iframe>` (`ui=panel,time` keeps the information panel
   or the time bar, `follow=1` follows the selection); the page around it drives it and takes PNG snapshots with
   `postMessage` (protocol `perigee:v1`).
+- **Architecture** of the machine interfaces (engine, embed API, MCP servers, usage log, load tests):
+  [`docs/machine-interface.md`](docs/machine-interface.md).
 - **Documents**: [`llms.txt`](https://perigee.info/llms.txt), [`llms-full.txt`](https://perigee.info/llms-full.txt)
   and [`api/interface.json`](https://perigee.info/api/interface.json) (with `catalog.json`, `images.json`,
   `glossary.json`).

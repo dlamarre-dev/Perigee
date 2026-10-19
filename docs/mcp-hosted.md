@@ -4,7 +4,9 @@
 services that cannot start a local server (Claude.ai custom connectors, web-based assistants). It is stateless (one
 MCP server per request, JSON responses), reads Perigee's published data from https://perigee.info/ like the npm
 package, keeps the raw files in the data centre's Cache API by content hash and the parsed datasets in memory, and
-never contacts CelesTrak or Horizons. Request logs are off; the caller's IP address is only used by the per-IP rate
+never contacts CelesTrak or Horizons. It writes one usage line per request to Workers Logs (tool, object id, outcome,
+duration, client name, country; never the IP address or place coordinates; see
+[machine-interface.md](machine-interface.md#observability)); the caller's IP address is only used by the per-IP rate
 limiter (300 requests per minute, in memory at Cloudflare; Cloudflare counts loosely, and 60 refused MCP clients after two or three requests).
 
 Deployed at <https://perigee-mcp.perigeeinfo.workers.dev> (account subdomain `perigeeinfo`): `GET /` describes the
@@ -63,3 +65,9 @@ issuing its certificate, then add to `workers/mcp/wrangler.jsonc`:
 Free plan: 100,000 requests per day. The rate limit (`ratelimits` in `wrangler.jsonc`) caps each address at 60
 requests per minute; change `limit`/`period` there. Data downloads come from GitHub Pages once per dataset version
 and data centre (Cache API), not per request.
+
+## Usage log and load tests
+
+The usage log, the dashboard queries and the load-test tool (`npm run mcp:load`) are described in
+[machine-interface.md](machine-interface.md#observability). Workers Logs must stay with invocation logs off
+(`wrangler.jsonc`): those record request headers, IP addresses included.

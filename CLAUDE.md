@@ -341,7 +341,9 @@ the "up" vector and causes gimbal lock at the poles).
   `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
   Hosted endpoint `workers/mcp/` (Cloudflare Worker, https://perigee-mcp.perigeeinfo.workers.dev/mcp,
   `docs/mcp-hosted.md`): the same tools over stateless
-  Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, request logs off, per-IP rate limit
+  Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, a usage line per request in Workers Logs
+  (`workers/mcp/src/usageLog.ts`: tool, object id, outcome, duration, client, country; never IP addresses or
+  coordinates; Cloudflare's invocation logs off since they record headers), per-IP rate limit
   (300/min, binding `LIMITER`: Cloudflare counts loosely, 60/min refused MCP clients after a few requests); deployed by `mcp-worker.yml` once the Cloudflare secrets exist (else it only checks
   the bundle). To fit the free plan's 10 ms of CPU per request, the pipeline also writes `earth.gp` and
   `earth.satcat` split by NORAD number (256 shards, `src/data/shards.ts`; manifest entry fields `shards` and, for
@@ -362,7 +364,8 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.0 has 14 tools.
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.0 has 14 tools. Architecture, observability,
+  load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

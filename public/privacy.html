@@ -85,7 +85,10 @@
         AI assistants can query Perigee through its MCP server. The <code>perigee-mcp</code> package runs on
         your own computer and only downloads Perigee’s published data from this site. The hosted version, run
         on <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare</a> Workers, receives the questions
-        the assistant’s service sends it (object names, dates); it keeps no logs, and the sending address is
+        the assistant’s service sends it (object names, dates). For each request it keeps, for three days, a
+        usage line: the tool asked, the object named in the question, whether it succeeded and how long it
+        took, the name of the assistant’s software and the country of the server that sent it. It never
+        records the sending address, nor the place coordinates or dates of a question. The sending address is
         only used, for a minute, to limit how many requests one address can make. Neither version knows who
         you are.
       </p>

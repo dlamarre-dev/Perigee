@@ -25,7 +25,8 @@
     "data:audit": "tsx pipeline/run.ts audit",
     "icons": "tsx tools/icons/make-icons.ts",
     "moons:anchor": "tsx tools/moons/anchor.ts",
-    "mcp:build": "vite build -c mcp/vite.config.ts"
+    "mcp:build": "vite build -c mcp/vite.config.ts",
+    "mcp:load": "tsx tools/loadtest/mcp-load.ts"
   },
   "dependencies": {
     "@fontsource/rajdhani": "^5.3.0",

@@ -7,8 +7,10 @@
   // https://perigee-mcp.<account subdomain>.workers.dev; a custom domain needs the perigee.info zone on Cloudflare.
   "workers_dev": true,
   "preview_urls": false,
-  // No request logs: the endpoint keeps nothing about its callers.
-  "observability": { "enabled": false },
+  // Usage log: the Worker's own JSON line per request (workers/mcp/src/usageLog.ts: tool, object id, outcome,
+  // duration, client name, country; never the IP address or the place coordinates). Cloudflare's invocation logs
+  // record the request headers, IP address included: off. Kept 3 days on the free plan (200,000 lines a day).
+  "observability": { "enabled": true, "logs": { "enabled": true, "invocation_logs": false, "head_sampling_rate": 1 } },
   "vars": { "PERIGEE_SITE": "https://perigee.info/" },
   // Per-IP limit (in memory at Cloudflare, nothing stored). Cloudflare counts loosely: at 60 a minute, MCP clients
   // (several requests per tool call) were refused after two or three requests; 300 leaves room for them.
