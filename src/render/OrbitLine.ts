@@ -35,10 +35,14 @@ export class OrbitLine {
     );
     this.line.name = 'orbit';
     this.line.frustumCulled = false;
+    // After the Earth's cloud layer (renderOrder 1, transparent, no depth writes): drawn before it, the line was
+    // blended under the clouds, which lie far below every orbit.
+    this.line.renderOrder = 2;
     this.line.visible = false;
     this.near = new Line(new BufferGeometry(), this.line.material);
     this.near.name = 'orbit';
     this.near.frustumCulled = false;
+    this.near.renderOrder = 2;
     this.near.visible = false;
   }
 
@@ -133,7 +137,9 @@ export class SelectionMarker {
           fragmentShader: markerFragment,
           depthTest,
           depthWrite: false,
-          transparent: opacity < 1,
+          // Always in the transparent pass, which three.js draws after the opaque one in renderOrder: an opaque
+          // ring without depth writes was drawn before the clouds (renderOrder 1), which then covered it.
+          transparent: true,
         }),
       );
       p.frustumCulled = false;
