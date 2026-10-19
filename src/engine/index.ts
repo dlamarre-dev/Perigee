@@ -255,6 +255,7 @@ export class Engine {
           name: c?.name[lang] ?? o?.OBJECT_NAME ?? sc?.OBJECT_NAME,
           norad: ref.norad,
           cospar: o?.OBJECT_ID ?? sc?.OBJECT_ID,
+          ...(c ? { agency: c.agency, country: c.country } : {}),
           owner: sc?.OWNER,
           launchDate: sc?.LAUNCH_DATE ?? c?.launchDate,
           launchSite: sc?.LAUNCH_SITE,
