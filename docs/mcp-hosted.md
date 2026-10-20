@@ -3,7 +3,8 @@
 `workers/mcp/` serves the same tools as the npm package `perigee-mcp` over MCP's Streamable HTTP transport, for AI
 services that cannot start a local server (Claude.ai custom connectors, web-based assistants). It is stateless (one
 MCP server per request, JSON responses), reads Perigee's published data from https://perigee.info/ like the npm
-package, keeps the raw files in the data centre's Cache API by content hash and the parsed datasets in memory, and
+package, keeps the parsed datasets of the current data version in each isolate's memory (Cloudflare's Cache API
+does nothing on `*.workers.dev`, so new isolates download what they need, checked against the manifest's hashes), and
 never contacts CelesTrak or Horizons. It writes one usage line per request to Workers Logs (tool, object id, outcome,
 duration, client name, country; never the IP address or place coordinates; see
 [machine-interface.md](machine-interface.md#observability)); the caller's IP address is only used by the per-IP rate
@@ -64,7 +65,7 @@ issuing its certificate, then add to `workers/mcp/wrangler.jsonc`:
 
 Free plan: 100,000 requests per day. The rate limit (`ratelimits` in `wrangler.jsonc`) caps each address at 60
 requests per minute; change `limit`/`period` there. Data downloads come from GitHub Pages once per dataset version
-and data centre (Cache API), not per request.
+and isolate, not per request.
 
 ## Usage log and load tests
 
@@ -108,7 +109,8 @@ When `mcp-monitor.yml` opens an issue, or users report failures:
    `calls[0].tool`, `agent`, `country`, `rateLimited` to see who and what.
 2. **Switch off the expensive tools** (seconds, no commit): dashboard → perigee-mcp → **Settings → Variables and
    Secrets** → add or edit the text variable `PERIGEE_MCP_DISABLED_TOOLS` = `series,passes,events,sky` (tool names or
-   their ends) → Deploy. They leave the tool list and calls to them fail; the others keep working. The variable
+   their ends; spaces and case do not matter) → Deploy. They stay listed, marked unavailable, and calls to them
+   answer with a pointer to the local server; the others keep working. The variable
    survives deployments (`keep_vars`).
 3. **Pause the endpoint** if the quota is about to run out: `PERIGEE_MCP_DISABLED_TOOLS` = `*`. Every call is then
    answered at once with 503 and a pointer to the local server (`npx -y perigee-mcp`); requests still count, but

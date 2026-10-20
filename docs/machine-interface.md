@@ -58,31 +58,31 @@ flowchart LR
 A DOM-free TypeScript module, bundled into the app (lazily, for the embed API's `details`), into the npm package and
 into the Worker.
 
-| Module                      | Role                                                                                                                                                                          |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index.ts`                  | `createEngine()` → `Engine`: `find`, `describe`, `state`, `orbit`, `distance`, `series`, `passes`, `sky`, `events`, `stats`, `describeView`, `define`, `viewUrl`, `about`     |
-| `data.ts`                   | `PublishedData`: reads `manifest.json` (10 min TTL), then files by content hash; whole files or one shard; name index; stats; injectable `fetch` and `ByteCache`              |
-| `objects.ts`                | Catalogues (bundled, zod-validated), id resolution (`25544`, `mars`, `moon:titan`, `site:…`, `launch:…`, `star:…`), catalogue search, images, the app view of an object       |
-| `state.ts`                  | Heliocentric state of any object at a date, with its provenance (SGP4 GP/SupGP, Hermite interpolation of Horizons, Kepler extrapolation, VSOP87, moon theories, sites, stars) |
-| `provenance.ts`             | Model ids, data states, sources and the accuracy table                                                                                                                        |
-| `ground.ts`, `regions.json` | WGS 84 geodetic ↔ Earth-fixed, planetocentric coordinates, country or sea below (Natural Earth 1:110m, public domain)                                                         |
-| `orbitTools.ts`             | Ground point and sunlight of a state; mean SGP4 orbit or osculating elements                                                                                                  |
-| `passes.ts`                 | Satellite passes over a place: geometric skip scan, bisection, golden section, naked-eye visibility                                                                           |
-| `sky.ts`, `events.ts`       | The sky from a place; Moon phases, eclipses, seasons, planet events, mission milestones (astronomy-engine)                                                                    |
-| `describeView.ts`           | A Perigee link in words (alternative text and description)                                                                                                                    |
-| `apiDocs.ts`                | The static documents `api/*.json` and `llms-full.txt`, written at build time                                                                                                  |
+| Module                      | Role                                                                                                                                                                                                                                                                         |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.ts`                  | `createEngine()` → `Engine`: `find`, `describe`, `state`, `orbit`, `distance`, `series`, `passes`, `sky`, `events`, `stats`, `describeView`, `define`, `viewUrl`, `about`                                                                                                    |
+| `data.ts`                   | `PublishedData`: reads `manifest.json` (10 min TTL), then files checked against their SHA-256 (the manifest's, or the shard index's) before use or caching; whole files or one shard; name index; stats; one data version kept in memory; injectable `fetch` and `ByteCache` |
+| `objects.ts`                | Catalogues (bundled, zod-validated), id resolution (`25544`, `mars`, `moon:titan`, `site:…`, `launch:…`, `star:…`), catalogue search, images, the app view of an object                                                                                                      |
+| `state.ts`                  | Heliocentric state of any object at a date, with its provenance (SGP4 GP/SupGP, Hermite interpolation of Horizons, Kepler extrapolation, VSOP87, moon theories, sites, stars)                                                                                                |
+| `provenance.ts`             | Model ids, data states, sources and the accuracy table                                                                                                                                                                                                                       |
+| `ground.ts`, `regions.json` | WGS 84 geodetic ↔ Earth-fixed, planetocentric coordinates, country or sea below (Natural Earth 1:110m, public domain)                                                                                                                                                        |
+| `orbitTools.ts`             | Ground point and sunlight of a state; mean SGP4 orbit or osculating elements                                                                                                                                                                                                 |
+| `passes.ts`                 | Satellite passes over a place: geometric skip scan, bisection, golden section, naked-eye visibility                                                                                                                                                                          |
+| `sky.ts`, `events.ts`       | The sky from a place; Moon phases, eclipses, seasons, planet events, mission milestones (astronomy-engine)                                                                                                                                                                   |
+| `describeView.ts`           | A Perigee link in words (alternative text and description)                                                                                                                                                                                                                   |
+| `apiDocs.ts`                | The static documents `api/*.json` and `llms-full.txt`, written at build time                                                                                                                                                                                                 |
 
 ### Data the engine reads
 
-| File (under `data/`)                              | Written by         | Used for                                              |
-| ------------------------------------------------- | ------------------ | ----------------------------------------------------- |
-| `manifest.json`                                   | every pipeline run | hashes, fetch times, shard templates, stats entry     |
-| `earth/gp-active/{shard}.json.gz` (256)           | GP run             | one satellite's elements (≈ 65 per shard)             |
-| `earth/gp-names.txt.gz`                           | GP run             | name, NORAD and COSPAR search (text scan)             |
-| `earth/satcat/{shard}.json.gz` (256)              | SATCAT run         | one satellite's owner, launch, type                   |
-| `earth/stats.json.gz` (manifest `stats`)          | GP and SATCAT runs | counts by owner, operator, group, regime…             |
-| `ephem/<mission>.bin`, `ephem/moons/<id>.bin`     | Horizons run       | probe and moon state vectors                          |
-| `earth/gp-active.json.gz`, `earth/satcat.json.gz` | GP / SATCAT runs   | the app (whole files); engine fallback when no shards |
+| File (under `data/`)                                        | Written by         | Used for                                                                        |
+| ----------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------- |
+| `manifest.json`                                             | every pipeline run | hashes, fetch times, shard templates, stats entry                               |
+| `earth/gp-active/{shard}.json.gz` (256) and `index.json.gz` | GP run             | one satellite's elements (≈ 65 per shard); the index lists each shard's SHA-256 |
+| `earth/gp-names.txt.gz`                                     | GP run             | name, NORAD and COSPAR search (text scan)                                       |
+| `earth/satcat/{shard}.json.gz` (256)                        | SATCAT run         | one satellite's owner, launch, type                                             |
+| `earth/stats.json.gz` (manifest `stats`)                    | GP and SATCAT runs | counts by owner, operator, group, regime…                                       |
+| `ephem/<mission>.bin`, `ephem/moons/<id>.bin`               | Horizons run       | probe and moon state vectors                                                    |
+| `earth/gp-active.json.gz`, `earth/satcat.json.gz`           | GP / SATCAT runs   | the app (whole files); engine fallback when no shards                           |
 
 New manifest information always goes in **extra fields** of existing entries (or a new top-level field), never in a
 new dataset key: older app versions validate `datasets` with a zod `partialRecord`, which rejects unknown keys.
@@ -148,7 +148,7 @@ The hosted limits keep each request within the free plan's 10 ms of CPU (see [`m
   dependencies external) into `mcp/dist/perigee-mcp.js`.
 - Released by pushing a `mcp-v<version>` tag: `.github/workflows/mcp-release.yml` checks the version, runs the
   engine and MCP tests, builds and publishes through npm trusted publishing with provenance
-  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.1.4: 14 tools).
+  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.1.5: 14 tools).
 
 ## Hosted endpoint (`workers/mcp/`)
 
@@ -158,22 +158,21 @@ sequenceDiagram
   participant W as Worker (handler.ts)
   participant L as Rate limiter (LIMITER)
   participant M as Isolate memory (engine)
-  participant K as Cache API (data centre)
   participant P as perigee.info/data
   C->>W: POST /mcp (JSON-RPC, stateless)
   W->>L: limit(caller address)
   L-->>W: allowed (60 units/min) or 429
   W->>M: tool call → engine
-  M->>K: file by content hash (if not parsed yet)
-  K-->>M: hit, or miss →
-  M->>P: GET file?v=hash (miss only)
+  M->>P: GET file?v=hash (not in memory yet: manifest, one shard and its index, the name index…)
+  P-->>M: bytes, checked against the manifest's SHA-256
   M-->>W: answer + provenance
   W-->>C: JSON response
   W->>W: console.log(usage entry)
 ```
 
-- `src/index.ts`: one engine per isolate (parsed shards, index and tables stay in memory), `EdgeCache` on
-  `caches.default` keyed by content hash (a week), the request counter for cold starts, the logger.
+- `src/index.ts`: one engine per isolate (parsed shards, indexes and tables of the current data version stay in
+  memory; older versions are dropped), the request counter for cold starts, the logger. No byte cache: Cloudflare's
+  Cache API does nothing on a `*.workers.dev` host, so a new isolate downloads the few small files it needs.
 - `src/handler.ts`: `GET /` describes the server; `GET` or `DELETE /mcp` get 405 (no event stream); `POST /mcp` runs a new MCP server per request with
   `enableJsonResponse` (no sessions); CORS open; bodies over 64 KB refused; the Worker's tool limits.
 - `src/usageLog.ts`: the usage entry (below).

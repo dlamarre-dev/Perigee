@@ -52,7 +52,20 @@ describe('publishDatasets', () => {
       },
     ]);
     const entry = ManifestSchema.parse(manifest).datasets['earth.gp'];
-    expect(entry?.shards).toEqual({ count: 256, path: 'earth/gp-active/{shard}.json.gz' });
+    expect(entry?.shards).toMatchObject({
+      count: 256,
+      path: 'earth/gp-active/{shard}.json.gz',
+      index: 'earth/gp-active/index.json.gz',
+    });
+    expect(entry?.namesSha256).toMatch(/^[0-9a-f]{64}$/);
+    const index = JSON.parse(
+      gunzipSync(readFileSync(join(dir, 'earth/gp-active/index.json.gz'))).toString(),
+    ) as {
+      parent: string;
+      sha256: string[];
+    };
+    expect(index.parent).toBe(entry?.sha256);
+    expect(index.sha256).toHaveLength(256);
     expect(entry?.names).toBe('earth/gp-names.txt.gz');
     const shard = (k: number): { NORAD_CAT_ID: number }[] =>
       JSON.parse(gunzipSync(readFileSync(join(dir, `earth/gp-active/${k}.json.gz`))).toString());

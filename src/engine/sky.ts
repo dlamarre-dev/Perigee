@@ -73,9 +73,18 @@ export function skyState(sunAltitudeDeg: number): keyof typeof SKY_STATES {
   return 'night';
 }
 
-/** Brightest magnitude seen with the naked eye under a dark sky, and in twilight. */
-const NAKED_EYE_DARK = 6;
-const NAKED_EYE_TWILIGHT = 1;
+/**
+ * Faintest magnitude seen with the naked eye, by state of the sky (rough limits for a clear sky away from city
+ * lights): only the brightest planets and stars in civil twilight, more as the sky darkens. One rule for stars and
+ * planets. Undefined: daytime, nothing counted.
+ */
+export const NAKED_EYE_LIMIT: Readonly<Record<string, number | undefined>> = {
+  day: undefined,
+  civil: 0,
+  nautical: 3,
+  astronomical: 5,
+  night: 6,
+};
 
 export function skyFrom(o: SkyOptions): Record<string, unknown> {
   const observer = new Astronomy.Observer(o.latDeg, o.lonDeg, o.heightM ?? 0);
@@ -113,7 +122,9 @@ export function skyFrom(o: SkyOptions): Record<string, unknown> {
   // The Sun: day or night, and the next twilight boundaries.
   const sun = horizontal(Astronomy.Body.Sun);
   const state = skyState(sun.hor.altitude);
-  const dark = sun.hor.altitude < -6;
+  const limit = NAKED_EYE_LIMIT[state];
+  const nakedEye = (altitudeDeg: number, magnitude: number): boolean =>
+    limit !== undefined && altitudeDeg > 0 && magnitude <= limit;
   const twilight = (direction: number, altitude: number) =>
     when(Astronomy.SearchAltitude(Astronomy.Body.Sun, observer, direction, time, 1, altitude));
 
@@ -131,10 +142,7 @@ export function skyFrom(o: SkyOptions): Record<string, unknown> {
   const planets = PLANETS.filter((p) => !p.dwarf && p.id !== 'earth').map((p) => {
     const { hor } = horizontal(p.body);
     const illum = Astronomy.Illumination(p.body, time);
-    const visible =
-      hor.altitude > 0 &&
-      illum.mag <= (dark ? NAKED_EYE_DARK : NAKED_EYE_TWILIGHT) &&
-      sun.hor.altitude < -0.833;
+    const visible = nakedEye(hor.altitude, illum.mag);
     return {
       id: p.id,
       name: p.name[o.lang],
@@ -173,7 +181,7 @@ export function skyFrom(o: SkyOptions): Record<string, unknown> {
       altitudeDeg: round(x.altitudeDeg, 1),
       azimuthDeg: round(x.azimuthDeg, 1),
       direction: compassPoint((x.azimuthDeg * Math.PI) / 180),
-      nakedEyeNow: dark && x.s.magnitude <= NAKED_EYE_DARK,
+      nakedEyeNow: nakedEye(x.altitudeDeg, x.s.magnitude),
     }));
 
   return {
@@ -202,8 +210,8 @@ export function skyFrom(o: SkyOptions): Record<string, unknown> {
     planets,
     brightStars: stars,
     notes: {
-      en: 'Altitudes include standard atmospheric refraction; rise and set are those of the upper limb of the Sun and the Moon and of a planet’s centre, within the next 24 hours. “nakedEyeNow”: above the horizon, Sun set, and bright enough for the sky at that time (magnitude 6 or brighter in a dark sky, 1 in civil twilight); city lights, haze and the horizon’s relief are not known. Magnitudes: smaller is brighter.',
-      fr: 'Les hauteurs tiennent compte de la réfraction atmosphérique moyenne ; le lever et le coucher sont ceux du bord supérieur du Soleil et de la Lune, et du centre des planètes, dans les 24 heures qui suivent. « nakedEyeNow » : au-dessus de l’horizon, Soleil couché, et assez brillant pour le ciel du moment (magnitude 6 ou moins par ciel noir, 1 au crépuscule civil) ; l’éclairage urbain, la brume et le relief de l’horizon ne sont pas connus. Magnitudes : plus petit est plus brillant.',
+      en: 'Altitudes include standard atmospheric refraction; rise and set are those of the upper limb of the Sun and the Moon and of a planet’s centre, within the next 24 hours. “nakedEyeNow”: above the horizon, Sun set, and bright enough for the sky at that time (magnitude 0 or brighter in civil twilight, 3 in nautical twilight, 5 in astronomical twilight, 6 at night); city lights, haze and the horizon’s relief are not known. Magnitudes: smaller is brighter.',
+      fr: 'Les hauteurs tiennent compte de la réfraction atmosphérique moyenne ; le lever et le coucher sont ceux du bord supérieur du Soleil et de la Lune, et du centre des planètes, dans les 24 heures qui suivent. « nakedEyeNow » : au-dessus de l’horizon, Soleil couché, et assez brillant pour le ciel du moment (magnitude 0 ou moins au crépuscule civil, 3 au crépuscule nautique, 5 au crépuscule astronomique, 6 de nuit) ; l’éclairage urbain, la brume et le relief de l’horizon ne sont pas connus. Magnitudes : plus petit est plus brillant.',
     }[o.lang],
   };
 }

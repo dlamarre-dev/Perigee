@@ -9,7 +9,7 @@ export const SHARD_COUNT = 256;
 export const shardOf = (norad: number, count: number): number => norad % count;
 
 /** Path of one shard from the manifest's template (`earth/gp-active/{shard}.json.gz`). */
-export const shardPath = (template: string, shard: number): string =>
+export const shardPath = (template: string, shard: number | 'index'): string =>
   template.replace('{shard}', String(shard));
 
 /** One line of the name index: "NORAD\tNAME\tCOSPAR". */

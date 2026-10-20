@@ -31,6 +31,42 @@ export interface HandlerOptions {
 
 /** Largest accepted request body (a tool call is a few hundred bytes). */
 const MAX_BODY_BYTES = 64 * 1024;
+/** The circuit breaker's variable ("series, passes", "*"): trimmed names, empty items dropped. */
+export function parseDisabledTools(raw: string | undefined): string[] {
+  return (raw ?? '')
+    .split(',')
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/** A request body, or undefined once it passes `limit` bytes (the rest is not read). */
+export async function readLimited(
+  body: ReadableStream<Uint8Array> | null,
+  limit: number,
+): Promise<Uint8Array<ArrayBuffer> | undefined> {
+  if (!body) return new Uint8Array(0);
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel();
+      return undefined;
+    }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(size);
+  let offset = 0;
+  for (const c of chunks) {
+    out.set(c, offset);
+    offset += c.byteLength;
+  }
+  return out;
+}
+
 /** JSON-RPC batches (older MCP revisions) are limited to this many messages. */
 export const MAX_BATCH = 4;
 
@@ -121,16 +157,23 @@ export async function handle(request: Request, options: HandlerOptions): Promise
   const started = Date.now();
   const cf = (request as Request & { cf?: { country?: string; colo?: string } }).cf;
   const agent = agentOf(request.headers.get('User-Agent'));
+  // The body is read once, stopping past MAX_BODY_BYTES bytes (a chunked upload has no Content-Length to trust),
+  // then handed to the MCP transport as a fresh request.
   const declared = Number(request.headers.get('Content-Length') ?? '0');
-  const text = declared > MAX_BODY_BYTES ? '' : await request.clone().text();
-  if (declared > MAX_BODY_BYTES || text.length > MAX_BODY_BYTES)
+  const bytes = declared > MAX_BODY_BYTES ? undefined : await readLimited(request.body, MAX_BODY_BYTES);
+  if (!bytes)
     return jsonResponse(
       { jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Request too large' } },
       413,
     );
+  const forwarded = new Request(request.url, {
+    method: 'POST',
+    headers: request.headers,
+    body: bytes as Uint8Array<ArrayBuffer>,
+  });
   let requestBody: unknown;
   try {
-    requestBody = JSON.parse(text);
+    requestBody = JSON.parse(new TextDecoder().decode(bytes));
   } catch {
     requestBody = undefined;
   }
@@ -190,7 +233,7 @@ export async function handle(request: Request, options: HandlerOptions): Promise
   });
   await server.connect(transport);
   try {
-    const response = withCors(await transport.handleRequest(request));
+    const response = withCors(await transport.handleRequest(forwarded));
     if (options.log) {
       const json = response.headers.get('Content-Type')?.includes('application/json');
       const responseBody = json

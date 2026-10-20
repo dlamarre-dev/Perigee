@@ -24,7 +24,8 @@ export interface ToolOptions {
   readonly maxEventDays?: number;
   /**
    * Tools switched off (the hosted endpoint's circuit breaker): full names or their ends ("series" for
-   * perigee_distance_series). They leave tools/list, and calls to them get an error naming the local server.
+   * perigee_distance_series). They stay in tools/list marked unavailable, and calls to them get an error that
+   * points to the local server.
    */
   readonly disabledTools?: readonly string[];
 }
@@ -449,8 +450,16 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     guard(async () => json(await engine.about())),
   );
 
-  for (const name of matchTools([...registered.keys()], options.disabledTools ?? []))
-    registered.get(name)?.disable();
+  // Circuit breaker: switched-off tools stay listed, marked unavailable, and answer with the way out.
+  const unavailable =
+    'Temporarily unavailable on this server (protection against overload). The same tool works in the local server: npx -y perigee-mcp';
+  for (const name of matchTools([...registered.keys()], options.disabledTools ?? [])) {
+    const tool = registered.get(name);
+    tool?.update({
+      description: `[${unavailable}] ${tool.description ?? ''}`,
+      callback: (() => failure(new Error(`${name}: ${unavailable}`))) as never,
+    });
+  }
   return server;
 }
 

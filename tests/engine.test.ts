@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import * as Astronomy from 'astronomy-engine';
@@ -27,7 +28,7 @@ const ephem = (() => {
   return buf;
 })();
 
-const sha = (c: string): string => c.repeat(64);
+const sha = (b: Buffer): string => createHash('sha256').update(b).digest('hex');
 const manifest = {
   version: 1,
   generatedAt: '2026-09-26T12:00:00Z',
@@ -38,7 +39,7 @@ const manifest = {
       fetchedAt: '2026-09-26T12:00:00Z',
       count: 3,
       bytes: gp.length,
-      sha256: sha('a'),
+      sha256: sha(gp),
     },
   },
   ephemerides: {
@@ -48,7 +49,7 @@ const manifest = {
       fetchedAt: '2026-09-26T03:00:00Z',
       count: 241,
       bytes: ephem.length,
-      sha256: sha('b'),
+      sha256: sha(ephem),
       horizonsId: '-31',
       center: '500@10',
       centralBody: 'sun',
@@ -329,5 +330,97 @@ describe('engine on sharded data (hosted endpoint budget)', () => {
     expect((await shardedEngine.find('100830')).map((f) => f.id)).toEqual(['100830']);
     expect((await shardedEngine.find('1998-067a')).map((f) => f.id)).toContain('25544');
     expect(paths.filter((p) => p === 'data/earth/gp.json.gz')).toEqual([]);
+  });
+});
+
+describe('engine data integrity', () => {
+  const body = (b: Buffer | undefined) => ({
+    ok: b !== undefined,
+    status: b ? 200 : 404,
+    arrayBuffer: async () =>
+      b ? (b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer) : new ArrayBuffer(0),
+  });
+
+  it('adds the final slash to a site address', () => {
+    expect(createEngine({ baseUrl: 'https://perigee.info' }).data.baseUrl).toBe('https://perigee.info/');
+  });
+
+  it('refuses a file that does not match the manifest, and caches nothing', async () => {
+    const other = gzipSync(Buffer.from('[]'));
+    const served: Record<string, Buffer> = { ...files, 'data/earth/gp.json.gz': other };
+    const stored: string[] = [];
+    const e = createEngine({
+      baseUrl: 'https://example.test/',
+      fetch: async (url) => body(served[new URL(url).pathname.slice(1)]),
+      cache: { get: async () => undefined, set: async (k) => void stored.push(k) },
+    });
+    await expect(e.state('25544', '2026-09-26T10:00:00Z')).rejects.toThrow(/being updated/);
+    expect(stored.filter((k) => k.startsWith('earth/gp.json.gz'))).toEqual([]);
+  });
+
+  it('drops a cached copy that no longer matches and downloads it again', async () => {
+    const deleted: string[] = [];
+    const e = createEngine({
+      baseUrl: 'https://example.test/',
+      fetch: async (url) => body(files[new URL(url).pathname.slice(1)]),
+      cache: {
+        get: async (k) => (k.startsWith('earth/gp.json.gz') ? new ArrayBuffer(8) : undefined),
+        set: async () => undefined,
+        delete: async (k) => void deleted.push(k),
+      },
+    });
+    const s = await e.state('25544', '2026-09-26T10:00:00Z');
+    expect(s.altitudeKm).toBeGreaterThan(370);
+    expect(deleted).toEqual([`earth/gp.json.gz@${sha(gp).slice(0, 16)}`]);
+  });
+
+  it('checks each shard against the shard index and keeps one data version in memory', async () => {
+    type Rec = { NORAD_CAT_ID: number };
+    const omm = JSON.parse(readFileSync('tests/fixtures/omm-sample.json', 'utf8')) as Rec[];
+    const count = 4;
+    const build = (records: Rec[], parentSeed: string) => {
+      const parent = createHash('sha256').update(parentSeed).digest('hex');
+      const shards = Array.from({ length: count }, (_, k) =>
+        gzipSync(JSON.stringify(records.filter((o) => o.NORAD_CAT_ID % count === k))),
+      );
+      const index = gzipSync(JSON.stringify({ parent, sha256: shards.map(sha) }));
+      const entry = {
+        ...manifest.datasets['earth.gp'],
+        sha256: parent,
+        shards: {
+          count,
+          path: 'earth/s/{shard}.json.gz',
+          index: 'earth/s/index.json.gz',
+          indexSha256: sha(index),
+        },
+      };
+      const out: Record<string, Buffer> = {
+        'data/manifest.json': Buffer.from(JSON.stringify({ ...manifest, datasets: { 'earth.gp': entry } })),
+        'data/earth/s/index.json.gz': index,
+      };
+      shards.forEach((b, k) => (out[`data/earth/s/${k}.json.gz`] = b));
+      return out;
+    };
+    let served = build(omm, 'v1');
+    const e = createEngine({
+      baseUrl: 'https://example.test/',
+      fetch: async (url) => body(served[new URL(url).pathname.slice(1)]),
+      manifestTtlMs: 0,
+    });
+    expect((await e.state('25544', '2026-09-26T10:00:00Z')).altitudeKm).toBeGreaterThan(370);
+    await e.state('100830', '2026-09-26T06:00:00Z');
+    expect(e.data.memoryEntries().shards).toBe(2);
+
+    // A shard of another version under the same name: refused, not mixed in.
+    const tampered = { ...served, [`data/earth/s/${25544 % count}.json.gz`]: gzipSync('[]') };
+    served = {
+      ...build(omm, 'v2'),
+      [`data/earth/s/${25544 % count}.json.gz`]: tampered[`data/earth/s/${25544 % count}.json.gz`] as Buffer,
+    };
+    await expect(e.state('25544', '2026-09-26T10:00:00Z')).rejects.toThrow(/being updated/);
+    // The new version replaced the old one in memory.
+    await e.state('100830', '2026-09-26T06:00:00Z');
+    expect(e.data.memoryEntries().shards).toBe(1);
+    expect(e.data.memoryEntries().shardIndexes).toBe(1);
   });
 });

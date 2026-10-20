@@ -97,11 +97,33 @@ export const DatasetEntrySchema = z.object({
    * ("{shard}" replaced), written with the dataset, so its sha256 versions them too. Extra fields, so older clients
    * that do not know them still read the manifest.
    */
-  shards: z.object({ count: z.number().int().positive(), path: z.string() }).optional(),
+  shards: z
+    .object({
+      count: z.number().int().positive(),
+      path: z.string(),
+      /** Gzip JSON of the shards' SHA-256 (ShardIndexSchema), and its own hash: readers check every shard. */
+      index: z.string().optional(),
+      indexSha256: z
+        .string()
+        .regex(/^[0-9a-f]{64}$/)
+        .optional(),
+    })
+    .optional(),
   /** earth.gp: gzip text index of every record, one tab-separated "NORAD NAME COSPAR" line each (name searches). */
   names: z.string().optional(),
+  namesSha256: z
+    .string()
+    .regex(/^[0-9a-f]{64}$/)
+    .optional(),
 });
 export type DatasetEntry = z.infer<typeof DatasetEntrySchema>;
+
+/** Hashes of a dataset's shards (`shards.index`), for the dataset version `parent` (its sha256). */
+export const ShardIndexSchema = z.object({
+  parent: z.string().regex(/^[0-9a-f]{64}$/),
+  sha256: z.array(z.string().regex(/^[0-9a-f]{64}$/)),
+});
+export type ShardIndex = z.infer<typeof ShardIndexSchema>;
 
 export const CentralBodySchema = z.enum(['moon', 'mars', 'sun']);
 export type CentralBody = z.infer<typeof CentralBodySchema>;

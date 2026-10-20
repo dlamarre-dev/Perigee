@@ -341,7 +341,8 @@ the "up" vector and causes gimbal lock at the poles).
   `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
   Hosted endpoint `workers/mcp/` (Cloudflare Worker, https://perigee-mcp.perigeeinfo.workers.dev/mcp,
   `docs/mcp-hosted.md`): the same tools over stateless
-  Streamable HTTP at `/mcp`, raw data in the Cache API by content hash, a usage line per request in Workers Logs
+  Streamable HTTP at `/mcp`, parsed data of the current version in isolate memory (the Cache API is a no-op on
+  `*.workers.dev`; every file is checked against the manifest's or the shard index's SHA-256), a usage line per request in Workers Logs
   (`workers/mcp/src/usageLog.ts`: tool, object id, outcome, duration, client, country; never IP addresses or
   coordinates; Cloudflare's invocation logs off since they record headers), per-IP rate limit
   (60 units/min, binding `LIMITER`; a tool call costs 1–4, `TOOL_COST`; batches ≤ 4 messages, each charged), circuit
@@ -367,7 +368,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.4 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.5 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;

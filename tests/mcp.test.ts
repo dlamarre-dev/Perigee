@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -29,7 +30,7 @@ const manifest = {
   stats: {
     path: 'earth/stats.json.gz',
     bytes: statsGz.length,
-    sha256: 'c'.repeat(64),
+    sha256: createHash('sha256').update(statsGz).digest('hex'),
     generatedAt: '2026-09-26T12:00:00Z',
   },
   version: 1,
@@ -41,7 +42,7 @@ const manifest = {
       fetchedAt: '2026-09-26T12:00:00Z',
       count: 3,
       bytes: gp.length,
-      sha256: 'a'.repeat(64),
+      sha256: createHash('sha256').update(gp).digest('hex'),
     },
   },
   ephemerides: {},

@@ -69,11 +69,17 @@ export async function publishDatasets(
     const file = join(dataDir, d.path);
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, gz);
-    if (d.shards) await writeShards(dataDir, d.shards.path, d.payload as never[], d.shards.norad);
+    const datasetSha256 = sha256(gz);
+    const shardIndex = d.shards
+      ? await writeShards(dataDir, d.shards.path, d.payload as never[], d.shards.norad, datasetSha256)
+      : undefined;
+    let namesSha256: string | undefined;
     if (d.names) {
       const namesFile = join(dataDir, d.names.path);
       await mkdir(dirname(namesFile), { recursive: true });
-      await writeFile(namesFile, gzipSync(Buffer.from(d.names.text), { level: 9 }));
+      const namesGz = gzipSync(Buffer.from(d.names.text), { level: 9 });
+      await writeFile(namesFile, namesGz);
+      namesSha256 = sha256(namesGz);
     }
     next.datasets[d.key] = {
       path: d.path,
@@ -81,9 +87,11 @@ export async function publishDatasets(
       fetchedAt: d.fetchedAt.toISOString(),
       count: d.count,
       bytes: gz.byteLength,
-      sha256: createHash('sha256').update(gz).digest('hex'),
-      ...(d.shards ? { shards: { count: SHARD_COUNT, path: d.shards.path } } : {}),
-      ...(d.names ? { names: d.names.path } : {}),
+      sha256: datasetSha256,
+      ...(d.shards && shardIndex
+        ? { shards: { count: SHARD_COUNT, path: d.shards.path, ...shardIndex } }
+        : {}),
+      ...(d.names && namesSha256 ? { names: d.names.path, namesSha256 } : {}),
     };
     console.log(`wrote ${d.path}: ${d.count} records, ${(gz.byteLength / 1024).toFixed(0)} KiB`);
   }
@@ -142,15 +150,26 @@ async function writeShards(
   template: string,
   records: readonly never[],
   norad: (record: never) => number,
-): Promise<void> {
+  parent: string,
+): Promise<{ index: string; indexSha256: string }> {
   const shards: never[][] = Array.from({ length: SHARD_COUNT }, () => []);
   for (const r of records) shards[shardOf(norad(r), SHARD_COUNT)]?.push(r);
+  const hashes: string[] = [];
   for (const [i, list] of shards.entries()) {
     const file = join(dataDir, shardPath(template, i));
     await mkdir(dirname(file), { recursive: true });
-    await writeFile(file, gzipSync(Buffer.from(JSON.stringify(list)), { level: 9 }));
+    const gz = gzipSync(Buffer.from(JSON.stringify(list)), { level: 9 });
+    await writeFile(file, gz);
+    hashes.push(sha256(gz));
   }
+  // The shards' hashes, tied to their dataset version: readers check each shard (src/engine/data.ts).
+  const index = shardPath(template, 'index');
+  const gz = gzipSync(Buffer.from(JSON.stringify({ parent, sha256: hashes })), { level: 9 });
+  await writeFile(join(dataDir, index), gz);
+  return { index, indexSha256: sha256(gz) };
 }
+
+const sha256 = (data: Buffer): string => createHash('sha256').update(data).digest('hex');
 
 /** Records which CelesTrak supplemental GP sets fed the last earth.gp (manifest `supplemental`). */
 export async function writeSupplementalInfo(

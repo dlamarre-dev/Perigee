@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '../src/engine';
 import type { FetchLike } from '../src/engine/data';
-import { handle, type HandlerOptions } from '../workers/mcp/src/handler';
+import { handle, parseDisabledTools, readLimited, type HandlerOptions } from '../workers/mcp/src/handler';
 import { agentOf, callsOf, type UsageEntry } from '../workers/mcp/src/usageLog';
 import { matchTools } from '../mcp/src/tools';
 
@@ -264,21 +264,51 @@ describe('abuse protections of the hosted endpoint', () => {
       rpc({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
       options({ disabledTools: ['series', 'perigee_passes'] }),
     );
-    const names = ((await list.json()) as { result: { tools: { name: string }[] } }).result.tools.map(
-      (t) => t.name,
-    );
-    expect(names).not.toContain('perigee_distance_series');
-    expect(names).not.toContain('perigee_passes');
-    expect(names).toContain('perigee_distance');
+    const tools = ((await list.json()) as { result: { tools: { name: string; description: string }[] } })
+      .result.tools;
+    const described = (n: string) => tools.find((t) => t.name === n)?.description ?? '';
+    expect(described('perigee_distance_series')).toMatch(/^\[Temporarily unavailable on this server/);
+    expect(described('perigee_passes')).toMatch(/^\[Temporarily unavailable/);
+    expect(described('perigee_distance')).not.toMatch(/unavailable/);
     const blocked = await handle(
       rpc(call(2, 'perigee_passes', { id: '25544', latitude: 0, longitude: 0 })),
       options({ disabledTools: ['passes'] }),
     );
-    const body = (await blocked.json()) as { result?: { isError?: boolean }; error?: unknown };
-    expect(body.result?.isError === true || body.error !== undefined).toBe(true);
+    const body = (await blocked.json()) as { result: { isError?: boolean; content: { text: string }[] } };
+    expect(body.result.isError).toBe(true);
+    expect(body.result.content[0]?.text).toMatch(/npx -y perigee-mcp/);
     const paused = await handle(rpc(call(3, 'perigee_define')), options({ disabledTools: ['*'] }));
     expect(paused.status).toBe(503);
     expect(paused.headers.get('Retry-After')).toBe('3600');
+  });
+
+  it('reads the circuit breaker variable with spaces and in any case', async () => {
+    expect(parseDisabledTools(' Series , *, ')).toEqual(['series', '*']);
+    expect(parseDisabledTools(undefined)).toEqual([]);
+    const paused = await handle(
+      rpc(call(4, 'perigee_define')),
+      options({ disabledTools: parseDisabledTools('series, *') }),
+    );
+    expect(paused.status).toBe(503);
+  });
+
+  it('stops reading a body past the size limit, chunked or with multi-byte text', async () => {
+    const stream = (parts: string[]) =>
+      new ReadableStream<Uint8Array>({
+        start(c) {
+          for (const p of parts) c.enqueue(new TextEncoder().encode(p));
+          c.close();
+        },
+      });
+    expect(await readLimited(stream(['ab', 'cd']), 4)).toEqual(new TextEncoder().encode('abcd'));
+    expect(await readLimited(stream(['ab', 'cde']), 4)).toBeUndefined();
+    // 3-byte characters: 30,000 of them are 90,000 bytes, over 64 KB though only 30,000 characters.
+    const big = new Request('https://mcp.example/mcp', {
+      method: 'POST',
+      body: stream(['€'.repeat(30_000)]),
+      duplex: 'half',
+    } as RequestInit);
+    expect((await handle(big, options())).status).toBe(413);
   });
 
   it('matches tool names by full name or name end', () => {

@@ -10,7 +10,7 @@ import { OmmListSchema, OperatorsCatalogSchema } from '../src/data/schemas';
 import { buildCatalog } from '../src/earth/catalog';
 import { satelliteStats } from '../src/earth/stats';
 import { eventsBetween } from '../src/engine/events';
-import { moonPhaseName, skyFrom, skyState } from '../src/engine/sky';
+import { moonPhaseName, NAKED_EYE_LIMIT, skyFrom, skyState } from '../src/engine/sky';
 
 describe('sky from a place', () => {
   const date = new Date('2026-10-20T01:30:00Z'); // 21:30 in Montreal
@@ -63,6 +63,28 @@ describe('sky from a place', () => {
     const hor = Astronomy.Horizon(time, observer, eq.ra, eq.dec, 'normal');
     expect(vega.altitudeDeg).toBeCloseTo(hor.altitude, 0);
     expect(vega.azimuthDeg).toBeCloseTo(hor.azimuth, 0);
+  });
+});
+
+describe('naked-eye visibility', () => {
+  it('applies one magnitude limit, set by the sky, to planets and stars', () => {
+    // Montreal on 20 October 2026: day, civil, nautical and astronomical twilight, night.
+    for (const iso of [
+      '2026-10-20T18:00:00Z',
+      '2026-10-20T22:20:00Z',
+      '2026-10-20T22:50:00Z',
+      '2026-10-20T23:25:00Z',
+      '2026-10-21T03:00:00Z',
+    ]) {
+      const sky = skyFrom({ latDeg: 45.5, lonDeg: -73.57, date: new Date(iso), lang: 'en' }) as {
+        sun: { altitudeDeg: number };
+        planets: { altitudeDeg: number; magnitude: number; nakedEyeNow: boolean }[];
+        brightStars: { altitudeDeg: number; magnitude: number; nakedEyeNow: boolean }[];
+      };
+      const limit = NAKED_EYE_LIMIT[skyState(sky.sun.altitudeDeg)];
+      for (const o of [...sky.planets, ...sky.brightStars])
+        expect(o.nakedEyeNow, iso).toBe(limit !== undefined && o.altitudeDeg > 0 && o.magnitude <= limit);
+    }
   });
 });
 
