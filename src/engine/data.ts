@@ -43,7 +43,11 @@ export interface DataOptions {
   readonly manifestTtlMs?: number;
 }
 
+/** gzip magic bytes: their absence on a .gz file means a server decoded it in transit (Content-Encoding). */
+const isGzip = (bytes: Uint8Array): boolean => bytes[0] === 0x1f && bytes[1] === 0x8b;
+
 async function gunzipText(bytes: Uint8Array): Promise<string> {
+  if (!isGzip(bytes)) return new TextDecoder().decode(bytes);
   const stream = new Blob([bytes as Uint8Array<ArrayBuffer>])
     .stream()
     .pipeThrough(new DecompressionStream('gzip'));
@@ -145,6 +149,9 @@ export class PublishedData {
       await this.cache?.delete?.(key);
     }
     const buf = await this.download(`${this.url(file.path)}?v=${file.version.slice(0, 12)}`);
+    // A server that sends .gz files with Content-Encoding: gzip (Vite's dev and preview servers; not GitHub Pages)
+    // hands over the decompressed bytes, whose hash cannot be checked: used as they are, never cached.
+    if (file.path.endsWith('.gz') && !isGzip(new Uint8Array(buf))) return buf;
     if (file.sha256 && (await sha256Hex(buf)) !== file.sha256) {
       this.manifestValue = undefined;
       throw new DataError(

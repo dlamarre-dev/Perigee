@@ -358,6 +358,21 @@ describe('engine data integrity', () => {
     expect(stored.filter((k) => k.startsWith('earth/gp.json.gz'))).toEqual([]);
   });
 
+  it('uses .gz files a server decompressed in transit, without caching them (Vite dev and preview)', async () => {
+    const decoded: Record<string, Buffer> = {
+      ...files,
+      'data/earth/gp.json.gz': readFileSync('tests/fixtures/omm-sample.json'),
+    };
+    const stored: string[] = [];
+    const e = createEngine({
+      baseUrl: 'https://example.test/',
+      fetch: async (url) => body(decoded[new URL(url).pathname.slice(1)]),
+      cache: { get: async () => undefined, set: async (k) => void stored.push(k) },
+    });
+    expect((await e.state('25544', '2026-09-26T10:00:00Z')).altitudeKm).toBeGreaterThan(370);
+    expect(stored).toEqual([]);
+  });
+
   it('drops a cached copy that no longer matches and downloads it again', async () => {
     const deleted: string[] = [];
     const e = createEngine({
