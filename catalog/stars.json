@@ -1,5 +1,5 @@
 {
-  "verified": "2026-10-14",
+  "verified": "2026-10-21",
   "sources": ["https://simbad.cds.unistra.fr/simbad/", "https://www.iau.org/public/themes/naming_stars/"],
   "stars": [
     {
@@ -61,8 +61,8 @@
       "temperatureK": 7400,
       "luminositySun": 16600,
       "notes": {
-        "en": "The second-brightest star in the night sky, about 71 times wider than the Sun. Too far south to be seen from Canada or France. Many spacecraft have used it as a reference star to keep their orientation.",
-        "fr": "La deuxième étoile la plus brillante du ciel nocturne, environ 71 fois plus large que le Soleil. Trop au sud pour être vue du Québec ou de la France. De nombreuses sondes spatiales s’en sont servies comme étoile de référence pour garder leur orientation."
+        "en": "The second-brightest star in the night sky, about 71 times wider than the Sun. Too far south to be seen from north of latitude 37° N, which covers most of Europe, northern Asia and much of North America. Many spacecraft have used it as a reference star to keep their orientation.",
+        "fr": "La deuxième étoile la plus brillante du ciel nocturne, environ 71 fois plus large que le Soleil. Trop au sud pour être vue au nord de la latitude 37° N, soit la majeure partie de l’Europe, le nord de l’Asie et une bonne partie de l’Amérique du Nord. De nombreuses sondes spatiales s’en sont servies comme étoile de référence pour garder leur orientation."
       },
       "verified": "2026-10-14",
       "sources": [
@@ -940,6 +940,4220 @@
         "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Per",
         "https://en.wikipedia.org/wiki/Algol",
         "https://doi.org/10.1088/0004-637X/752/1/20"
+      ]
+    },
+    {
+      "id": "barnards-star",
+      "name": {
+        "en": "Barnard's Star",
+        "fr": "Étoile de Barnard"
+      },
+      "designation": "Gliese 699",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 269.45208,
+      "decDeg": 4.69336,
+      "magnitude": 9.51,
+      "distanceLy": 5.96,
+      "spectralType": "M4V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.187,
+      "massSun": 0.162,
+      "temperatureK": 3195,
+      "luminositySun": 0.0034,
+      "notes": {
+        "en": "The star that moves fastest across our sky: Edward Barnard measured in 1916 that it shifts by half the width of the full Moon in a human lifetime. Too faint for the naked eye, this old red dwarf still flares, and four small planets, all lighter than Earth, were found around it in 2024–2025.",
+        "fr": "L’étoile qui se déplace le plus vite dans notre ciel : Edward Barnard a mesuré en 1916 qu’elle parcourt la moitié du diamètre de la pleine Lune en une vie humaine. Trop faible pour l’œil nu, cette vieille naine rouge connaît encore des éruptions, et quatre petites planètes, toutes plus légères que la Terre, y ont été découvertes en 2024–2025."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=NAME+Barnard%27s+star",
+        "https://en.wikipedia.org/wiki/Barnard%27s_Star",
+        "https://doi.org/10.1051/0004-6361/202451311",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "lalande-21185",
+      "name": {
+        "en": "Lalande 21185",
+        "fr": "Lalande 21185"
+      },
+      "designation": "Gliese 411",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 165.83415,
+      "decDeg": 35.96988,
+      "magnitude": 7.52,
+      "distanceLy": 8.3,
+      "spectralType": "M2+V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.392,
+      "massSun": 0.389,
+      "temperatureK": 3547,
+      "luminositySun": 0.02194,
+      "notes": {
+        "en": "The brightest red dwarf of the northern sky, yet still too faint for the naked eye: binoculars or a small telescope show it in Ursa Major. It has two known planets, a hot super-Earth and a heavier one on a years-long orbit, confirmed in 2021. In about 20,000 years it will pass only 4.65 light-years from the Sun.",
+        "fr": "La naine rouge la plus brillante du ciel boréal, et pourtant trop faible pour l’œil nu : des jumelles ou une petite lunette la montrent dans la Grande Ourse. On lui connaît deux planètes, une super-Terre brûlante et une autre plus massive, dont l’orbite dure plusieurs années, confirmée en 2021. Dans 20 000 ans environ, elle passera à seulement 4,65 années-lumière du Soleil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+95735",
+        "https://en.wikipedia.org/wiki/Lalande_21185",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "ross-154",
+      "name": {
+        "en": "Ross 154",
+        "fr": "Ross 154"
+      },
+      "designation": "Gliese 729",
+      "constellation": {
+        "en": "Sagittarius",
+        "fr": "Sagittaire"
+      },
+      "raDeg": 282.45568,
+      "decDeg": -23.83624,
+      "magnitude": 10.43,
+      "distanceLy": 9.71,
+      "spectralType": "M3.5Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.2,
+      "massSun": 0.177,
+      "temperatureK": 3340,
+      "luminositySun": 0.004015,
+      "notes": {
+        "en": "The nearest star in Sagittarius, a red dwarf that can only be seen with a telescope. It is a lively flare star, also named V1216 Sagittarii: a major flare erupts about every two days, and its brightness can then jump by 3 to 4 magnitudes, that is 15 to 40 times brighter.",
+        "fr": "L’étoile la plus proche dans le Sagittaire, une naine rouge visible seulement au télescope. C’est une étoile à éruptions très active, aussi appelée V1216 Sagittarii : une forte éruption se produit environ tous les deux jours, et son éclat peut alors bondir de 3 à 4 magnitudes, soit 15 à 40 fois plus."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=CD-23+14742",
+        "https://en.wikipedia.org/wiki/Ross_154",
+        "https://doi.org/10.3847/1538-4357/ac0aea",
+        "https://doi.org/10.1093/mnras/stag1294"
+      ]
+    },
+    {
+      "id": "epsilon-eridani",
+      "name": {
+        "en": "Epsilon Eridani (Ran)",
+        "fr": "Epsilon Eridani (Ran)"
+      },
+      "designation": "ε Eridani",
+      "constellation": {
+        "en": "Eridanus",
+        "fr": "Éridan"
+      },
+      "raDeg": 53.23269,
+      "decDeg": -9.45826,
+      "magnitude": 3.73,
+      "distanceLy": 10.47,
+      "spectralType": "K2V",
+      "kind": {
+        "en": "orange dwarf",
+        "fr": "naine orange"
+      },
+      "radiusSun": 0.742,
+      "massSun": 0.82,
+      "temperatureK": 5085,
+      "luminositySun": 0.326,
+      "notes": {
+        "en": "One of the nearest Sun-like stars visible to the naked eye, but young: about a billion years old, and more magnetically active than the Sun. It has a giant planet, Epsilon Eridani b (Ægir), and dust belts like our Kuiper belt. In 1960 it was one of the two first targets of the search for alien radio signals (Project Ozma).",
+        "fr": "L’une des étoiles semblables au Soleil les plus proches visibles à l’œil nu, mais jeune : environ un milliard d’années, et plus active magnétiquement que le Soleil. Elle possède une planète géante, Epsilon Eridani b (Ægir), et des ceintures de poussières comme notre ceinture de Kuiper. En 1960, elle fut l’une des deux premières cibles de la recherche de signaux radio extraterrestres (projet Ozma)."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Eri",
+        "https://en.wikipedia.org/wiki/Epsilon_Eridani",
+        "https://doi.org/10.1051/0004-6361/202347136"
+      ]
+    },
+    {
+      "id": "lacaille-9352",
+      "name": {
+        "en": "Lacaille 9352",
+        "fr": "Lacaille 9352"
+      },
+      "designation": "Gliese 887",
+      "constellation": {
+        "en": "Piscis Austrinus",
+        "fr": "Poisson austral"
+      },
+      "raDeg": 346.46682,
+      "decDeg": -35.85307,
+      "magnitude": 7.39,
+      "distanceLy": 10.72,
+      "spectralType": "M2V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.474,
+      "massSun": 0.479,
+      "temperatureK": 3672,
+      "luminositySun": 0.0368,
+      "notes": {
+        "en": "A red dwarf that crosses the sky fast, with the fourth-highest known proper motion; binoculars show it in Piscis Austrinus. Two super-Earths were announced in 2020, and a 2026 study confirmed a third planet, GJ 887 d, in the zone where liquid water could exist, and found a fourth, Earth-mass one.",
+        "fr": "Une naine rouge qui traverse vite le ciel : elle a le quatrième plus grand mouvement propre connu. Des jumelles la montrent dans le Poisson austral. Deux super-Terres ont été annoncées en 2020, et une étude de 2026 a confirmé une troisième planète, GJ 887 d, dans la zone où de l’eau liquide pourrait exister, et en a trouvé une quatrième, de la masse de la Terre."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+217987",
+        "https://en.wikipedia.org/wiki/Gliese_887",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "ross-128",
+      "name": {
+        "en": "Ross 128",
+        "fr": "Ross 128"
+      },
+      "designation": "Gliese 447",
+      "constellation": {
+        "en": "Virgo",
+        "fr": "Vierge"
+      },
+      "raDeg": 176.93499,
+      "decDeg": 0.80456,
+      "magnitude": 11.15,
+      "distanceLy": 11.01,
+      "spectralType": "dM4",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.198,
+      "massSun": 0.176,
+      "temperatureK": 3189,
+      "luminositySun": 0.00366,
+      "notes": {
+        "en": "The nearest star in Virgo, a calm red dwarf that rarely flares, seen only with a telescope. In 2017 astronomers found Ross 128 b, a temperate Earth-size planet, the second-closest known after Proxima b. The star is coming towards us and will pass within 6.2 light-years of the Sun in about 71,000 years.",
+        "fr": "L’étoile la plus proche dans la Vierge, une naine rouge calme, aux éruptions rares, visible seulement au télescope. En 2017, les astronomes y ont découvert Ross 128 b, une planète tempérée de la taille de la Terre, la deuxième plus proche connue après Proxima b. L’étoile se rapproche : elle passera à 6,2 années-lumière du Soleil dans 71 000 ans environ."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Ross+128",
+        "https://en.wikipedia.org/wiki/Ross_128",
+        "https://doi.org/10.3847/1538-4357/ac0aea",
+        "https://doi.org/10.1051/0004-6361/201731973"
+      ]
+    },
+    {
+      "id": "61-cygni",
+      "name": {
+        "en": "61 Cygni",
+        "fr": "61 du Cygne"
+      },
+      "designation": "61 Cygni A",
+      "constellation": {
+        "en": "Cygnus",
+        "fr": "Cygne"
+      },
+      "raDeg": 316.72475,
+      "decDeg": 38.74942,
+      "magnitude": 5.21,
+      "distanceLy": 11.4,
+      "spectralType": "K5V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.667,
+      "massSun": 0.677,
+      "temperatureK": 4398,
+      "luminositySun": 0.15,
+      "notes": {
+        "en": "The first star whose distance was measured: in 1838 Friedrich Bessel found about 10.4 light-years from its parallax. This pair of orange dwarfs, circling each other every 659 years, is visible to the naked eye in a dark sky and has the highest proper motion of any naked-eye star. The values given are for 61 Cygni A.",
+        "fr": "La première étoile dont on a mesuré la distance : en 1838, Friedrich Bessel a trouvé environ 10,4 années-lumière grâce à sa parallaxe. Ce couple de naines orange, qui tournent l’une autour de l’autre en 659 ans, est visible à l’œil nu sous un ciel noir et a le plus grand mouvement propre des étoiles visibles à l’œil nu. Les valeurs indiquées sont celles de 61 du Cygne A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+61+Cyg+A",
+        "https://en.wikipedia.org/wiki/61_Cygni",
+        "https://doi.org/10.1051/0004-6361/202347136",
+        "https://doi.org/10.3847/1538-3881/add922"
+      ]
+    },
+    {
+      "id": "struve-2398",
+      "name": {
+        "en": "Struve 2398",
+        "fr": "Struve 2398"
+      },
+      "designation": "Gliese 725",
+      "constellation": {
+        "en": "Draco",
+        "fr": "Dragon"
+      },
+      "raDeg": 280.6946,
+      "decDeg": 59.63039,
+      "magnitude": 8.93,
+      "distanceLy": 11.49,
+      "spectralType": "M3V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.351,
+      "massSun": 0.33,
+      "temperatureK": 3433,
+      "luminositySun": 0.01552,
+      "notes": {
+        "en": "A pair of red dwarfs in Draco that orbit each other every 871 years: too faint for the naked eye, but within reach of binoculars. Both stars have a planet: a super-Earth found in 2024 around A, and one in the habitable zone of B announced in 2025. The values given are for Struve 2398 A.",
+        "fr": "Un couple de naines rouges dans le Dragon, qui tournent l’une autour de l’autre en 871 ans : trop faibles pour l’œil nu, mais à la portée de jumelles. Chaque étoile a une planète : une super-Terre découverte en 2024 autour de A, et une autre dans la zone habitable de B, annoncée en 2025. Les valeurs indiquées sont celles de Struve 2398 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+173739",
+        "https://en.wikipedia.org/wiki/Struve_2398",
+        "https://doi.org/10.1051/0004-6361/202451646",
+        "https://doi.org/10.1051/0004-6361/202555469"
+      ]
+    },
+    {
+      "id": "groombridge-34",
+      "name": {
+        "en": "Groombridge 34",
+        "fr": "Groombridge 34"
+      },
+      "designation": "Gliese 15",
+      "constellation": {
+        "en": "Andromeda",
+        "fr": "Andromède"
+      },
+      "raDeg": 4.59535,
+      "decDeg": 44.02295,
+      "magnitude": 8.14,
+      "distanceLy": 11.62,
+      "spectralType": "M2V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.385,
+      "massSun": 0.393,
+      "temperatureK": 3601,
+      "luminositySun": 0.02249,
+      "notes": {
+        "en": "Two red dwarfs in Andromeda that orbit each other every 1,065 years and both flare from time to time; binoculars show the brighter one. Star A has two planets: a super-Earth that orbits in 11 days and a Neptune-mass world that takes about 21 years. The values given are for Groombridge 34 A.",
+        "fr": "Deux naines rouges d’Andromède qui tournent l’une autour de l’autre en 1 065 ans et connaissent toutes deux des éruptions ; des jumelles montrent la plus brillante. L’étoile A a deux planètes : une super-Terre qui en fait le tour en 11 jours et un monde de la masse de Neptune qui met environ 21 ans. Les valeurs indiquées sont celles de Groombridge 34 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+1326",
+        "https://en.wikipedia.org/wiki/Groombridge_34",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "epsilon-indi",
+      "name": {
+        "en": "Epsilon Indi",
+        "fr": "Epsilon Indi"
+      },
+      "designation": "ε Indi",
+      "constellation": {
+        "en": "Indus",
+        "fr": "Indien"
+      },
+      "raDeg": 330.84022,
+      "decDeg": -56.78598,
+      "magnitude": 4.69,
+      "distanceLy": 11.87,
+      "spectralType": "K5V",
+      "kind": {
+        "en": "orange dwarf",
+        "fr": "naine orange"
+      },
+      "radiusSun": 0.713,
+      "massSun": 0.782,
+      "temperatureK": 4649,
+      "luminositySun": 0.21,
+      "notes": {
+        "en": "An orange star faintly visible to the naked eye, with two brown dwarfs, found in 2003, on a wide orbit around it. Its giant planet, Epsilon Indi Ab, about six times as massive as Jupiter, was photographed by the James Webb Space Telescope (image released in 2024). The values given are for Epsilon Indi A.",
+        "fr": "Une étoile orange tout juste visible à l’œil nu, accompagnée de deux naines brunes, découvertes en 2003, sur une large orbite. Sa planète géante, Epsilon Indi Ab, environ six fois plus massive que Jupiter, a été photographiée par le télescope spatial James Webb (image publiée en 2024). Les valeurs indiquées sont celles d’Epsilon Indi A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Ind",
+        "https://en.wikipedia.org/wiki/Epsilon_Indi",
+        "https://doi.org/10.3847/1538-4357/ad25f2",
+        "https://doi.org/10.1093/mnras/staa282"
+      ]
+    },
+    {
+      "id": "tau-ceti",
+      "name": {
+        "en": "Tau Ceti",
+        "fr": "Tau Ceti"
+      },
+      "designation": "τ Ceti",
+      "constellation": {
+        "en": "Cetus",
+        "fr": "Baleine"
+      },
+      "raDeg": 26.01701,
+      "decDeg": -15.93748,
+      "magnitude": 3.5,
+      "distanceLy": 11.91,
+      "spectralType": "G8V",
+      "kind": {
+        "en": "yellow dwarf",
+        "fr": "naine jaune"
+      },
+      "radiusSun": 0.801,
+      "massSun": 0.8,
+      "temperatureK": 5382,
+      "luminositySun": 0.48,
+      "notes": {
+        "en": "The nearest single star like the Sun, visible to the naked eye. It is calm and stable but wrapped in ten times more dust than our Solar System. Several planets have been proposed, yet none is confirmed, and it has long been a favourite target in the search for extraterrestrial intelligence.",
+        "fr": "L’étoile isolée semblable au Soleil la plus proche, visible à l’œil nu. Calme et stable, elle est pourtant entourée de dix fois plus de poussières que notre Système solaire. Plusieurs planètes ont été proposées, mais aucune n’est confirmée, et elle est depuis longtemps une cible de choix de la recherche d’intelligence extraterrestre."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+tau+Cet",
+        "https://en.wikipedia.org/wiki/Tau_Ceti",
+        "https://doi.org/10.1051/0004-6361/202661193",
+        "https://doi.org/10.3847/1538-3881/ace906"
+      ]
+    },
+    {
+      "id": "luytens-star",
+      "name": {
+        "en": "Luyten's Star",
+        "fr": "Étoile de Luyten"
+      },
+      "designation": "Gliese 273",
+      "constellation": {
+        "en": "Canis Minor",
+        "fr": "Petit Chien"
+      },
+      "raDeg": 111.85208,
+      "decDeg": 5.22579,
+      "magnitude": 9.87,
+      "distanceLy": 12.35,
+      "spectralType": "M3.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.293,
+      "massSun": 0.29,
+      "temperatureK": 3382,
+      "luminositySun": 0.0088,
+      "notes": {
+        "en": "A red dwarf named after Willem Luyten, who measured its fast motion across the sky in 1935; binoculars or a small telescope show it. It has two confirmed planets, one of them, GJ 273 b, in the habitable zone. In 2017 a radio message with music was beamed towards it from Norway.",
+        "fr": "Une naine rouge qui porte le nom de Willem Luyten, qui a mesuré son déplacement rapide dans le ciel en 1935 ; des jumelles ou une petite lunette la montrent. Elle a deux planètes confirmées, dont GJ 273 b, dans la zone habitable. En 2017, un message radio contenant de la musique lui a été envoyé depuis la Norvège."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=BD%2B05+1668",
+        "https://en.wikipedia.org/wiki/Luyten%27s_Star",
+        "https://doi.org/10.1051/0004-6361/202038047"
+      ]
+    },
+    {
+      "id": "kapteyns-star",
+      "name": {
+        "en": "Kapteyn's Star",
+        "fr": "Étoile de Kapteyn"
+      },
+      "designation": "Gliese 191",
+      "constellation": {
+        "en": "Pictor",
+        "fr": "Peintre"
+      },
+      "raDeg": 77.91912,
+      "decDeg": -45.01843,
+      "magnitude": 8.85,
+      "distanceLy": 12.83,
+      "spectralType": "M1VIp",
+      "kind": {
+        "en": "red subdwarf",
+        "fr": "sous-naine rouge"
+      },
+      "radiusSun": 0.291,
+      "massSun": 0.281,
+      "temperatureK": 3570,
+      "luminositySun": 0.012,
+      "notes": {
+        "en": "The nearest star of the Milky Way’s halo, an old red subdwarf that may once have belonged to the globular cluster Omega Centauri. When Jacobus Kapteyn noticed it in 1898, it had the highest proper motion known. Two planets announced in 2014 were refuted in 2021. Binoculars show it.",
+        "fr": "L’étoile du halo de la Voie lactée la plus proche, une vieille sous-naine rouge qui a peut-être appartenu à l’amas globulaire Oméga du Centaure. Quand Jacobus Kapteyn l’a remarquée en 1898, elle avait le plus grand mouvement propre connu. Deux planètes annoncées en 2014 ont été réfutées en 2021. Des jumelles la montrent."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+33793",
+        "https://en.wikipedia.org/wiki/Kapteyn%27s_Star",
+        "https://doi.org/10.3847/0004-637X/821/2/81"
+      ]
+    },
+    {
+      "id": "lacaille-8760",
+      "name": {
+        "en": "Lacaille 8760",
+        "fr": "Lacaille 8760"
+      },
+      "designation": "Gliese 825",
+      "constellation": {
+        "en": "Microscopium",
+        "fr": "Microscope"
+      },
+      "raDeg": 319.31362,
+      "decDeg": -38.86736,
+      "magnitude": 6.68,
+      "distanceLy": 12.95,
+      "spectralType": "M1V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.51,
+      "massSun": 0.6,
+      "temperatureK": 3800,
+      "luminositySun": 0.072,
+      "notes": {
+        "en": "The brightest red dwarf in our night sky, yet just too faint for the naked eye except under exceptionally dark skies; binoculars show it easily. The French abbé Lacaille first listed it in a catalogue published in 1763, and in 1979 it was found to be a flare star, named AX Microscopii.",
+        "fr": "La naine rouge la plus brillante de notre ciel nocturne, mais juste trop faible pour l’œil nu, sauf sous un ciel exceptionnellement noir ; des jumelles la montrent facilement. L’abbé français Lacaille l’a inscrite le premier dans un catalogue publié en 1763, et l’on a découvert en 1979 que c’est une étoile à éruptions, nommée AX Microscopii."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=V*+AX+Mic",
+        "https://en.wikipedia.org/wiki/Lacaille_8760",
+        "https://doi.org/10.1086/509763"
+      ]
+    },
+    {
+      "id": "kruger-60",
+      "name": {
+        "en": "Krüger 60",
+        "fr": "Krüger 60"
+      },
+      "designation": "Gliese 860",
+      "constellation": {
+        "en": "Cepheus",
+        "fr": "Céphée"
+      },
+      "raDeg": 336.99816,
+      "decDeg": 57.69502,
+      "magnitude": 9.79,
+      "distanceLy": 13.07,
+      "spectralType": "M3V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.301,
+      "massSun": 0.271,
+      "temperatureK": 3342,
+      "luminositySun": 0.00983,
+      "notes": {
+        "en": "A pair of red dwarfs that orbit each other every 45 years, visible with a small telescope. The smaller star, Krüger 60 B, is a flare star (DO Cephei) whose outbursts can last up to an hour. The values given are for Krüger 60 A.",
+        "fr": "Un couple de naines rouges qui tournent l’une autour de l’autre en 45 ans, visible avec un petit télescope. La plus petite, Krüger 60 B, est une étoile à éruptions (DO Cephei) dont les sursauts peuvent durer jusqu’à une heure. Les valeurs indiquées sont celles de Krüger 60 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+239960A",
+        "https://en.wikipedia.org/wiki/Kr%C3%BCger_60",
+        "https://doi.org/10.3847/1538-3881/acd1ec"
+      ]
+    },
+    {
+      "id": "ross-614",
+      "name": {
+        "en": "Ross 614",
+        "fr": "Ross 614"
+      },
+      "designation": "Gliese 234",
+      "constellation": {
+        "en": "Monoceros",
+        "fr": "Licorne"
+      },
+      "raDeg": 97.34746,
+      "decDeg": -2.81356,
+      "magnitude": 11.1,
+      "distanceLy": 13.36,
+      "spectralType": "M4.5V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.238,
+      "massSun": 0.2228,
+      "temperatureK": 3193,
+      "luminositySun": 0.007,
+      "notes": {
+        "en": "A faint flare star spotted in 1927 by Frank Ross thanks to its fast motion across the sky; a telescope is needed to see it. An unseen companion was detected in 1936 from the star’s wobble, then first seen with the giant Palomar telescope. The two orbit each other every 16.6 years; the values given are for Ross 614 A.",
+        "fr": "Une faible étoile à éruptions repérée en 1927 par Frank Ross grâce à son déplacement rapide dans le ciel ; il faut un télescope pour la voir. Un compagnon invisible a été détecté en 1936 par l’oscillation de l’étoile, puis vu pour la première fois avec le grand télescope du mont Palomar. Les deux tournent l’une autour de l’autre en 16,6 ans ; les valeurs indiquées sont celles de Ross 614 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Ross+614",
+        "https://en.wikipedia.org/wiki/Ross_614",
+        "https://doi.org/10.1086/346143"
+      ]
+    },
+    {
+      "id": "wolf-1061",
+      "name": {
+        "en": "Wolf 1061",
+        "fr": "Wolf 1061"
+      },
+      "designation": "Gliese 628",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 247.57524,
+      "decDeg": -12.66259,
+      "magnitude": 10.07,
+      "distanceLy": 14.05,
+      "spectralType": "M3V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.319,
+      "massSun": 0.304,
+      "temperatureK": 3307,
+      "luminositySun": 0.011,
+      "notes": {
+        "en": "A red dwarf catalogued in 1919 by Max Wolf, seen only with a telescope. In 2015 astronomers found three planets around it, probably rocky. One of them, the super-Earth Wolf 1061 c, orbits near the inner edge of the zone where liquid water could exist, making it one of the nearest potentially habitable planets.",
+        "fr": "Une naine rouge cataloguée en 1919 par Max Wolf, visible seulement au télescope. En 2015, des astronomes y ont découvert trois planètes, sans doute rocheuses. L’une d’elles, la super-Terre Wolf 1061 c, tourne près du bord intérieur de la zone où de l’eau liquide pourrait exister : c’est l’une des planètes potentiellement habitables les plus proches."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=BD-12+4523",
+        "https://en.wikipedia.org/wiki/Wolf_1061",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "gliese-1",
+      "name": {
+        "en": "Gliese 1",
+        "fr": "Gliese 1"
+      },
+      "designation": "Gliese 1",
+      "constellation": {
+        "en": "Sculptor",
+        "fr": "Sculpteur"
+      },
+      "raDeg": 1.35179,
+      "decDeg": -37.35736,
+      "magnitude": 8.56,
+      "distanceLy": 14.17,
+      "spectralType": "M2V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.379,
+      "massSun": 0.33,
+      "temperatureK": 3616,
+      "luminositySun": 0.015,
+      "notes": {
+        "en": "The very first entry of the Gliese catalogue of nearby stars, because it sat almost exactly at right ascension zero in 1950. Benjamin Gould noticed its fast motion in 1885. This red dwarf crosses our part of the Galaxy unusually fast; binoculars are enough to spot it, and no planet has been found.",
+        "fr": "La toute première étoile du catalogue Gliese des étoiles proches, car elle se trouvait presque exactement à l’ascension droite zéro en 1950. Benjamin Gould a remarqué son déplacement rapide en 1885. Cette naine rouge traverse notre région de la Galaxie à une vitesse inhabituelle ; des jumelles suffisent pour la repérer, et aucune planète n’y a été trouvée."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+225213",
+        "https://en.wikipedia.org/wiki/Gliese_1",
+        "https://doi.org/10.1051/0004-6361/202039478"
+      ]
+    },
+    {
+      "id": "gliese-687",
+      "name": {
+        "en": "Gliese 687",
+        "fr": "Gliese 687"
+      },
+      "designation": "Gliese 687",
+      "constellation": {
+        "en": "Draco",
+        "fr": "Dragon"
+      },
+      "raDeg": 264.10791,
+      "decDeg": 68.33914,
+      "magnitude": 9.17,
+      "distanceLy": 14.84,
+      "spectralType": "M3.0V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.4183,
+      "massSun": 0.4,
+      "temperatureK": 3413,
+      "luminositySun": 0.02128,
+      "notes": {
+        "en": "A red dwarf of the northern sky that moves quickly against the background stars; a small telescope is needed to see it. Two planets about as massive as Neptune circle it: Gliese 687 b, found in 2014 in the star’s habitable zone, and a colder, more distant one reported in 2020.",
+        "fr": "Une naine rouge du ciel boréal qui se déplace vite devant les étoiles lointaines ; il faut un petit télescope pour la voir. Deux planètes à peu près aussi massives que Neptune tournent autour d’elle : Gliese 687 b, découverte en 2014 dans la zone habitable de l’étoile, et une autre plus lointaine et plus froide, annoncée en 2020."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=BD%2B68+946",
+        "https://en.wikipedia.org/wiki/Gliese_687",
+        "https://doi.org/10.1088/0004-637X/757/2/112"
+      ]
+    },
+    {
+      "id": "gliese-674",
+      "name": {
+        "en": "Gliese 674",
+        "fr": "Gliese 674"
+      },
+      "designation": "Gliese 674",
+      "constellation": {
+        "en": "Ara",
+        "fr": "Autel"
+      },
+      "raDeg": 262.16644,
+      "decDeg": -46.89519,
+      "magnitude": 9.41,
+      "distanceLy": 14.85,
+      "spectralType": "M3V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.361,
+      "massSun": 0.353,
+      "temperatureK": 3404,
+      "luminositySun": 0.01575,
+      "notes": {
+        "en": "A calm red dwarf of the southern sky, seen only with a telescope. In 2007 the HARPS instrument in Chile found a planet about 11 times as massive as the Earth circling it in less than five days. Even so quiet a star can flare: in 2018 it threw out a powerful ultraviolet outburst lasting hours.",
+        "fr": "Une naine rouge calme du ciel austral, visible seulement au télescope. En 2007, l’instrument HARPS, au Chili, y a découvert une planète environ 11 fois plus massive que la Terre, qui en fait le tour en moins de cinq jours. Même une étoile aussi tranquille peut éclater : en 2018, elle a lancé un puissant sursaut ultraviolet qui a duré des heures."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=CD-46+11540",
+        "https://en.wikipedia.org/wiki/Gliese_674",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "gliese-440",
+      "name": {
+        "en": "Gliese 440",
+        "fr": "Gliese 440"
+      },
+      "designation": "Gliese 440",
+      "constellation": {
+        "en": "Musca",
+        "fr": "Mouche"
+      },
+      "raDeg": 176.42882,
+      "decDeg": -64.84152,
+      "magnitude": 11.51,
+      "distanceLy": 15.12,
+      "spectralType": "DQ",
+      "kind": {
+        "en": "white dwarf",
+        "fr": "naine blanche"
+      },
+      "radiusSun": 0.0127,
+      "massSun": 0.56,
+      "temperatureK": 7837,
+      "luminositySun": 0.000525,
+      "notes": {
+        "en": "The fourth-nearest white dwarf, barely larger than the Earth, and a rare kind whose light shows traces of carbon; a telescope is needed to see it. In 2019 the Hubble telescope weighed it by watching its gravity bend the light of a star behind it. It is the remnant of a star about 4 times the Sun’s mass.",
+        "fr": "La quatrième naine blanche la plus proche, à peine plus grande que la Terre, et d’un type rare dont la lumière montre des traces de carbone ; il faut un télescope pour la voir. En 2019, le télescope Hubble l’a « pesée » en observant sa gravité dévier la lumière d’une étoile située derrière elle. C’est le reste d’une étoile d’environ 4 fois la masse du Soleil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=LAWD+37",
+        "https://en.wikipedia.org/wiki/Gliese_440",
+        "https://doi.org/10.1093/mnras/stac3532"
+      ]
+    },
+    {
+      "id": "gliese-876",
+      "name": {
+        "en": "Gliese 876",
+        "fr": "Gliese 876"
+      },
+      "designation": "Gliese 876",
+      "constellation": {
+        "en": "Aquarius",
+        "fr": "Verseau"
+      },
+      "raDeg": 343.31972,
+      "decDeg": -14.2637,
+      "magnitude": 10.19,
+      "distanceLy": 15.24,
+      "spectralType": "M3.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.372,
+      "massSun": 0.346,
+      "temperatureK": 3201,
+      "luminositySun": 0.01309,
+      "notes": {
+        "en": "A red dwarf with four known planets, the first found in 1998, seen only with a telescope. Three of them are locked in step: while the outermost goes around once, the next goes twice and the inner one four times, like Jupiter’s moons Io, Europa and Ganymede. Two are giant planets in the star’s habitable zone.",
+        "fr": "Une naine rouge entourée de quatre planètes connues, la première découverte en 1998, visible seulement au télescope. Trois d’entre elles avancent en cadence : pendant que la plus éloignée fait un tour, la suivante en fait deux et l’intérieure quatre, comme Io, Europe et Ganymède autour de Jupiter. Deux sont des planètes géantes situées dans la zone habitable de l’étoile."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=BD-15+6290",
+        "https://en.wikipedia.org/wiki/Gliese_876",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "groombridge-1618",
+      "name": {
+        "en": "Groombridge 1618",
+        "fr": "Groombridge 1618"
+      },
+      "designation": "Gliese 380",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 152.84225,
+      "decDeg": 49.45424,
+      "magnitude": 6.61,
+      "distanceLy": 15.89,
+      "spectralType": "K6VeFe-1",
+      "kind": {
+        "en": "orange dwarf",
+        "fr": "naine orange"
+      },
+      "radiusSun": 0.605,
+      "massSun": 0.67,
+      "temperatureK": 3970,
+      "luminositySun": 0.15,
+      "notes": {
+        "en": "An orange dwarf at the very limit of naked-eye visibility, easy with binoculars. Listed by Stephen Groombridge in a catalogue published in 1838, its fast motion made it an early target for distance measurements. The Herschel space telescope found hints of a faint, cold ring of dust far from the star.",
+        "fr": "Une naine orange à l’extrême limite de la visibilité à l’œil nu, facile à voir aux jumelles. Inscrite par Stephen Groombridge dans un catalogue publié en 1838, elle a été l’une des premières cibles des mesures de distance grâce à son déplacement rapide. Le télescope spatial Herschel a détecté les indices d’un faible anneau de poussières froides loin de l’étoile."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+88230",
+        "https://en.wikipedia.org/wiki/Groombridge_1618",
+        "https://doi.org/10.1051/0004-6361:20021714"
+      ]
+    },
+    {
+      "id": "gliese-412",
+      "name": {
+        "en": "Gliese 412",
+        "fr": "Gliese 412"
+      },
+      "designation": "Gliese 412",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 166.36907,
+      "decDeg": 43.52677,
+      "magnitude": 8.77,
+      "distanceLy": 16,
+      "spectralType": "M1.0V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.398,
+      "massSun": 0.387,
+      "temperatureK": 3639,
+      "luminositySun": 0.0223,
+      "notes": {
+        "en": "A pair of red dwarfs, also called Lalande 21258; binoculars show the brighter one. Its fast motion was noticed in 1860 by Friedrich Argelander. The fainter star, WX Ursae Majoris, is a flare star; seen from it, its companion would shine as brightly as a quarter Moon. The values given are for Gliese 412 A.",
+        "fr": "Un couple de naines rouges, aussi appelé Lalande 21258 ; des jumelles montrent la plus brillante. Son déplacement rapide a été remarqué en 1860 par Friedrich Argelander. La plus faible, WX Ursae Majoris, est une étoile à éruptions ; vue de celle-ci, sa compagne brillerait comme un premier quartier de Lune. Les valeurs indiquées sont celles de Gliese 412 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=BD%2B44+2051",
+        "https://en.wikipedia.org/wiki/Gliese_412",
+        "https://doi.org/10.1051/0004-6361/201834965"
+      ]
+    },
+    {
+      "id": "ad-leonis",
+      "name": {
+        "en": "AD Leonis",
+        "fr": "AD Leonis"
+      },
+      "designation": "Gliese 388",
+      "constellation": {
+        "en": "Leo",
+        "fr": "Lion"
+      },
+      "raDeg": 154.90117,
+      "decDeg": 19.87,
+      "magnitude": 9.52,
+      "distanceLy": 16.19,
+      "spectralType": "dM3",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.4233,
+      "massSun": 0.423,
+      "temperatureK": 3477,
+      "luminositySun": 0.02359,
+      "notes": {
+        "en": "One of the most active flare stars known: this young red dwarf, spinning once every 2.2 days, often brightens suddenly, from radio waves to X-rays. A telescope shows it just beside the bright star Algieba. A planet announced in 2018 turned out to be an illusion caused by its starspots.",
+        "fr": "L’une des étoiles à éruptions les plus actives connues : cette jeune naine rouge, qui tourne sur elle-même en 2,2 jours, s’illumine souvent brusquement, des ondes radio aux rayons X. Un télescope la montre tout près de l’étoile brillante Algieba. Une planète annoncée en 2018 s’est révélée être une illusion due à ses taches stellaires."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=V*+AD+Leo",
+        "https://en.wikipedia.org/wiki/AD_Leonis",
+        "https://doi.org/10.1051/0004-6361/202243773"
+      ]
+    },
+    {
+      "id": "gliese-832",
+      "name": {
+        "en": "Gliese 832",
+        "fr": "Gliese 832"
+      },
+      "designation": "Gliese 832",
+      "constellation": {
+        "en": "Grus",
+        "fr": "Grue"
+      },
+      "raDeg": 323.39156,
+      "decDeg": -49.009,
+      "magnitude": 8.67,
+      "distanceLy": 16.2,
+      "spectralType": "M1.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.442,
+      "massSun": 0.449,
+      "temperatureK": 3539,
+      "luminositySun": 0.0276,
+      "notes": {
+        "en": "A red dwarf of the southern sky, visible with binoculars. Since 2008 it has been known to host a giant planet much like Jupiter, on a long, nearly circular orbit. A second, possibly habitable super-Earth announced in 2014 was ruled out in 2022: its signal came from the star’s own activity.",
+        "fr": "Une naine rouge du ciel austral, visible aux jumelles. On sait depuis 2008 qu’elle possède une planète géante très semblable à Jupiter, sur une orbite longue et presque circulaire. Une seconde planète, une super-Terre peut-être habitable annoncée en 2014, a été écartée en 2022 : son signal venait de l’activité de l’étoile elle-même."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+204961",
+        "https://en.wikipedia.org/wiki/Gliese_832",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "gliese-682",
+      "name": {
+        "en": "Gliese 682",
+        "fr": "Gliese 682"
+      },
+      "designation": "Gliese 682",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 264.26527,
+      "decDeg": -44.31921,
+      "magnitude": 10.95,
+      "distanceLy": 16.33,
+      "spectralType": "M3.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.3,
+      "massSun": 0.27,
+      "temperatureK": 3237,
+      "luminositySun": 0.008118,
+      "notes": {
+        "en": "A red dwarf seen against the crowded star fields near the centre of our galaxy, half a degree from the distant globular cluster NGC 6388; a telescope is needed to see it. Two planets announced in 2014 were later traced to the star’s own activity, but in 2026 hints of a distant giant planet were reported.",
+        "fr": "Une naine rouge vue sur les riches champs d’étoiles proches du centre de notre galaxie, à un demi-degré du lointain amas globulaire NGC 6388 ; il faut un télescope pour la voir. Deux planètes annoncées en 2014 se sont révélées être des signaux de l’activité de l’étoile, mais en 2026, des indices d’une planète géante lointaine ont été publiés."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=CD-44+11909",
+        "https://en.wikipedia.org/wiki/Gliese_682",
+        "https://doi.org/10.3847/1538-4357/ab5640",
+        "https://doi.org/10.3847/1538-4357/ab72f9"
+      ]
+    },
+    {
+      "id": "40-eridani",
+      "name": {
+        "en": "40 Eridani (Keid)",
+        "fr": "40 Eridani (Keid)"
+      },
+      "designation": "ο² Eridani",
+      "constellation": {
+        "en": "Eridanus",
+        "fr": "Éridan"
+      },
+      "raDeg": 63.818,
+      "decDeg": -7.65287,
+      "magnitude": 4.43,
+      "distanceLy": 16.33,
+      "spectralType": "K0V",
+      "kind": {
+        "en": "triple star system",
+        "fr": "système d’étoiles triple"
+      },
+      "radiusSun": 0.804,
+      "massSun": 0.78,
+      "temperatureK": 5126,
+      "luminositySun": 0.4,
+      "notes": {
+        "en": "Its main star, Keid, is visible to the naked eye. It is orbited by a pair of stars: 40 Eridani B, the first white dwarf ever identified (in 1910) and the easiest to observe, and the red dwarf 40 Eridani C. The values given are for 40 Eridani A.",
+        "fr": "Son étoile principale, Keid, est visible à l’œil nu. Un couple d’étoiles tourne autour d’elle : 40 Eridani B, la première naine blanche identifiée (en 1910) et la plus facile à observer, et la naine rouge 40 Eridani C. Les valeurs indiquées sont celles de 40 Eridani A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+omi02+Eri",
+        "https://en.wikipedia.org/wiki/40_Eridani",
+        "https://doi.org/10.1093/mnras/staa282",
+        "https://doi.org/10.1093/mnras/sty1933"
+      ]
+    },
+    {
+      "id": "ev-lacertae",
+      "name": {
+        "en": "EV Lacertae",
+        "fr": "EV Lacertae"
+      },
+      "designation": "Gliese 873",
+      "constellation": {
+        "en": "Lacerta",
+        "fr": "Lézard"
+      },
+      "raDeg": 341.70721,
+      "decDeg": 44.33399,
+      "magnitude": 10.26,
+      "distanceLy": 16.48,
+      "spectralType": "M4.0Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.331,
+      "massSun": 0.32,
+      "temperatureK": 3370,
+      "notes": {
+        "en": "A young flare star, about 300 million years old, that spins fast. On 25 April 2008, NASA’s Swift satellite caught it releasing a flare thousands of times more powerful than the largest solar flare ever seen; it could have been seen with the naked eye had the star been in the night sky. Normally it is barely within reach of binoculars.",
+        "fr": "Une jeune étoile à éruptions, âgée d’environ 300 millions d’années, qui tourne vite sur elle-même. Le 25 avril 2008, le satellite Swift de la NASA l’a surprise en pleine éruption, des milliers de fois plus puissante que la plus grosse éruption solaire observée : elle aurait pu être vue à l’œil nu si l’étoile avait été dans le ciel nocturne. D’ordinaire, elle est à peine visible aux jumelles."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=V*+EV+Lac",
+        "https://en.wikipedia.org/wiki/EV_Lacertae",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "70-ophiuchi",
+      "name": {
+        "en": "70 Ophiuchi",
+        "fr": "70 Ophiuchi"
+      },
+      "designation": "70 Ophiuchi",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 271.36354,
+      "decDeg": 2.50015,
+      "magnitude": 4.21,
+      "distanceLy": 16.71,
+      "spectralType": "K0V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.831,
+      "massSun": 0.883,
+      "temperatureK": 5301,
+      "luminositySun": 0.53,
+      "notes": {
+        "en": "Two orange dwarfs that orbit each other every 88 years, seen with the naked eye as one dim star. Herschel’s study of the pair helped show that Newton’s gravity works beyond the Solar System, and in 1855 it was the target of the first claimed exoplanet detection, later shown to be wrong. The values given are for 70 Ophiuchi A.",
+        "fr": "Deux naines orange qui tournent l’une autour de l’autre en 88 ans, vues à l’œil nu comme une seule étoile peu brillante. L’étude de ce couple par Herschel a aidé à montrer que la gravitation de Newton s’applique au-delà du Système solaire, et en 1855, il a fait l’objet de la première annonce d’exoplanète, qui s’est révélée fausse. Les valeurs indiquées sont celles de 70 Ophiuchi A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+70+Oph+A",
+        "https://en.wikipedia.org/wiki/70_Ophiuchi",
+        "https://doi.org/10.3847/1538-4357/ae9f52",
+        "https://doi.org/10.1088/0004-637X/757/2/112"
+      ]
+    },
+    {
+      "id": "gj-3379",
+      "name": {
+        "en": "GJ 3379",
+        "fr": "GJ 3379"
+      },
+      "designation": "GJ 3379",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 90.0146,
+      "decDeg": 2.70655,
+      "magnitude": 11.31,
+      "distanceLy": 16.99,
+      "spectralType": "M3.5Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.246,
+      "massSun": 0.231,
+      "temperatureK": 3284,
+      "luminositySun": 0.00633,
+      "notes": {
+        "en": "The nearest star in Orion, south-east of Betelgeuse: a small, very active red dwarf that spins once in less than two days. It is now moving away from us, but about 161,000 years ago it passed only about 4 light-years from the Sun. A telescope is needed to see it.",
+        "fr": "L’étoile la plus proche dans Orion, au sud-est de Bételgeuse : une petite naine rouge très active qui tourne sur elle-même en moins de deux jours. Elle s’éloigne de nous aujourd’hui, mais il y a environ 161 000 ans, elle est passée à seulement 4 années-lumière environ du Soleil. Il faut un télescope pour la voir."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=G+99-49",
+        "https://en.wikipedia.org/wiki/GJ_3379",
+        "https://doi.org/10.1051/0004-6361/201834965"
+      ]
+    },
+    {
+      "id": "gliese-445",
+      "name": {
+        "en": "Gliese 445",
+        "fr": "Gliese 445"
+      },
+      "designation": "Gliese 445",
+      "constellation": {
+        "en": "Camelopardalis",
+        "fr": "Girafe"
+      },
+      "raDeg": 176.92245,
+      "decDeg": 78.69116,
+      "magnitude": 10.79,
+      "distanceLy": 17.14,
+      "spectralType": "M4.0V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.266,
+      "massSun": 0.24,
+      "temperatureK": 3356,
+      "luminositySun": 0.008,
+      "notes": {
+        "en": "A faint red dwarf near the north celestial pole, visible all night from north of the Tropic of Cancer, but only through a telescope. It is heading towards the Sun: in about 40,000 years, Voyager 1 will pass within 1.6 light-years of it, and it will then be one of the closest stars to the Sun, about 3.5 light-years away.",
+        "fr": "Une faible naine rouge proche du pôle Nord céleste, visible toute la nuit au nord du tropique du Cancer, mais seulement au télescope. Elle se dirige vers le Soleil : dans environ 40 000 ans, Voyager 1 passera à 1,6 année-lumière d’elle, et elle sera alors l’une des étoiles les plus proches du Soleil, à environ 3,5 années-lumière."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=G+254-29",
+        "https://en.wikipedia.org/wiki/Gliese_445",
+        "https://doi.org/10.1093/mnras/stad2301",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "gliese-526",
+      "name": {
+        "en": "Gliese 526",
+        "fr": "Gliese 526"
+      },
+      "designation": "Gliese 526",
+      "constellation": {
+        "en": "Boötes",
+        "fr": "Bouvier"
+      },
+      "raDeg": 206.4324,
+      "decDeg": 14.89152,
+      "magnitude": 8.5,
+      "distanceLy": 17.73,
+      "spectralType": "M2V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.488,
+      "massSun": 0.472,
+      "temperatureK": 3678,
+      "luminositySun": 0.0365,
+      "notes": {
+        "en": "A red dwarf in Boötes, already listed in 1801 in Lalande’s star catalogue; its fast motion across the sky and its closeness were known by 1911. It is a flare star whose brightness can suddenly jump. With a magnitude of 8.5, it can be found with binoculars.",
+        "fr": "Une naine rouge du Bouvier, déjà inscrite en 1801 dans le catalogue d’étoiles de Lalande ; son déplacement rapide dans le ciel et sa proximité étaient connus dès 1911. C’est une étoile à éruptions, dont l’éclat peut bondir soudainement. De magnitude 8,5, elle se repère aux jumelles."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+119850",
+        "https://en.wikipedia.org/wiki/Gliese_526",
+        "https://doi.org/10.1051/0004-6361/201834965"
+      ]
+    },
+    {
+      "id": "stein-2051",
+      "name": {
+        "en": "Stein 2051",
+        "fr": "Stein 2051"
+      },
+      "designation": "Gliese 169.1",
+      "constellation": {
+        "en": "Camelopardalis",
+        "fr": "Girafe"
+      },
+      "raDeg": 67.79798,
+      "decDeg": 58.97707,
+      "magnitude": 10.98,
+      "distanceLy": 17.99,
+      "spectralType": "M4.0V",
+      "kind": {
+        "en": "binary star",
+        "fr": "étoile double"
+      },
+      "radiusSun": 0.292,
+      "massSun": 0.252,
+      "temperatureK": 3277,
+      "luminositySun": 0.0081,
+      "notes": {
+        "en": "A red dwarf and a white dwarf, the nearest such pair that is not part of a larger system. In 2017, the Hubble telescope watched the white dwarf pass in front of a distant star: by measuring how much its gravity bent that star’s light, astronomers weighed it directly. The values given are for Stein 2051 A.",
+        "fr": "Une naine rouge et une naine blanche, le plus proche couple de ce genre qui ne fait pas partie d’un système plus grand. En 2017, le télescope Hubble a vu la naine blanche passer devant une étoile lointaine : en mesurant la déviation de la lumière de cette étoile par sa gravité, les astronomes l’ont pesée directement. Les valeurs indiquées sont celles de Stein 2051 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=G+175-34",
+        "https://en.wikipedia.org/wiki/Stein_2051",
+        "https://doi.org/10.1093/mnras/staa427",
+        "https://doi.org/10.1126/science.aal2879"
+      ]
+    },
+    {
+      "id": "gliese-251",
+      "name": {
+        "en": "Gliese 251",
+        "fr": "Gliese 251"
+      },
+      "designation": "Gliese 251",
+      "constellation": {
+        "en": "Gemini",
+        "fr": "Gémeaux"
+      },
+      "raDeg": 103.70399,
+      "decDeg": 33.26818,
+      "magnitude": 10.02,
+      "distanceLy": 18.21,
+      "spectralType": "M3V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.364,
+      "massSun": 0.36,
+      "temperatureK": 3342,
+      "luminositySun": 0.0155,
+      "notes": {
+        "en": "The nearest star in Gemini, a red dwarf with two known super-Earths: Gliese 251 b, found in 2020, circles it in just over 14 days, and Gliese 251 c, confirmed in 2025, orbits in the zone where liquid water could exist. A telescope is needed to see the star.",
+        "fr": "L’étoile la plus proche dans les Gémeaux, une naine rouge accompagnée de deux super-Terres connues : Gliese 251 b, découverte en 2020, en fait le tour en un peu plus de 14 jours, et Gliese 251 c, confirmée en 2025, orbite dans la zone où de l’eau liquide pourrait exister. Il faut un télescope pour voir l’étoile."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+265866",
+        "https://en.wikipedia.org/wiki/Gliese_251",
+        "https://doi.org/10.1051/0004-6361/202038820",
+        "https://doi.org/10.3847/1538-3881/ae0e20"
+      ]
+    },
+    {
+      "id": "lp-816-60",
+      "name": {
+        "en": "LP 816-60",
+        "fr": "LP 816-60"
+      },
+      "designation": "LP 816-60",
+      "constellation": {
+        "en": "Capricornus",
+        "fr": "Capricorne"
+      },
+      "raDeg": 313.13757,
+      "decDeg": -16.97472,
+      "magnitude": 11.46,
+      "distanceLy": 18.33,
+      "spectralType": "M4V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.266,
+      "massSun": 0.224,
+      "temperatureK": 3030,
+      "notes": {
+        "en": "A single red dwarf in Capricornus, catalogued by Willem Luyten among the stars that move fast across the sky. Like the Sun, it has a cycle of starspots, lasting about 10.6 years; no massive planets had been found around it as of 2013. A telescope is needed to see it.",
+        "fr": "Une naine rouge solitaire du Capricorne, cataloguée par Willem Luyten parmi les étoiles qui se déplacent vite dans le ciel. Comme le Soleil, elle connaît un cycle de taches stellaires, d’environ 10,6 ans ; aucune planète massive n’avait été trouvée autour d’elle en 2013. Il faut un télescope pour la voir."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=LP+816-60",
+        "https://en.wikipedia.org/wiki/LP_816-60",
+        "https://doi.org/10.1088/0004-637X/804/1/64",
+        "https://doi.org/10.1051/0004-6361/201937194"
+      ]
+    },
+    {
+      "id": "gliese-205",
+      "name": {
+        "en": "Gliese 205",
+        "fr": "Gliese 205"
+      },
+      "designation": "Gliese 205",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 82.86415,
+      "decDeg": -3.67723,
+      "magnitude": 7.97,
+      "distanceLy": 18.6,
+      "spectralType": "M1.5Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.556,
+      "massSun": 0.549,
+      "temperatureK": 3770,
+      "luminositySun": 0.061,
+      "notes": {
+        "en": "A red dwarf in Orion that Friedrich Bessel probably observed as early as 1823. Two Neptune-mass planets were suggested in 2019, but a 2023 study found no sign of them and measured that the star turns once in about 34 days. Binoculars are enough to spot it.",
+        "fr": "Une naine rouge d’Orion que Friedrich Bessel a probablement observée dès 1823. Deux planètes de la masse de Neptune ont été proposées en 2019, mais une étude de 2023 n’en a trouvé aucune trace et a mesuré que l’étoile tourne sur elle-même en 34 jours environ. Des jumelles suffisent pour la repérer."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+36395",
+        "https://en.wikipedia.org/wiki/Gliese_205",
+        "https://doi.org/10.1051/0004-6361/202245131"
+      ]
+    },
+    {
+      "id": "gliese-229",
+      "name": {
+        "en": "Gliese 229",
+        "fr": "Gliese 229"
+      },
+      "designation": "Gliese 229",
+      "constellation": {
+        "en": "Lepus",
+        "fr": "Lièvre"
+      },
+      "raDeg": 92.64423,
+      "decDeg": -21.86463,
+      "magnitude": 8.12,
+      "distanceLy": 18.79,
+      "spectralType": "M1V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.549,
+      "massSun": 0.581,
+      "temperatureK": 3700,
+      "luminositySun": 0.043,
+      "notes": {
+        "en": "The nearest star system in Lepus: a red dwarf with a companion found in 1994, Gliese 229 B, one of the first brown dwarfs discovered and the model for the methane-rich T dwarfs. In 2024 it turned out to be two brown dwarfs orbiting each other every 12 days. The values given are for Gliese 229 A.",
+        "fr": "Le système stellaire le plus proche dans le Lièvre : une naine rouge accompagnée de Gliese 229 B, découverte en 1994, l’une des premières naines brunes connues et le modèle des naines T, riches en méthane. En 2024, elle s’est révélée double : deux naines brunes qui tournent l’une autour de l’autre en 12 jours. Les valeurs indiquées sont celles de Gliese 229 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+42581",
+        "https://en.wikipedia.org/wiki/Gliese_229",
+        "https://doi.org/10.3847/1538-3881/ac273e",
+        "https://doi.org/10.3847/1538-3881/adb4f2",
+        "https://doi.org/10.1038/s41586-024-08064-x"
+      ]
+    },
+    {
+      "id": "sigma-draconis",
+      "name": {
+        "en": "Sigma Draconis (Alsafi)",
+        "fr": "Sigma Draconis (Alsafi)"
+      },
+      "designation": "σ Draconis",
+      "constellation": {
+        "en": "Draco",
+        "fr": "Dragon"
+      },
+      "raDeg": 293.08996,
+      "decDeg": 69.66118,
+      "magnitude": 4.68,
+      "distanceLy": 18.8,
+      "spectralType": "K0V",
+      "kind": {
+        "en": "orange dwarf",
+        "fr": "naine orange"
+      },
+      "radiusSun": 0.776,
+      "massSun": 0.84,
+      "temperatureK": 5336,
+      "luminositySun": 0.44,
+      "notes": {
+        "en": "Also named Alsafi, from an Arabic word for the tripods of nomads’ cooking fires, this orange dwarf is faintly visible to the naked eye. Since 1943 it has served as a reference star for the K0 V spectral type, and its brightness and activity vary in a cycle much like the Sun’s sunspot cycle.",
+        "fr": "Aussi appelée Alsafi, d’un mot arabe désignant les trépieds des feux de cuisine des nomades, cette naine orange est faiblement visible à l’œil nu. Depuis 1943, elle sert d’étoile de référence pour le type spectral K0 V, et son éclat et son activité varient selon un cycle très semblable au cycle des taches solaires."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+sig+Dra",
+        "https://en.wikipedia.org/wiki/Sigma_Draconis",
+        "https://doi.org/10.48550/arXiv.2608.30557",
+        "https://doi.org/10.3847/1538-4357/ad76a9"
+      ]
+    },
+    {
+      "id": "ross-47",
+      "name": {
+        "en": "Ross 47",
+        "fr": "Ross 47"
+      },
+      "designation": "Gliese 213",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 85.53862,
+      "decDeg": 12.48933,
+      "magnitude": 11.51,
+      "distanceLy": 18.89,
+      "spectralType": "M4V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.238,
+      "massSun": 0.218,
+      "temperatureK": 3334,
+      "luminositySun": 0.006288,
+      "notes": {
+        "en": "A small red dwarf in Orion, visible only through a telescope. Starspots make its brightness vary slightly as it turns, which earned it the variable-star name V1352 Orionis in 1997. It rotates very slowly, about once every 170 days.",
+        "fr": "Une petite naine rouge d’Orion, visible seulement au télescope. Des taches stellaires font légèrement varier son éclat au fil de sa rotation, ce qui lui a valu en 1997 le nom d’étoile variable V1352 Orionis. Elle tourne très lentement, en 170 jours environ."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Ross+47",
+        "https://en.wikipedia.org/wiki/Ross_47",
+        "https://doi.org/10.3847/1538-4357/ac0aea"
+      ]
+    },
+    {
+      "id": "gliese-570",
+      "name": {
+        "en": "Gliese 570",
+        "fr": "Gliese 570"
+      },
+      "designation": "Gliese 570 A",
+      "constellation": {
+        "en": "Libra",
+        "fr": "Balance"
+      },
+      "raDeg": 224.36667,
+      "decDeg": -21.41548,
+      "magnitude": 5.72,
+      "distanceLy": 19.2,
+      "spectralType": "K4V",
+      "kind": {
+        "en": "orange dwarf (quadruple system)",
+        "fr": "naine orange (système quadruple)"
+      },
+      "radiusSun": 0.685,
+      "massSun": 0.679,
+      "temperatureK": 4629,
+      "luminositySun": 0.19,
+      "notes": {
+        "en": "A family of four: an orange dwarf just visible to the naked eye, a pair of red dwarfs circling it, and a distant brown dwarf, Gliese 570 D, found in 2000 and then the coolest known. In 2026 a spectrograph picked up the faint “starquakes” of star A. The values given are for Gliese 570 A.",
+        "fr": "Une famille de quatre : une naine orange tout juste visible à l’œil nu, un couple de naines rouges qui tourne autour d’elle et une lointaine naine brune, Gliese 570 D, découverte en 2000 et alors la plus froide connue. En 2026, un spectrographe a capté les faibles « séismes » de l’étoile A. Les valeurs indiquées sont celles de Gliese 570 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+131977",
+        "https://en.wikipedia.org/wiki/Gliese_570",
+        "https://arxiv.org/abs/2610.20985",
+        "https://doi.org/10.1093/mnras/staa282"
+      ]
+    },
+    {
+      "id": "gliese-693",
+      "name": {
+        "en": "Gliese 693",
+        "fr": "Gliese 693"
+      },
+      "designation": "Gliese 693",
+      "constellation": {
+        "en": "Pavo",
+        "fr": "Paon"
+      },
+      "raDeg": 266.64264,
+      "decDeg": -57.31904,
+      "magnitude": 10.78,
+      "distanceLy": 19.21,
+      "spectralType": "M3.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "notes": {
+        "en": "A faint red dwarf in Pavo, visible only through a telescope. It drifts quickly across our sky, about 1.8 arcseconds per year: enough to cover the width of the full Moon in just over 1,000 years. It is also coming towards us at about 43 km/s.",
+        "fr": "Une faible naine rouge du Paon, visible seulement au télescope. Elle se déplace vite dans notre ciel, d’environ 1,8 seconde d’arc par an : assez pour parcourir la largeur de la pleine Lune en un peu plus de 1 000 ans. Elle se rapproche aussi de nous à environ 43 km/s."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=L+205-128",
+        "https://en.wikipedia.org/wiki/List_of_nearest_stars"
+      ]
+    },
+    {
+      "id": "gliese-908",
+      "name": {
+        "en": "Gliese 908",
+        "fr": "Gliese 908"
+      },
+      "designation": "Gliese 908",
+      "constellation": {
+        "en": "Pisces",
+        "fr": "Poissons"
+      },
+      "raDeg": 357.30219,
+      "decDeg": 2.40122,
+      "magnitude": 8.99,
+      "distanceLy": 19.27,
+      "spectralType": "dM1",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.409,
+      "massSun": 0.37,
+      "temperatureK": 3600,
+      "luminositySun": 0.0253,
+      "notes": {
+        "en": "A red dwarf in Pisces, at the limit of binoculars; a small telescope shows it easily. It holds fewer heavy elements than the Sun, and starspots make its brightness flicker slightly: since 1997 it has also been called BR Piscium. It turns once in about 51 days.",
+        "fr": "Une naine rouge des Poissons, à la limite des jumelles ; un petit télescope la montre sans peine. Elle contient moins d’éléments lourds que le Soleil, et des taches stellaires font légèrement varier son éclat : depuis 1997, on l’appelle aussi BR Piscium. Elle tourne sur elle-même en 51 jours environ."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=V*+BR+Psc",
+        "https://en.wikipedia.org/wiki/Gliese_908",
+        "https://doi.org/10.3847/1538-3881/aae982",
+        "https://doi.org/10.1051/0004-6361/201628985"
+      ]
+    },
+    {
+      "id": "gliese-752",
+      "name": {
+        "en": "Gliese 752",
+        "fr": "Gliese 752"
+      },
+      "designation": "Gliese 752 A",
+      "constellation": {
+        "en": "Aquila",
+        "fr": "Aigle"
+      },
+      "raDeg": 289.23024,
+      "decDeg": 5.1689,
+      "magnitude": 9.12,
+      "distanceLy": 19.29,
+      "spectralType": "M3-V",
+      "kind": {
+        "en": "red dwarf (binary system)",
+        "fr": "naine rouge (système double)"
+      },
+      "radiusSun": 0.481,
+      "massSun": 0.484,
+      "temperatureK": 3534,
+      "luminositySun": 0.0326,
+      "notes": {
+        "en": "Two red dwarfs, seen with a small telescope. Max Wolf noticed the main star’s fast motion in 1919; in 1944 George Van Biesbroeck found its tiny companion VB 10, one of the least luminous stars known. In 2018 a Neptune-mass planet was found around star A. The values given are for Gliese 752 A.",
+        "fr": "Deux naines rouges, visibles avec un petit télescope. Max Wolf a remarqué le mouvement rapide de l’étoile principale en 1919 ; en 1944, George Van Biesbroeck a trouvé sa minuscule compagne VB 10, l’une des étoiles les moins lumineuses connues. En 2018, une planète de la masse de Neptune a été découverte autour de l’étoile A. Les valeurs indiquées sont celles de Gliese 752 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+180617",
+        "https://en.wikipedia.org/wiki/Gliese_752",
+        "https://doi.org/10.3847/1538-3881/abc2d0",
+        "https://doi.org/10.1051/0004-6361/201833354"
+      ]
+    },
+    {
+      "id": "gliese-588",
+      "name": {
+        "en": "Gliese 588",
+        "fr": "Gliese 588"
+      },
+      "designation": "Gliese 588",
+      "constellation": {
+        "en": "Lupus",
+        "fr": "Loup"
+      },
+      "raDeg": 233.05388,
+      "decDeg": -41.27559,
+      "magnitude": 9.31,
+      "distanceLy": 19.3,
+      "spectralType": "M2.5V",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "notes": {
+        "en": "A red dwarf in Lupus, seen with binoculars or a small telescope. Its light is remarkably steady, with no detectable pulsations. Two planets proposed in 2019 were not confirmed: a 2024 study traced their signals to the star’s own activity.",
+        "fr": "Une naine rouge du Loup, visible aux jumelles ou avec un petit télescope. Sa lumière est remarquablement stable, sans aucune pulsation détectable. Deux planètes proposées en 2019 n’ont pas été confirmées : une étude de 2024 a attribué leurs signaux à l’activité de l’étoile elle-même."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=CD-40+9712",
+        "https://en.wikipedia.org/wiki/Gliese_588",
+        "https://doi.org/10.1051/0004-6361/202346570"
+      ]
+    },
+    {
+      "id": "eta-cassiopeiae",
+      "name": {
+        "en": "Eta Cassiopeiae (Achird)",
+        "fr": "Êta de Cassiopée (Achird)"
+      },
+      "designation": "η Cassiopeiae",
+      "constellation": {
+        "en": "Cassiopeia",
+        "fr": "Cassiopée"
+      },
+      "raDeg": 12.27623,
+      "decDeg": 57.81518,
+      "magnitude": 3.44,
+      "distanceLy": 19.33,
+      "spectralType": "F9V",
+      "kind": {
+        "en": "yellow dwarf (binary system)",
+        "fr": "naine jaune (système double)"
+      },
+      "radiusSun": 1.036,
+      "massSun": 1.026,
+      "temperatureK": 5879,
+      "luminositySun": 1.13,
+      "notes": {
+        "en": "A Sun-like star visible to the naked eye beside the W of Cassiopeia, named Achird by the IAU. William Herschel discovered in 1779 that it is double: an orange dwarf circles it every 472 years. Searches have found no giant planet. The values given are for Eta Cassiopeiae A.",
+        "fr": "Une étoile semblable au Soleil, visible à l’œil nu à côté du W de Cassiopée et nommée Achird par l’UAI. William Herschel a découvert en 1779 qu’elle est double : une naine orange tourne autour d’elle en 472 ans. Aucune planète géante n’y a été trouvée. Les valeurs indiquées sont celles d’Êta de Cassiopée A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eta+Cas",
+        "https://en.wikipedia.org/wiki/Eta_Cassiopeiae",
+        "https://arxiv.org/abs/2608.30557",
+        "https://doi.org/10.3847/1538-3881/add922",
+        "https://doi.org/10.3847/1538-3881/ae089f"
+      ]
+    },
+    {
+      "id": "36-ophiuchi",
+      "name": {
+        "en": "36 Ophiuchi (Guniibuu)",
+        "fr": "36 Ophiuchi (Guniibuu)"
+      },
+      "designation": "36 Ophiuchi A",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 258.8366,
+      "decDeg": -26.6017,
+      "magnitude": 5.08,
+      "distanceLy": 19.42,
+      "spectralType": "K2V",
+      "kind": {
+        "en": "triple star system",
+        "fr": "système d’étoiles triple"
+      },
+      "radiusSun": 0.817,
+      "massSun": 0.803,
+      "temperatureK": 5103,
+      "luminositySun": 0.326,
+      "notes": {
+        "en": "A triple system visible to the naked eye: two nearly identical orange dwarfs orbit each other, and a third lies much farther away. The IAU named star A Guniibuu, the red-breasted robin of the Kamilaroi and Euahlayi peoples of Australia. The values given are for 36 Ophiuchi A.",
+        "fr": "Un système triple visible à l’œil nu : deux naines orange presque identiques tournent l’une autour de l’autre, et une troisième se tient beaucoup plus loin. L’UAI a nommé l’étoile A Guniibuu, le rouge-gorge des peuples kamilaroi et euahlayi d’Australie. Les valeurs indiquées sont celles de 36 Ophiuchi A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+36+Oph+A",
+        "https://en.wikipedia.org/wiki/36_Ophiuchi",
+        "https://arxiv.org/abs/2608.13243",
+        "https://doi.org/10.1051/0004-6361/200911976",
+        "https://doi.org/10.3847/1538-3881/acd1ec",
+        "https://doi.org/10.3847/1538-3881/153/1/21"
+      ]
+    },
+    {
+      "id": "yz-canis-minoris",
+      "name": {
+        "en": "YZ Canis Minoris",
+        "fr": "YZ Canis Minoris"
+      },
+      "designation": "Gliese 285",
+      "constellation": {
+        "en": "Canis Minor",
+        "fr": "Petit Chien"
+      },
+      "raDeg": 116.16738,
+      "decDeg": 3.55247,
+      "magnitude": 11.22,
+      "distanceLy": 19.53,
+      "spectralType": "M4.0Ve",
+      "kind": {
+        "en": "red dwarf",
+        "fr": "naine rouge"
+      },
+      "radiusSun": 0.37,
+      "massSun": 0.36,
+      "temperatureK": 3125,
+      "luminositySun": 0.01116,
+      "notes": {
+        "en": "A red dwarf in Canis Minor, visible only through a telescope. It is a famous flare star: on 16 January 2009 it unleashed a “megaflare” lasting more than seven hours, one of the most energetic ever seen on such a small star.",
+        "fr": "Une naine rouge du Petit Chien, visible seulement au télescope. C’est une célèbre étoile à éruptions : le 16 janvier 2009, elle a lancé une « méga-éruption » de plus de sept heures, l’une des plus énergiques jamais vues sur une aussi petite étoile."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=V*+YZ+CMi",
+        "https://en.wikipedia.org/wiki/YZ_Canis_Minoris",
+        "https://doi.org/10.1051/0004-6361/202038295",
+        "https://doi.org/10.1088/0004-637X/791/1/54",
+        "https://doi.org/10.1088/2041-8205/714/1/L98"
+      ]
+    },
+    {
+      "id": "gj-1005",
+      "name": {
+        "en": "GJ 1005",
+        "fr": "GJ 1005"
+      },
+      "designation": "GJ 1005",
+      "constellation": {
+        "en": "Cetus",
+        "fr": "Baleine"
+      },
+      "raDeg": 3.86713,
+      "decDeg": -16.13379,
+      "magnitude": 11.48,
+      "distanceLy": 19.58,
+      "spectralType": "M4V",
+      "kind": {
+        "en": "pair of red dwarfs",
+        "fr": "couple de naines rouges"
+      },
+      "massSun": 0.179,
+      "temperatureK": 3341,
+      "notes": {
+        "en": "Two red dwarfs that orbit each other every 4.6 years, visible only through a telescope. In the 1990s the Hubble Space Telescope followed their dance so precisely that astronomers could weigh each star. The values given are for GJ 1005 A.",
+        "fr": "Deux naines rouges qui tournent l’une autour de l’autre en 4,6 ans, visibles seulement au télescope. Dans les années 1990, le télescope spatial Hubble a suivi leur ballet avec tant de précision que les astronomes ont pu peser chaque étoile. Les valeurs indiquées sont celles de GJ 1005 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=G+158-50",
+        "https://en.wikipedia.org/wiki/GJ_1005",
+        "https://doi.org/10.3847/0004-6256/152/5/141",
+        "https://doi.org/10.1093/mnras/stab2831"
+      ]
+    },
+    {
+      "id": "hr-7703",
+      "name": {
+        "en": "HR 7703",
+        "fr": "HR 7703"
+      },
+      "designation": "Gliese 783 A",
+      "constellation": {
+        "en": "Sagittarius",
+        "fr": "Sagittaire"
+      },
+      "raDeg": 302.79974,
+      "decDeg": -36.10121,
+      "magnitude": 5.32,
+      "distanceLy": 19.61,
+      "spectralType": "K2.5V",
+      "kind": {
+        "en": "orange dwarf (binary system)",
+        "fr": "naine orange (système double)"
+      },
+      "radiusSun": 0.697,
+      "massSun": 0.75,
+      "temperatureK": 4854,
+      "luminositySun": 0.26,
+      "notes": {
+        "en": "An orange dwarf visible to the naked eye, with a faint red dwarf companion. It is rushing towards us at about 129 km/s and will pass closest to the Sun in about 41,000 years. In 2026 its tiny “starquakes” were measured. The values given are for HR 7703 A.",
+        "fr": "Une naine orange visible à l’œil nu, accompagnée d’une faible naine rouge. Elle fonce vers nous à environ 129 km/s et passera au plus près du Soleil dans 41 000 ans environ. En 2026, ses minuscules « séismes » ont été mesurés. Les valeurs indiquées sont celles de HR 7703 A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=HD+191408",
+        "https://en.wikipedia.org/wiki/HR_7703",
+        "https://arxiv.org/abs/2610.20985",
+        "https://arxiv.org/abs/2605.04094",
+        "https://doi.org/10.1088/0004-637X/720/2/1290"
+      ]
+    },
+    {
+      "id": "82-eridani",
+      "name": {
+        "en": "82 Eridani",
+        "fr": "82 Eridani"
+      },
+      "designation": "e Eridani",
+      "constellation": {
+        "en": "Eridanus",
+        "fr": "Éridan"
+      },
+      "raDeg": 49.98188,
+      "decDeg": -43.06978,
+      "magnitude": 4.27,
+      "distanceLy": 19.7,
+      "spectralType": "G6V",
+      "kind": {
+        "en": "yellow dwarf",
+        "fr": "naine jaune"
+      },
+      "radiusSun": 0.93,
+      "massSun": 0.8,
+      "temperatureK": 5473,
+      "luminositySun": 0.6869,
+      "notes": {
+        "en": "A Sun-like star, a little smaller and much older (about 9 billion years), visible to the naked eye. It is the nearest Sun-type star with confirmed planets: three, a few times the Earth’s mass, one of which follows an elongated orbit partly inside the habitable zone.",
+        "fr": "Une étoile semblable au Soleil, un peu plus petite et bien plus âgée (environ 9 milliards d’années), visible à l’œil nu. C’est l’étoile de type solaire la plus proche ayant des planètes confirmées : trois, de quelques masses terrestres, dont une suit une orbite allongée en partie dans la zone habitable."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+e+Eri",
+        "https://en.wikipedia.org/wiki/82_G._Eridani",
+        "https://doi.org/10.1051/0004-6361/202451769",
+        "https://doi.org/10.3847/1538-3881/aaa9b5",
+        "https://arxiv.org/abs/2604.24596"
+      ]
+    },
+    {
+      "id": "delta-pavonis",
+      "name": {
+        "en": "Delta Pavonis",
+        "fr": "Delta du Paon"
+      },
+      "designation": "δ Pavonis",
+      "constellation": {
+        "en": "Pavo",
+        "fr": "Paon"
+      },
+      "raDeg": 302.1817,
+      "decDeg": -66.18207,
+      "magnitude": 3.56,
+      "distanceLy": 19.89,
+      "spectralType": "G8IV",
+      "kind": {
+        "en": "yellow subgiant",
+        "fr": "sous-géante jaune"
+      },
+      "radiusSun": 1.197,
+      "massSun": 1.07,
+      "temperatureK": 5609,
+      "luminositySun": 1.24,
+      "notes": {
+        "en": "A naked-eye star of the southern sky, much like the Sun but older and richer in heavy elements; it will soon (on a cosmic scale) begin to swell. Among nearby stars, SETI researchers once ranked it their best target in the search for alien signals.",
+        "fr": "Une étoile du ciel austral visible à l’œil nu, très semblable au Soleil mais plus âgée et plus riche en éléments lourds ; elle commencera bientôt (à l’échelle cosmique) à enfler. Parmi les étoiles proches, des chercheurs du SETI l’ont déjà classée meilleure cible pour la recherche de signaux extraterrestres."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+del+Pav",
+        "https://en.wikipedia.org/wiki/Delta_Pavonis",
+        "https://doi.org/10.3847/2041-8213/adc382",
+        "https://doi.org/10.1093/mnras/staa282"
+      ]
+    },
+    {
+      "id": "hadar",
+      "name": {
+        "en": "Hadar",
+        "fr": "Hadar"
+      },
+      "designation": "β Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 210.95586,
+      "decDeg": -60.37304,
+      "magnitude": 0.61,
+      "distanceLy": 390,
+      "spectralType": "B1III",
+      "kind": {
+        "en": "blue giant (multiple system)",
+        "fr": "géante bleue (système multiple)"
+      },
+      "massSun": 12.02,
+      "temperatureK": 25000,
+      "luminositySun": 31600,
+      "notes": {
+        "en": "The inner of the two “Pointers” of the Southern Cross: a line from Alpha Centauri through Hadar leads to Gacrux, at the top of the Cross. Two hot giants circle each other every 357 days, with a third star nearby; the values given are for the main one, Hadar Aa, massive enough to end as a supernova.",
+        "fr": "Le plus proche des deux « pointeurs » de la Croix du Sud : une ligne d’Alpha du Centaure vers Hadar mène à Gacrux, en haut de la Croix. Deux géantes chaudes tournent l’une autour de l’autre en 357 jours, avec une troisième étoile tout près ; les valeurs indiquées sont celles de la principale, Hadar Aa, assez massive pour finir en supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Cen",
+        "https://en.wikipedia.org/wiki/Beta_Centauri",
+        "https://doi.org/10.1051/0004-6361/201527872",
+        "https://doi.org/10.1093/mnras/stz416"
+      ]
+    },
+    {
+      "id": "acrux",
+      "name": {
+        "en": "Acrux",
+        "fr": "Acrux"
+      },
+      "designation": "α Crucis",
+      "constellation": {
+        "en": "Crux",
+        "fr": "Croix du Sud"
+      },
+      "raDeg": 186.64956,
+      "decDeg": -63.09909,
+      "magnitude": 0.76,
+      "distanceLy": 320,
+      "spectralType": "B0.5IV+B1V",
+      "kind": {
+        "en": "seven-star system",
+        "fr": "système de sept étoiles"
+      },
+      "radiusSun": 6.8,
+      "massSun": 17.2,
+      "temperatureK": 28950,
+      "luminositySun": 31110,
+      "notes": {
+        "en": "The foot of the Southern Cross and the southernmost first-magnitude star, barely seen north of latitude 27°. Its name is a contraction of “Alpha Crucis”. A small telescope splits it in two, yet it holds seven stars; the values given are for the brightest, Acrux Aa, a future supernova.",
+        "fr": "Le pied de la Croix du Sud et l’étoile de première magnitude la plus australe, à peine visible au nord de 27° de latitude. Son nom est une contraction d’« Alpha Crucis ». Un petit télescope la sépare en deux, mais elle compte sept étoiles ; les valeurs indiquées sont celles de la plus brillante, Acrux Aa, une future supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Cru",
+        "https://en.wikipedia.org/wiki/Acrux",
+        "https://arxiv.org/abs/2603.11194",
+        "https://doi.org/10.1093/mnras/stac1816"
+      ]
+    },
+    {
+      "id": "mimosa",
+      "name": {
+        "en": "Mimosa",
+        "fr": "Mimosa"
+      },
+      "designation": "β Crucis",
+      "constellation": {
+        "en": "Crux",
+        "fr": "Croix du Sud"
+      },
+      "raDeg": 191.93029,
+      "decDeg": -59.68877,
+      "magnitude": 1.25,
+      "distanceLy": 280,
+      "spectralType": "B1IV",
+      "kind": {
+        "en": "blue giant (multiple system)",
+        "fr": "géante bleue (système multiple)"
+      },
+      "massSun": 14.5,
+      "temperatureK": 28840,
+      "luminositySun": 25700,
+      "notes": {
+        "en": "One of the four bright stars of the Southern Cross, drawn on the flags of Australia, New Zealand and Brazil. Only about 11 million years old, this hot blue giant pulsates every 4 to 5 hours and may explode as a supernova in some 6 million years. The values given are for Mimosa A.",
+        "fr": "L’une des quatre étoiles brillantes de la Croix du Sud, dessinée sur les drapeaux de l’Australie, de la Nouvelle-Zélande et du Brésil. Âgée d’environ 11 millions d’années seulement, cette géante bleue pulse toutes les 4 à 5 heures et pourrait exploser en supernova dans quelque 6 millions d’années. Les valeurs indiquées sont celles de Mimosa A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Cru",
+        "https://en.wikipedia.org/wiki/Mimosa_(star)",
+        "https://doi.org/10.1038/s41550-021-01531-9",
+        "https://doi.org/10.1093/mnras/stac1816"
+      ]
+    },
+    {
+      "id": "adhara",
+      "name": {
+        "en": "Adhara",
+        "fr": "Adhara"
+      },
+      "designation": "ε Canis Majoris",
+      "constellation": {
+        "en": "Canis Major",
+        "fr": "Grand Chien"
+      },
+      "raDeg": 104.65645,
+      "decDeg": -28.97209,
+      "magnitude": 1.5,
+      "distanceLy": 430,
+      "spectralType": "B1.5II",
+      "kind": {
+        "en": "blue giant (binary system)",
+        "fr": "géante bleue (système double)"
+      },
+      "radiusSun": 10.7,
+      "massSun": 13.1,
+      "temperatureK": 22500,
+      "luminositySun": 19900,
+      "notes": {
+        "en": "The second-brightest star of the Great Dog; its name comes from the Arabic for “virgins”. It is the brightest source of extreme ultraviolet light in our sky. About 4.4 million years ago it was much closer and outshone every other star, a brilliance none has reached since. The values given are for Adhara A.",
+        "fr": "La deuxième étoile la plus brillante du Grand Chien ; son nom vient de l’arabe « les vierges ». C’est la source d’ultraviolet extrême la plus brillante de notre ciel. Il y a environ 4,4 millions d’années, bien plus proche, elle surpassait toutes les autres étoiles, un éclat qu’aucune n’a atteint depuis. Les valeurs indiquées sont celles d’Adhara A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+CMa",
+        "https://en.wikipedia.org/wiki/Epsilon_Canis_Majoris",
+        "https://doi.org/10.3847/1538-4357/ad9b8b",
+        "https://doi.org/10.1051/0004-6361/201424986"
+      ]
+    },
+    {
+      "id": "shaula",
+      "name": {
+        "en": "Shaula",
+        "fr": "Shaula"
+      },
+      "designation": "λ Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 263.40217,
+      "decDeg": -37.10382,
+      "magnitude": 1.63,
+      "distanceLy": 570,
+      "spectralType": "B2IV+DA7.9",
+      "kind": {
+        "en": "triple star system",
+        "fr": "système d’étoiles triple"
+      },
+      "radiusSun": 8.8,
+      "massSun": 10.4,
+      "temperatureK": 25000,
+      "luminositySun": 36300,
+      "notes": {
+        "en": "In the tail of the Scorpion; its name comes from the Arabic for “the raised [tail]”. Three stars orbit together in the same plane: a pulsating blue star, a young companion circling it every 6 days and a second blue star every 1,053 days. The values given are for Shaula Aa1, a future supernova.",
+        "fr": "Dans la queue du Scorpion ; son nom vient de l’arabe « la [queue] dressée ». Trois étoiles tournent ensemble dans le même plan : une étoile bleue pulsante, une jeune compagne qui en fait le tour en 6 jours et une seconde étoile bleue en 1 053 jours. Les valeurs indiquées sont celles de Shaula Aa1, une future supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+lam+Sco",
+        "https://en.wikipedia.org/wiki/Lambda_Scorpii",
+        "https://doi.org/10.1111/j.1365-2966.2006.10526.x",
+        "https://doi.org/10.1051/0004-6361/201321886"
+      ]
+    },
+    {
+      "id": "gacrux",
+      "name": {
+        "en": "Gacrux",
+        "fr": "Gacrux"
+      },
+      "designation": "γ Crucis",
+      "constellation": {
+        "en": "Crux",
+        "fr": "Croix du Sud"
+      },
+      "raDeg": 187.7915,
+      "decDeg": -57.11321,
+      "magnitude": 1.64,
+      "distanceLy": 89,
+      "spectralType": "M3.5III",
+      "kind": {
+        "en": "red giant",
+        "fr": "géante rouge"
+      },
+      "radiusSun": 73,
+      "massSun": 1.5,
+      "temperatureK": 3689,
+      "luminositySun": 830,
+      "notes": {
+        "en": "The top of the Southern Cross: a line from Gacrux through Acrux points south, a trick used by navigators. It is the nearest M-type red giant: only 1.5 times the Sun’s mass, it has swollen to 73 times its width. Its atmosphere is rich in barium, perhaps a gift from an unseen companion.",
+        "fr": "Le haut de la Croix du Sud : une ligne de Gacrux vers Acrux indique le sud, une astuce des navigateurs. C’est la géante rouge de type M la plus proche : 1,5 fois seulement la masse du Soleil, elle a gonflé jusqu’à 73 fois sa taille. Son atmosphère est riche en baryum, peut-être un cadeau d’une compagne invisible."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Cru",
+        "https://en.wikipedia.org/wiki/Gacrux",
+        "https://doi.org/10.1051/0004-6361/201834514",
+        "https://doi.org/10.3847/1538-4357/acdcf1"
+      ]
+    },
+    {
+      "id": "bellatrix",
+      "name": {
+        "en": "Bellatrix",
+        "fr": "Bellatrix"
+      },
+      "designation": "γ Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 81.28276,
+      "decDeg": 6.3497,
+      "magnitude": 1.64,
+      "distanceLy": 250,
+      "spectralType": "B2III",
+      "kind": {
+        "en": "blue giant",
+        "fr": "géante bleue"
+      },
+      "radiusSun": 6.2,
+      "massSun": 8.4,
+      "temperatureK": 22017,
+      "luminositySun": 7410,
+      "notes": {
+        "en": "One of Orion’s shoulders, 5° west of Betelgeuse; its name is Latin for “female warrior”. It is the closest of Orion’s major stars, much nearer than the Belt. This hot star, about 28 million years old, should run out of core hydrogen in seven million years and may end as a supernova.",
+        "fr": "L’une des épaules d’Orion, à 5° à l’ouest de Bételgeuse ; son nom signifie « guerrière » en latin. C’est la plus proche des grandes étoiles d’Orion, bien plus que la ceinture. Cette étoile chaude, âgée d’environ 28 millions d’années, devrait épuiser l’hydrogène de son cœur d’ici sept millions d’années et pourrait finir en supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Ori",
+        "https://en.wikipedia.org/wiki/Bellatrix",
+        "https://arxiv.org/abs/2603.17011",
+        "https://doi.org/10.1051/0004-6361/201731562",
+        "https://doi.org/10.3847/1538-4365/acc321"
+      ]
+    },
+    {
+      "id": "elnath",
+      "name": {
+        "en": "Elnath",
+        "fr": "Elnath"
+      },
+      "designation": "β Tauri",
+      "constellation": {
+        "en": "Taurus",
+        "fr": "Taureau"
+      },
+      "raDeg": 81.57297,
+      "decDeg": 28.60745,
+      "magnitude": 1.65,
+      "distanceLy": 130,
+      "spectralType": "B7III",
+      "kind": {
+        "en": "blue-white giant",
+        "fr": "géante bleu-blanc"
+      },
+      "radiusSun": 4.79,
+      "massSun": 5,
+      "temperatureK": 13600,
+      "luminositySun": 564,
+      "notes": {
+        "en": "Its name comes from the Arabic for “the butting”, for the horns of Taurus the Bull. Ptolemy shared it with Auriga, so it also bore the name Gamma Aurigae. It is a “mercury-manganese” star: its light shows unusually strong traces of manganese, but little calcium.",
+        "fr": "Son nom vient de l’arabe « le coup de corne », pour les cornes du Taureau. Ptolémée la partageait avec le Cocher, d’où son autre nom, Gamma Aurigae. C’est une étoile « à mercure et manganèse » : sa lumière montre des traces de manganèse inhabituellement fortes, mais peu de calcium."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Tau",
+        "https://en.wikipedia.org/wiki/Beta_Tauri",
+        "https://doi.org/10.1088/0004-637X/736/2/89",
+        "https://doi.org/10.3847/1538-3881/adc930",
+        "https://doi.org/10.3847/1538-3881/ac2431",
+        "https://doi.org/10.3847/1538-4357/ab04b2"
+      ]
+    },
+    {
+      "id": "miaplacidus",
+      "name": {
+        "en": "Miaplacidus",
+        "fr": "Miaplacidus"
+      },
+      "designation": "β Carinae",
+      "constellation": {
+        "en": "Carina",
+        "fr": "Carène"
+      },
+      "raDeg": 138.29991,
+      "decDeg": -69.71721,
+      "magnitude": 1.69,
+      "distanceLy": 110,
+      "spectralType": "A1III-",
+      "kind": {
+        "en": "white giant",
+        "fr": "géante blanche"
+      },
+      "radiusSun": 5.82,
+      "massSun": 3.88,
+      "temperatureK": 9150,
+      "luminositySun": 223,
+      "notes": {
+        "en": "The brightest star of the Diamond Cross, an asterism of Carina. Its name may mix the Arabic for “waters” and the Latin for “placid”. About 260 million years old, this white giant has already used up the hydrogen in its core, yet it still spins fast, at least 146 km/s at its equator.",
+        "fr": "L’étoile la plus brillante de la Croix du Diamant, un astérisme de la Carène. Son nom mêlerait l’arabe « les eaux » et le latin « paisible ». Âgée d’environ 260 millions d’années, cette géante blanche a déjà épuisé l’hydrogène de son cœur, mais tourne encore vite, à au moins 146 km/s à l’équateur."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Car",
+        "https://en.wikipedia.org/wiki/Beta_Carinae",
+        "https://doi.org/10.3847/0004-637X/826/2/171",
+        "https://scixplorer.org/abs/2000AcA....50..369J/abstract",
+        "https://doi.org/10.1017/S1743921304004314"
+      ]
+    },
+    {
+      "id": "alnair",
+      "name": {
+        "en": "Alnair",
+        "fr": "Alnair"
+      },
+      "designation": "α Gruis",
+      "constellation": {
+        "en": "Grus",
+        "fr": "Grue"
+      },
+      "raDeg": 332.05827,
+      "decDeg": -46.96097,
+      "magnitude": 1.74,
+      "distanceLy": 100,
+      "spectralType": "B6V",
+      "kind": {
+        "en": "blue-white main-sequence star",
+        "fr": "étoile bleu-blanc de la séquence principale"
+      },
+      "massSun": 3.82,
+      "temperatureK": 14245,
+      "luminositySun": 520,
+      "notes": {
+        "en": "The brightest star of the Crane; its name comes from the Arabic for “the bright one”. It is one of the 58 stars chosen for celestial navigation. This young star, about 100 million years old, travels with the AB Doradus moving group and spins fast, at least 215 km/s at its equator.",
+        "fr": "L’étoile la plus brillante de la Grue ; son nom vient de l’arabe « la brillante ». C’est l’une des 58 étoiles retenues pour la navigation astronomique. Cette jeune étoile d’environ 100 millions d’années voyage avec le groupe mobile d’AB Doradus et tourne vite, à au moins 215 km/s à l’équateur."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Gru",
+        "https://en.wikipedia.org/wiki/Alpha_Gruis",
+        "https://doi.org/10.1088/0004-637X/804/2/146",
+        "https://doi.org/10.1088/0004-6256/143/6/134"
+      ]
+    },
+    {
+      "id": "alioth",
+      "name": {
+        "en": "Alioth",
+        "fr": "Alioth"
+      },
+      "designation": "ε Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 193.50729,
+      "decDeg": 55.95982,
+      "magnitude": 1.77,
+      "distanceLy": 83,
+      "spectralType": "A1III-IVpkB9",
+      "kind": {
+        "en": "white subgiant",
+        "fr": "sous-géante blanche"
+      },
+      "radiusSun": 4.29,
+      "massSun": 2.91,
+      "temperatureK": 8908,
+      "luminositySun": 104.4,
+      "notes": {
+        "en": "The star of the Big Dipper’s handle closest to the bowl, and the brightest of Ursa Major; its name comes from the Arabic for “the sheep’s fat tail”. Its magnetic field gathers elements such as chromium into bands, so its spectrum changes as it turns, every 5.1 days.",
+        "fr": "L’étoile du manche de la Grande Casserole la plus proche de la casserole, et la plus brillante de la Grande Ourse ; son nom vient de l’arabe « la queue grasse du mouton ». Son champ magnétique rassemble des éléments comme le chrome en bandes : son spectre change à mesure qu’elle tourne, en 5,1 jours."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+UMa",
+        "https://en.wikipedia.org/wiki/Alioth",
+        "https://doi.org/10.1088/0067-0049/192/1/2",
+        "https://doi.org/10.3847/1538-3881/ad08be"
+      ]
+    },
+    {
+      "id": "mirfak",
+      "name": {
+        "en": "Mirfak",
+        "fr": "Mirfak"
+      },
+      "designation": "α Persei",
+      "constellation": {
+        "en": "Perseus",
+        "fr": "Persée"
+      },
+      "raDeg": 51.08071,
+      "decDeg": 49.86118,
+      "magnitude": 1.82,
+      "distanceLy": 510,
+      "spectralType": "F5Ib",
+      "kind": {
+        "en": "yellow-white supergiant",
+        "fr": "supergéante blanc-jaune"
+      },
+      "radiusSun": 53.8,
+      "temperatureK": 6439,
+      "luminositySun": 4018,
+      "notes": {
+        "en": "The brightest star of Perseus, outshining the famous Algol; its name comes from the Arabic for “elbow”. It lies in the Alpha Persei Cluster, a fine sight in binoculars. Its small speed changes, once blamed on a planet, are now explained by the supergiant’s own oscillations.",
+        "fr": "L’étoile la plus brillante de Persée, plus éclatante que la célèbre Algol ; son nom vient de l’arabe « le coude ». Elle se trouve dans l’amas d’Alpha Persei, superbe aux jumelles. Ses petites variations de vitesse, autrefois attribuées à une planète, s’expliquent aujourd’hui par les oscillations de la supergéante elle-même."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Per",
+        "https://en.wikipedia.org/wiki/Alpha_Persei",
+        "https://arxiv.org/abs/2607.24956",
+        "https://doi.org/10.3847/1538-4357/adcc13"
+      ]
+    },
+    {
+      "id": "wezen",
+      "name": {
+        "en": "Wezen",
+        "fr": "Wezen"
+      },
+      "designation": "δ Canis Majoris",
+      "constellation": {
+        "en": "Canis Major",
+        "fr": "Grand Chien"
+      },
+      "raDeg": 107.09785,
+      "decDeg": -26.3932,
+      "magnitude": 1.82,
+      "distanceLy": 1800,
+      "spectralType": "F8Ia",
+      "kind": {
+        "en": "yellow-white supergiant",
+        "fr": "supergéante blanc-jaune"
+      },
+      "radiusSun": 188,
+      "temperatureK": 5818,
+      "luminositySun": 34600,
+      "notes": {
+        "en": "About 10° south-southeast of Sirius, in the Great Dog’s hindquarters; its name comes from the Arabic for “weight”. Only about 12 million years old, this supergiant has already stopped fusing hydrogen in its core: within 100,000 years it should become a red supergiant, then explode.",
+        "fr": "À environ 10° au sud-sud-est de Sirius, dans l’arrière-train du Grand Chien ; son nom vient de l’arabe « le poids ». Âgée d’environ 12 millions d’années seulement, cette supergéante ne fusionne déjà plus d’hydrogène dans son cœur : d’ici 100 000 ans, elle devrait devenir une supergéante rouge, puis exploser."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+del+CMa",
+        "https://en.wikipedia.org/wiki/Delta_Canis_Majoris",
+        "https://doi.org/10.1093/mnras/stx1433",
+        "https://doi.org/10.1071/AS07017"
+      ]
+    },
+    {
+      "id": "gamma-velorum",
+      "name": {
+        "en": "Gamma Velorum",
+        "fr": "Gamma des Voiles"
+      },
+      "designation": "γ² Velorum",
+      "constellation": {
+        "en": "Vela",
+        "fr": "Voiles"
+      },
+      "raDeg": 122.38313,
+      "decDeg": -47.33659,
+      "magnitude": 1.83,
+      "distanceLy": 840,
+      "spectralType": "WC8+O7.5III-V",
+      "kind": {
+        "en": "multiple system with a Wolf–Rayet star",
+        "fr": "système multiple avec une étoile Wolf-Rayet"
+      },
+      "radiusSun": 13.5,
+      "massSun": 26.4,
+      "temperatureK": 35000,
+      "luminositySun": 250000,
+      "notes": {
+        "en": "The brightest star with no IAU-approved name, nicknamed Regor in honour of Apollo 1 astronaut Roger Chaffee. Binoculars split it in two; the brighter pair holds the nearest Wolf–Rayet star, whose wind collides with its partner’s. The values given are for that more massive partner, the O star.",
+        "fr": "L’étoile la plus brillante sans nom approuvé par l’UAI, surnommée Regor en hommage à l’astronaute d’Apollo 1 Roger Chaffee. Des jumelles la séparent en deux ; le couple le plus brillant abrite l’étoile Wolf-Rayet la plus proche, dont le vent percute celui de sa partenaire. Les valeurs indiquées sont celles de cette partenaire plus massive, l’étoile O."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam02+Vel",
+        "https://en.wikipedia.org/wiki/Gamma_Velorum",
+        "https://doi.org/10.1051/0004-6361/202660042"
+      ]
+    },
+    {
+      "id": "sargas",
+      "name": {
+        "en": "Sargas",
+        "fr": "Sargas"
+      },
+      "designation": "θ Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 264.32971,
+      "decDeg": -42.99783,
+      "magnitude": 1.84,
+      "distanceLy": 330,
+      "spectralType": "F1III",
+      "kind": {
+        "en": "yellow-white giant",
+        "fr": "géante blanc-jaune"
+      },
+      "radiusSun": 35.5,
+      "massSun": 3.1,
+      "temperatureK": 6294,
+      "luminositySun": 1400,
+      "notes": {
+        "en": "It sits in the curl of the Scorpion’s tail, and its name may come from Sumerian. It spins so fast that it is a third wider at the equator than from pole to pole (radius given at the equator), probably because two stars merged into one. It appears on the flag of Brazil for the state of Alagoas.",
+        "fr": "Elle se trouve dans la courbe de la queue du Scorpion, et son nom viendrait du sumérien. Elle tourne si vite qu’elle est un tiers plus large à l’équateur que d’un pôle à l’autre (rayon donné à l’équateur), sans doute parce que deux étoiles ont fusionné. Elle figure sur le drapeau du Brésil pour l’État d’Alagoas."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+tet+Sco",
+        "https://en.wikipedia.org/wiki/Theta_Scorpii",
+        "https://doi.org/10.1093/mnras/stac991"
+      ]
+    },
+    {
+      "id": "kaus-australis",
+      "name": {
+        "en": "Kaus Australis",
+        "fr": "Kaus Australis"
+      },
+      "designation": "ε Sagittarii",
+      "constellation": {
+        "en": "Sagittarius",
+        "fr": "Sagittaire"
+      },
+      "raDeg": 276.04299,
+      "decDeg": -34.38462,
+      "magnitude": 1.85,
+      "distanceLy": 140,
+      "spectralType": "B9IVp_lB?",
+      "kind": {
+        "en": "blue-white subgiant",
+        "fr": "sous-géante bleu-blanc"
+      },
+      "radiusSun": 8.8,
+      "massSun": 3.8,
+      "luminositySun": 497,
+      "notes": {
+        "en": "The brightest star of Sagittarius, part of the “Teapot”; its name means “southern bow” (Arabic and Latin). It spins at 95 % of the speed that would tear it apart, the fastest rate measured in the Milky Way, and is flattened, with a gas disc around its equator (radius given there). The values given are for Kaus Australis A.",
+        "fr": "L’étoile la plus brillante du Sagittaire, dans la « Théière » ; son nom signifie « arc austral » (arabe et latin). Elle tourne à 95 % de la vitesse qui la disloquerait, le record mesuré dans la Voie lactée, et elle est aplatie, avec un disque de gaz autour de l’équateur (rayon donné à l’équateur). Les valeurs indiquées sont celles de Kaus Australis A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Sgr",
+        "https://en.wikipedia.org/wiki/Epsilon_Sagittarii",
+        "https://doi.org/10.3847/1538-4357/ad630b"
+      ]
+    },
+    {
+      "id": "avior",
+      "name": {
+        "en": "Avior",
+        "fr": "Avior"
+      },
+      "designation": "ε Carinae",
+      "constellation": {
+        "en": "Carina",
+        "fr": "Carène"
+      },
+      "raDeg": 125.62848,
+      "decDeg": -59.50948,
+      "magnitude": 1.86,
+      "distanceLy": 600,
+      "spectralType": "K3:III+B2:V",
+      "kind": {
+        "en": "orange giant (binary system)",
+        "fr": "géante orange (système double)"
+      },
+      "massSun": 10.5,
+      "temperatureK": 4460,
+      "luminositySun": 8128,
+      "notes": {
+        "en": "One corner of the “False Cross”, often mistaken for the Southern Cross by navigators. Its name was invented in the late 1930s for the Royal Air Force’s navigation almanac, which wanted a name for every star. An orange giant paired with a hot blue star; the values given are for Avior A.",
+        "fr": "Un coin de la « Fausse Croix », souvent confondue avec la Croix du Sud par les navigateurs. Son nom a été inventé à la fin des années 1930 pour l’almanach de navigation de la Royal Air Force, qui voulait un nom pour chaque étoile. Une géante orange accompagnée d’une étoile bleue très chaude ; les valeurs indiquées sont celles d’Avior A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Car",
+        "https://en.wikipedia.org/wiki/Epsilon_Carinae",
+        "https://doi.org/10.1086/383546",
+        "https://doi.org/10.1051/0004-6361/201936360"
+      ]
+    },
+    {
+      "id": "alkaid",
+      "name": {
+        "en": "Alkaid",
+        "fr": "Alkaïd"
+      },
+      "designation": "η Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 206.88516,
+      "decDeg": 49.31327,
+      "magnitude": 1.86,
+      "distanceLy": 100,
+      "spectralType": "B3V",
+      "kind": {
+        "en": "blue-white main-sequence star",
+        "fr": "étoile bleu-blanc de la séquence principale"
+      },
+      "radiusSun": 2.89,
+      "massSun": 5.07,
+      "luminositySun": 574,
+      "notes": {
+        "en": "The star at the tip of the Big Dipper’s handle; its Arabic name means “the leader of the mourners” following the bier formed by the bowl. Unlike most of the Dipper’s stars it does not travel with them through space. Only about 6 million years old, it spins fast and is flattened (radius given at the equator).",
+        "fr": "L’étoile au bout du manche de la Grande Casserole ; son nom arabe signifie « la meneuse des pleureuses » qui suivent la civière formée par la casserole. Contrairement à la plupart des étoiles de la Casserole, elle ne voyage pas avec elles dans l’espace. Âgée d’environ 6 millions d’années seulement, elle tourne vite et est aplatie (rayon donné à l’équateur)."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eta+UMa",
+        "https://en.wikipedia.org/wiki/Alkaid",
+        "https://doi.org/10.1051/0004-6361/202659029"
+      ]
+    },
+    {
+      "id": "menkalinan",
+      "name": {
+        "en": "Menkalinan",
+        "fr": "Menkalinan"
+      },
+      "designation": "β Aurigae",
+      "constellation": {
+        "en": "Auriga",
+        "fr": "Cocher"
+      },
+      "raDeg": 89.88218,
+      "decDeg": 44.94743,
+      "magnitude": 1.9,
+      "distanceLy": 80,
+      "spectralType": "A1IV-Vp",
+      "kind": {
+        "en": "eclipsing binary",
+        "fr": "binaire à éclipses"
+      },
+      "radiusSun": 2.75,
+      "massSun": 2.36,
+      "temperatureK": 8985,
+      "luminositySun": 46.7,
+      "notes": {
+        "en": "Its Arabic name means “shoulder of the rein-holder”, the Charioteer. Two nearly twin white stars circle each other in under four days and take turns eclipsing each other, too slightly to see by eye. It is coming towards us and should pass about 32 light-years from the Sun in 1.3 million years. The values given are for Menkalinan Aa.",
+        "fr": "Son nom arabe signifie « épaule du tenant des rênes », le Cocher. Deux étoiles blanches presque jumelles tournent l’une autour de l’autre en moins de quatre jours et s’éclipsent à tour de rôle, trop peu pour que l’œil le voie. Elle se rapproche de nous et devrait passer à environ 32 années-lumière du Soleil dans 1,3 million d’années. Les valeurs indiquées sont celles de Menkalinan Aa."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Aur",
+        "https://en.wikipedia.org/wiki/Beta_Aurigae",
+        "https://doi.org/10.1051/0004-6361/202661076",
+        "https://doi.org/10.1093/mnras/stz3616"
+      ]
+    },
+    {
+      "id": "atria",
+      "name": {
+        "en": "Atria",
+        "fr": "Atria"
+      },
+      "designation": "α Trianguli Australis",
+      "constellation": {
+        "en": "Triangulum Australe",
+        "fr": "Triangle austral"
+      },
+      "raDeg": 252.16623,
+      "decDeg": -69.02771,
+      "magnitude": 1.91,
+      "distanceLy": 390,
+      "spectralType": "K2III_Ba1",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 139,
+      "massSun": 6.4,
+      "temperatureK": 4043,
+      "luminositySun": 4634,
+      "notes": {
+        "en": "The brightest corner of the Southern Triangle, and its name is a contraction of “Alpha Trianguli Australis”. So bright that it may really be a supergiant, it would almost reach the orbit of Venus in place of the Sun. Its flares and X-rays hint at a young Sun-like companion. It appears on the flag of Brazil.",
+        "fr": "Le coin le plus brillant du Triangle austral, et son nom est une contraction d’« Alpha Trianguli Australis ». Si lumineuse qu’elle pourrait être en fait une supergéante, elle atteindrait presque l’orbite de Vénus à la place du Soleil. Ses éruptions et ses rayons X trahissent sans doute une jeune compagne semblable au Soleil. Elle figure sur le drapeau du Brésil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+TrA",
+        "https://en.wikipedia.org/wiki/Alpha_Trianguli_Australis",
+        "https://doi.org/10.3847/1538-4365/acb535"
+      ]
+    },
+    {
+      "id": "alhena",
+      "name": {
+        "en": "Alhena",
+        "fr": "Alhena"
+      },
+      "designation": "γ Geminorum",
+      "constellation": {
+        "en": "Gemini",
+        "fr": "Gémeaux"
+      },
+      "raDeg": 99.42796,
+      "decDeg": 16.39928,
+      "magnitude": 1.92,
+      "distanceLy": 100,
+      "spectralType": "A1.5IV+",
+      "kind": {
+        "en": "white subgiant (binary system)",
+        "fr": "sous-géante blanche (système double)"
+      },
+      "radiusSun": 6.06,
+      "massSun": 3.4,
+      "temperatureK": 9190,
+      "luminositySun": 207,
+      "notes": {
+        "en": "The third-brightest star of the Twins; its Arabic name means “the brand” on a camel’s neck. A white star running out of hydrogen in its core, it has a smaller companion on a very elongated 12.6-year orbit. The Sun passes it around 30 June each year. The values given are for Alhena A.",
+        "fr": "La troisième étoile des Gémeaux par l’éclat ; son nom arabe signifie « la marque » au fer sur le cou d’un chameau. Une étoile blanche qui épuise l’hydrogène de son cœur, avec une compagne plus petite sur une orbite très allongée de 12,6 ans. Le Soleil passe près d’elle vers le 30 juin chaque année. Les valeurs indiquées sont celles d’Alhena A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Gem",
+        "https://en.wikipedia.org/wiki/Gamma_Geminorum",
+        "https://doi.org/10.3847/1538-3881/adc930",
+        "https://doi.org/10.1088/0004-6256/147/3/65",
+        "https://doi.org/10.1051/0004-6361/201117691",
+        "https://doi.org/10.1093/mnras/stad2862"
+      ]
+    },
+    {
+      "id": "peacock",
+      "name": {
+        "en": "Peacock",
+        "fr": "Peacock"
+      },
+      "designation": "α Pavonis",
+      "constellation": {
+        "en": "Pavo",
+        "fr": "Paon"
+      },
+      "raDeg": 306.4119,
+      "decDeg": -56.73509,
+      "magnitude": 1.94,
+      "distanceLy": 180,
+      "spectralType": "B2IV",
+      "kind": {
+        "en": "blue-white subgiant (binary system)",
+        "fr": "sous-géante bleu-blanc (système double)"
+      },
+      "radiusSun": 4.83,
+      "massSun": 5.91,
+      "temperatureK": 17711,
+      "luminositySun": 2200,
+      "notes": {
+        "en": "The brightest star of the Peacock constellation. It had no traditional name, so in the late 1930s the Royal Air Force’s navigation almanac simply called it “Peacock”, the meaning of Pavo. Two hot blue stars orbit each other every 11.8 days, too close to be seen apart. The values given are for Peacock A.",
+        "fr": "L’étoile la plus brillante de la constellation du Paon. Elle n’avait pas de nom traditionnel : à la fin des années 1930, l’almanach de navigation de la Royal Air Force l’a simplement appelée « Peacock » (« paon » en anglais). Deux étoiles bleues très chaudes tournent l’une autour de l’autre en 11,8 jours, trop proches pour être vues séparément. Les valeurs indiquées sont celles de Peacock A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Pav",
+        "https://en.wikipedia.org/wiki/Alpha_Pavonis",
+        "https://doi.org/10.1088/0004-637X/804/2/146",
+        "https://scixplorer.org/abs/2000AcA....50..369J/abstract"
+      ]
+    },
+    {
+      "id": "alsephina",
+      "name": {
+        "en": "Alsephina",
+        "fr": "Alsephina"
+      },
+      "designation": "δ Velorum",
+      "constellation": {
+        "en": "Vela",
+        "fr": "Voiles"
+      },
+      "raDeg": 131.17594,
+      "decDeg": -54.70882,
+      "magnitude": 1.96,
+      "distanceLy": 80,
+      "spectralType": "A2IV+A4V",
+      "kind": {
+        "en": "eclipsing binary (triple system)",
+        "fr": "binaire à éclipses (système triple)"
+      },
+      "massSun": 2.43,
+      "temperatureK": 9440,
+      "luminositySun": 67,
+      "notes": {
+        "en": "A corner of the “False Cross”; its name comes from the Arabic for “the ship”, the ancient constellation Argo. Its two main stars eclipse each other every 45 days, which makes it the brightest eclipsing star known; it was noticed only in 2000, partly by the Galileo probe at Jupiter. The values given are for Alsephina (δ Velorum Aa).",
+        "fr": "Un coin de la « Fausse Croix » ; son nom vient de l’arabe « le navire », l’ancienne constellation Argo. Ses deux étoiles principales s’éclipsent mutuellement tous les 45 jours, ce qui en fait l’étoile à éclipses la plus brillante connue ; on ne l’a remarqué qu’en 2000, en partie grâce à la sonde Galileo près de Jupiter. Les valeurs indiquées sont celles d’Alsephina (δ Velorum Aa)."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+del01+Vel",
+        "https://en.wikipedia.org/wiki/Delta_Velorum",
+        "https://doi.org/10.1051/0004-6361/201116896"
+      ]
+    },
+    {
+      "id": "mirzam",
+      "name": {
+        "en": "Mirzam",
+        "fr": "Mirzam"
+      },
+      "designation": "β Canis Majoris",
+      "constellation": {
+        "en": "Canis Major",
+        "fr": "Grand Chien"
+      },
+      "raDeg": 95.67494,
+      "decDeg": -17.95592,
+      "magnitude": 1.98,
+      "distanceLy": 500,
+      "spectralType": "B1II-III",
+      "kind": {
+        "en": "blue giant",
+        "fr": "géante bleue"
+      },
+      "radiusSun": 8.44,
+      "massSun": 13,
+      "temperatureK": 25180,
+      "luminositySun": 25700,
+      "notes": {
+        "en": "Its Arabic name means “the herald”: it rises just before Sirius and announces it. This hot blue giant gently pulsates every six hours, too little to see by eye, and is massive enough to end as a supernova. About four million years ago it was the brightest star in our sky, more than seven times brighter than Sirius today.",
+        "fr": "Son nom arabe signifie « le héraut » : elle se lève juste avant Sirius et l’annonce. Cette géante bleue très chaude pulse doucement toutes les six heures, trop peu pour que l’œil le voie, et elle est assez massive pour finir en supernova. Il y a environ quatre millions d’années, c’était l’étoile la plus brillante de notre ciel, plus de sept fois plus brillante que Sirius aujourd’hui."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+CMa",
+        "https://en.wikipedia.org/wiki/Beta_Canis_Majoris",
+        "https://arxiv.org/abs/2508.03800"
+      ]
+    },
+    {
+      "id": "alphard",
+      "name": {
+        "en": "Alphard",
+        "fr": "Alphard"
+      },
+      "designation": "α Hydrae",
+      "constellation": {
+        "en": "Hydra",
+        "fr": "Hydre"
+      },
+      "raDeg": 141.89684,
+      "decDeg": -8.6586,
+      "magnitude": 2,
+      "distanceLy": 180,
+      "spectralType": "K3IIIa",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 57.6,
+      "massSun": 3.2,
+      "temperatureK": 4117,
+      "luminositySun": 971,
+      "notes": {
+        "en": "Its Arabic name means “the solitary one”: no other bright star lies near it, in the long and faint Water Snake. Tycho Brahe called it “the heart of the Hydra”. This orange giant, about 58 times wider than the Sun, shows a little extra barium, a hint that a companion may once have passed material to it. It appears on the flag of Brazil.",
+        "fr": "Son nom arabe signifie « la solitaire » : aucune autre étoile brillante ne l’entoure dans la longue et pâle Hydre. Tycho Brahe l’appelait « le cœur de l’Hydre ». Cette géante orange, environ 58 fois plus large que le Soleil, contient un peu trop de baryum, signe qu’une compagne lui a peut-être donné de la matière. Elle figure sur le drapeau du Brésil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Hya",
+        "https://en.wikipedia.org/wiki/Alphard",
+        "https://doi.org/10.1093/mnras/stac929",
+        "https://doi.org/10.3847/1538-3881/adc930"
+      ]
+    },
+    {
+      "id": "hamal",
+      "name": {
+        "en": "Hamal",
+        "fr": "Hamal"
+      },
+      "designation": "α Arietis",
+      "constellation": {
+        "en": "Aries",
+        "fr": "Bélier"
+      },
+      "raDeg": 31.79336,
+      "decDeg": 23.46242,
+      "magnitude": 2,
+      "distanceLy": 66,
+      "spectralType": "K2-IIIbCa-1",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 15.19,
+      "massSun": 1.43,
+      "temperatureK": 4553,
+      "luminositySun": 76.2,
+      "notes": {
+        "en": "The head of the Ram, which its Arabic name means. Between 2000 and 100 BCE the Sun was in Aries at the spring equinox, which is why horoscopes still start with this sign. This aging orange giant probably has a planet at least 1.8 times as massive as Jupiter, circling it in 381 days.",
+        "fr": "La tête du Bélier, ce que signifie son nom arabe. Entre 2000 et 100 av. J.-C., le Soleil se trouvait dans le Bélier à l’équinoxe de printemps : c’est pourquoi les horoscopes commencent encore par ce signe. Cette géante orange vieillissante possède probablement une planète au moins 1,8 fois plus massive que Jupiter, qui en fait le tour en 381 jours."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Ari",
+        "https://en.wikipedia.org/wiki/Hamal",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://doi.org/10.3847/1538-3881/ad08be",
+        "https://doi.org/10.1051/0004-6361/201016293"
+      ]
+    },
+    {
+      "id": "diphda",
+      "name": {
+        "en": "Diphda",
+        "fr": "Diphda"
+      },
+      "designation": "β Ceti",
+      "constellation": {
+        "en": "Cetus",
+        "fr": "Baleine"
+      },
+      "raDeg": 10.89738,
+      "decDeg": -17.98661,
+      "magnitude": 2.02,
+      "distanceLy": 96,
+      "spectralType": "G9.5IIICH-1",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 17.52,
+      "massSun": 3.5,
+      "temperatureK": 4792,
+      "luminositySun": 149.7,
+      "notes": {
+        "en": "Easy to spot alone in a dark part of the sky, it outshines Menkar, the “alpha” of the Whale. Its name is Arabic for “the second frog” (the first is Fomalhaut). This giant now burns helium in its core and will stay this way for over 100 million years; it has long flares and gives off 2,000 times more X-rays than the Sun.",
+        "fr": "Facile à repérer, seule dans une région sombre du ciel, elle est plus brillante que Menkar, l’« alpha » de la Baleine. Son nom signifie « la deuxième grenouille » en arabe (la première est Fomalhaut). Cette géante brûle maintenant de l’hélium en son cœur et restera ainsi plus de 100 millions d’années ; elle a de longues éruptions et émet 2 000 fois plus de rayons X que le Soleil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Cet",
+        "https://en.wikipedia.org/wiki/Beta_Ceti",
+        "https://doi.org/10.1051/0004-6361/201321051",
+        "https://doi.org/10.1051/0004-6361/201322360",
+        "https://doi.org/10.1088/0004-6256/150/3/88"
+      ]
+    },
+    {
+      "id": "mizar",
+      "name": {
+        "en": "Mizar",
+        "fr": "Mizar"
+      },
+      "designation": "ζ Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 200.98142,
+      "decDeg": 54.92535,
+      "magnitude": 2.04,
+      "distanceLy": 83,
+      "spectralType": "A2Vp",
+      "kind": {
+        "en": "quadruple star system",
+        "fr": "système d’étoiles quadruple"
+      },
+      "radiusSun": 2.4,
+      "massSun": 2.22,
+      "temperatureK": 9000,
+      "luminositySun": 33.3,
+      "notes": {
+        "en": "The middle star of the Big Dipper’s handle; seeing faint Alcor beside it is an old test of good eyesight. In 1617 Galileo saw through a telescope that Mizar itself is double, and Mizar A later became the first star found to be a pair from its spectrum alone: four stars in all. The values given are for Mizar Aa.",
+        "fr": "L’étoile du milieu du manche de la Grande Casserole ; voir la pâle Alcor à côté d’elle est un vieux test de bonne vue. En 1617, Galilée a vu au télescope que Mizar elle-même est double, puis Mizar A fut la première étoile reconnue double par son seul spectre : quatre étoiles en tout. Les valeurs indiquées sont celles de Mizar Aa."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+zet+UMa",
+        "https://en.wikipedia.org/wiki/Mizar",
+        "https://doi.org/10.1088/0004-6256/142/1/6",
+        "https://doi.org/10.1086/300602"
+      ]
+    },
+    {
+      "id": "nunki",
+      "name": {
+        "en": "Nunki",
+        "fr": "Nunki"
+      },
+      "designation": "σ Sagittarii",
+      "constellation": {
+        "en": "Sagittarius",
+        "fr": "Sagittaire"
+      },
+      "raDeg": 283.81636,
+      "decDeg": -26.29672,
+      "magnitude": 2.05,
+      "distanceLy": 230,
+      "spectralType": "B2.5V",
+      "kind": {
+        "en": "blue-white main-sequence star (binary system)",
+        "fr": "étoile bleu-blanc de la séquence principale (système double)"
+      },
+      "radiusSun": 4.1,
+      "massSun": 6.5,
+      "temperatureK": 18500,
+      "notes": {
+        "en": "One of the stars of the Teapot in Sagittarius; lying near the path of the Sun, it is sometimes hidden by the Moon. It is a pair of twin blue-white stars that should merge in about 25 million years into one star heavy enough to explode: the nearest known future core-collapse supernova. The values given are for Nunki Aa.",
+        "fr": "L’une des étoiles de la Théière du Sagittaire ; proche de la route du Soleil, elle est parfois cachée par la Lune. C’est un couple d’étoiles bleu-blanc jumelles qui devraient fusionner dans environ 25 millions d’années en une étoile assez massive pour exploser : la plus proche future supernova à effondrement de cœur connue. Les valeurs indiquées sont celles de Nunki Aa."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+sig+Sgr",
+        "https://en.wikipedia.org/wiki/Sigma_Sagittarii",
+        "https://doi.org/10.3847/2515-5172/adc739",
+        "https://arxiv.org/abs/2603.17011"
+      ]
+    },
+    {
+      "id": "menkent",
+      "name": {
+        "en": "Menkent",
+        "fr": "Menkent"
+      },
+      "designation": "θ Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 211.67061,
+      "decDeg": -36.36995,
+      "magnitude": 2.06,
+      "distanceLy": 59,
+      "spectralType": "K0-IIIb",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 10.96,
+      "massSun": 1.32,
+      "temperatureK": 4853,
+      "notes": {
+        "en": "Its name comes from the Arabic for “shoulder”, blended with “centaur”: it marks the Centaur’s shoulder. It is an orange giant that already burns helium in its core, a southern twin of Pollux. It crosses the sky quickly and may come from the outer disc of the Milky Way, only passing through our neighbourhood.",
+        "fr": "Son nom vient de l’arabe « épaule », mêlé à « centaure » : elle marque l’épaule du Centaure. C’est une géante orange qui brûle déjà de l’hélium en son cœur, une jumelle australe de Pollux. Elle se déplace vite dans le ciel et viendrait peut-être du disque externe de la Voie lactée, simplement de passage près de nous."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+tet+Cen",
+        "https://en.wikipedia.org/wiki/Theta_Centauri",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://doi.org/10.1051/0004-6361/202040078"
+      ]
+    },
+    {
+      "id": "alpheratz",
+      "name": {
+        "en": "Alpheratz",
+        "fr": "Alpheratz"
+      },
+      "designation": "α Andromedae",
+      "constellation": {
+        "en": "Andromeda",
+        "fr": "Andromède"
+      },
+      "raDeg": 2.09692,
+      "decDeg": 29.09043,
+      "magnitude": 2.06,
+      "distanceLy": 97,
+      "spectralType": "B8IV-VHgMn",
+      "kind": {
+        "en": "blue-white subgiant (binary system)",
+        "fr": "sous-géante bleu-blanc (système double)"
+      },
+      "massSun": 3.63,
+      "temperatureK": 11950,
+      "luminositySun": 158,
+      "notes": {
+        "en": "A corner of the Great Square of Pegasus, although it belongs to Andromeda; it was once counted in both constellations. Its Arabic name means “navel of the horse”. The main star is the brightest known mercury-manganese star, with unusually large amounts of mercury in its atmosphere. The values given are for Alpheratz A.",
+        "fr": "Un coin du grand carré de Pégase, bien qu’elle appartienne à Andromède ; elle a longtemps été comptée dans les deux constellations. Son nom arabe signifie « nombril du cheval ». L’étoile principale est l’étoile à mercure et manganèse la plus brillante connue : son atmosphère contient anormalement beaucoup de mercure. Les valeurs indiquées sont celles d’Alpheratz A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+And",
+        "https://en.wikipedia.org/wiki/Alpheratz",
+        "https://doi.org/10.1093/mnras/stw2393",
+        "https://doi.org/10.1093/mnras/stz3616"
+      ]
+    },
+    {
+      "id": "mirach",
+      "name": {
+        "en": "Mirach",
+        "fr": "Mirach"
+      },
+      "designation": "β Andromedae",
+      "constellation": {
+        "en": "Andromeda",
+        "fr": "Andromède"
+      },
+      "raDeg": 17.43302,
+      "decDeg": 35.62056,
+      "magnitude": 2.07,
+      "distanceLy": 200,
+      "spectralType": "M0+IIIa",
+      "kind": {
+        "en": "red giant",
+        "fr": "géante rouge"
+      },
+      "radiusSun": 86.4,
+      "massSun": 2.49,
+      "temperatureK": 3762,
+      "luminositySun": 1675,
+      "notes": {
+        "en": "Stargazers use it as a stepping stone to find the Andromeda Galaxy, and a small galaxy nicknamed “Mirach’s Ghost” lies right beside it. Its name comes from the Arabic for “girdle”: it marks Andromeda’s hip. It is an ageing red giant, swollen to about 86 times the Sun’s width.",
+        "fr": "Les astronomes amateurs s’en servent comme relais pour trouver la galaxie d’Andromède, et une petite galaxie surnommée « le fantôme de Mirach » se trouve juste à côté. Son nom vient de l’arabe « ceinture » : elle marque la hanche d’Andromède. C’est une géante rouge vieillissante, gonflée jusqu’à environ 86 fois la largeur du Soleil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+And",
+        "https://en.wikipedia.org/wiki/Mirach",
+        "https://doi.org/10.1051/0004-6361/200912442",
+        "https://doi.org/10.1093/mnras/stx1433",
+        "https://doi.org/10.1088/1538-3873/ad4177"
+      ]
+    },
+    {
+      "id": "rasalhague",
+      "name": {
+        "en": "Rasalhague",
+        "fr": "Rasalhague"
+      },
+      "designation": "α Ophiuchi",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 263.73362,
+      "decDeg": 12.56004,
+      "magnitude": 2.07,
+      "distanceLy": 47,
+      "spectralType": "A5IVnn",
+      "kind": {
+        "en": "white subgiant (binary system)",
+        "fr": "sous-géante blanche (système double)"
+      },
+      "radiusSun": 2.86,
+      "massSun": 2.2,
+      "luminositySun": 31.3,
+      "notes": {
+        "en": "Its name means “head of the snake charmer” in Arabic: it marks the head of Ophiuchus, close to Rasalgethi, the head of Hercules. The main star spins in about 14 hours, so fast that it is flattened (radius given at the equator) and hotter at its poles. The values given are for Rasalhague A, which has a smaller companion.",
+        "fr": "Son nom signifie « tête du charmeur de serpents » en arabe : elle marque la tête du Serpentaire, près de Rasalgethi, la tête d’Hercule. L’étoile principale tourne sur elle-même en 14 heures environ, si vite qu’elle est aplatie (rayon donné à l’équateur) et plus chaude aux pôles. Les valeurs indiquées sont celles de Rasalhague A, qui a une compagne plus petite."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Oph",
+        "https://en.wikipedia.org/wiki/Alpha_Ophiuchi",
+        "https://doi.org/10.3847/1538-4357/ac1172",
+        "https://doi.org/10.1088/0004-637X/725/1/1192"
+      ]
+    },
+    {
+      "id": "algieba",
+      "name": {
+        "en": "Algieba",
+        "fr": "Algieba"
+      },
+      "designation": "γ Leonis",
+      "constellation": {
+        "en": "Leo",
+        "fr": "Lion"
+      },
+      "raDeg": 154.99313,
+      "decDeg": 19.84149,
+      "magnitude": 2.08,
+      "distanceLy": 130,
+      "spectralType": "K1-III+G7IIIb",
+      "kind": {
+        "en": "orange giant (binary system)",
+        "fr": "géante orange (système double)"
+      },
+      "radiusSun": 26.08,
+      "massSun": 1.66,
+      "temperatureK": 4457,
+      "luminositySun": 250,
+      "notes": {
+        "en": "Its name comes from the Arabic for “the forehead”, yet it sits in the Lion’s mane, in the Sickle with Regulus. A small telescope splits it into two giants, orange and yellow, that orbit each other in about 550 years. The main star has a giant planet at least ten times as massive as Jupiter. The values given are for Algieba A.",
+        "fr": "Son nom vient de l’arabe « le front », pourtant elle se trouve dans la crinière du Lion, dans la Faucille avec Régulus. Un petit télescope la sépare en deux géantes, orange et jaune, qui tournent l’une autour de l’autre en 550 ans environ. L’étoile principale a une planète géante au moins dix fois plus massive que Jupiter. Les valeurs indiquées sont celles d’Algieba A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Leo",
+        "https://en.wikipedia.org/wiki/Gamma_Leonis",
+        "https://doi.org/10.1007/s10509-023-04214-1"
+      ]
+    },
+    {
+      "id": "kochab",
+      "name": {
+        "en": "Kochab",
+        "fr": "Kochab"
+      },
+      "designation": "β Ursae Minoris",
+      "constellation": {
+        "en": "Ursa Minor",
+        "fr": "Petite Ourse"
+      },
+      "raDeg": 222.67636,
+      "decDeg": 74.1555,
+      "magnitude": 2.08,
+      "distanceLy": 130,
+      "spectralType": "K4-III",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 44.13,
+      "massSun": 1.3,
+      "temperatureK": 4008,
+      "luminositySun": 454,
+      "notes": {
+        "en": "The brightest star in the bowl of the Little Dipper, almost as bright as Polaris. Around 1100 BCE it was within about 7° of the north celestial pole and served as a pole star; with Pherkad it is still called a “Guardian of the Pole”. It is an orange giant 44 times wider than the Sun, with a giant planet.",
+        "fr": "L’étoile la plus brillante du bol de la Petite Casserole, presque aussi brillante que l’étoile Polaire. Vers 1100 av. J.-C., elle était à environ 7° du pôle Nord céleste et servait d’étoile polaire ; avec Pherkad, on l’appelle encore l’une des « gardiennes du pôle ». C’est une géante orange 44 fois plus large que le Soleil, avec une planète géante."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+UMi",
+        "https://en.wikipedia.org/wiki/Kochab",
+        "https://doi.org/10.1051/0004-6361:200809738",
+        "https://doi.org/10.3847/1538-3881/ac2431"
+      ]
+    },
+    {
+      "id": "saiph",
+      "name": {
+        "en": "Saiph",
+        "fr": "Saïph"
+      },
+      "designation": "κ Orionis",
+      "constellation": {
+        "en": "Orion",
+        "fr": "Orion"
+      },
+      "raDeg": 86.93912,
+      "decDeg": -9.6696,
+      "magnitude": 2.09,
+      "distanceLy": 650,
+      "spectralType": "B0.5Ia",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "massSun": 15.5,
+      "temperatureK": 25700,
+      "luminositySun": 60300,
+      "notes": {
+        "en": "The south-eastern corner of Orion’s quadrangle, at the lower left for northern observers. Its name comes from the Arabic for “sword of the giant”, a name first given to another star of Orion. Hotter but less luminous than Rigel, this blue supergiant blows a strong wind and is expected to end as a supernova.",
+        "fr": "Le coin sud-est du quadrilatère d’Orion, en bas à gauche pour un observateur de l’hémisphère Nord. Son nom vient de l’arabe « l’épée du géant », un nom donné d’abord à une autre étoile d’Orion. Plus chaude mais moins lumineuse que Rigel, cette supergéante bleue souffle un vent puissant et devrait finir en supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+kap+Ori",
+        "https://en.wikipedia.org/wiki/Saiph",
+        "https://doi.org/10.1002/asna.200911355",
+        "https://doi.org/10.1051/0004-6361/201731678"
+      ]
+    },
+    {
+      "id": "denebola",
+      "name": {
+        "en": "Denebola",
+        "fr": "Denebola"
+      },
+      "designation": "β Leonis",
+      "constellation": {
+        "en": "Leo",
+        "fr": "Lion"
+      },
+      "raDeg": 177.26491,
+      "decDeg": 14.57206,
+      "magnitude": 2.11,
+      "distanceLy": 36,
+      "spectralType": "A3Va",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 1.75,
+      "massSun": 1.78,
+      "temperatureK": 8262,
+      "luminositySun": 12.9,
+      "notes": {
+        "en": "The Lion’s tail: its name comes from the Arabic for “tail of the lion”. With Arcturus and Spica it forms the Spring Triangle. This young star spins fast and is surrounded by a disc of cold dust, like Vega, a possible place for planets.",
+        "fr": "La queue du Lion : son nom vient de l’arabe « la queue du lion ». Avec Arcturus et Spica, elle forme le triangle du printemps. Cette jeune étoile tourne vite et est entourée d’un disque de poussière froide, comme Véga, où des planètes pourraient se trouver."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Leo",
+        "https://en.wikipedia.org/wiki/Denebola",
+        "https://doi.org/10.1051/0004-6361:20047189",
+        "https://doi.org/10.3847/1538-3881/ad08be"
+      ]
+    },
+    {
+      "id": "tiaki",
+      "name": {
+        "en": "Tiaki",
+        "fr": "Tiaki"
+      },
+      "designation": "β Gruis",
+      "constellation": {
+        "en": "Grus",
+        "fr": "Grue"
+      },
+      "raDeg": 340.66688,
+      "decDeg": -46.88458,
+      "magnitude": 2.15,
+      "distanceLy": 170,
+      "spectralType": "M4.5III",
+      "kind": {
+        "en": "red giant",
+        "fr": "géante rouge"
+      },
+      "radiusSun": 154,
+      "massSun": 2.4,
+      "temperatureK": 3508,
+      "luminositySun": 3221,
+      "notes": {
+        "en": "The second star of the Crane; its official name is the one used by the Tuamotu islanders of Polynesia. It is a cool red giant about 150 times wider than the Sun, one of the brightest stars of the sky in infrared light, and its brightness varies semi-regularly.",
+        "fr": "La deuxième étoile de la Grue ; son nom officiel est celui qu’employaient les habitants des Tuamotu, en Polynésie. C’est une géante rouge froide environ 150 fois plus large que le Soleil, l’une des étoiles les plus brillantes du ciel en lumière infrarouge, dont l’éclat varie de façon semi-régulière."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Gru",
+        "https://en.wikipedia.org/wiki/Beta_Gruis",
+        "https://scixplorer.org/abs/1999A%26A...352..217G/abstract",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "muhlifain",
+      "name": {
+        "en": "Muhlifain",
+        "fr": "Muhlifain"
+      },
+      "designation": "γ Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 190.37933,
+      "decDeg": -48.95987,
+      "magnitude": 2.17,
+      "distanceLy": 130,
+      "spectralType": "A1IV+A0IV",
+      "kind": {
+        "en": "pair of white subgiants",
+        "fr": "couple de sous-géantes blanches"
+      },
+      "notes": {
+        "en": "In the Centaur, it looks like a single star but is a pair of nearly identical white stars that orbit each other in about 85 years and are starting to swell into giants. Tau Centauri, 1.7 light-years away, moves through space with them and is very likely bound to the pair.",
+        "fr": "Dans le Centaure, elle ressemble à une seule étoile mais c’est un couple d’étoiles blanches presque identiques qui tournent l’une autour de l’autre en 85 ans environ et commencent à enfler pour devenir des géantes. Tau Centauri, à 1,7 année-lumière, voyage avec elles dans l’espace et leur est très probablement liée."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Cen",
+        "https://en.wikipedia.org/wiki/Gamma_Centauri"
+      ]
+    },
+    {
+      "id": "aspidiske",
+      "name": {
+        "en": "Aspidiske",
+        "fr": "Aspidiske"
+      },
+      "designation": "ι Carinae",
+      "constellation": {
+        "en": "Carina",
+        "fr": "Carène"
+      },
+      "raDeg": 139.27253,
+      "decDeg": -59.27523,
+      "magnitude": 2.21,
+      "distanceLy": 690,
+      "spectralType": "A7Ib",
+      "kind": {
+        "en": "white supergiant",
+        "fr": "supergéante blanche"
+      },
+      "massSun": 6.9,
+      "temperatureK": 7500,
+      "luminositySun": 4900,
+      "notes": {
+        "en": "With Epsilon Carinae and two stars of Vela it forms the False Cross, often mistaken for the Southern Cross, which has misled navigators. Its name means “small shield” in Greek. This white supergiant is evolving into a red supergiant, and around the year 8100 it will be the southern pole star.",
+        "fr": "Avec Epsilon de la Carène et deux étoiles des Voiles, elle forme la fausse Croix, souvent confondue avec la Croix du Sud, ce qui a trompé des navigateurs. Son nom signifie « petit bouclier » en grec. Cette supergéante blanche évolue vers une supergéante rouge et, vers l’an 8100, elle sera l’étoile polaire du Sud."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+iot+Car",
+        "https://en.wikipedia.org/wiki/Iota_Carinae",
+        "https://doi.org/10.1093/mnras/stx1549",
+        "https://doi.org/10.1051/0004-6361:20054377"
+      ]
+    },
+    {
+      "id": "suhail",
+      "name": {
+        "en": "Suhail",
+        "fr": "Suhaïl"
+      },
+      "designation": "λ Velorum",
+      "constellation": {
+        "en": "Vela",
+        "fr": "Voiles"
+      },
+      "raDeg": 136.99899,
+      "decDeg": -43.43259,
+      "magnitude": 2.21,
+      "distanceLy": 570,
+      "spectralType": "K4Ib",
+      "kind": {
+        "en": "orange supergiant",
+        "fr": "supergéante orange"
+      },
+      "radiusSun": 211,
+      "massSun": 7,
+      "temperatureK": 3835,
+      "luminositySun": 8300,
+      "notes": {
+        "en": "Its name is the shortened form of an Arabic name, kept for its use as a navigation star. This cool supergiant has swollen to about 200 times the Sun’s width, and its brightness changes slowly and irregularly. It may end as a white dwarf or, if heavy enough, in a supernova leaving a neutron star.",
+        "fr": "Son nom est la forme abrégée d’un nom arabe, conservée pour son usage comme étoile de navigation. Cette supergéante froide a enflé jusqu’à environ 200 fois la largeur du Soleil, et son éclat varie lentement et irrégulièrement. Elle pourrait finir en naine blanche ou, si elle est assez massive, en supernova laissant une étoile à neutrons."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+lam+Vel",
+        "https://en.wikipedia.org/wiki/Lambda_Velorum",
+        "https://doi.org/10.3847/1538-3881/ac6feb"
+      ]
+    },
+    {
+      "id": "alphecca",
+      "name": {
+        "en": "Alphecca",
+        "fr": "Alphecca"
+      },
+      "designation": "α Coronae Borealis",
+      "constellation": {
+        "en": "Corona Borealis",
+        "fr": "Couronne boréale"
+      },
+      "raDeg": 233.67195,
+      "decDeg": 26.71469,
+      "magnitude": 2.23,
+      "distanceLy": 75,
+      "spectralType": "A1IV",
+      "kind": {
+        "en": "eclipsing binary",
+        "fr": "binaire à éclipses"
+      },
+      "radiusSun": 3.059,
+      "massSun": 2.581,
+      "temperatureK": 9700,
+      "luminositySun": 74,
+      "notes": {
+        "en": "The brightest star of the Northern Crown; its other name, Gemma, means “jewel” in Latin. Like Algol, it is an eclipsing pair: a white star and a smaller yellow one eclipse each other every 17.4 days, a dimming too slight to notice with the naked eye. The values given are for Alphecca A.",
+        "fr": "L’étoile la plus brillante de la Couronne boréale ; son autre nom, Gemma, signifie « joyau » en latin. Comme Algol, c’est un couple à éclipses : une étoile blanche et une plus petite étoile jaune s’éclipsent mutuellement tous les 17,4 jours, une baisse d’éclat trop faible pour être remarquée à l’œil nu. Les valeurs indiquées sont celles d’Alphecca A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+CrB",
+        "https://en.wikipedia.org/wiki/Alpha_Coronae_Borealis",
+        "https://doi.org/10.1017/pasa.2014.17"
+      ]
+    },
+    {
+      "id": "sadr",
+      "name": {
+        "en": "Sadr",
+        "fr": "Sadr"
+      },
+      "designation": "γ Cygni",
+      "constellation": {
+        "en": "Cygnus",
+        "fr": "Cygne"
+      },
+      "raDeg": 305.55709,
+      "decDeg": 40.25668,
+      "magnitude": 2.23,
+      "distanceLy": 1500,
+      "spectralType": "F8Ib",
+      "kind": {
+        "en": "yellow-white supergiant",
+        "fr": "supergéante blanc-jaune"
+      },
+      "massSun": 14.5,
+      "temperatureK": 5790,
+      "luminositySun": 33023,
+      "notes": {
+        "en": "The star where the two bars of the Northern Cross meet, in the heart of the swan; its name comes from the Arabic for “chest”. This supergiant is only about 12 million years old but heavy enough to end as a supernova. It sits in front of a glowing cloud of gas, the Gamma Cygni nebula (IC 1318).",
+        "fr": "L’étoile au croisement des deux branches de la Croix du Nord, au cœur du cygne ; son nom vient de l’arabe « la poitrine ». Cette supergéante n’a qu’environ 12 millions d’années, mais elle est assez massive pour finir en supernova. Elle se trouve devant un nuage de gaz lumineux, la nébuleuse de Gamma Cygni (IC 1318)."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Cyg",
+        "https://en.wikipedia.org/wiki/Gamma_Cygni",
+        "https://doi.org/10.1111/j.1365-2966.2009.15979.x",
+        "https://doi.org/10.1002/asna.200911355"
+      ]
+    },
+    {
+      "id": "eltanin",
+      "name": {
+        "en": "Eltanin",
+        "fr": "Eltanin"
+      },
+      "designation": "γ Draconis",
+      "constellation": {
+        "en": "Draco",
+        "fr": "Dragon"
+      },
+      "raDeg": 269.15154,
+      "decDeg": 51.4889,
+      "magnitude": 2.23,
+      "distanceLy": 150,
+      "spectralType": "K5III",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 51.8,
+      "massSun": 2.14,
+      "temperatureK": 3964,
+      "luminositySun": 598,
+      "notes": {
+        "en": "The brightest star of Draco; its name comes from the Arabic for “the great serpent”. In 1728 James Bradley, trying to measure its distance, discovered instead the aberration of light, proof that the Earth moves around the Sun. In 1.5 million years it will pass within 28 light-years of us and become the brightest star in our sky.",
+        "fr": "L’étoile la plus brillante du Dragon ; son nom vient de l’arabe « le grand serpent ». En 1728, en cherchant à mesurer sa distance, James Bradley découvrit l’aberration de la lumière, preuve que la Terre tourne autour du Soleil. Dans 1,5 million d’années, elle passera à 28 années-lumière de nous et deviendra l’étoile la plus brillante de notre ciel."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Dra",
+        "https://en.wikipedia.org/wiki/Gamma_Draconis",
+        "https://doi.org/10.3847/1538-3881/ac2431",
+        "https://doi.org/10.3847/1538-3881/aaa8e1"
+      ]
+    },
+    {
+      "id": "schedar",
+      "name": {
+        "en": "Schedar",
+        "fr": "Schedar"
+      },
+      "designation": "α Cassiopeiae",
+      "constellation": {
+        "en": "Cassiopeia",
+        "fr": "Cassiopée"
+      },
+      "raDeg": 10.12685,
+      "decDeg": 56.53733,
+      "magnitude": 2.24,
+      "distanceLy": 230,
+      "spectralType": "K0-IIIa",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 43.14,
+      "massSun": 4.98,
+      "temperatureK": 4625,
+      "luminositySun": 734,
+      "notes": {
+        "en": "One of the five stars of Cassiopeia’s “W”, barely brighter than its neighbour Caph. Its name comes from the Arabic for “breast”, its place in the heart of the mythical queen. It spent most of its 100 to 200 million years as a blue-white star; now an orange giant, it most likely burns helium in its core.",
+        "fr": "L’une des cinq étoiles du « W » de Cassiopée, à peine plus brillante que sa voisine Caph. Son nom vient de l’arabe « le sein », sa place au cœur de la reine mythique. Elle a passé l’essentiel de ses 100 à 200 millions d’années en étoile bleu-blanc ; devenue géante orange, elle brûle très probablement de l’hélium en son cœur."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Cas",
+        "https://en.wikipedia.org/wiki/Alpha_Cassiopeiae",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://arxiv.org/abs/2607.24956",
+        "https://doi.org/10.3847/1538-3881/ad08be",
+        "https://doi.org/10.3847/1538-3881/adc930"
+      ]
+    },
+    {
+      "id": "naos",
+      "name": {
+        "en": "Naos",
+        "fr": "Naos"
+      },
+      "designation": "ζ Puppis",
+      "constellation": {
+        "en": "Puppis",
+        "fr": "Poupe"
+      },
+      "raDeg": 120.89603,
+      "decDeg": -40.00315,
+      "magnitude": 2.25,
+      "distanceLy": 1080,
+      "spectralType": "O4I(n)fp",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "radiusSun": 13.72,
+      "massSun": 25.3,
+      "luminositySun": 376000,
+      "notes": {
+        "en": "The brightest star of Puppis, the ship’s stern; its name is Greek for “ship”. One of the hottest stars visible to the naked eye, it blows a wind at 2,500 km/s and spins close to breaking point, so it is flattened (radius given at the equator). It is a runaway star, probably flung out when a companion exploded as a supernova.",
+        "fr": "L’étoile la plus brillante de la Poupe ; son nom signifie « navire » en grec. L’une des étoiles les plus chaudes visibles à l’œil nu, elle souffle un vent à 2 500 km/s et tourne presque à la limite de la rupture, ce qui l’aplatit (rayon donné à l’équateur). C’est une étoile en fuite, sans doute éjectée quand une compagne a explosé en supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+zet+Pup",
+        "https://en.wikipedia.org/wiki/Zeta_Puppis",
+        "https://doi.org/10.1093/mnras/stz291"
+      ]
+    },
+    {
+      "id": "almach",
+      "name": {
+        "en": "Almach",
+        "fr": "Almach"
+      },
+      "designation": "γ¹ Andromedae",
+      "constellation": {
+        "en": "Andromeda",
+        "fr": "Andromède"
+      },
+      "raDeg": 30.9748,
+      "decDeg": 42.32973,
+      "magnitude": 2.26,
+      "distanceLy": 350,
+      "spectralType": "K2+IIb",
+      "kind": {
+        "en": "orange bright giant (quadruple system)",
+        "fr": "géante lumineuse orange (système quadruple)"
+      },
+      "radiusSun": 98.5,
+      "temperatureK": 4248,
+      "luminositySun": 2987,
+      "notes": {
+        "en": "The foot of Andromeda, the chained princess; its name comes from the Arabic for “the caracal”, a desert lynx. A small telescope splits it into a golden star and a blue one, a favourite colour contrast of stargazers, and the blue one is itself three stars, two of which were found to eclipse each other in 2026. The values given are for Almach A.",
+        "fr": "Le pied d’Andromède, la princesse enchaînée ; son nom vient de l’arabe « le caracal », un lynx du désert. Une petite lunette la sépare en une étoile dorée et une bleue, un contraste de couleurs apprécié des observateurs, et la bleue compte elle-même trois étoiles, dont deux s’éclipsent mutuellement, découvert en 2026. Les valeurs indiquées sont celles d’Almach A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam01+And",
+        "https://en.wikipedia.org/wiki/Gamma_Andromedae",
+        "https://doi.org/10.1093/mnras/stx1433",
+        "https://doi.org/10.1088/0004-6256/147/6/137"
+      ]
+    },
+    {
+      "id": "caph",
+      "name": {
+        "en": "Caph",
+        "fr": "Caph"
+      },
+      "designation": "β Cassiopeiae",
+      "constellation": {
+        "en": "Cassiopeia",
+        "fr": "Cassiopée"
+      },
+      "raDeg": 2.29452,
+      "decDeg": 59.14978,
+      "magnitude": 2.28,
+      "distanceLy": 54,
+      "spectralType": "F2III",
+      "kind": {
+        "en": "yellow-white giant",
+        "fr": "géante blanc-jaune"
+      },
+      "radiusSun": 3.79,
+      "massSun": 1.91,
+      "luminositySun": 21.3,
+      "notes": {
+        "en": "The end star of Cassiopeia’s “W”, beside Schedar; its name comes from the Arabic for “palm of the hand”. It pulses in brightness every 2.5 hours and turns on itself in about 21 hours, so fast that it is flattened (radius given at the equator). Tycho Brahe’s supernova of 1572 appeared about 5° from it.",
+        "fr": "L’étoile du bout du « W » de Cassiopée, à côté de Schedar ; son nom vient de l’arabe « la paume de la main ». Son éclat pulse toutes les 2,5 heures et elle tourne sur elle-même en 21 heures environ, si vite qu’elle est aplatie (rayon donné à l’équateur). La supernova de Tycho Brahe, en 1572, est apparue à environ 5° d’elle."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Cas",
+        "https://en.wikipedia.org/wiki/Beta_Cassiopeiae",
+        "https://doi.org/10.1088/0004-637X/732/2/68"
+      ]
+    },
+    {
+      "id": "izar",
+      "name": {
+        "en": "Izar",
+        "fr": "Izar"
+      },
+      "designation": "ε Boötis",
+      "constellation": {
+        "en": "Boötes",
+        "fr": "Bouvier"
+      },
+      "raDeg": 221.24674,
+      "decDeg": 27.07422,
+      "magnitude": 2.29,
+      "distanceLy": 202,
+      "spectralType": "K0-II-III",
+      "kind": {
+        "en": "orange giant (binary system)",
+        "fr": "géante orange (système double)"
+      },
+      "radiusSun": 37.61,
+      "massSun": 5.36,
+      "temperatureK": 4755,
+      "luminositySun": 652.5,
+      "notes": {
+        "en": "Its name comes from the Arabic for “loincloth”. A telescope shows an orange giant beside a smaller blue-white star; Struve called the pair Pulcherrima, “the loveliest”, and in April 2026 the IAU gave that name to the companion. The values given are for Izar A.",
+        "fr": "Son nom vient de l’arabe « le pagne ». Une lunette montre une géante orange à côté d’une étoile bleu-blanc plus petite ; Struve appela le couple Pulcherrima, « la plus belle », et en avril 2026 l’UAI a donné ce nom à la compagne. Les valeurs indiquées sont celles d’Izar A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Boo",
+        "https://en.wikipedia.org/wiki/Epsilon_Bo%C3%B6tis",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://doi.org/10.3847/1538-3881/ac2431"
+      ]
+    },
+    {
+      "id": "uridim",
+      "name": {
+        "en": "Uridim",
+        "fr": "Uridim"
+      },
+      "designation": "α Lupi",
+      "constellation": {
+        "en": "Lupus",
+        "fr": "Loup"
+      },
+      "raDeg": 220.48232,
+      "decDeg": -47.3882,
+      "magnitude": 2.3,
+      "distanceLy": 550,
+      "spectralType": "B1.5III",
+      "kind": {
+        "en": "blue-white giant (binary system)",
+        "fr": "géante bleu-blanc (système double)"
+      },
+      "massSun": 10.1,
+      "temperatureK": 24550,
+      "luminositySun": 18200,
+      "notes": {
+        "en": "The brightest star of Lupus, the Wolf; its name, approved by the IAU in 2024, comes from the Sumerian name of the constellation, UR.IDIM. It pulsates slightly every 7 hours and is one of the nearest stars that may one day explode as a supernova. The values given are for the main star; a faint companion was found in 2023.",
+        "fr": "L’étoile la plus brillante du Loup ; son nom, approuvé par l’UAI en 2024, vient du nom sumérien de la constellation, UR.IDIM. Elle pulse légèrement toutes les 7 heures et c’est l’une des étoiles les plus proches susceptibles d’exploser un jour en supernova. Les valeurs indiquées sont celles de l’étoile principale ; une faible compagne a été découverte en 2023."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Lup",
+        "https://en.wikipedia.org/wiki/Alpha_Lupi",
+        "https://doi.org/10.1111/j.1365-2966.2010.17434.x",
+        "https://doi.org/10.1093/mnras/stac1816"
+      ]
+    },
+    {
+      "id": "epsilon-centauri",
+      "name": {
+        "en": "Epsilon Centauri",
+        "fr": "Epsilon du Centaure"
+      },
+      "designation": "ε Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 204.97191,
+      "decDeg": -53.46639,
+      "magnitude": 2.3,
+      "distanceLy": 380,
+      "spectralType": "B1III",
+      "kind": {
+        "en": "blue-white giant",
+        "fr": "géante bleu-blanc"
+      },
+      "radiusSun": 5.8,
+      "massSun": 8.2,
+      "temperatureK": 24937,
+      "luminositySun": 16137,
+      "notes": {
+        "en": "One of the brightest stars of the Centaur, with no official proper name; Chinese astronomers paired it with Alpha Centauri as the “Southern Gate”. Only about 16 million years old, it belongs to the nearest family of massive young stars, the Scorpius–Centaurus association, and its brightness pulses every 4 hours.",
+        "fr": "L’une des étoiles les plus brillantes du Centaure, sans nom propre officiel ; les astronomes chinois l’associaient à Alpha du Centaure pour former la « Porte du Sud ». Âgée d’environ 16 millions d’années seulement, elle appartient à la famille d’étoiles massives et jeunes la plus proche, l’association Scorpion–Centaure, et son éclat pulse toutes les 4 heures."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Cen",
+        "https://en.wikipedia.org/wiki/Epsilon_Centauri",
+        "https://doi.org/10.1093/mnras/staf083",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "dschubba",
+      "name": {
+        "en": "Dschubba",
+        "fr": "Dschubba"
+      },
+      "designation": "δ Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 240.08336,
+      "decDeg": -22.62171,
+      "magnitude": 2.31,
+      "distanceLy": 400,
+      "spectralType": "B0.3IV",
+      "kind": {
+        "en": "blue-white subgiant (binary system)",
+        "fr": "sous-géante bleu-blanc (système double)"
+      },
+      "radiusSun": 6.8,
+      "massSun": 15.3,
+      "temperatureK": 29700,
+      "luminositySun": 28000,
+      "notes": {
+        "en": "The forehead of the Scorpion, which its Arabic name means. In 2000 it unexpectedly brightened, changing the familiar shape of Scorpius: spinning very fast, it throws off a disc of gas from its equator (radius given there). A companion swings close to it every 10.5 years. The values given are for Dschubba A.",
+        "fr": "Le front du Scorpion, comme le dit son nom arabe. En 2000, elle s’est mise à briller davantage, changeant l’allure familière du Scorpion : tournant très vite, elle éjecte un disque de gaz par son équateur (rayon donné à l’équateur). Une compagne frôle l’étoile tous les 10,5 ans. Les valeurs indiquées sont celles de Dschubba A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+del+Sco",
+        "https://en.wikipedia.org/wiki/Delta_Scorpii",
+        "https://doi.org/10.3847/1538-4357/ab68dc"
+      ]
+    },
+    {
+      "id": "larawag",
+      "name": {
+        "en": "Larawag",
+        "fr": "Larawag"
+      },
+      "designation": "ε Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 252.54088,
+      "decDeg": -34.29323,
+      "magnitude": 2.31,
+      "distanceLy": 65,
+      "spectralType": "K1III",
+      "kind": {
+        "en": "orange giant (binary system)",
+        "fr": "géante orange (système double)"
+      },
+      "radiusSun": 12.91,
+      "massSun": 1.41,
+      "temperatureK": 4522,
+      "luminositySun": 60,
+      "notes": {
+        "en": "Its name comes from the Wardaman people of northern Australia and means “clear sighting”. This orange giant has used up the hydrogen in its core and now burns helium there. It appears on the flag of Brazil, for the state of Ceará. The values given are for Larawag A, which has a small red dwarf companion found in 2018.",
+        "fr": "Son nom vient du peuple wardaman, dans le nord de l’Australie, et signifie « vue dégagée ». Cette géante orange a épuisé l’hydrogène de son cœur et y brûle désormais de l’hélium. Elle figure sur le drapeau du Brésil, pour l’État du Ceará. Les valeurs indiquées sont celles de Larawag A, accompagnée d’une petite naine rouge découverte en 2018."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Sco",
+        "https://en.wikipedia.org/wiki/Epsilon_Scorpii",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://doi.org/10.1088/0004-6256/150/3/88"
+      ]
+    },
+    {
+      "id": "eta-centauri",
+      "name": {
+        "en": "Eta Centauri",
+        "fr": "Êta du Centaure"
+      },
+      "designation": "η Centauri",
+      "constellation": {
+        "en": "Centaurus",
+        "fr": "Centaure"
+      },
+      "raDeg": 218.87677,
+      "decDeg": -42.15783,
+      "magnitude": 2.35,
+      "distanceLy": 310,
+      "spectralType": "B2Ve",
+      "kind": {
+        "en": "blue-white main-sequence star",
+        "fr": "étoile bleu-blanc de la séquence principale"
+      },
+      "radiusSun": 6.1,
+      "massSun": 12,
+      "temperatureK": 25700,
+      "luminositySun": 8700,
+      "notes": {
+        "en": "A star of the Centaur with no official proper name. It turns on itself in less than a day, so fast that it sheds gas into a disc around its equator, which makes its light flicker slightly. With about 12 times the Sun’s mass, it should end its life as a supernova.",
+        "fr": "Une étoile du Centaure sans nom propre officiel. Elle tourne sur elle-même en moins d’un jour, si vite qu’elle perd du gaz qui forme un disque autour de son équateur, ce qui fait légèrement varier son éclat. Avec environ 12 fois la masse du Soleil, elle devrait finir sa vie en supernova."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eta+Cen",
+        "https://en.wikipedia.org/wiki/Eta_Centauri",
+        "https://doi.org/10.1111/j.1365-2966.2010.17434.x",
+        "https://doi.org/10.1093/mnras/stx3075",
+        "https://doi.org/10.1046/j.1365-8711.1999.02821.x"
+      ]
+    },
+    {
+      "id": "ankaa",
+      "name": {
+        "en": "Ankaa",
+        "fr": "Ankaa"
+      },
+      "designation": "α Phoenicis",
+      "constellation": {
+        "en": "Phoenix",
+        "fr": "Phénix"
+      },
+      "raDeg": 6.57105,
+      "decDeg": -42.30599,
+      "magnitude": 2.38,
+      "distanceLy": 77,
+      "spectralType": "K0.5IIIb",
+      "kind": {
+        "en": "orange giant (binary system)",
+        "fr": "géante orange (système double)"
+      },
+      "radiusSun": 13.39,
+      "massSun": 0.96,
+      "temperatureK": 4770,
+      "luminositySun": 83,
+      "notes": {
+        "en": "The brightest star of the Phoenix, whose name it bears: “Ankaa” comes from the Arabic for “the phoenix”. It lies in the southern sky, outshone by its neighbours Achernar and Fomalhaut. It is a pair of stars too close to be seen apart, orbiting each other every 10.5 years; the values given are for the main star, an orange giant.",
+        "fr": "L’étoile la plus brillante du Phénix, dont elle porte le nom : « Ankaa » vient de l’arabe « le phénix ». Elle se trouve dans le ciel austral, éclipsée par ses voisines Achernar et Fomalhaut. C’est un couple d’étoiles trop proches pour être séparées, qui tournent l’une autour de l’autre en 10,5 ans ; les valeurs indiquées sont celles de l’étoile principale, une géante orange."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Phe",
+        "https://en.wikipedia.org/wiki/Alpha_Phoenicis",
+        "https://doi.org/10.1093/mnras/stag413",
+        "https://doi.org/10.1051/0004-6361/201936360"
+      ]
+    },
+    {
+      "id": "girtab",
+      "name": {
+        "en": "Girtab",
+        "fr": "Girtab"
+      },
+      "designation": "κ Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 265.62198,
+      "decDeg": -39.02998,
+      "magnitude": 2.39,
+      "distanceLy": 460,
+      "spectralType": "B1.5III",
+      "kind": {
+        "en": "blue-white giant (binary system)",
+        "fr": "géante bleu-blanc (système double)"
+      },
+      "radiusSun": 6.45,
+      "massSun": 10.2,
+      "temperatureK": 23170,
+      "notes": {
+        "en": "In the tail of the Scorpion; its name is the Sumerian word for “scorpion”. It is two hot stars too close to be seen apart, circling each other every 195 days, and the main one pulsates every 4.8 hours. It appears on the flag of Brazil, for the state of Paraíba. The values given are for κ Scorpii A.",
+        "fr": "Dans la queue du Scorpion ; son nom est le mot sumérien pour « scorpion ». Ce sont deux étoiles chaudes trop proches pour être séparées, qui tournent l’une autour de l’autre en 195 jours, et la principale pulse toutes les 4,8 heures. Elle figure sur le drapeau du Brésil, pour l’État de la Paraíba. Les valeurs indiquées sont celles de κ Scorpii A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+kap+Sco",
+        "https://en.wikipedia.org/wiki/Kappa_Scorpii",
+        "https://doi.org/10.1051/0004-6361/201321886"
+      ]
+    },
+    {
+      "id": "enif",
+      "name": {
+        "en": "Enif",
+        "fr": "Enif"
+      },
+      "designation": "ε Pegasi",
+      "constellation": {
+        "en": "Pegasus",
+        "fr": "Pégase"
+      },
+      "raDeg": 326.04648,
+      "decDeg": 9.87501,
+      "magnitude": 2.4,
+      "distanceLy": 670,
+      "spectralType": "K2Ib-II",
+      "kind": {
+        "en": "orange supergiant",
+        "fr": "supergéante orange"
+      },
+      "radiusSun": 183,
+      "temperatureK": 4100,
+      "luminositySun": 8508,
+      "notes": {
+        "en": "Its name comes from the Arabic for “nose”: it marks the muzzle of Pegasus, the winged horse. This supergiant, 11 to 12 times the Sun’s mass, is about 180 times wider than the Sun. Its light wavers slightly, and it was once seen flaring very briefly to magnitude 0.7.",
+        "fr": "Son nom vient de l’arabe « le nez » : elle marque le museau de Pégase, le cheval ailé. Cette supergéante, de 11 à 12 fois la masse du Soleil, est environ 180 fois plus large que lui. Son éclat varie un peu, et on l’a vue une fois s’embraser très brièvement jusqu’à la magnitude 0,7."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Peg",
+        "https://en.wikipedia.org/wiki/Epsilon_Pegasi",
+        "https://doi.org/10.3847/1538-3881/adc930",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "scheat",
+      "name": {
+        "en": "Scheat",
+        "fr": "Scheat"
+      },
+      "designation": "β Pegasi",
+      "constellation": {
+        "en": "Pegasus",
+        "fr": "Pégase"
+      },
+      "raDeg": 345.94357,
+      "decDeg": 28.08279,
+      "magnitude": 2.42,
+      "distanceLy": 200,
+      "spectralType": "M2.5II-III",
+      "kind": {
+        "en": "red giant",
+        "fr": "géante rouge"
+      },
+      "radiusSun": 109,
+      "massSun": 1.7,
+      "temperatureK": 3606,
+      "notes": {
+        "en": "The upper right corner of the Great Square of Pegasus. This red giant is about 109 times wider than the Sun, and its surface is cool enough for titanium oxide molecules to form. Its brightness wavers over about 43 days, and it is slowly blowing off a shell of gas and dust.",
+        "fr": "Le coin supérieur droit du grand carré de Pégase. Cette géante rouge est environ 109 fois plus large que le Soleil, et sa surface est assez froide pour que des molécules d’oxyde de titane s’y forment. Son éclat varie sur environ 43 jours, et elle souffle lentement une coquille de gaz et de poussière."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Peg",
+        "https://en.wikipedia.org/wiki/Beta_Pegasi",
+        "https://doi.org/10.1051/0004-6361/201323264",
+        "https://doi.org/10.1093/mnras/stv1141"
+      ]
+    },
+    {
+      "id": "sabik",
+      "name": {
+        "en": "Sabik",
+        "fr": "Sabik"
+      },
+      "designation": "η Ophiuchi",
+      "constellation": {
+        "en": "Ophiuchus",
+        "fr": "Serpentaire"
+      },
+      "raDeg": 257.59453,
+      "decDeg": -15.72491,
+      "magnitude": 2.43,
+      "distanceLy": 88,
+      "spectralType": "A2IV-V",
+      "kind": {
+        "en": "white binary star",
+        "fr": "étoile double blanche"
+      },
+      "radiusSun": 2.5,
+      "massSun": 2.25,
+      "temperatureK": 9000,
+      "notes": {
+        "en": "The second-brightest star of Ophiuchus, the Serpent Bearer; its Arabic name means “the preceding one”. It is a pair of white stars that circle each other every 88 years on a very stretched orbit: in 2024 they swung within 2.15 au of each other. The values given are for Sabik A.",
+        "fr": "La deuxième étoile la plus brillante du Serpentaire ; son nom arabe signifie « celle qui précède ». C’est un couple d’étoiles blanches qui tournent l’une autour de l’autre en 88 ans sur une orbite très allongée : en 2024, elles se sont approchées à 2,15 ua. Les valeurs indiquées sont celles de Sabik A."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eta+Oph",
+        "https://en.wikipedia.org/wiki/Eta_Ophiuchi",
+        "https://doi.org/10.33232/001c.138625"
+      ]
+    },
+    {
+      "id": "phecda",
+      "name": {
+        "en": "Phecda",
+        "fr": "Phecda"
+      },
+      "designation": "γ Ursae Majoris",
+      "constellation": {
+        "en": "Ursa Major",
+        "fr": "Grande Ourse"
+      },
+      "raDeg": 178.4577,
+      "decDeg": 53.69476,
+      "magnitude": 2.44,
+      "distanceLy": 83,
+      "spectralType": "A0V",
+      "kind": {
+        "en": "white main-sequence star",
+        "fr": "étoile blanche de la séquence principale"
+      },
+      "radiusSun": 3.39,
+      "massSun": 2.41,
+      "luminositySun": 44.6,
+      "notes": {
+        "en": "The lower-left star of the Big Dipper’s bowl; its name comes from the Arabic for “thigh of the bear”. Like Merak, it belongs to the Ursa Major moving group. It spins so fast that it is flattened (radius given at the equator), and an orange companion makes it wobble every 20.5 years.",
+        "fr": "L’étoile en bas à gauche de la casserole de la Grande Ourse ; son nom vient de l’arabe « la cuisse de l’ourse ». Comme Merak, elle fait partie du groupe mobile de la Grande Ourse. Elle tourne si vite qu’elle est aplatie (rayon donné à l’équateur), et une compagne orange la fait osciller tous les 20,5 ans."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+UMa",
+        "https://en.wikipedia.org/wiki/Phecda",
+        "https://doi.org/10.1088/0004-637X/813/1/58"
+      ]
+    },
+    {
+      "id": "aludra",
+      "name": {
+        "en": "Aludra",
+        "fr": "Aludra"
+      },
+      "designation": "η Canis Majoris",
+      "constellation": {
+        "en": "Canis Major",
+        "fr": "Grand Chien"
+      },
+      "raDeg": 111.02376,
+      "decDeg": -29.30311,
+      "magnitude": 2.45,
+      "distanceLy": 2000,
+      "spectralType": "B5Ia",
+      "kind": {
+        "en": "blue supergiant",
+        "fr": "supergéante bleue"
+      },
+      "radiusSun": 54,
+      "temperatureK": 15800,
+      "luminositySun": 163800,
+      "notes": {
+        "en": "Its Arabic name means “the virgin”. This blue supergiant was born with about 22 times the Sun’s mass less than 10 million years ago, yet it is probably already near the end of its life: it has left a red supergiant phase and lost much of its mass. Its brightness pulses slightly every 4.7 days.",
+        "fr": "Son nom arabe signifie « la vierge ». Cette supergéante bleue est née avec environ 22 fois la masse du Soleil il y a moins de 10 millions d’années, mais elle approche sans doute déjà de la fin de sa vie : elle a quitté une phase de supergéante rouge et perdu une grande partie de sa masse. Son éclat pulse un peu tous les 4,7 jours."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eta+CMa",
+        "https://en.wikipedia.org/wiki/Eta_Canis_Majoris",
+        "https://doi.org/10.3390/galaxies11050093",
+        "https://doi.org/10.1051/0004-6361/201731678"
+      ]
+    },
+    {
+      "id": "alderamin",
+      "name": {
+        "en": "Alderamin",
+        "fr": "Alderamin"
+      },
+      "designation": "α Cephei",
+      "constellation": {
+        "en": "Cepheus",
+        "fr": "Céphée"
+      },
+      "raDeg": 319.64488,
+      "decDeg": 62.58557,
+      "magnitude": 2.46,
+      "distanceLy": 49,
+      "spectralType": "A8Vn",
+      "kind": {
+        "en": "white subgiant",
+        "fr": "sous-géante blanche"
+      },
+      "radiusSun": 2.74,
+      "massSun": 1.92,
+      "luminositySun": 18.1,
+      "notes": {
+        "en": "The brightest star of Cepheus; its name comes from the Arabic for “the right arm”. Because the Earth’s axis slowly wobbles, it will be the North Star around the year 7500. It turns on itself in less than 12 hours, so fast that it is flattened; the radius given is the equatorial one.",
+        "fr": "L’étoile la plus brillante de Céphée ; son nom vient de l’arabe « le bras droit ». Comme l’axe de la Terre oscille lentement, elle sera l’étoile Polaire vers l’an 7500. Elle tourne sur elle-même en moins de 12 heures, si vite qu’elle est aplatie ; le rayon donné est celui de l’équateur."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Cep",
+        "https://en.wikipedia.org/wiki/Alpha_Cephei",
+        "https://doi.org/10.1088/0004-637X/701/1/209"
+      ]
+    },
+    {
+      "id": "markeb",
+      "name": {
+        "en": "Markeb",
+        "fr": "Markeb"
+      },
+      "designation": "κ Velorum",
+      "constellation": {
+        "en": "Vela",
+        "fr": "Voiles"
+      },
+      "raDeg": 140.52841,
+      "decDeg": -55.01067,
+      "magnitude": 2.46,
+      "distanceLy": 540,
+      "spectralType": "B2IV",
+      "kind": {
+        "en": "blue-white subgiant",
+        "fr": "sous-géante bleu-blanc"
+      },
+      "massSun": 13,
+      "temperatureK": 18200,
+      "luminositySun": 13200,
+      "notes": {
+        "en": "With δ Velorum, ι and ε Carinae it forms the False Cross, often mistaken for the Southern Cross by navigators. Its name comes from the Arabic for “something to ride”. A lighter companion circles it every 117 days; the values given are for the main star, Markeb (κ Velorum A).",
+        "fr": "Avec δ des Voiles, ι et ε de la Carène, elle forme la Fausse Croix, souvent confondue avec la Croix du Sud par les navigateurs. Son nom vient de l’arabe « ce que l’on monte ». Une compagne plus légère tourne autour d’elle en 117 jours ; les valeurs indiquées sont celles de l’étoile principale, Markeb (κ des Voiles A)."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+kap+Vel",
+        "https://en.wikipedia.org/wiki/Kappa_Velorum",
+        "https://doi.org/10.1088/1538-3873/ae3b75",
+        "https://doi.org/10.1093/mnras/stab1100"
+      ]
+    },
+    {
+      "id": "tiansi",
+      "name": {
+        "en": "Tiansi",
+        "fr": "Tiansi"
+      },
+      "designation": "γ Cassiopeiae",
+      "constellation": {
+        "en": "Cassiopeia",
+        "fr": "Cassiopée"
+      },
+      "raDeg": 14.17721,
+      "decDeg": 60.71674,
+      "magnitude": 2.47,
+      "distanceLy": 610,
+      "spectralType": "B0.5IVpe",
+      "kind": {
+        "en": "blue-white subgiant",
+        "fr": "sous-géante bleu-blanc"
+      },
+      "radiusSun": 10.9,
+      "massSun": 15,
+      "luminositySun": 19000,
+      "notes": {
+        "en": "The centre star of the “W” of Cassiopeia. It spins so fast that it throws off a disc of gas (radius given at the equator), and in 1866 it was the first star seen with emission lines. In 2026 the XRISM satellite showed that its strong X-rays come from gas falling onto a white-dwarf companion.",
+        "fr": "L’étoile centrale du « W » de Cassiopée. Elle tourne si vite qu’elle éjecte un disque de gaz (rayon donné à l’équateur), et en 1866 ce fut la première étoile observée avec des raies d’émission. En 2026, le satellite XRISM a montré que ses puissants rayons X viennent du gaz qui tombe sur une naine blanche compagne."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+gam+Cas",
+        "https://en.wikipedia.org/wiki/Gamma_Cassiopeiae",
+        "https://doi.org/10.3847/1538-4357/ae0744",
+        "https://doi.org/10.1051/0004-6361/201629932"
+      ]
+    },
+    {
+      "id": "markab",
+      "name": {
+        "en": "Markab",
+        "fr": "Markab"
+      },
+      "designation": "α Pegasi",
+      "constellation": {
+        "en": "Pegasus",
+        "fr": "Pégase"
+      },
+      "raDeg": 346.19022,
+      "decDeg": 15.20527,
+      "magnitude": 2.48,
+      "distanceLy": 140,
+      "spectralType": "A0IV",
+      "kind": {
+        "en": "white subgiant",
+        "fr": "sous-géante blanche"
+      },
+      "radiusSun": 4.62,
+      "massSun": 3.5,
+      "temperatureK": 10100,
+      "luminositySun": 165,
+      "notes": {
+        "en": "One of the four corners of the Great Square of Pegasus; its name may come from the Arabic for “the saddle of the horse”. This white star has used up the hydrogen in its core and swelled to almost five times the Sun’s width. It spins fast, at least 130 km/s at its equator.",
+        "fr": "L’un des quatre coins du grand carré de Pégase ; son nom viendrait de l’arabe « la selle du cheval ». Cette étoile blanche a épuisé l’hydrogène de son cœur et a gonflé jusqu’à presque cinq fois la largeur du Soleil. Elle tourne vite, à au moins 130 km/s à son équateur."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+alf+Peg",
+        "https://en.wikipedia.org/wiki/Alpha_Pegasi",
+        "https://doi.org/10.1093/mnras/stt1932",
+        "https://doi.org/10.3847/1538-4357/ab04b2",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "aljanah",
+      "name": {
+        "en": "Aljanah",
+        "fr": "Aljanah"
+      },
+      "designation": "ε Cygni",
+      "constellation": {
+        "en": "Cygnus",
+        "fr": "Cygne"
+      },
+      "raDeg": 311.5528,
+      "decDeg": 33.97033,
+      "magnitude": 2.48,
+      "distanceLy": 72,
+      "spectralType": "K0III",
+      "kind": {
+        "en": "orange giant",
+        "fr": "géante orange"
+      },
+      "radiusSun": 11.13,
+      "massSun": 1.1,
+      "temperatureK": 4699,
+      "luminositySun": 56.4,
+      "notes": {
+        "en": "Its name means “the wing” in Arabic: it sits on one wing of Cygnus, the Swan. This nine-billion-year-old orange giant now burns helium in its core. An unseen companion circles it every 53 years on a very stretched orbit; the values given are for Aljanah (ε Cygni Aa). The Veil Nebula lies 3° to the south.",
+        "fr": "Son nom signifie « l’aile » en arabe : elle se trouve sur une aile du Cygne. Cette géante orange de neuf milliards d’années brûle maintenant de l’hélium en son cœur. Une compagne invisible tourne autour d’elle en 53 ans sur une orbite très allongée ; les valeurs indiquées sont celles d’Aljanah (ε du Cygne Aa). La nébuleuse du Voile est à 3° au sud."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+eps+Cyg",
+        "https://en.wikipedia.org/wiki/Epsilon_Cygni",
+        "https://doi.org/10.3847/1538-4357/ab2fce",
+        "https://doi.org/10.1051/0004-6361/202040087",
+        "https://doi.org/10.1093/mnras/stx1433"
+      ]
+    },
+    {
+      "id": "acrab",
+      "name": {
+        "en": "Acrab",
+        "fr": "Acrab"
+      },
+      "designation": "β Scorpii",
+      "constellation": {
+        "en": "Scorpius",
+        "fr": "Scorpion"
+      },
+      "raDeg": 241.35929,
+      "decDeg": -19.80539,
+      "magnitude": 2.5,
+      "distanceLy": 404,
+      "spectralType": "B1V+B2V",
+      "kind": {
+        "en": "six-star system",
+        "fr": "système de six étoiles"
+      },
+      "radiusSun": 6.3,
+      "massSun": 15,
+      "temperatureK": 28000,
+      "luminositySun": 31600,
+      "notes": {
+        "en": "Its name comes from the Arabic for “the scorpion”. A small telescope splits it in two, but it is a family of six young stars; the values given are for the main one, Acrab (β Scorpii Aa). Lying close to the ecliptic, it is often hidden by the Moon. It is one of the stars on the flag of Brazil.",
+        "fr": "Son nom vient de l’arabe « le scorpion ». Un petit télescope la sépare en deux, mais c’est une famille de six jeunes étoiles ; les valeurs indiquées sont celles de la principale, Acrab (β du Scorpion Aa). Proche de l’écliptique, elle est souvent cachée par la Lune. Elle figure sur le drapeau du Brésil."
+      },
+      "verified": "2026-10-21",
+      "sources": [
+        "https://simbad.cds.unistra.fr/simbad/sim-id?Ident=*+bet+Sco",
+        "https://en.wikipedia.org/wiki/Beta_Scorpii",
+        "https://doi.org/10.1051/0004-6361/200913332",
+        "https://scixplorer.org/abs/1997A%26A...322..565H/abstract"
       ]
     }
   ]

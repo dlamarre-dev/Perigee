@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDec, formatRa, starDirectionEqj } from '../src/astro/stars';
+import { formatDec, formatRa, isBrightStar, isNearbyStar, starDirectionEqj } from '../src/astro/stars';
 import { StarsCatalogSchema } from '../src/data/schemas';
 import { blackbodyRgb, temperatureFromSpectralType } from '../src/render/starImage';
 import starsJson from '../catalog/stars.json';
@@ -28,6 +28,23 @@ describe('stars', () => {
     expect(new Set(ids).size).toBe(ids.length);
     const polaris = catalog.stars.find((s) => s.id === 'polaris');
     expect(polaris && starDirectionEqj(polaris)[2]).toBeGreaterThan(Math.cos(DEG));
+  });
+
+  it('lists every star in the panel: bright (mag ≤ 2.5), within 20 light-years, or both', () => {
+    const { stars } = StarsCatalogSchema.parse(starsJson);
+    for (const s of stars) expect(isBrightStar(s) || isNearbyStar(s), s.id).toBe(true);
+    // Every star of Wikipedia's List of brightest stars, to magnitude 2.5 (Alpha Centauri counted once).
+    expect(stars.filter(isBrightStar).length).toBe(93);
+    const nearby = stars.filter(isNearbyStar);
+    // Every system within 20 ly whose primary is magnitude 12 or brighter (Wikipedia's List of nearest stars).
+    expect(nearby.length).toBe(57);
+    expect(nearby.every((s) => s.magnitude <= 12)).toBe(true);
+    expect(stars.filter((s) => isBrightStar(s) && isNearbyStar(s)).map((s) => s.id)).toEqual([
+      'sirius',
+      'alpha-centauri',
+      'procyon',
+      'altair',
+    ]);
   });
 });
 

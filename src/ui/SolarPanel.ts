@@ -1,9 +1,10 @@
 /**
  * Side panel of the solar-system view: planets (their moons folded underneath, unfolded while the planet or
- * one of its moons is selected), well-known stars (named on the sky when ticked), spacecraft (status, ephemeris
- * availability), log scale.
+ * one of its moons is selected), well-known stars in two groups (the bright ones, and those within 20 light-years;
+ * each named on the sky when ticked), spacecraft (status, ephemeris availability), log scale.
  */
 import type { PlanetInfo } from '../astro/planets';
+import { isBrightStar, isNearbyStar, NEARBY_STAR_MAX_LY } from '../astro/stars';
 import type { Mission, Moon, Star } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
@@ -15,8 +16,10 @@ export interface SolarPanelCallbacks {
   readonly onSelectMission: (m: Mission) => void;
   readonly onSelectMoon: (m: Moon) => void;
   readonly onSelectStar: (s: Star) => void;
-  /** Names the well-known stars on the sky (off by default). */
+  /** Names the bright stars on the sky (off by default). */
   readonly onToggleStars: (on: boolean) => void;
+  /** Names the stars within 20 light-years on the sky (off by default). */
+  readonly onToggleNearbyStars: (on: boolean) => void;
   readonly onToggleLogScale: (on: boolean) => void;
   /** Spacecraft whose markers, trajectories and labels are not drawn. */
   readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
@@ -33,6 +36,9 @@ export class SolarPanel {
   private readonly starsToggle = h('input', { type: 'checkbox', id: 'toggle-stars' });
   private readonly starsLabel = h('label', { for: 'toggle-stars' });
   private readonly starsList = h('ul', { class: 'results moon-list star-list', id: 'star-list' });
+  private readonly nearbyToggle = h('input', { type: 'checkbox', id: 'toggle-nearby-stars' });
+  private readonly nearbyLabel = h('label', { for: 'toggle-nearby-stars' });
+  private readonly nearbyList = h('ul', { class: 'results moon-list star-list', id: 'nearby-star-list' });
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
   private fetchedAt: Date | undefined;
@@ -53,6 +59,7 @@ export class SolarPanel {
     private readonly callbacks: SolarPanelCallbacks,
     hiddenMissions: ReadonlySet<string> = new Set(),
     showStars = false,
+    showNearbyStars = false,
   ) {
     this.toggles = new MissionToggles(
       i18n,
@@ -69,6 +76,13 @@ export class SolarPanel {
       callbacks.onToggleStars(this.starsToggle.checked);
     });
     this.starsList.hidden = !showStars;
+    this.nearbyToggle.checked = showNearbyStars;
+    this.nearbyToggle.setAttribute('aria-controls', 'nearby-star-list');
+    this.nearbyToggle.addEventListener('change', () => {
+      this.nearbyList.hidden = !this.nearbyToggle.checked;
+      callbacks.onToggleNearbyStars(this.nearbyToggle.checked);
+    });
+    this.nearbyList.hidden = !showNearbyStars;
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'solar-panel-title' },
       [
@@ -80,6 +94,8 @@ export class SolarPanel {
         this.planetsList,
         h('p', { class: 'search-row' }, [this.starsToggle, this.starsLabel]),
         this.starsList,
+        h('p', { class: 'search-row' }, [this.nearbyToggle, this.nearbyLabel]),
+        this.nearbyList,
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
@@ -168,20 +184,32 @@ export class SolarPanel {
       : '';
     this.logLabel.textContent = t('solar.logScale');
     this.starsLabel.textContent = t('solar.stars');
+    this.nearbyLabel.textContent = this.i18n.format('solar.nearbyStars', { ly: NEARBY_STAR_MAX_LY });
+    const item = (s: Star, detail: string): HTMLLIElement => {
+      const b = h('button', { type: 'button', class: 'result', 'data-star': s.id }, [
+        h('span', { class: 'result-name' }, [s.name[lang]]),
+        h('span', { class: 'result-id' }, [detail]),
+      ]);
+      b.addEventListener('click', () => this.callbacks.onSelectStar(s));
+      return h('li', {}, [b]);
+    };
     // Brightest first (lowest apparent magnitude).
     this.starsList.replaceChildren(
-      ...[...this.stars]
+      ...this.stars
+        .filter(isBrightStar)
         .sort((a, b) => a.magnitude - b.magnitude)
-        .map((s) => {
-          const b = h('button', { type: 'button', class: 'result', 'data-star': s.id }, [
-            h('span', { class: 'result-name' }, [s.name[lang]]),
-            h('span', { class: 'result-id' }, [
-              this.i18n.format('star.magnitudeShort', { mag: this.i18n.number(s.magnitude, 2) }),
-            ]),
-          ]);
-          b.addEventListener('click', () => this.callbacks.onSelectStar(s));
-          return h('li', {}, [b]);
-        }),
+        .map((s) =>
+          item(s, this.i18n.format('star.magnitudeShort', { mag: this.i18n.number(s.magnitude, 2) })),
+        ),
+    );
+    // Nearest first.
+    this.nearbyList.replaceChildren(
+      ...this.stars
+        .filter(isNearbyStar)
+        .sort((a, b) => a.distanceLy - b.distanceLy)
+        .map((s) =>
+          item(s, this.i18n.format('star.distanceShort', { ly: this.i18n.number(s.distanceLy, 2) })),
+        ),
     );
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');

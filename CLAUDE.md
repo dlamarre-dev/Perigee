@@ -145,8 +145,13 @@ No single API provides "active probes + landing sites". We maintain:
   zod schemas: a plain string fails validation, so updates cannot add English-only text.
 - `catalog/stars.json`: well-known stars named on the sky of the solar view (EN/FR name, Bayer designation,
   constellation, ICRS J2000 position, V magnitude and spectral type from SIMBAD; distance, radius, mass,
-  temperature and luminosity of the main star from the cited literature; student-level notes). Off by default
-  (panel checkbox "Identify the bright stars", URL `stars=1`): no marker, a leader line from the star to its label
+  temperature and luminosity of the main star from the cited literature; student-level notes): the bright stars
+  (magnitude ≤ 2.5: all 93 of Wikipedia's List of brightest stars) and every system within 20 light-years whose primary is magnitude 12 or brighter (Wikipedia's
+  List of nearest stars, added 2026-10-21), two groups in `src/astro/stars.ts` (`isBrightStar`, `isNearbyStar`;
+  every entry must be in one). Notes say where a star can be seen by latitude, hemisphere or continent, never by
+  country (visitors are international); papers without a DOI or arXiv entry are cited on SciX
+  (`https://scixplorer.org/abs/<bibcode>/abstract`; ADS links move there from 2026-11-16). Off by default (panel checkboxes "Identify the bright stars", URL `stars=1`, and
+  "Identify the stars within 20 light-years", URL `nearby=1`, listed nearest first): no marker, a leader line from the star to its label
   (`LabelLayer` `leaderPx`); selectable (`sel=star:<id>`, not followable), the camera turns towards it
   (`ViewHost.aimAt`). Hidden behind the Sun and the bodies like the other labels. The info panel shows an
   illustration (`src/render/starImage.ts`, labelled "not a photograph": black-body colour of the effective
@@ -371,7 +376,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.6 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.2.0 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;

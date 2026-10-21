@@ -15,7 +15,7 @@ Site: https://perigee.info/ (English: `?lang=en`, French: `?lang=fr`). It is a s
 
 URL parameters: `view` (`moon`, `mars`, `solar`; Earth by default), `lang` (`en`, `fr`), `sel` (selected object: a NORAD catalogue number such as `25544` for the ISS, a mission id, `site:<id>` for a landing site, or a planet id such as `jupiter`), `t` (ISO 8601 UTC instant, e.g. `2026-10-08T15:00:00Z`), `rate` (time multiplier, `0` pauses), `frame` (`inertial`).
 Example: https://perigee.info/?lang=en&view=moon&sel=site:apollo-11
-More: `sel` also takes `moon:<id>` (moons in the solar view, e.g. `moon:titan`), `star:<id>` (named stars, with `stars=1`), `sun`, and `moon` in the Earth view; `follow=1` follows the selected object.
+More: `sel` also takes `moon:<id>` (moons in the solar view, e.g. `moon:titan`), `star:<id>` (named stars: `stars=1` names the bright ones, `nearby=1` those within 20 light-years), `sun`, and `moon` in the Earth view; `follow=1` follows the selected object.
 
 ## For AI assistants and lesson pages: embed mode
 

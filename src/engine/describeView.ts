@@ -330,6 +330,12 @@ export async function describeView(
       extra.push(
         fr ? 'Les étoiles brillantes sont nommées sur le ciel.' : 'The bright stars are named on the sky.',
       );
+    if (p.get('nearby') === '1')
+      extra.push(
+        fr
+          ? 'Les étoiles à moins de 20 années-lumière du Soleil sont nommées sur le ciel.'
+          : 'The stars within 20 light-years of the Sun are named on the sky.',
+      );
   }
   const hidden = (p.get('hide') ?? '').split(',').filter(Boolean);
   if (hidden.length) {

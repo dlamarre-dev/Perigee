@@ -82,7 +82,7 @@ import {
   type Star,
   type SunRegions,
 } from '../data/schemas';
-import { formatDec, formatRa, starDirectionEqj } from '../astro/stars';
+import { formatDec, formatRa, isBrightStar, isNearbyStar, starDirectionEqj } from '../astro/stars';
 import { temperatureFromSpectralType } from '../render/starImage';
 import type { PreviewSubject } from '../ui/ModelPreview';
 import {
@@ -346,8 +346,10 @@ class SolarView implements View {
   private readonly probes: ProbeObject[] = [];
   private readonly moons: MoonObject[] = [];
   private readonly stars: readonly StarObject[];
-  /** Name the well-known stars on the sky (URL `stars=1`); a selected star is named in any case. */
+  /** Name the bright stars on the sky (URL `stars=1`); a selected star is named in any case. */
   private showStars: boolean;
+  /** Name the stars within 20 light-years on the sky (URL `nearby=1`). */
+  private showNearbyStars: boolean;
   private readonly moonMarkers: MarkerPoints;
   private readonly jupiterCache: Parameters<typeof moonState>[3] = {};
   private readonly planetMarkers: MarkerPoints;
@@ -381,6 +383,7 @@ class SolarView implements View {
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
     this.showStars = host.initialParams.get('stars') === '1';
+    this.showNearbyStars = host.initialParams.get('nearby') === '1';
     this.stars = StarsCatalogSchema.parse(starsJson).stars.map((star) => ({
       star,
       dirEqj: starDirectionEqj(star),
@@ -602,6 +605,10 @@ class SolarView implements View {
           this.showStars = on;
           this.host.syncUrl();
         },
+        onToggleNearbyStars: (on) => {
+          this.showNearbyStars = on;
+          this.host.syncUrl();
+        },
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -619,6 +626,7 @@ class SolarView implements View {
       },
       this.hiddenMissions,
       this.showStars,
+      this.showNearbyStars,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.ring = new SelectionMarker();
@@ -962,6 +970,7 @@ class SolarView implements View {
     if (sel?.kind === 'star') p.set('sel', `star:${sel.star.id}`);
     if (this.logScale) p.set('log', '1');
     if (this.showStars) p.set('stars', '1');
+    if (this.showNearbyStars) p.set('nearby', '1');
     writeHiddenMissions(p, this.hiddenMissions);
   }
 
@@ -1471,9 +1480,13 @@ class SolarView implements View {
     return this.stars.find((s) => s.star.id === star.id) ?? { star, dirEqj: starDirectionEqj(star) };
   }
 
-  /** Named on the sky: every star while the panel's box is ticked, the selected one always. */
+  /** Named on the sky: the stars of each group whose box is ticked, the selected one always. */
   private starNamed(s: StarObject): boolean {
-    return this.showStars || (this.selection?.kind === 'star' && this.selection.star.id === s.star.id);
+    return (
+      (this.showStars && isBrightStar(s.star)) ||
+      (this.showNearbyStars && isNearbyStar(s.star)) ||
+      (this.selection?.kind === 'star' && this.selection.star.id === s.star.id)
+    );
   }
 
   /**
@@ -1854,7 +1867,12 @@ class SolarView implements View {
     const { i18n } = this.host;
     const t = (k: MessageKey): string => i18n.t(k);
     const lang = i18n.lang;
-    const sig = (v: number): string => i18n.number(v, v < 10 ? 2 : v < 100 ? 1 : 0);
+    // Two significant digits below 1 (a red dwarf's 0.0034 × the Sun's luminosity), else two or fewer decimals.
+    const sig = (v: number): string =>
+      i18n.number(
+        v,
+        v > 0 && v < 1 ? Math.max(2, 1 - Math.floor(Math.log10(v))) : v < 10 ? 2 : v < 100 ? 1 : 0,
+      );
     const timesSun = (v: number | undefined): string | undefined =>
       v === undefined ? undefined : i18n.format('star.timesSun', { n: sig(v) });
     const ly = sig(star.distanceLy);

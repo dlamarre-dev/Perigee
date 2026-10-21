@@ -195,7 +195,14 @@ function interfaceDoc(site: string, header: object): object {
           description: 'Body-fixed or inertial frame.',
         },
         follow: { values: ['1'], description: 'Follow the selected object.' },
-        stars: { values: ['1'], description: 'Name the bright stars (solar view).' },
+        stars: {
+          values: ['1'],
+          description: 'Name the bright stars, magnitude 2.5 or brighter (solar view).',
+        },
+        nearby: {
+          values: ['1'],
+          description: 'Name the stars within 20 light-years of the Sun (solar view).',
+        },
         embed: { values: ['1'], description: 'Embed mode: the 3D view alone, with a link to the full app.' },
         ui: {
           values: ['panel', 'time', 'panel,time'],
