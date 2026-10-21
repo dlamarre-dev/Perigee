@@ -11,6 +11,11 @@ permissions:
   contents: read
   id-token: write
 
+# GitHub sometimes delivers a tag push more than once: runs for the same tag wait for each other.
+concurrency:
+  group: mcp-release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -35,6 +40,17 @@ jobs:
         run: |
           version=$(node -p "require('./mcp/package.json').version")
           if npm view "perigee-mcp@$version" version >/dev/null 2>&1; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+      # npm takes a few minutes to list a new version, so a duplicate run can miss it above: its 409
+      # ("cannot publish over previously published/staged version") means the version is already there.
       - if: steps.published.outputs.skip != 'true'
-        run: npm publish --access public
+        name: Publish
         working-directory: mcp
+        run: |
+          set +e
+          npm publish --access public 2>&1 | tee "$RUNNER_TEMP/publish.log"
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ] && grep -qE 'E409|previously (published|staged) version' "$RUNNER_TEMP/publish.log"; then
+            echo "::notice::perigee-mcp $(node -p "require('./package.json').version") is already on npm."
+            exit 0
+          fi
+          exit "$status"
