@@ -2226,6 +2226,7 @@ class SolarView implements View {
       ...(notes ? { notes } : {}),
       ...(m.goals ? { goals: m.goals[i18n.lang] } : {}),
       ...(m.website ? { website: m.website } : {}),
+      ...(m.model3d ? { model3d: m.model3d } : {}),
       sources: m.sources,
       footnote: i18n.format('info.verified', { date: m.verified }),
       followable: s !== undefined,

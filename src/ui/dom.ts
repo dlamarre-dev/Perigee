@@ -156,16 +156,20 @@ export interface WebsiteLink {
 
 /**
  * Source links of a panel: the mission's main page first ("science.nasa.gov · mission page", with the page's
- * language code when it is neither English nor French), then the other sources (hostnames).
+ * language code when it is neither English nor French), then its 3D model on the publisher's site
+ * ("scifleet.esa.int · 3D model", not in the phone layout), then the other sources (hostnames).
  */
 export function sourceItems(
   sources: readonly string[],
   website: WebsiteLink | undefined,
   websiteLabel: string,
+  model3d?: { readonly url: string; readonly label: string },
 ): HTMLLIElement[] {
   const link = (url: string): HTMLAnchorElement =>
     h('a', { href: url, target: '_blank', rel: 'noopener' }, [new URL(url).hostname]);
   const items = sources.filter((u) => u !== website?.url).map((url) => h('li', {}, [link(url)]));
+  // Hidden in the phone layout (styles.css): SciFleet's Unity viewer warns that phones are not supported.
+  if (model3d) items.unshift(h('li', { class: 'model3d-link' }, [link(model3d.url), ` · ${model3d.label}`]));
   if (website) {
     const lang = website.lang ? ` (${website.lang})` : '';
     items.unshift(h('li', {}, [link(website.url), `${lang} · ${websiteLabel}`]));

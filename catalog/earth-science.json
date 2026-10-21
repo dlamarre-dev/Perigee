@@ -65,6 +65,9 @@
         "fr": "Lancé par la navette Discovery et réparé cinq fois par des astronautes. Depuis juin 2024, il observe avec un seul gyroscope pour ménager les autres, ce qui limite certaines cibles sans arrêter la science."
       },
       "website": { "url": "https://science.nasa.gov/mission/hubble/" },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/hst/"
+      },
       "verified": "2026-10-03",
       "sources": [
         "https://science.nasa.gov/mission/hubble/",
@@ -164,6 +167,9 @@
         "fr": "Mission X-ray Multi-Mirror de l'ESA, dotée de trois télescopes à rayons X et d'un moniteur optique et UV, sur une orbite elliptique de 48 heures. Toujours en service plus de 25 ans après son lancement."
       },
       "website": { "url": "https://www.esa.int/Science_Exploration/Space_Science/XMM-Newton" },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/xmm_newton/"
+      },
       "verified": "2026-10-03",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/XMM-Newton"]
     },
@@ -1188,6 +1194,9 @@
         "fr": "Solar wind Magnetosphere Ionosphere Link Explorer, mission conjointe de l'ESA et de l'Académie chinoise des sciences qui prend les premières images X globales de la magnétosphère terrestre. Arrivé sur son orbite (apogée de 121 000 km) le 20 juin 2026 ; la science devait commencer en septembre 2026, après la mise en service."
       },
       "website": { "url": "https://www.esa.int/Science_Exploration/Space_Science/Smile" },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/smile/"
+      },
       "verified": "2026-10-03",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Smile",

@@ -211,6 +211,13 @@ export const WebsiteSchema = z.object({
     .optional(),
 });
 export type Website = z.infer<typeof WebsiteSchema>;
+
+/**
+ * A 3D model shown on its publisher's site (ESA SciFleet): linked from the panel, never downloaded or copied,
+ * since SciFleet's licence does not allow redistributing the models.
+ */
+export const ModelLinkSchema = z.object({ url: z.url().startsWith('https://') });
+export type ModelLink = z.infer<typeof ModelLinkSchema>;
 const iso2 = z.string().regex(/^[a-z]{2}$/);
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 /** ISO date at the precision the source gives: YYYY, YYYY-MM or YYYY-MM-DD. */
@@ -262,6 +269,7 @@ export const MissionSchema = z.object({
   goals: localized.optional(),
   notes: localized.optional(),
   website: WebsiteSchema.optional(),
+  model3d: ModelLinkSchema.optional(),
   verified: isoDate,
   sources: z.array(z.url()).min(1),
 });
@@ -609,6 +617,7 @@ export const EarthScienceSatelliteSchema = z.object({
   goals: localized.optional(),
   notes: localized.optional(),
   website: WebsiteSchema.optional(),
+  model3d: ModelLinkSchema.optional(),
   verified: isoDate,
   sources: z.array(z.url()).min(1),
 });

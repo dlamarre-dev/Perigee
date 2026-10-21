@@ -2182,6 +2182,11 @@ body.music-open .altimeter {
   .altimeter {
     display: none;
   }
+
+  /* SciFleet's 3D viewer (Unity WebGL) warns that phones are not supported and runs poorly there. */
+  .model3d-link {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------- phone layout

@@ -202,7 +202,10 @@ No single API provides "active probes + landing sites". We maintain:
   cropped); the panel frames the image itself with "kind · image: credit, licence", and a click opens it larger
   in a centred dialog (`src/ui/ImageViewer.ts`, About's frame). glTF BLEND materials are drawn as cut-outs (alpha test,
   plus alpha to coverage on the high tier, with a minimum edge width) so overlapping parts keep their depth order. ESA models (SCIFLEET) are
-  under a non-commercial licence: not used (permission requested).
+  under a non-commercial licence and may not be redistributed or modified in this repository (SciFleet reply,
+  2026-10-21, ticket CCR-171-85084): never copied; catalogue entries link to them instead (`model3d`, a
+  `https://scifleet.esa.int/model/<id>/` viewer page, listed after the mission page in the panel's sources,
+  hidden in the phone layout since the Unity viewer warns that phones are unsupported; their server sends no CORS headers, so the app cannot load them anyway).
 - Sky (all views): NASA SVS Deep Star Maps 2020 (`src/render/SkyMesh.ts`, J2000 plate carrée, EXR tone-mapped by
   `tools/textures/exr.ts`); 4k KTX2 by default, 8k UASTC (~25 MB) only on large high-density screens.
 - Sun: procedural photosphere shader (`src/render/SunMesh.ts`: limb darkening, granulation); sunspots from the
@@ -368,7 +371,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.5 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.1.6 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;

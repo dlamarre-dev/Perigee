@@ -584,6 +584,9 @@
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express"
       },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/mars_express/"
+      },
       "verified": "2026-09-27",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express",
@@ -670,6 +673,9 @@
       },
       "website": {
         "url": "https://explorationscience.esa.int/project/exomars-trace-gas-orbiter-tgo/"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/trace_gas_orbiter/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1240,6 +1246,9 @@
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Solar_Orbiter"
       },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/solar_orbiter/"
+      },
       "verified": "2026-09-27",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Solar_Orbiter/Solar_Orbiter_perihelia_and_flybys",
@@ -1286,6 +1295,9 @@
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/BepiColombo"
       },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/bepi_mcs/"
+      },
       "verified": "2026-09-27",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/BepiColombo/Latest_updates_BepiColombo_s_arrival_at_Mercury",
@@ -1331,6 +1343,9 @@
       },
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Juice"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/juice/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -1723,6 +1738,9 @@
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/SOHO"
       },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/soho/"
+      },
       "verified": "2026-10-17",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
@@ -1810,6 +1828,9 @@
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
       },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/gaia/"
+      },
       "verified": "2026-09-27",
       "sources": [
         "https://www.esa.int/Enabling_Support/Operations/Farewell_Gaia!_Spacecraft_operations_come_to_an_end",
@@ -1854,6 +1875,9 @@
       },
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Euclid"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/euclid/"
       },
       "verified": "2026-09-27",
       "sources": [
@@ -2227,6 +2251,9 @@
       },
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/comet_interceptor/"
       },
       "verified": "2026-09-27",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"]

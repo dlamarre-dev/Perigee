@@ -217,14 +217,15 @@ export class InfoPanel {
     setText(this.notes, notes ?? '');
     const urls = curated?.sources ?? [];
     const w = curated?.website;
-    this.sourcesTitle.hidden = urls.length === 0 && !w;
+    const model3d = curated?.model3d && { url: curated.model3d.url, label: t('info.model3d') };
+    this.sourcesTitle.hidden = urls.length === 0 && !w && !model3d;
     setText(this.sourcesTitle, t('info.sources'));
     // Rebuild the links only when they change, so keyboard focus survives live updates.
     const websiteLabel = t('info.missionPage');
-    const key = [w?.url, w?.lang, websiteLabel, ...urls].join('|');
+    const key = [w?.url, w?.lang, websiteLabel, model3d?.url, model3d?.label, ...urls].join('|');
     if (key !== this.lastSourcesKey) {
       this.lastSourcesKey = key;
-      this.sources.replaceChildren(...sourceItems(urls, w, websiteLabel));
+      this.sources.replaceChildren(...sourceItems(urls, w, websiteLabel, model3d));
     }
     setText(this.footnote, curated ? this.i18n.format('info.verified', { date: curated.verified }) : '');
   }

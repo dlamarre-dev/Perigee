@@ -293,6 +293,8 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
       }
       const website = o['website'] as { url?: string } | undefined;
       if (website?.url) lines.push(`Website: ${website.url}`);
+      const model3d = o['model3d'] as { url?: string } | undefined;
+      if (model3d?.url) lines.push(`3D model: ${model3d.url}`);
       const sources = o['sources'] as string[] | undefined;
       if (sources?.length) lines.push(`Sources: ${sources.join(', ')}`);
       lines.push(`View: ${String(o['view'])}`, '');

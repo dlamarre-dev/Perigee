@@ -18,6 +18,7 @@ type Obj = {
   view: string;
   embed: string;
   image?: { url: string };
+  model3d?: { url: string };
 };
 
 describe('machine documents', () => {
@@ -47,6 +48,14 @@ describe('machine documents', () => {
       expect(i.credit).toBeTruthy();
     }
     expect(catalog.objects.some((o) => o.image?.url.endsWith('.webp'))).toBe(true);
+  });
+
+  it('links ESA models on SciFleet instead of copying them', () => {
+    const linked = catalog.objects.filter((o) => o.model3d);
+    expect(linked.map((o) => o.id)).toContain('juice');
+    for (const o of linked)
+      expect(o.model3d?.url).toMatch(/^https:\/\/scifleet\.esa\.int\/model\/[a-z0-9_]+\/$/);
+    expect(docs['llms-full.txt']).toContain('3D model: https://scifleet.esa.int/model/juice/');
   });
 
   it('documents the interface with the set schema and the model accuracy', () => {

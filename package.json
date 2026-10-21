@@ -1,6 +1,6 @@
 {
   "name": "perigee",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "private": true,
   "description": "Real-time, in-browser viewer of artificial objects orbiting the Earth, the Moon, Mars and the solar system.",
   "license": "MIT",

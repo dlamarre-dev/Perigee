@@ -349,6 +349,7 @@ export const fr: Messages = {
   'info.purpose': 'Mission',
   'info.catalogName': 'Nom au catalogue',
   'info.missionPage': 'page de la mission',
+  'info.model3d': 'modèle 3D',
   'info.sources': 'Sources',
   'info.verified': 'Vérifié le {date}',
 

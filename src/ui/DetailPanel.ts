@@ -26,6 +26,8 @@ export interface DetailContent {
   readonly notes?: string;
   /** The mission's main page, listed first among the sources. */
   readonly website?: WebsiteLink;
+  /** Its 3D model on the publisher's site (catalog `model3d`), listed after the main page. */
+  readonly model3d?: { readonly url: string };
   readonly sources?: readonly string[];
   readonly footnote?: string;
   /** Show the Follow button. */
@@ -137,12 +139,13 @@ export class DetailPanel {
     const websiteLabel = this.i18n.t('info.missionPage');
     const sources = content.sources ?? [];
     const w = content.website;
-    const key = [w?.url, w?.lang, websiteLabel, ...sources].join('|');
+    const model3d = content.model3d && { url: content.model3d.url, label: this.i18n.t('info.model3d') };
+    const key = [w?.url, w?.lang, websiteLabel, model3d?.url, model3d?.label, ...sources].join('|');
     if (key !== this.lastSourcesKey) {
       this.lastSourcesKey = key;
-      this.sources.replaceChildren(...sourceItems(sources, w, websiteLabel));
+      this.sources.replaceChildren(...sourceItems(sources, w, websiteLabel, model3d));
     }
-    this.sourcesTitle.hidden = !sources.length && !w;
+    this.sourcesTitle.hidden = !sources.length && !w && !model3d;
     setText(this.footnote, content.footnote ?? '');
     this.follow.hidden = !content.followable;
     this.action.hidden = !content.action;

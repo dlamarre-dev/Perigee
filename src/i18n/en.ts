@@ -341,6 +341,7 @@ export const en = {
   'info.purpose': 'Mission',
   'info.catalogName': 'Catalogue name',
   'info.missionPage': 'mission page',
+  'info.model3d': '3D model',
   'info.sources': 'Sources',
   'info.verified': 'Checked {date}',
 
