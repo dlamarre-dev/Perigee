@@ -1503,6 +1503,97 @@ h2[tabindex='-1']:focus {
   color: var(--accent-strong);
 }
 
+/* 3D map of a star and the Sun (src/ui/StarMap.ts), in About's frame. */
+.model-preview .star-map-button {
+  cursor: pointer;
+}
+
+.star-map {
+  width: min(1100px, calc(100% - 2 * var(--gutter)));
+  max-width: none;
+}
+
+.star-map-stage {
+  position: relative;
+  height: min(70dvh, 640px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #02060b;
+}
+
+.star-map-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.star-map-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star-map-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0 4px;
+  border-left: 1px solid var(--star-label);
+  background: rgb(3 9 16 / 70%);
+  color: var(--star-label);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.star-map-label.is-highlight {
+  border-left-color: var(--accent);
+  color: var(--accent-strong);
+  font-size: 13px;
+  text-shadow: var(--accent-glow);
+}
+
+.star-map-label.is-picked {
+  font-size: 12px;
+}
+
+.star-map-label.is-distance.is-picked {
+  color: var(--star-label);
+}
+
+/* Axis gizmo of the star map (src/ui/viewGizmo.ts), top right. */
+.view-gizmo {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.view-gizmo-canvas {
+  display: block;
+}
+
+.view-gizmo-toggle {
+  min-width: 56px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.star-map-label.is-distance {
+  border-left: 0;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.star-map p {
+  margin: 6px 0 0;
+}
+
 .model-preview .model-credit a {
   color: inherit;
 }

@@ -163,6 +163,12 @@ export class ModelPreview {
   private readonly canvasBox = h('div', { class: 'model-canvas' });
   private readonly caption = h('p', { class: 'muted small model-credit' });
   private readonly starCanvas = h('canvas', { role: 'img' });
+  /** A catalogue star's illustration opens its 3D map with the Sun (src/ui/StarMap.ts, loaded on demand). */
+  private readonly starButton = h(
+    'button',
+    { type: 'button', class: 'preview-image-button star-map-button' },
+    [this.starCanvas],
+  );
   private readonly image = h('img', { class: 'preview-image', decoding: 'async' });
   /** The image opens larger in a dialog (src/ui/ImageViewer.ts). */
   private readonly imageButton = h('button', { type: 'button', class: 'preview-image-button' }, [this.image]);
@@ -188,6 +194,11 @@ export class ModelPreview {
     this.imageButton.addEventListener('click', () => {
       if (this.subject?.kind !== 'image') return;
       openImage(this.i18n, this.baseUrl, this.subject.entry, this.subject.title, this.image.currentSrc);
+    });
+    this.starButton.addEventListener('click', () => {
+      if (this.subject?.kind !== 'star' || this.subject.star.id === 'sun') return;
+      const id = this.subject.star.id;
+      void import('./StarMap').then((m) => m.openStarMap(this.i18n, id));
     });
     if (typeof IntersectionObserver !== 'undefined') {
       this.observer = new IntersectionObserver((entries) => {
@@ -261,6 +272,7 @@ export class ModelPreview {
       return;
     }
     this.imageButton.remove();
+    this.starButton.remove();
     this.starCanvas.remove();
     this.starDrawn = '';
     const s = getShared();
@@ -304,7 +316,21 @@ export class ModelPreview {
   private drawStar(star: StarPreview): void {
     const shared = getSharedIfAny();
     if (shared?.owner === this) shared.owner = undefined;
-    if (this.starCanvas.parentElement !== this.canvasBox) this.canvasBox.replaceChildren(this.starCanvas);
+    // The Sun has no map of its own (it is the map's centre): its illustration stays a plain picture.
+    if (star.id === 'sun') {
+      if (this.starCanvas.parentElement !== this.canvasBox) this.canvasBox.replaceChildren(this.starCanvas);
+    } else if (
+      this.starButton.parentElement !== this.canvasBox ||
+      this.starCanvas.parentElement !== this.starButton
+    ) {
+      this.starButton.replaceChildren(this.starCanvas);
+      this.canvasBox.replaceChildren(this.starButton);
+    }
+    const hint = this.i18n.t('starMap.open');
+    if (this.starButton.title !== hint) {
+      this.starButton.title = hint;
+      this.starButton.setAttribute('aria-label', hint);
+    }
     const w = this.canvasBox.clientWidth;
     if (w === 0) return;
     const ratio = Math.min(2, window.devicePixelRatio || 1);

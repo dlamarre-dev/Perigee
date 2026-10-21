@@ -523,6 +523,8 @@ export class QuaternionOrbitControls {
     if (e.key === 'Alt') this.setAltHeld(true);
     if (target && (target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)))
       return;
+    // Keys typed in a dialog drive only the controls inside it (the star map), not the view behind it.
+    if (target?.closest?.('dialog') !== this.element.closest('dialog')) return;
     const direction = directionOf(e);
     const panKey = direction && PAN_KEYS[direction];
     if (e.altKey && !e.ctrlKey && !e.metaKey && panKey) {

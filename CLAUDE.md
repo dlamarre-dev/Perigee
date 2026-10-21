@@ -156,7 +156,15 @@ No single API provides "active probes + landing sites". We maintain:
   (`ViewHost.aimAt`). Hidden behind the Sun and the bodies like the other labels. The info panel shows an
   illustration (`src/render/starImage.ts`, labelled "not a photograph": black-body colour of the effective
   temperature, limb darkening, convection cells sized to the star, the Sun at the same scale); few stars were
-  ever resolved, so none uses a real image.
+  ever resolved, so none uses a real image. Clicking it opens a 3D map (`src/ui/StarMap.ts`, About's frame, loaded
+  on demand, its own WebGL renderer only while open): every catalogue star at its distance around the Sun (light-
+  years, to scale; dots not to scale), the star and the Sun named in the accent colour and joined by a dashed line
+  with their distance; a stalk map for depth: rings of the galactic plane around the Sun and a stalk from each star
+  to its foot on that plane (faint, except the followed and the clicked star's), galactic north up at the opening;
+  a click picks one other star (named, with its own dashed line and distance to the Sun); an axis gizmo at the top
+  right (`src/ui/viewGizmo.ts`) looks along the six galactic axes and switches perspective/orthographic;
+  QuaternionOrbitControls around the Sun, double-click a star to centre on it (keys typed in a dialog drive only
+  the controls inside it).
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models

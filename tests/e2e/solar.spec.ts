@@ -189,6 +189,25 @@ test('bright stars are named on demand, selectable from the list and by their na
   await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sirius');
 });
 
+test("a star's illustration opens a 3D map with the Sun and the distance between them", async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&sel=star:sirius&${FROZEN}`);
+  await page.locator('aside.info:visible .star-map-button').click();
+  const map = page.getByRole('dialog', { name: 'Sirius and the Sun' });
+  await expect(map).toBeVisible();
+  await expect(map.locator('.star-map-stage > canvas')).toBeVisible();
+  await expect(map.locator('.star-map-label.is-highlight')).toHaveText(['Sun', 'Sirius']);
+  await expect(map.locator('.star-map-label.is-distance')).toHaveText('8.6 ly');
+  // Only the Sun, the star and their distance are named until another star is clicked.
+  await expect(map.locator('.star-map-label')).toHaveCount(3);
+  // The gizmo's button switches to an orthographic projection and back.
+  const toggle = map.locator('.view-gizmo-toggle');
+  await expect(toggle).toHaveText(/persp/i);
+  await toggle.click();
+  await expect(toggle).toHaveText(/ortho/i);
+  await page.keyboard.press('Escape');
+  await expect(map).toBeHidden();
+});
+
 test('the stars within 20 light-years have their own box, nearest first', async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&${FROZEN}`);
   const nearby = page.locator('#nearby-star-list');
