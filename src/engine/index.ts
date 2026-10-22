@@ -148,6 +148,9 @@ export interface ViewLinkOptions {
   readonly follow?: boolean;
   /** Embed mode (no bars or panels), for an iframe. */
   readonly embed?: boolean;
+  /** A star's 3D map with the Sun (stars only), with another star compared with it. */
+  readonly starMap?: boolean;
+  readonly compare?: string;
 }
 
 /** Default reference point of a position: the body an object orbits or stands on. */
@@ -756,7 +759,16 @@ export class Engine {
     if (options.lang) p.set('lang', options.lang);
     if (options.date) p.set('t', options.date.toISOString().replace(/\.\d{3}Z$/, 'Z'));
     if (options.rate !== undefined && options.rate !== 1) p.set('rate', String(options.rate));
-    if (options.follow) p.set('follow', '1');
+    if (options.starMap) {
+      if (!sel.startsWith('star:')) throw new Error(`The star map needs a star (star:<id>), not ${id}`);
+      p.set('map', '1');
+      if (options.compare) {
+        const other = viewOf(resolve(options.compare)).sel;
+        if (!other.startsWith('star:'))
+          throw new Error(`Only a star can be compared on the map, not ${options.compare}`);
+        p.set('pick', other);
+      }
+    } else if (options.follow) p.set('follow', '1');
     if (options.embed) p.set('embed', '1');
     return `${this.data.baseUrl}?${p.toString()}`;
   }

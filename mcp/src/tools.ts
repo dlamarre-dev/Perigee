@@ -361,7 +361,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Link or embed a 3D view',
       description:
-        'Link to Perigee showing an object (optionally at a date, paused or accelerated, followed), and an iframe snippet for a lesson page: the live 3D view without bars or panels. The embedding page can then drive the view and take PNG snapshots with postMessage (protocol perigee:v1, documented in `embedApi`).',
+        'Link to Perigee showing an object (optionally at a date, paused or accelerated, followed), and an iframe snippet for a lesson page: the live 3D view without bars or panels. The embedding page can then drive the view and take PNG snapshots with postMessage (protocol perigee:v1, documented in `embedApi`). For a star, star_map opens its 3D map with the Sun instead (every named star at its real distance, the Sun–star distance drawn; compare adds a second star), alone in the iframe.',
       inputSchema: {
         id,
         date,
@@ -375,10 +375,17 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
         follow: z.boolean().optional().describe('Follow the object (default true).'),
         panel: z.boolean().optional().describe('Keep the information panel in the embed.'),
         time_bar: z.boolean().optional().describe('Keep the time bar in the embed.'),
+        star_map: z
+          .boolean()
+          .optional()
+          .describe("Stars only (star:<id>): open the star's 3D map with the Sun, alone in the embed."),
+        compare: id
+          .optional()
+          .describe('With star_map: another star (star:<id>) drawn with its distance to compare.'),
       },
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
-    guard(({ id: objectId, date: d, lang: l, rate, follow, panel, time_bar }) => {
+    guard(({ id: objectId, date: d, lang: l, rate, follow, panel, time_bar, star_map, compare }) => {
       const when = d ? new Date(d) : undefined;
       if (when && Number.isNaN(when.getTime())) throw new Error(`Invalid date: ${d}`);
       const opts = {
@@ -386,6 +393,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
         ...(l ? { lang: l } : {}),
         ...(rate !== undefined ? { rate } : {}),
         follow: follow ?? true,
+        ...(star_map ? { starMap: true, ...(compare ? { compare } : {}) } : {}),
       };
       const embedUrl = new URL(engine.viewUrl(objectId, { ...opts, embed: true }));
       const ui = [panel && 'panel', time_bar && 'time'].filter(Boolean).join(',');

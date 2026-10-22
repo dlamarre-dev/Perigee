@@ -1,5 +1,5 @@
 /**
- * README screenshots (docs/images): the eight views at 1920 × 1080 and the controls of the settings window for
+ * README screenshots (docs/images): the eight views at 1920 × 1080, a star's 3D map and the controls of the settings window for
  * Windows/Linux, macOS and touch screens. Needs the dev server (`npm run dev`), fresh data (`npm run data:pull`) and
  * a GPU (Chromium with ANGLE/D3D11 here, so the high quality tier and its effects are on).
  *
@@ -90,6 +90,16 @@ const shots: Record<string, () => Promise<void>> = {
     await drag(p, 760, 700, 760, 540);
     await p.waitForTimeout(6000);
     await shot(p, 'mro');
+  },
+  async 'star-map'() {
+    // Sirius's 3D map with the Sun, Vega picked for comparison, as it opens; the dialog alone.
+    const p = await open('view=solar&sel=star:sirius&map=1&pick=star:vega', 6000);
+    const map = p.locator('dialog.star-map');
+    await p.mouse.move(1919, 1079);
+    await p.waitForTimeout(1500);
+    await map.screenshot({ path: `${out}/star-map.jpg`, type: 'jpeg', quality: 88 });
+    console.log('shot', 'star-map');
+    await p.close();
   },
   async 'io-jupiter'() {
     // Io just before it crosses Jupiter's disc (seen from the Sun at 01:10 UTC): followed, then the camera turned

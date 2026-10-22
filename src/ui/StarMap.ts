@@ -10,7 +10,9 @@
  * Sun; a double click on a star centres the map on it. Positions are to scale; the stars are dots, not to scale.
  *
  * Its own small WebGL renderer, created when the dialog opens and released when it closes (one extra context
- * only while the map is shown). Loaded on demand (dynamic import from src/ui/ModelPreview.ts).
+ * only while the map is shown). Loaded on demand by the solar view, which mirrors it in the URL (`map=1`, the
+ * picked star in `pick`) so links and the MCP server's perigee_view can open it. In embed mode (`embed=1`) the map
+ * fills the frame alone, with a link to the full app instead of the Close button.
  */
 import {
   BufferGeometry,
@@ -269,23 +271,36 @@ class StarMapDialog {
   private readonly labelLayer = h('div', { class: 'star-map-labels', 'aria-hidden': 'true' });
   private readonly caption = h('p', { class: 'muted small' });
   private readonly close = h('button', { type: 'button', class: 'btn' });
+  /** Embed mode: the full app showing the same map. */
+  private readonly fullApp = h('a', { class: 'btn', target: '_blank', rel: 'noopener', hidden: true });
   private star: Star | undefined;
   private session: Session | undefined;
+  private options: StarMapOptions = {};
 
   constructor(private readonly i18n: I18n) {
     this.close.addEventListener('click', () => this.element.close());
+    // The URL follows the picked star: the link is read when it is followed.
+    for (const type of ['pointerdown', 'focus', 'click'] as const)
+      this.fullApp.addEventListener(type, () => (this.fullApp.href = fullAppHref()));
     this.stage.append(this.labelLayer);
     this.element = h('dialog', { class: 'panel about star-map', 'aria-labelledby': 'star-map-title' }, [
       this.title,
       this.stage,
       this.caption,
-      h('div', { class: 'dialog-actions' }, [this.close]),
+      h('div', { class: 'dialog-actions' }, [this.fullApp, this.close]),
     ]);
     scrollingDialog(this.element);
     this.element.addEventListener('click', (e) => {
       if (e.target === this.element) this.element.close();
     });
-    this.element.addEventListener('close', () => this.release());
+    this.element.addEventListener('close', () => {
+      this.release();
+      this.options.onClose?.();
+    });
+    // Embedded, the map is the whole page: Escape does not close it.
+    this.element.addEventListener('cancel', (e) => {
+      if (this.options.embedded) e.preventDefault();
+    });
     i18n.onChange(() => {
       this.renderText();
       if (this.star && this.session) this.buildLabels(this.session, this.star);
@@ -299,22 +314,46 @@ class StarMapDialog {
     this.stage.addEventListener('dblclick', (e) => this.centreOn(e));
   }
 
-  open(star: Star): void {
+  open(star: Star, options: StarMapOptions): void {
     this.star = star;
+    this.options = {};
+    this.release();
+    this.options = options;
+    const embedded = options.embedded ?? false;
+    this.element.classList.toggle('is-embedded', embedded);
+    this.close.hidden = embedded;
+    this.fullApp.hidden = !embedded;
     this.renderText();
     if (!this.element.open) this.element.showModal();
-    this.release();
     this.session = this.build(star);
+    const pick = STARS.find((o) => o.id === options.pick && o.id !== star.id);
+    if (this.session && pick) {
+      this.setPicked(this.session, pick);
+      // Opened on a link with a star to compare: zoomed out until it fits too (its distance within the frame's
+      // shorter half, whatever its direction).
+      const { controls } = this.session;
+      const tanHalf =
+        Math.tan(((FOV_Y_DEG / 2) * Math.PI) / 180) * Math.min(1, this.session.perspective.aspect);
+      const home = {
+        ...controls.state,
+        distanceKm: Math.max(controls.state.distanceKm, pick.distanceLy / (HOME_STAR_X * tanHalf)),
+      };
+      controls.setHome(home);
+      controls.setState(home);
+    }
     this.title.focus({ preventScroll: true });
   }
 
   private renderText(): void {
     const { i18n } = this;
     this.close.textContent = i18n.t('about.close');
+    this.fullApp.textContent = i18n.t('embed.open');
+    this.fullApp.href = fullAppHref();
     if (!this.star) return;
     const name = this.star.name[i18n.lang];
     this.title.textContent = i18n.format('starMap.title', { star: name });
-    this.caption.textContent = i18n.t('starMap.caption');
+    // Embedded, the frame is small: a one-line caption.
+    this.caption.textContent = i18n.t(this.options.embedded ? 'starMap.captionShort' : 'starMap.caption');
     this.stage.setAttribute(
       'aria-label',
       i18n.format('starMap.alt', { star: name, ly: i18n.number(this.star.distanceLy, 2) }),
@@ -370,7 +409,9 @@ class StarMapDialog {
     const aspect = this.stage.clientWidth / Math.max(1, this.stage.clientHeight) || 1.5;
     const controls = new QuaternionOrbitControls(canvas, {
       // Units are light-years here (the controller's "km" names are only units).
-      limits: { minDistanceKm: 0.05, maxDistanceKm: 2e4, pivotMinDistanceKm: 0.05 },
+      // No surface to skim (the Sun is a dot here): turning keeps its speed when zoomed in close (the default
+      // body radius, minDistance / 1.02, made it crawl at the closest zoom).
+      limits: { minDistanceKm: 0.05, maxDistanceKm: 2e4, pivotMinDistanceKm: 0.05, surfaceRadiusKm: 0 },
       home: homeState(target, aspect),
       fovYRad: (FOV_Y_DEG * Math.PI) / 180,
     });
@@ -468,8 +509,8 @@ class StarMapDialog {
     add(distance(star), scale(starPositionLy(star), 0.5), 1, 'is-distance', true);
     const picked = s.picked?.star;
     if (picked) {
-      add(picked.name[i18n.lang], starPositionLy(picked), 2, 'is-picked');
-      add(distance(picked), scale(starPositionLy(picked), 0.5), 2, 'is-distance is-picked', true);
+      add(picked.name[i18n.lang], starPositionLy(picked), 1, 'is-picked');
+      add(distance(picked), scale(starPositionLy(picked), 0.5), 1, 'is-distance is-picked', true);
     }
     for (const l of s.labels) {
       l.width = l.el.offsetWidth;
@@ -510,6 +551,12 @@ class StarMapDialog {
     const hit = this.starAt(s, e);
     const star = hit && hit.id !== this.star.id ? hit : undefined;
     if (star === s.picked?.star) return;
+    this.setPicked(s, star);
+    this.options.onPick?.(star?.id);
+  }
+
+  private setPicked(s: Session, star: Star | undefined): void {
+    if (!this.star) return;
     if (s.picked) this.disposeObjects(s, s.picked.objects);
     s.picked = undefined;
     if (star) {
@@ -672,13 +719,30 @@ class StarMapDialog {
 
 let dialog: StarMapDialog | undefined;
 
+/** This page in the full app: the embed's own parameters removed (as the embed's corner link). */
+function fullAppHref(): string {
+  const url = new URL(window.location.href);
+  for (const key of ['embed', 'ui', 'e2e']) url.searchParams.delete(key);
+  return url.href;
+}
+
+export interface StarMapOptions {
+  /** Catalogue id of the star picked for comparison at the opening. */
+  readonly pick?: string | undefined;
+  /** Embed mode: the map fills the frame, with a link to the full app instead of Close. */
+  readonly embedded?: boolean;
+  /** The picked star changed (undefined: none), and the map closed: the view mirrors them in the URL. */
+  readonly onPick?: (id: string | undefined) => void;
+  readonly onClose?: () => void;
+}
+
 /** Opens the 3D map of a catalogue star and the Sun (the dialog is created on first use). */
-export function openStarMap(i18n: I18n, starId: string): void {
+export function openStarMap(i18n: I18n, starId: string, options: StarMapOptions = {}): void {
   const star = STARS.find((s) => s.id === starId);
   if (!star) return;
   if (!dialog) {
     dialog = new StarMapDialog(i18n);
     (document.getElementById('app') ?? document.body).append(dialog.element);
   }
-  dialog.open(star);
+  dialog.open(star, options);
 }

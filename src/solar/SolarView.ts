@@ -350,6 +350,8 @@ class SolarView implements View {
   private showStars: boolean;
   /** Name the stars within 20 light-years on the sky (URL `nearby=1`). */
   private showNearbyStars: boolean;
+  /** The selected star's 3D map is open (URL `map=1`), with this star picked for comparison (`pick`). */
+  private starMap: { pick: string | undefined } | undefined;
   private readonly moonMarkers: MarkerPoints;
   private readonly jupiterCache: Parameters<typeof moonState>[3] = {};
   private readonly planetMarkers: MarkerPoints;
@@ -971,6 +973,10 @@ class SolarView implements View {
     if (this.logScale) p.set('log', '1');
     if (this.showStars) p.set('stars', '1');
     if (this.showNearbyStars) p.set('nearby', '1');
+    if (this.starMap && sel?.kind === 'star') {
+      p.set('map', '1');
+      if (this.starMap.pick) p.set('pick', `star:${this.starMap.pick}`);
+    }
     writeHiddenMissions(p, this.hiddenMissions);
   }
 
@@ -1476,6 +1482,29 @@ class SolarView implements View {
     ]);
   }
 
+  /** Opens a star's 3D map (src/ui/StarMap.ts, loaded on demand), mirrored in the URL while it is open. */
+  private openStarMap(star: Star, pick?: string): void {
+    this.starMap = { pick };
+    this.host.syncUrl();
+    void import('../ui/StarMap').then((m) => {
+      if (this.disposed) return;
+      m.openStarMap(this.host.i18n, star.id, {
+        pick,
+        embedded: document.documentElement.classList.contains('embed'),
+        onPick: (id) => {
+          if (this.disposed) return;
+          this.starMap = { pick: id };
+          this.host.syncUrl();
+        },
+        onClose: () => {
+          if (this.disposed) return;
+          this.starMap = undefined;
+          this.host.syncUrl();
+        },
+      });
+    });
+  }
+
   private starOf(star: Star): StarObject {
     return this.stars.find((s) => s.star.id === star.id) ?? { star, dirEqj: starDirectionEqj(star) };
   }
@@ -1673,7 +1702,12 @@ class SolarView implements View {
       return true;
     }
     const star = this.stars.find((s) => `star:${s.star.id}` === sel)?.star;
-    if (star) this.select({ kind: 'star', star }, { frame: true });
+    if (star) {
+      this.select({ kind: 'star', star }, { frame: true });
+      // A link with map=1 opens the star's 3D map (pick=star:<id>: the star compared with it).
+      const params = this.host.initialParams;
+      if (params.get('map') === '1') this.openStarMap(star, params.get('pick')?.replace(/^star:/, ''));
+    }
     return star !== undefined;
   }
 
@@ -1908,6 +1942,7 @@ class SolarView implements View {
           id: star.id,
           temperatureK: star.temperatureK ?? temperatureFromSpectralType(star.spectralType) ?? 5800,
           radiusSun: star.radiusSun,
+          openMap: () => this.openStarMap(star),
         },
       },
     };

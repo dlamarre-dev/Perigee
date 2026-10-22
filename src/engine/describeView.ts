@@ -238,6 +238,13 @@ export async function describeView(
       if (d['kind'] === 'site' && typeof d['type'] === 'string') {
         const type = SITE_TYPES[d['type']]?.[lang] ?? d['type'];
         where.push(typeof d['date'] === 'string' ? `${type}, ${d['date']}` : type);
+      } else if (d['kind'] === 'star' && typeof d['distanceLy'] === 'number') {
+        // A star: in light-years, not hundreds of thousands of astronomical units.
+        where.push(
+          fr
+            ? `à ${number(d['distanceLy'], 2)} années-lumière du Soleil`
+            : `${number(d['distanceLy'], 2)} light-years from the Sun`,
+        );
       } else if (s?.centre === 'sun' && s.distanceKm !== undefined) {
         const au = s.distanceKm / AU_KM;
         where.push(
@@ -276,9 +283,20 @@ export async function describeView(
     : fr
       ? `au ${dateText(date, lang, zone)}`
       : `on ${dateText(date, lang, zone)}`;
-  const alt = fr
-    ? `Vue 3D de Périgée : ${view.name.fr} ${when}${subject ? `, ${follow ? 'objet suivi' : 'centrée sur l’objet'} : ${subject}` : ''}.`
-    : `Perigee 3D ${view.name.en} ${when}${subject ? `, ${follow ? 'following' : 'centred on'} ${subject}` : ''}.`;
+  // map=1 with a selected star: its 3D map with the Sun (src/ui/StarMap.ts), pick=star:<id> compared with it.
+  const starOf = (sel: string | null): (typeof catalogs.stars)[number] | undefined =>
+    sel?.startsWith('star:') ? catalogs.stars.find((s) => `star:${s.id}` === sel) : undefined;
+  const mapStar = url.view === 'solar' && p.get('map') === '1' ? starOf(p.get('sel')) : undefined;
+  const mapPick = mapStar ? starOf(p.get('pick')) : undefined;
+  const ly = (s: { readonly distanceLy: number }): string =>
+    `${s.distanceLy.toLocaleString(fr ? 'fr-CA' : 'en-CA', { maximumFractionDigits: 2 })} ${fr ? 'années-lumière' : 'light-years'}`;
+  const alt = mapStar
+    ? fr
+      ? `Carte 3D de Périgée : ${mapStar.name.fr} et le Soleil, à ${ly(mapStar)} l’un de l’autre${mapPick ? `, comparée à ${mapPick.name.fr} (${ly(mapPick)})` : ''}, parmi les étoiles nommées autour du Soleil.`
+      : `Perigee 3D map: ${mapStar.name.en} and the Sun, ${ly(mapStar)} apart${mapPick ? `, compared with ${mapPick.name.en} (${ly(mapPick)})` : ''}, among the named stars around the Sun.`
+    : fr
+      ? `Vue 3D de Périgée : ${view.name.fr} ${when}${subject ? `, ${follow ? 'objet suivi' : 'centrée sur l’objet'} : ${subject}` : ''}.`
+      : `Perigee 3D ${view.name.en} ${when}${subject ? `, ${follow ? 'following' : 'centred on'} ${subject}` : ''}.`;
 
   const intro = fr
     ? `La ${view.name.fr} montre ${view.shows.fr}.`
@@ -336,6 +354,14 @@ export async function describeView(
           ? 'Les étoiles à moins de 20 années-lumière du Soleil sont nommées sur le ciel.'
           : 'The stars within 20 light-years of the Sun are named on the sky.',
       );
+    if (mapStar) {
+      extra.push(
+        fr
+          ? `Par-dessus la vue, une carte 3D place chaque étoile nommée à sa distance réelle du Soleil (les points ne sont pas à l’échelle) : ${mapStar.name.fr} et le Soleil sont reliés par un trait pointillé de ${ly(mapStar)}${mapPick ? `, et ${mapPick.name.fr} par un second trait de ${ly(mapPick)} pour comparer` : ''}. Des cercles dans le plan de la Voie lactée et une tige de chaque étoile jusqu’à ce plan montrent la profondeur.`
+          : `Over the view, a 3D map places every named star at its real distance from the Sun (the dots are not to scale): ${mapStar.name.en} and the Sun are joined by a dashed line of ${ly(mapStar)}${mapPick ? `, and ${mapPick.name.en} by a second one of ${ly(mapPick)} for comparison` : ''}. Rings in the plane of the Milky Way and a stalk from each star down to that plane show depth.`,
+      );
+      facts['starMap'] = { star: `star:${mapStar.id}`, ...(mapPick ? { pick: `star:${mapPick.id}` } : {}) };
+    }
   }
   const hidden = (p.get('hide') ?? '').split(',').filter(Boolean);
   if (hidden.length) {

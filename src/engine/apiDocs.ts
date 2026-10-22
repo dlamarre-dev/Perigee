@@ -203,6 +203,16 @@ function interfaceDoc(site: string, header: object): object {
           values: ['1'],
           description: 'Name the stars within 20 light-years of the Sun (solar view).',
         },
+        map: {
+          values: ['1'],
+          description:
+            "With sel=star:<id> (solar view): open that star's 3D map with the Sun (every named star at its distance, a dashed line and the distance between the star and the Sun). With embed=1, the map fills the frame alone.",
+        },
+        pick: {
+          values: ['star:<id>'],
+          description:
+            'With map=1: another star compared on the map (its own dashed line and distance to the Sun).',
+        },
         embed: { values: ['1'], description: 'Embed mode: the 3D view alone, with a link to the full app.' },
         ui: {
           values: ['panel', 'time', 'panel,time'],

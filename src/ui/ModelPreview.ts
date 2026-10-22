@@ -62,6 +62,8 @@ export interface StarPreview {
   readonly id: string;
   readonly temperatureK: number;
   readonly radiusSun: number | undefined;
+  /** Opens the star's 3D map with the Sun (src/ui/StarMap.ts): the illustration becomes a button. */
+  readonly openMap?: (() => void) | undefined;
 }
 
 export type PreviewSubject =
@@ -196,9 +198,7 @@ export class ModelPreview {
       openImage(this.i18n, this.baseUrl, this.subject.entry, this.subject.title, this.image.currentSrc);
     });
     this.starButton.addEventListener('click', () => {
-      if (this.subject?.kind !== 'star' || this.subject.star.id === 'sun') return;
-      const id = this.subject.star.id;
-      void import('./StarMap').then((m) => m.openStarMap(this.i18n, id));
+      if (this.subject?.kind === 'star') this.subject.star.openMap?.();
     });
     if (typeof IntersectionObserver !== 'undefined') {
       this.observer = new IntersectionObserver((entries) => {
@@ -317,7 +317,7 @@ export class ModelPreview {
     const shared = getSharedIfAny();
     if (shared?.owner === this) shared.owner = undefined;
     // The Sun has no map of its own (it is the map's centre): its illustration stays a plain picture.
-    if (star.id === 'sun') {
+    if (!star.openMap) {
       if (this.starCanvas.parentElement !== this.canvasBox) this.canvasBox.replaceChildren(this.starCanvas);
     } else if (
       this.starButton.parentElement !== this.canvasBox ||

@@ -130,6 +130,8 @@ export const en = {
   'starMap.title': '{star} and the Sun',
   'starMap.caption':
     'Positions and distances to scale; the stars are dots, not to scale. The rings lie in the plane of the Milky Way around the Sun (1, 2, 5, 10, 20, 50… light-years); each star’s stalk shows its height above or below that plane. Drag to turn, scroll or pinch to zoom, click a star to name it and show its distance, double-click it to centre on it. The gizmo at the top right looks along the galactic axes (X towards the galactic centre, Z north) and switches to an orthographic view.',
+  'starMap.captionShort':
+    'To scale (dots not to scale). Rings: plane of the Milky Way; stalks: height above it. Drag, zoom, click a star.',
   'starMap.alt': '3D map: {star} lies {ly} light-years from the Sun, among the other named stars.',
   'starMap.noWebgl': 'This browser cannot draw the 3D map (WebGL unavailable).',
   'starMap.persp': 'Persp',

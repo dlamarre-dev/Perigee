@@ -146,6 +146,8 @@ describe('MCP server', () => {
     );
     expect(String(r.structured['embedUrl'])).toMatch(/embed=1&ui=panel$/);
     expect(String(r.structured['iframe'])).toContain('&amp;');
+    const map = await call('perigee_view', { id: 'star:sirius', star_map: true, compare: 'star:vega' });
+    expect(String(map.structured['embedUrl'])).toMatch(/sel=star%3Asirius&map=1&pick=star%3Avega&embed=1$/);
   });
 
   it('defines terms and reports errors as tool errors', async () => {

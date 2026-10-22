@@ -208,6 +208,28 @@ test("a star's illustration opens a 3D map with the Sun and the distance between
   await expect(map).toBeHidden();
 });
 
+test('a link opens the star map (map=1, pick), alone in the frame in embed mode', async ({ page }) => {
+  // The full app: the map follows the URL while open, and leaves it when closed.
+  await page.goto(`./?lang=en&view=solar&sel=star:sirius&map=1&pick=star:vega&${FROZEN}`);
+  const map = page.getByRole('dialog', { name: 'Sirius and the Sun' });
+  await expect(map).toBeVisible();
+  await expect(map.locator('.star-map-label.is-picked:not(.is-distance)')).toHaveText('Vega');
+  await expect(map.locator('.star-map-label.is-distance.is-picked')).toHaveText('25 ly');
+  await expect(page).toHaveURL(/map=1/);
+  await expect(page).toHaveURL(/pick=star(%3A|:)vega/);
+  await map.getByRole('button', { name: 'Close' }).click();
+  await expect(map).toBeHidden();
+  await expect(page).not.toHaveURL(/map=1/);
+  // Embedded: no Close button, a link to the full app, Escape keeps it open.
+  await page.goto(`./?lang=en&view=solar&sel=star:sirius&map=1&embed=1&${FROZEN}`);
+  const embedded = page.locator('dialog.star-map.is-embedded');
+  await expect(embedded).toBeVisible();
+  await expect(embedded.getByRole('button', { name: 'Close' })).toBeHidden();
+  await expect(embedded.getByRole('link', { name: /Open in Perigee/ })).toHaveAttribute('href', /map=1/);
+  await page.keyboard.press('Escape');
+  await expect(embedded).toBeVisible();
+});
+
 test('the stars within 20 light-years have their own box, nearest first', async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&${FROZEN}`);
   const nearby = page.locator('#nearby-star-list');

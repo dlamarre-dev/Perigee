@@ -74,9 +74,17 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   Ceres), illustrative Earth clouds with their shadows, gas moving with the winds of Venus and the giant planets,
   sunspots at the places NOAA reported them, and spacecraft lit by the Sun alone, with their own shadows and the
   shadow of the body they orbit.
-- **Named stars**: tick _Identify the bright stars_ to label some 25 well-known stars on the starry background (a
-  thin line points at each one); click a name for its distance, type, size, temperature and luminosity, with an
-  illustration of the star beside the Sun at the same scale.
+- **Named stars**: tick _Identify the bright stars_ to label the 93 brightest stars on the starry background, or
+  _Identify the stars within 20 light-years_ for the Sun's 57 nearest neighbours (a thin line points at each
+  one); click a name for its distance, type, size, temperature and luminosity, with an illustration of the star
+  beside the Sun at the same scale.
+- **Star map**: click a star's illustration for a 3D map of it and the Sun, every named star at its real
+  distance. Rings in the plane of the Milky Way and a stalk from each star to that plane show where they lie;
+  click another star to compare its distance, and turn the map or look along the galactic axes, in perspective
+  or orthographic view.
+
+  <img src="docs/images/star-map.jpg" alt="The 3D map of Sirius and the Sun: the stars around the Sun on stalks above and below rings in the plane of the Milky Way, Sirius 8.6 light-years away and Vega, picked for comparison, 25 light-years away">
+
 - **Previews**: the info panel shows the selected planet, moon or dwarf planet in 3D, as drawn in the view; in
   the Earth view the Moon can be selected too, with its phase.
 - **Honest pictures**: artists' impressions, hand-drawn maps and illustrative effects are labelled as such in
@@ -143,7 +151,8 @@ The address bar always describes what you see, so a link reproduces it:
 | `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                                                                  |
 | `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                                                                 |
 | `log=1`                                        | Logarithmic distances in the solar-system view                                                                                                          |
-| `stars=1`                                      | Name the well-known stars on the sky (solar-system view)                                                                                                |
+| `stars=1`, `nearby=1`                          | Name the bright stars, or the stars within 20 light-years, on the sky (solar-system view)                                                               |
+| `map=1`, `pick=star:<id>`                      | With `sel=star:<id>`: open that star's 3D map with the Sun, with another star to compare                                                                |
 | `hide=<id>,<id>`                               | Missions not drawn in the Moon, Mars and solar-system views (unticked in the panel)                                                                     |
 | `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                                                       |
 
@@ -154,7 +163,8 @@ The address bar always describes what you see, so a link reproduces it:
   age, typical accuracy).
 - **Embed mode**: `?embed=1` shows the 3D view alone in an `<iframe>` (`ui=panel,time` keeps the information panel
   or the time bar, `follow=1` follows the selection); the page around it drives it and takes PNG snapshots with
-  `postMessage` (protocol `perigee:v1`).
+  `postMessage` (protocol `perigee:v1`). With `sel=star:<id>&map=1` the frame shows that star's 3D map instead
+  (`perigee_view` with `star_map`).
 - **Architecture** of the machine interfaces (engine, embed API, MCP servers, usage log, load tests):
   [`docs/machine-interface.md`](docs/machine-interface.md).
 - **Documents**: [`llms.txt`](https://perigee.info/llms.txt), [`llms-full.txt`](https://perigee.info/llms-full.txt)

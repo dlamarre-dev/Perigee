@@ -164,7 +164,10 @@ No single API provides "active probes + landing sites". We maintain:
   a click picks one other star (named, with its own dashed line and distance to the Sun); an axis gizmo at the top
   right (`src/ui/viewGizmo.ts`) looks along the six galactic axes and switches perspective/orthographic;
   QuaternionOrbitControls around the Sun, double-click a star to centre on it (keys typed in a dialog drive only
-  the controls inside it).
+  the controls inside it). The solar view mirrors it in the URL (`map=1` with `sel=star:<id>`, `pick=star:<id>`
+  for the compared star), so links open it; with `embed=1` it fills the frame alone (a link to the full app
+  instead of Close, Escape ignored). `perigee_view` builds such links (`star_map`, `compare`) and
+  `perigee_describe_view` puts them into words.
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models
@@ -384,7 +387,7 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.2.0 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). perigee-mcp 1.3.0 has 14 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;

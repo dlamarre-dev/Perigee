@@ -135,6 +135,8 @@ export const fr: Messages = {
   'starMap.title': '{star} et le Soleil',
   'starMap.caption':
     'Positions et distances à l’échelle ; les étoiles sont des points, pas à l’échelle. Les cercles sont dans le plan de la Voie lactée, autour du Soleil (1, 2, 5, 10, 20, 50… années-lumière) ; la tige de chaque étoile montre sa hauteur au-dessus ou au-dessous de ce plan. Faire glisser pour tourner, molette ou pincement pour zoomer, clic sur une étoile pour la nommer et afficher sa distance, double-clic pour la centrer. Le gyroscope en haut à droite regarde le long des axes galactiques (X vers le centre de la Galaxie, Z au nord) et passe à une vue orthographique.',
+  'starMap.captionShort':
+    'À l’échelle (points non à l’échelle). Cercles : plan de la Voie lactée ; tiges : hauteur. Glisser, zoomer, cliquer une étoile.',
   'starMap.alt':
     'Carte 3D : {star} se trouve à {ly} années-lumière du Soleil, parmi les autres étoiles nommées.',
   'starMap.noWebgl': 'Ce navigateur ne peut pas dessiner la carte 3D (WebGL indisponible).',

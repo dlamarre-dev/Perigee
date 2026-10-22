@@ -1594,6 +1594,36 @@ h2[tabindex='-1']:focus {
   margin: 6px 0 0;
 }
 
+/* Embed mode (embed=1&map=1): the map fills the frame alone. */
+.star-map.is-embedded[open] {
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+}
+
+.star-map.is-embedded::backdrop {
+  background: #02060b;
+}
+
+.star-map.is-embedded > .dialog-body {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+}
+
+.star-map.is-embedded .star-map-stage {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 200px;
+}
+
+.star-map.is-embedded .dialog-actions {
+  margin-top: 6px;
+}
+
 .model-preview .model-credit a {
   color: inherit;
 }

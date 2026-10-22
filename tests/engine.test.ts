@@ -258,6 +258,21 @@ describe('engine misc', () => {
       engine.viewUrl('25544', { date: new Date('2026-09-26T10:00:00Z'), embed: true, follow: true }),
     ).toBe('https://example.test/?sel=25544&t=2026-09-26T10%3A00%3A00Z&follow=1&embed=1');
     expect(engine.viewUrl('moon')).toBe('https://example.test/?sel=moon');
+    // A star's 3D map with the Sun, another star compared, no follow (the map has its own camera).
+    expect(
+      engine.viewUrl('star:sirius', { starMap: true, compare: 'star:vega', follow: true, embed: true }),
+    ).toBe('https://example.test/?view=solar&sel=star%3Asirius&map=1&pick=star%3Avega&embed=1');
+    expect(() => engine.viewUrl('mars', { starMap: true })).toThrow(/star map needs a star/);
+    expect(() => engine.viewUrl('star:sirius', { starMap: true, compare: 'mars' })).toThrow(/Only a star/);
+  });
+
+  it('describes a star map link', async () => {
+    const d = await engine.describeView('?view=solar&sel=star:sirius&map=1&pick=star:vega&embed=1', 'fr');
+    expect(String(d['altText'])).toBe(
+      'Carte 3D de Périgée : Sirius et le Soleil, à 8,6 années-lumière l’un de l’autre, comparée à Véga (25 années-lumière), parmi les étoiles nommées autour du Soleil.',
+    );
+    expect(String(d['description'])).toMatch(/tige de chaque étoile/);
+    expect(d['parameters']).toMatchObject({ starMap: { star: 'star:sirius', pick: 'star:vega' } });
   });
 
   it('defines glossary terms in both languages', () => {
