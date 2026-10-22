@@ -4,6 +4,7 @@
  *   tsx pipeline/run.ts gp      [--data-dir <dir>]   # GP "active" elements (every 4 h in CI)
  *   tsx pipeline/run.ts satcat  [--data-dir <dir>]   # SATCAT + group membership (daily in CI)
  *   tsx pipeline/run.ts horizons [--data-dir <dir>]  # JPL Horizons vectors for catalog/missions.json (daily)
+ *   tsx pipeline/run.ts horizons --bootstrap-past     # once: also the 30 days before each window (archive)
  *   tsx pipeline/run.ts rovers  [--data-dir <dir>]   # Mars rover positions from NASA MMGIS feeds (daily)
  *   tsx pipeline/run.ts sun     [--data-dir <dir>]   # NOAA SWPC solar active regions (daily)
  *   tsx pipeline/run.ts audit   [--data-dir <dir>]   # weekly maintenance audit → audit.json + audit.md
@@ -66,8 +67,16 @@ import {
   gpUrl,
   supGpUrl,
 } from './celestrak';
-import { CENTER_CODES, fetchMissionVectors, fetchMoonVectors, float64LittleEndian } from './horizons';
 import {
+  CENTER_CODES,
+  fetchMissionPast,
+  fetchMissionVectors,
+  fetchMoonVectors,
+  float64LittleEndian,
+} from './horizons';
+import {
+  PAST_DAYS,
+  archiveGpSnapshot,
   publishDatasets,
   publishEphemerides,
   publishMoonEphemerides,
@@ -183,6 +192,8 @@ async function runGp(dataDir: string, guard: LocalFetchGuard): Promise<void> {
     new Map(Object.entries(sets).map(([file, s]) => [file, s.records])),
     fetchedAt.getTime(),
   );
+  // The first run of a new UTC day keeps the previous day's last set (30-day history, no extra request).
+  await archiveGpSnapshot(dataDir, fetchedAt);
   await publishDatasets(dataDir, [
     {
       key: 'earth.gp',
@@ -296,7 +307,7 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
  * published. Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
  * and only warns; the moons gathered are published, the others keep their previous file (the audit flags them).
  */
-async function runHorizons(dataDir: string): Promise<void> {
+async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void> {
   const catalog = MissionsCatalogSchema.parse(
     JSON.parse(await readFile(resolve('catalog/missions.json'), 'utf8')),
   );
@@ -310,6 +321,16 @@ async function runHorizons(dataDir: string): Promise<void> {
         `${mission.id}: Horizons coverage ends ${clamped.kind} ${clamped.date.toISOString()}; window moved`,
       );
     }
+    // Only on request (a manual run): one more request per mission, to start its 30-day archive at once.
+    let pastRows: Float64Array | undefined;
+    if (bootstrapPast && !clamped) {
+      try {
+        pastRows = await fetchMissionPast(mission, now, PAST_DAYS);
+      } catch (err) {
+        console.warn(`::warning::${mission.id}: no archive fill (${String(err)}); remaining fills skipped`);
+        bootstrapPast = false;
+      }
+    }
     out.push({
       missionId: mission.id,
       horizonsId: mission.horizonsId,
@@ -321,6 +342,7 @@ async function runHorizons(dataDir: string): Promise<void> {
       rows: data,
       bytes: float64LittleEndian(data),
       ...(clamped?.kind === 'after' ? { coverageEnd: clamped.date } : {}),
+      ...(pastRows && pastRows.length > 0 ? { pastRows } : {}),
     });
   }
 
@@ -347,7 +369,7 @@ async function runHorizons(dataDir: string): Promise<void> {
     }
   }
   await publishMoonEphemerides(dataDir, moonOut);
-  await publishEphemerides(dataDir, out);
+  await publishEphemerides(dataDir, out, now);
 }
 
 /** One request per rover feed declared in catalog/landing-sites/*.json. */
@@ -514,7 +536,7 @@ async function main(): Promise<void> {
       await updateStats(dataDir);
       break;
     case 'horizons':
-      await runHorizons(dataDir);
+      await runHorizons(dataDir, rest.includes('--bootstrap-past'));
       break;
     case 'rovers':
       await runRovers(dataDir);

@@ -42,6 +42,8 @@ export interface Provenance {
   /** Epoch of the orbital elements (ISO UTC) and their age at the requested date (days, negative = ahead). */
   readonly elementEpoch?: string;
   readonly elementAgeDays?: number;
+  /** Which element set: the current one, or the daily copy kept for an earlier date ("archive YYYY-MM-DD"). */
+  readonly elementSet?: string;
   /** Ephemeris coverage (ISO UTC) and how far outside it the date falls (hours). */
   readonly validFrom?: string;
   readonly validTo?: string;

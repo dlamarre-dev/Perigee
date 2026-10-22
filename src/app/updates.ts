@@ -14,6 +14,8 @@ export type UpdateKind = 'app' | 'data';
 /** Key of a dataset or an ephemeris in a view's loaded-data map. */
 export const datasetKey = (key: string): string => `dataset:${key}`;
 export const ephemerisKey = (missionId: string): string => `ephem:${missionId}`;
+/** A mission's 30-day archive (loaded only for earlier dates). */
+export const ephemerisPastKey = (missionId: string): string => `ephem-past:${missionId}`;
 
 /** Hash published for a loaded-data key, or undefined when the manifest no longer lists it. */
 function publishedHash(manifest: Manifest, key: string): string | undefined {
@@ -21,6 +23,8 @@ function publishedHash(manifest: Manifest, key: string): string | undefined {
     return manifest.datasets[key.slice('dataset:'.length) as keyof Manifest['datasets']]?.sha256;
   }
   if (key.startsWith('ephem:')) return manifest.ephemerides[key.slice('ephem:'.length)]?.sha256;
+  if (key.startsWith('ephem-past:'))
+    return manifest.ephemerides[key.slice('ephem-past:'.length)]?.past?.sha256;
   return undefined;
 }
 

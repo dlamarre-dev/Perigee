@@ -59,9 +59,9 @@ export class FilterPanel {
 
   constructor(
     private readonly i18n: I18n,
-    private readonly catalog: SatCatalog,
+    private catalog: SatCatalog,
     initial: FilterState,
-    private readonly fetchedAt: Date | undefined,
+    private fetchedAt: Date | undefined,
     private readonly callbacks: FilterPanelCallbacks,
   ) {
     this.filters = initial;
@@ -116,6 +116,17 @@ export class FilterPanel {
     this.search.value = filters.query;
     this.update(filters);
     this.renderFacets();
+  }
+
+  /** Day of the archived element set shown (src/data/history.ts), undefined for the current set. */
+  private archiveDate: string | undefined;
+
+  /** Another element set for the shown date: the current one, or a daily copy (`archiveDate`). */
+  setCatalog(catalog: SatCatalog, fetchedAt: Date | undefined, archiveDate: string | undefined): void {
+    this.catalog = catalog;
+    this.fetchedAt = fetchedAt;
+    this.archiveDate = archiveDate;
+    this.renderAll();
   }
 
   /** Adds a view-specific control (e.g. a layer toggle) under the statistics. */
@@ -195,9 +206,12 @@ export class FilterPanel {
     this.clear.textContent = t('filters.clear');
     this.clear.disabled = isEmptyFilter(this.filters);
     this.resultsTitle.textContent = t('filters.results');
-    this.fetched.textContent = this.fetchedAt
-      ? this.i18n.format('stats.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
-      : '';
+    this.fetched.textContent = this.archiveDate
+      ? this.i18n.format('stats.archive', { date: this.archiveDate })
+      : this.fetchedAt
+        ? this.i18n.format('stats.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
+        : '';
+    this.fetched.classList.toggle('is-archive', this.archiveDate !== undefined);
     this.renderFacets();
     this.renderStats();
     this.renderResults();

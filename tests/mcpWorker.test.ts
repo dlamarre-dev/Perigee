@@ -103,6 +103,11 @@ describe('hosted MCP endpoint', () => {
     ).toBe(100);
     expect(tools.find((t) => t.name === 'perigee_passes')?.inputSchema.properties['days']?.maximum).toBe(3);
     expect(tools.find((t) => t.name === 'perigee_events')?.inputSchema.properties['days']?.maximum).toBe(31);
+    const max = (tool: string, field: string) =>
+      tools.find((t) => t.name === tool)?.inputSchema.properties[field]?.maximum;
+    expect(max('perigee_close_approach', 'days')).toBe(1);
+    expect(max('perigee_sky_conjunctions', 'days')).toBe(7);
+    expect(max('perigee_shadow', 'hours')).toBe(12);
   });
 
   it('rate-limits by caller address', async () => {

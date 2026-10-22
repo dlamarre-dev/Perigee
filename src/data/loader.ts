@@ -89,44 +89,52 @@ async function decodeOnMainThread<S extends z.ZodType>(bytes: ArrayBuffer, schem
 }
 
 /**
- * Like loadDataset for the large Earth datasets: gunzip, JSON and validation run in a worker (same schema), the
- * main thread only receives the result. Falls back to the main thread without a working worker; invalid data
- * still fail (DataUnavailableError).
+ * A large published file (an Earth dataset or one of its daily copies, src/data/history.ts): gunzip, JSON and
+ * validation run in a worker (same schema), the main thread only receives the result. Falls back to the main
+ * thread without a working worker; invalid data still fail (DataUnavailableError).
  */
-export async function loadBulkDataset<N extends BulkSchemaName>(
+export async function loadBulkFile<N extends BulkSchemaName>(
   baseUrl: string,
-  manifest: Manifest,
-  key: DatasetKey,
+  file: { readonly path: string; readonly sha256: string },
   schemaName: N,
-): Promise<{ entry: DatasetEntry; data: z.infer<(typeof BULK_SCHEMAS)[N]> }> {
+): Promise<z.infer<(typeof BULK_SCHEMAS)[N]>> {
   type Data = z.infer<(typeof BULK_SCHEMAS)[N]>;
   const schema = BULK_SCHEMAS[schemaName];
+  // The hash in the query string busts caches whenever the content changes.
+  const url = `${dataRoot(baseUrl)}${file.path}?v=${file.sha256.slice(0, 12)}`;
+  const download = async (): Promise<ArrayBuffer> => {
+    const res = await fetch(url);
+    if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
+    return res.arrayBuffer();
+  };
   const worker = decodeWorker();
-  if (!worker) {
-    const r = await loadDataset(baseUrl, manifest, key, schema);
-    return { entry: r.entry, data: r.data as Data };
-  }
-  const entry = manifest.datasets[key];
-  if (!entry) throw new DataUnavailableError(`Dataset ${key} is not published`);
-  const url = `${dataRoot(baseUrl)}${entry.path}?v=${entry.sha256.slice(0, 12)}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new DataUnavailableError(`HTTP ${res.status} for ${url}`);
-  const bytes = await res.arrayBuffer();
-  // The worker failed while downloading: the bytes are still here.
-  if (decoder !== worker) return { entry, data: (await decodeOnMainThread(bytes, schema)) as Data };
+  const bytes = await download();
+  // No worker, or it failed while downloading: the bytes are still here.
+  if (!worker || decoder !== worker) return (await decodeOnMainThread(bytes, schema)) as Data;
   const id = nextId++;
   try {
     const data = await new Promise<unknown>((resolve, reject) => {
       pending.set(id, { resolve, reject });
       worker.postMessage({ id, bytes, schema: schemaName }, [bytes]);
     });
-    return { entry, data: data as Data };
+    return data as Data;
   } catch (err) {
     if (!(err instanceof DecodeWorkerError)) throw err;
     // The bytes went to the dead worker: fetch again (from the HTTP cache) and decode here.
-    const r = await loadDataset(baseUrl, manifest, key, schema);
-    return { entry: r.entry, data: r.data as Data };
+    return (await decodeOnMainThread(await download(), schema)) as Data;
   }
+}
+
+/** Like loadDataset for the large Earth datasets, decoded off the main thread (loadBulkFile). */
+export async function loadBulkDataset<N extends BulkSchemaName>(
+  baseUrl: string,
+  manifest: Manifest,
+  key: DatasetKey,
+  schemaName: N,
+): Promise<{ entry: DatasetEntry; data: z.infer<(typeof BULK_SCHEMAS)[N]> }> {
+  const entry = manifest.datasets[key];
+  if (!entry) throw new DataUnavailableError(`Dataset ${key} is not published`);
+  return { entry, data: await loadBulkFile(baseUrl, entry, schemaName) };
 }
 
 /** Loads a state-vector table (mission or moon; rows of 7 little-endian Float64). */

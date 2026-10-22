@@ -5,33 +5,77 @@ import * as Astronomy from 'astronomy-engine';
 import { describe, expect, it } from 'vitest';
 import { AU_KM } from '../src/astro/constants';
 import { GM_KM3_S2 } from '../src/astro/kepler';
+import { SHARD_COUNT, shardOf } from '../src/data/shards';
 import { createEngine } from '../src/engine';
 import type { FetchLike } from '../src/engine/data';
 
 const J2000_JD = 2_451_545.0;
 const gp = gzipSync(readFileSync('tests/fixtures/omm-sample.json'));
 
-/** A circular heliocentric orbit at 1.2 AU, sampled hourly over ±5 days around 2026-09-26 (TDB ≈ UTC here). */
+/**
+ * A circular heliocentric orbit at 1.2 AU, sampled hourly over ±5 days around 2026-09-26 (TDB ≈ UTC here): the
+ * window is the last 5 days, the first 5 its archive (ephem/past), every 2 hours (a coarser archive step).
+ */
 const START_JD = Date.parse('2026-09-21T00:00:00Z') / 86_400_000 + 2_440_587.5;
-const ephem = (() => {
+const WINDOW_JD = START_JD + 5;
+const orbitRows = (from: number, to: number, stepH: number): Buffer => {
   const r = 1.2 * AU_KM;
   const v = Math.sqrt(GM_KM3_S2.sun / r);
   const n = v / r;
   const rows: number[] = [];
-  for (let i = 0; i <= 240; i++) {
-    const t = START_JD + i / 24;
+  const count = Math.round(((to - from) * 24) / stepH);
+  for (let i = 0; i <= count; i++) {
+    const t = from + (i * stepH) / 24;
     const a = n * (t - J2000_JD) * 86_400;
     rows.push(t, r * Math.cos(a), r * Math.sin(a), 0, -v * Math.sin(a), v * Math.cos(a), 0);
   }
   const buf = Buffer.alloc(rows.length * 8);
   rows.forEach((x, i) => buf.writeDoubleLE(x, i * 8));
   return buf;
-})();
+};
+const ephem = orbitRows(WINDOW_JD, START_JD + 10, 1);
+const ephemPast = orbitRows(START_JD, WINDOW_JD - 1 / 12, 2);
 
 const sha = (b: Buffer): string => createHash('sha256').update(b).digest('hex');
+
+/** A daily copy of 2026-09-15: the same objects, epochs 11 days earlier, split into shards with their index. */
+const history = (() => {
+  const omm = (JSON.parse(readFileSync('tests/fixtures/omm-sample.json', 'utf8')) as { EPOCH: string }[]).map(
+    (o) => ({ ...o, EPOCH: o.EPOCH.replace('2026-09-26', '2026-09-15') }),
+  );
+  const whole = gzipSync(JSON.stringify(omm));
+  const lists: unknown[][] = Array.from({ length: SHARD_COUNT }, () => []);
+  for (const o of omm as unknown as { NORAD_CAT_ID: number }[])
+    lists[shardOf(o.NORAD_CAT_ID, SHARD_COUNT)]?.push(o);
+  const shards = lists.map((l) => gzipSync(JSON.stringify(l)));
+  const index = gzipSync(JSON.stringify({ parent: sha(whole), sha256: shards.map(sha) }));
+  const files: Record<string, Buffer> = {
+    'data/earth/history/2026-09-15.json.gz': whole,
+    'data/earth/history/2026-09-15/index.json.gz': index,
+  };
+  shards.forEach((b, i) => (files[`data/earth/history/2026-09-15/${i}.json.gz`] = b));
+  return {
+    files,
+    entry: {
+      date: '2026-09-15',
+      path: 'earth/history/2026-09-15.json.gz',
+      fetchedAt: '2026-09-15T22:00:00.000Z',
+      count: omm.length,
+      bytes: whole.length,
+      sha256: sha(whole),
+      shards: {
+        count: SHARD_COUNT,
+        path: 'earth/history/2026-09-15/{shard}.json.gz',
+        index: 'earth/history/2026-09-15/index.json.gz',
+        indexSha256: sha(index),
+      },
+    },
+  };
+})();
 const manifest = {
   version: 1,
   generatedAt: '2026-09-26T12:00:00Z',
+  earthHistory: { days: 30, snapshots: [history.entry] },
   datasets: {
     'earth.gp': {
       path: 'earth/gp.json.gz',
@@ -47,15 +91,24 @@ const manifest = {
       path: 'ephem/voyager-1.bin',
       source: 'Horizons',
       fetchedAt: '2026-09-26T03:00:00Z',
-      count: 241,
+      count: ephem.length / 56,
       bytes: ephem.length,
       sha256: sha(ephem),
       horizonsId: '-31',
       center: '500@10',
       centralBody: 'sun',
-      startTdbJd: START_JD,
+      startTdbJd: WINDOW_JD,
       endTdbJd: START_JD + 10,
       stepMin: 60,
+      past: {
+        path: 'ephem/past/voyager-1.bin',
+        bytes: ephemPast.length,
+        sha256: sha(ephemPast),
+        count: ephemPast.length / 56,
+        startTdbJd: START_JD,
+        endTdbJd: WINDOW_JD - 1 / 12,
+        stepMin: 120,
+      },
     },
   },
 };
@@ -64,6 +117,8 @@ const files: Record<string, Buffer> = {
   'data/manifest.json': Buffer.from(JSON.stringify(manifest)),
   'data/earth/gp.json.gz': gp,
   'data/ephem/voyager-1.bin': ephem,
+  'data/ephem/past/voyager-1.bin': ephemPast,
+  ...history.files,
 };
 const requested: string[] = [];
 const fakeFetch: FetchLike = async (url) => {
@@ -142,6 +197,23 @@ describe('engine satellites', () => {
   });
 });
 
+describe('engine past satellite elements', () => {
+  it("reads a past date's daily copy from its own shard, and says so", async () => {
+    requested.length = 0;
+    const s = await engine.state('25544', '2026-09-15T12:00:00Z');
+    const p = s.provenance[0];
+    expect(p?.elementSet).toBe('archive 2026-09-15');
+    expect(p?.elementEpoch?.slice(0, 10)).toBe('2026-09-15');
+    expect(p?.dataFetchedAt).toBe('2026-09-15T22:00:00.000Z');
+    expect(p?.state).toBe('fresh');
+    expect(requested).toContain(`data/earth/history/2026-09-15/${shardOf(25544, SHARD_COUNT)}.json.gz`);
+    expect(requested).not.toContain('data/earth/history/2026-09-15.json.gz');
+    // The current set for recent dates.
+    const now = await engine.state('25544', '2026-09-26T10:00:00Z');
+    expect(now.provenance[0]?.elementSet).toBe('current');
+  });
+});
+
 describe('engine probes', () => {
   it('interpolates Horizons vectors inside the window', async () => {
     const s = await engine.state('voyager-1', '2026-09-26T00:30:00Z', 'sun');
@@ -151,6 +223,27 @@ describe('engine probes', () => {
     expect(p.model).toBe('horizons-interpolated');
     expect(p.state).toBe('interpolated');
     expect(p.hoursBeyondWindow).toBeUndefined();
+  });
+
+  it('reads the 30-day archive only before the window, as archived Horizons vectors', async () => {
+    requested.length = 0;
+    await engine.state('voyager-1', '2026-09-27T00:00:00Z', 'sun');
+    expect(requested).not.toContain('data/ephem/past/voyager-1.bin');
+    const s = await engine.state('voyager-1', '2026-09-22T05:00:00Z', 'sun');
+    expect(requested).toContain('data/ephem/past/voyager-1.bin');
+    expect(s.distanceAu).toBeCloseTo(1.2, 6);
+    expect(s.provenance[0]?.state).toBe('interpolated');
+    expect(s.provenance[0]?.method).toMatch(/Archived JPL Horizons/);
+    // The archive's first state (TDB, a minute after UTC).
+    const from = Date.parse(s.provenance[0]?.validFrom ?? '');
+    expect(Math.abs(from - Date.parse('2026-09-21T00:00:00Z'))).toBeLessThan(120_000);
+    // Across the joint (2-hour archive step, then the hourly window): still interpolated.
+    expect((await engine.state('voyager-1', '2026-09-25T23:30:00Z', 'sun')).provenance[0]?.state).toBe(
+      'interpolated',
+    );
+    // Before the archive: extrapolated from its first state.
+    const before = await engine.state('voyager-1', '2026-09-19T00:00:00Z', 'sun');
+    expect(before.provenance[0]?.state).toBe('extrapolated');
   });
 
   it('extrapolates past the window, then hides', async () => {

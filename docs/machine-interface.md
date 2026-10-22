@@ -119,22 +119,27 @@ sequenceDiagram
 
 Defined once in `mcp/src/tools.ts` and served by both MCP servers.
 
-| Tool                      | Answer                                                                     | Local limit  | Hosted limit |
-| ------------------------- | -------------------------------------------------------------------------- | ------------ | ------------ |
-| `perigee_find`            | ids by name (catalogues, then the satellite name index)                    | —            | —            |
-| `perigee_object`          | facts, goals, status, website, sources, image (optionally inline)          | —            | —            |
-| `perigee_state`           | position, velocity, distance, altitude, light time, sunlight, ground point | —            | —            |
-| `perigee_orbit`           | mean SGP4 orbit (Earth satellites) or osculating elements                  | —            | —            |
-| `perigee_passes`          | rise, culmination, set, naked-eye visibility over a place                  | 10 days      | 3 days       |
-| `perigee_sky`             | Sun, twilights, Moon phase, planets, bright stars from a place             | —            | —            |
-| `perigee_events`          | Moon phases, eclipses, seasons, planet events, mission milestones          | 366 days     | 31 days      |
-| `perigee_stats`           | counts of active satellites                                                | —            | —            |
-| `perigee_distance`        | distance and light time between two objects                                | —            | —            |
-| `perigee_distance_series` | sampled distances, closest and farthest                                    | 1000 samples | 100 samples  |
-| `perigee_view`            | app link, embed link, iframe, snapshot recipe                              | —            | —            |
-| `perigee_describe_view`   | a link in words                                                            | —            | —            |
-| `perigee_define`          | glossary (EN/FR)                                                           | —            | —            |
-| `perigee_about`           | sources, fetch times, models and accuracy                                  | —            | —            |
+| Tool                       | Answer                                                                     | Local limit  | Hosted limit |
+| -------------------------- | -------------------------------------------------------------------------- | ------------ | ------------ |
+| `perigee_find`             | ids by name (catalogues, then the satellite name index)                    | —            | —            |
+| `perigee_object`           | facts, goals, status, website, sources, image (optionally inline)          | —            | —            |
+| `perigee_state`            | position, velocity, distance, altitude, light time, sunlight, ground point | —            | —            |
+| `perigee_orbit`            | mean SGP4 orbit (Earth satellites) or osculating elements                  | —            | —            |
+| `perigee_passes`           | rise, culmination, set, naked-eye visibility over a place                  | 10 days      | 3 days       |
+| `perigee_sky`              | Sun, twilights, Moon phase, planets, bright stars from a place             | —            | —            |
+| `perigee_events`           | Moon phases, eclipses, seasons, planet events, mission milestones          | 366 days     | 31 days      |
+| `perigee_tonight`          | the night ahead from a place: Moon, planets, ISS/Tiangong/Hubble, pairings | one night    | one night    |
+| `perigee_sky_conjunctions` | close pairings of the Moon, planets, bright stars (and a satellite)        | 31 days      | 7 days       |
+| `perigee_shadow`           | sunlight, penumbra or umbra, next shadow entry and exit                    | 48 hours     | 12 hours     |
+| `perigee_ground_track`     | lat/lon below an Earth satellite over 1–2 orbits, GeoJSON                  | 360 points   | 360 points   |
+| `perigee_close_approach`   | closest distance between two objects in space (education only)             | 7 days       | 1 day        |
+| `perigee_stats`            | counts of active satellites                                                | —            | —            |
+| `perigee_distance`         | distance and light time between two objects                                | —            | —            |
+| `perigee_distance_series`  | sampled distances, closest and farthest                                    | 1000 samples | 100 samples  |
+| `perigee_view`             | app link, embed link, iframe, snapshot recipe                              | —            | —            |
+| `perigee_describe_view`    | a link in words                                                            | —            | —            |
+| `perigee_define`           | glossary (EN/FR)                                                           | —            | —            |
+| `perigee_about`            | sources, fetch times, models and accuracy                                  | —            | —            |
 
 The hosted limits keep each request within the free plan's 10 ms of CPU (see [`mcp-hosted.md`](mcp-hosted.md)).
 
@@ -148,7 +153,7 @@ The hosted limits keep each request within the free plan's 10 ms of CPU (see [`m
   dependencies external) into `mcp/dist/perigee-mcp.js`.
 - Released by pushing a `mcp-v<version>` tag: `.github/workflows/mcp-release.yml` checks the version, runs the
   engine and MCP tests, builds and publishes through npm trusted publishing with provenance
-  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.3.0: 14 tools).
+  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.4.0: 19 tools).
 
 ## Hosted endpoint (`workers/mcp/`)
 

@@ -9,6 +9,7 @@
  */
 import { EphemerisTable } from '../astro/hermite';
 import { gunzipJson } from '../data/decode';
+import { snapshotFor } from '../data/history';
 import { shardOf, shardPath } from '../data/shards';
 import type { SatelliteStats } from '../earth/stats';
 import {
@@ -23,6 +24,27 @@ import {
   type ShardIndex,
 } from '../data/schemas';
 
+const LITTLE_ENDIAN = new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
+
+/** Where a sharded file's shards are (a dataset's `shards`, or a daily copy's). */
+interface ShardsRef {
+  readonly count: number;
+  readonly path: string;
+  readonly index?: string | undefined;
+  readonly indexSha256?: string | undefined;
+}
+
+/**
+ * Parsed shards and indexes kept at most: the daily copies are separate families, which do not replace each
+ * other as dataset versions do (a long-running server answering about many dates).
+ */
+const MAX_SHARD_ENTRIES = 256;
+function capSize(map: Map<string, unknown>): void {
+  for (const key of map.keys()) {
+    if (map.size <= MAX_SHARD_ENTRIES) break;
+    map.delete(key);
+  }
+}
 export type FetchLike = (
   url: string,
 ) => Promise<{ ok: boolean; status: number; arrayBuffer(): Promise<ArrayBuffer> }>;
@@ -194,10 +216,13 @@ export class PublishedData {
     return { entry, records: await this.satcat.data };
   }
 
-  /** The hashes of a dataset's shards (pipeline index), checked against the manifest; undefined for older data. */
+  /**
+   * The hashes of a dataset's shards (pipeline index), checked against the manifest; undefined for older data.
+   * Works for the current datasets and the daily copies of earth.gp alike (their shards keep their own index).
+   */
   private async shardIndex(
-    entry: DatasetEntry,
-    shards: NonNullable<DatasetEntry['shards']>,
+    entry: { readonly sha256: string },
+    shards: ShardsRef,
   ): Promise<ShardIndex | undefined> {
     if (!shards.index) return undefined;
     const indexPath = shards.index;
@@ -219,6 +244,7 @@ export class PublishedData {
       );
       index.catch(() => this.shardIndexes.delete(key));
       this.shardIndexes.set(key, index);
+      capSize(this.shardIndexes);
     }
     return index;
   }
@@ -228,8 +254,8 @@ export class PublishedData {
    * about one satellite decodes a few dozen records instead of the whole file.
    */
   private async shard<T>(
-    entry: DatasetEntry,
-    shards: NonNullable<DatasetEntry['shards']>,
+    entry: { readonly sha256: string },
+    shards: ShardsRef,
     norad: number,
     parse: (raw: unknown) => readonly T[],
   ): Promise<readonly T[]> {
@@ -246,16 +272,34 @@ export class PublishedData {
         .then(async (buf) => parse(await gunzipJson(new Uint8Array(buf))));
       list.catch(() => this.shardLists.delete(key));
       this.shardLists.set(key, list);
+      capSize(this.shardLists);
     }
     return list as Promise<readonly T[]>;
   }
 
-  /** One active satellite's elements (undefined if not in the active set), from its shard when published. */
-  async satelliteElements(norad: number): Promise<{ entry: DatasetEntry; omm: Omm | undefined }> {
-    const entry = (await this.manifest()).datasets['earth.gp'];
+  /**
+   * One active satellite's elements (undefined if not in the active set), from its shard when published. For a
+   * date more than a day before the current set, the daily copy kept for that date (src/data/history.ts), read
+   * from its own shard; an object missing from it (launched later) keeps the current elements, labelled by age.
+   */
+  async satelliteElements(
+    norad: number,
+    date?: Date,
+  ): Promise<{ entry: DatasetEntry; omm: Omm | undefined; snapshot?: string }> {
+    const manifest = await this.manifest();
+    const entry = manifest.datasets['earth.gp'];
     if (!entry) throw new DataError('The satellite elements are not published');
+    const parse = (raw: unknown): readonly Omm[] => OmmListSchema.parse(raw);
+    const snap = date ? snapshotFor(manifest.earthHistory, entry.fetchedAt, date.getTime()) : undefined;
+    if (snap?.shards) {
+      const archived = (await this.shard(snap, snap.shards, norad, parse)).find(
+        (o) => o.NORAD_CAT_ID === norad,
+      );
+      if (archived)
+        return { entry: { ...entry, fetchedAt: snap.fetchedAt }, omm: archived, snapshot: snap.date };
+    }
     const list = entry.shards
-      ? await this.shard(entry, entry.shards, norad, (raw) => OmmListSchema.parse(raw))
+      ? await this.shard(entry, entry.shards, norad, parse)
       : (await this.gpElements()).omm;
     return { entry, omm: list.find((o) => o.NORAD_CAT_ID === norad) };
   }
@@ -342,6 +386,9 @@ export class PublishedData {
     if (!t) {
       t = this.bytes(this.entryFile(entry)).then((buf) => {
         if (buf.byteLength !== entry.bytes) throw new DataError(`Size mismatch for ${entry.path}`);
+        // Little-endian hosts (all of ours) read the bytes as they are: a 30-day archive is ~150k values, too
+        // many to decode one by one within the hosted endpoint's CPU budget.
+        if (LITTLE_ENDIAN) return new EphemerisTable(new Float64Array(buf.slice(0)));
         const view = new DataView(buf);
         const rows = new Float64Array(buf.byteLength / 8);
         for (let i = 0; i < rows.length; i++) rows[i] = view.getFloat64(i * 8, true);

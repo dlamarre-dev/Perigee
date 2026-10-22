@@ -4,7 +4,7 @@
  */
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
 import {
@@ -17,6 +17,7 @@ import {
   type Manifest,
   type OperatorsCatalog,
 } from '../src/data/schemas';
+import { utcToTdbJd } from '../src/astro/time';
 import { buildCatalog } from '../src/earth/catalog';
 import { satelliteStats } from '../src/earth/stats';
 import { SHARD_COUNT, shardOf, shardPath } from '../src/data/shards';
@@ -144,6 +145,76 @@ export async function writeStats(dataDir: string, operators: OperatorsCatalog): 
   console.log(`wrote ${path}: ${stats.total} satellites counted`);
 }
 
+/** Days of daily earth.gp copies kept (manifest `earthHistory`). */
+export const EARTH_HISTORY_DAYS = 30;
+
+/**
+ * Keeps the outgoing earth.gp as the copy of its UTC day, before a run of a later day replaces it: the last GP run
+ * of each day, with its shards (the engine reads one shard) — copied, not fetched again. Copies older than
+ * EARTH_HISTORY_DAYS are deleted. Updates the manifest's `earthHistory`; the dataset publication that follows keeps
+ * the field.
+ */
+export async function archiveGpSnapshot(dataDir: string, now: Date): Promise<void> {
+  const manifest = await readManifest(dataDir);
+  const entry = manifest.datasets['earth.gp'];
+  const today = now.toISOString().slice(0, 10);
+  let snapshots = [...(manifest.earthHistory?.snapshots ?? [])];
+  const day = entry?.fetchedAt.slice(0, 10);
+  if (
+    entry &&
+    day &&
+    day < today &&
+    !snapshots.some((s) => s.date === day) &&
+    existsSync(join(dataDir, entry.path))
+  ) {
+    const path = `earth/history/${day}.json.gz`;
+    await mkdir(dirname(join(dataDir, path)), { recursive: true });
+    await copyFile(join(dataDir, entry.path), join(dataDir, path));
+    let shards: (typeof snapshots)[number]['shards'];
+    const s = entry.shards;
+    // The shards go along when published with their index (a local `data:pull` copy has neither).
+    if (s?.index && s.indexSha256 && existsSync(join(dataDir, s.index))) {
+      const template = `earth/history/${day}/{shard}.json.gz`;
+      await mkdir(join(dataDir, `earth/history/${day}`), { recursive: true });
+      for (let i = 0; i < s.count; i++) {
+        const from = join(dataDir, shardPath(s.path, i));
+        if (existsSync(from)) await copyFile(from, join(dataDir, shardPath(template, i)));
+      }
+      await copyFile(join(dataDir, s.index), join(dataDir, shardPath(template, 'index')));
+      shards = {
+        count: s.count,
+        path: template,
+        index: shardPath(template, 'index'),
+        indexSha256: s.indexSha256,
+      };
+    }
+    snapshots.push({
+      date: day,
+      path,
+      fetchedAt: entry.fetchedAt,
+      count: entry.count,
+      bytes: entry.bytes,
+      sha256: entry.sha256,
+      ...(shards ? { shards } : {}),
+    });
+    console.log(`kept ${path}: the last earth.gp of ${day}`);
+  }
+  // Only the last EARTH_HISTORY_DAYS days.
+  const oldest = new Date(now.getTime() - EARTH_HISTORY_DAYS * 86_400_000).toISOString().slice(0, 10);
+  for (const old of snapshots.filter((x) => x.date < oldest)) {
+    await rm(join(dataDir, old.path), { force: true });
+    await rm(join(dataDir, `earth/history/${old.date}`), { recursive: true, force: true });
+  }
+  snapshots = snapshots.filter((x) => x.date >= oldest).sort((a, b) => a.date.localeCompare(b.date));
+  const next: Manifest = {
+    ...manifest,
+    ...(snapshots.length > 0 ? { earthHistory: { days: EARTH_HISTORY_DAYS, snapshots } } : {}),
+  };
+  if (snapshots.length === 0) delete next.earthHistory;
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+}
+
 /** Writes the SHARD_COUNT split copies of a record list (every shard, empty ones included). */
 async function writeShards(
   dataDir: string,
@@ -196,6 +267,117 @@ export interface EphemerisToWrite {
   readonly bytes: Buffer;
   /** End of the public ephemeris, when Horizons reported it inside the window. */
   readonly coverageEnd?: Date;
+  /** One-time fill of the archive (`--bootstrap-past`): Horizons rows from 30 days ago to the window start. */
+  readonly pastRows?: Float64Array;
+}
+
+/** Days of states kept before the window (ephem/past/<id>.bin). */
+export const PAST_DAYS = 30;
+const ROW = 7;
+
+/** Rows of a published .bin (7 little-endian Float64 each). */
+export function readRows(bytes: Buffer): Float64Array {
+  const out = new Float64Array(Math.floor(bytes.byteLength / 8));
+  for (let i = 0; i < out.length; i++) out[i] = bytes.readDoubleLE(i * 8);
+  return out;
+}
+
+/**
+ * The archive of states before a new window: rows earlier than `newStartJd` and not older than `cutoffJd`, from
+ * sources listed oldest first (the previous archive, the previous window, a one-time Horizons fill). A later
+ * source owns its own time span: earlier sources' rows inside it are dropped, so two step grids never interleave
+ * (a missed run is filled by the previous window's rows, which Horizons published then).
+ */
+export function mergePast(
+  sources: readonly (Float64Array | undefined)[],
+  newStartJd: number,
+  cutoffJd: number,
+): Float64Array {
+  const kept: { t: number; source: number; offset: number }[] = [];
+  const spans = sources.map((rows) =>
+    rows && rows.length >= ROW ? ([rows[0] ?? 0, rows[rows.length - ROW] ?? 0] as const) : undefined,
+  );
+  sources.forEach((rows, source) => {
+    if (!rows) return;
+    for (let o = 0; o + ROW <= rows.length; o += ROW) {
+      const t = rows[o] ?? Number.NaN;
+      if (!(t >= cutoffJd && t < newStartJd)) continue;
+      const owned = spans.some((span, later) => later > source && span && t >= span[0] && t <= span[1]);
+      if (!owned) kept.push({ t, source, offset: o });
+    }
+  });
+  kept.sort((a, b) => a.t - b.t);
+  const out: number[] = [];
+  let last = Number.NEGATIVE_INFINITY;
+  for (const k of kept) {
+    if (k.t <= last) continue;
+    const rows = sources[k.source];
+    if (!rows) continue;
+    const row = Array.from(rows.subarray(k.offset, k.offset + ROW));
+    if (!row.every(Number.isFinite)) continue;
+    out.push(...row);
+    last = k.t;
+  }
+  return Float64Array.from(out);
+}
+
+/** Largest interval between rows (minutes), the archive's coarsest step. */
+function largestStepMin(rows: Float64Array): number {
+  let max = 0;
+  for (let o = ROW; o < rows.length; o += ROW) max = Math.max(max, (rows[o] ?? 0) - (rows[o - ROW] ?? 0));
+  return Math.max(max * 1440, 1e-6);
+}
+
+async function readBin(dataDir: string, path: string | undefined): Promise<Float64Array | undefined> {
+  if (!path) return undefined;
+  const file = join(dataDir, path);
+  if (!existsSync(file)) return undefined;
+  return readRows(await readFile(file));
+}
+
+/**
+ * Writes data/ephem/past/<id>.bin for a mission whose new window starts less than PAST_DAYS ago (heliocentric
+ * windows already reach 60 days back), and returns its manifest field; undefined when there is nothing to keep.
+ * Missions not fetched this run keep their entry (and archive) as is.
+ */
+async function publishPast(
+  dataDir: string,
+  e: EphemerisToWrite,
+  prev: EphemerisEntry | undefined,
+  now: Date,
+): Promise<EphemerisEntry['past']> {
+  const newStartJd = e.rows[0] ?? 0;
+  const cutoffJd = utcToTdbJd(new Date(now.getTime() - PAST_DAYS * 86_400_000));
+  const path = `ephem/past/${e.missionId}.bin`;
+  const file = join(dataDir, path);
+  const rows =
+    newStartJd <= cutoffJd
+      ? new Float64Array(0)
+      : mergePast(
+          [await readBin(dataDir, prev?.past?.path), await readBin(dataDir, prev?.path), e.pastRows],
+          newStartJd,
+          cutoffJd,
+        );
+  if (rows.length === 0) {
+    // Nothing left to keep (the window reaches back far enough, or every row is older than 30 days).
+    await rm(file, { force: true });
+    return undefined;
+  }
+  await mkdir(dirname(file), { recursive: true });
+  const bytes = Buffer.alloc(rows.length * 8);
+  for (let i = 0; i < rows.length; i++) bytes.writeDoubleLE(rows[i] ?? 0, i * 8);
+  await writeFile(file, bytes);
+  const count = rows.length / ROW;
+  console.log(`wrote ${path}: ${count} archived states, ${(bytes.byteLength / 1024).toFixed(0)} KiB`);
+  return {
+    path,
+    bytes: bytes.byteLength,
+    sha256: createHash('sha256').update(bytes).digest('hex'),
+    count,
+    startTdbJd: rows[0] ?? 0,
+    endTdbJd: rows[rows.length - ROW] ?? 0,
+    stepMin: largestStepMin(rows),
+  };
 }
 
 /**
@@ -208,6 +390,7 @@ export interface EphemerisToWrite {
 export async function publishEphemerides(
   dataDir: string,
   list: readonly EphemerisToWrite[],
+  now: Date = new Date(),
 ): Promise<Manifest> {
   const manifest = await readManifest(dataDir);
   const refused: ShrinkGuardError[] = [];
@@ -227,6 +410,8 @@ export async function publishEphemerides(
   });
   const next: Manifest = { ...manifest, ephemerides: { ...manifest.ephemerides } };
   for (const e of accepted) {
+    // The archive first: it reads the previous window's file, about to be replaced.
+    const past = await publishPast(dataDir, e, manifest.ephemerides[e.missionId], now);
     const path = `ephem/${e.missionId}.bin`;
     const file = join(dataDir, path);
     await mkdir(dirname(file), { recursive: true });
@@ -246,6 +431,7 @@ export async function publishEphemerides(
       endTdbJd: e.rows[e.rows.length - 7] ?? 0,
       stepMin: e.stepMin,
       ...(e.coverageEnd ? { coverageEnd: e.coverageEnd.toISOString() } : {}),
+      ...(past ? { past } : {}),
     };
     console.log(`wrote ${path}: ${count} states, ${(e.bytes.byteLength / 1024).toFixed(0)} KiB`);
   }

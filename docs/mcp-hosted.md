@@ -24,7 +24,9 @@ satellite state or facts 2–3 ms, name search ~6 ms (1–1.5 ms once the index 
 2 ms, a 100-sample distance series with a satellite ~8 ms (the Worker caps series at 100 samples), satellite passes
 over a place ~5.5 ms for 3 days (the Worker caps searches at 3 days; the npm package allows 10), the sky from a
 place ~6 ms, a month of events ~5 ms (the Worker caps event searches at 31 days; the npm package allows 366),
-satellite statistics ~1 ms. The first request of a new isolate also pays the JavaScript engine's warm-up of
+satellite statistics ~1 ms; shadow over 12 hours ~4 ms (an Earth satellite, LRO or MRO), a ground track of two
+orbits ~1.5 ms, a day of close approaches between two satellites ~2 ms, a week of sky conjunctions ~13 ms, tonight
+~11 ms. A date more than a day before the current elements reads that day's archived shard (~65 records). The first request of a new isolate also pays the JavaScript engine's warm-up of
 astronomy-engine (tens of milliseconds); Cloudflare has tolerated it so far. Waiting for a
 download does not count as CPU. The Workers Paid plan (5 USD per month, 30 s of CPU) is only needed if Cloudflare's
 servers turn out slower than these measurements.
@@ -79,16 +81,16 @@ The free plan allows **100,000 requests a day** for the whole endpoint; beyond, 
 everyone until 00:00 UTC. Every request counts, refused ones included. The protections aim at keeping one caller
 from taking the service down, at seeing trouble early, and at reacting in minutes without a commit.
 
-| Protection         | Setting                                                                           | Effect                                                                                         |
-| ------------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Per-address budget | 60 units a minute (`wrangler.jsonc`, binding `LIMITER`)                           | One address sends at most 86,400 requests a day: it alone cannot use up the quota.             |
-| Cost per tool      | `TOOL_COST` (`handler.ts`): series 4, passes 3, events 3, sky 2, find 2, others 1 | Hammering the most expensive tools exhausts the budget sooner.                                 |
-| Batches            | at most 4 JSON-RPC messages, each charged (`MAX_BATCH`)                           | A batch cannot bypass the per-request count.                                                   |
-| Work per call      | series ≤ 100 samples, passes ≤ 3 days, events ≤ 31 days                           | Each call stays within 10 ms of CPU.                                                           |
-| Body size          | 64 KB                                                                             |                                                                                                |
-| Egress             | images only from `https://perigee.info/images/`; data only from perigee.info      | The Worker fetches nothing else.                                                               |
-| Alerts             | `mcp-monitor.yml`, hourly                                                         | An issue when today's requests pass 70 % of the quota, or on CPU-limit (1102) or error spikes. |
-| Logs               | one line per request, ≤ 1 line per invocation                                     | Bounded by the request quota (100,000) below the logs' 200,000 a day.                          |
+| Protection         | Setting                                                                                                                                             | Effect                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Per-address budget | 60 units a minute (`wrangler.jsonc`, binding `LIMITER`)                                                                                             | One address sends at most 86,400 requests a day: it alone cannot use up the quota.             |
+| Cost per tool      | `TOOL_COST` (`handler.ts`): series and tonight 4; passes, events, close approach and conjunctions 3; sky, find, shadow and ground track 2; others 1 | Hammering the most expensive tools exhausts the budget sooner.                                 |
+| Batches            | at most 4 JSON-RPC messages, each charged (`MAX_BATCH`)                                                                                             | A batch cannot bypass the per-request count.                                                   |
+| Work per call      | series ≤ 100 samples, passes ≤ 3 days, events ≤ 31 days, close approaches ≤ 1 day, conjunctions ≤ 7 days, shadow ≤ 12 hours                         | Each call stays within about 10 ms of CPU.                                                     |
+| Body size          | 64 KB                                                                                                                                               |                                                                                                |
+| Egress             | images only from `https://perigee.info/images/`; data only from perigee.info                                                                        | The Worker fetches nothing else.                                                               |
+| Alerts             | `mcp-monitor.yml`, hourly                                                                                                                           | An issue when today's requests pass 70 % of the quota, or on CPU-limit (1102) or error spikes. |
+| Logs               | one line per request, ≤ 1 line per invocation                                                                                                       | Bounded by the request quota (100,000) below the logs' 200,000 a day.                          |
 
 What these do not cover:
 

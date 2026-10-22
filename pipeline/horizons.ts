@@ -177,6 +177,20 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
   return { data, url, clamped };
 }
 
+/**
+ * One-time fill of a mission's archive (`run.ts horizons --bootstrap-past`, manual): its states from `days` ago to
+ * its window start, at its own step. One extra request per mission, only when asked: the daily runs then extend
+ * the archive with no request of their own.
+ */
+export async function fetchMissionPast(mission: Mission, now: Date, days: number): Promise<Float64Array> {
+  const { horizonsId, sampling } = mission;
+  if (!horizonsId || !sampling || sampling.pastDays >= days) return new Float64Array(0);
+  const start = new Date(now.getTime() - days * 86_400_000);
+  const stop = new Date(now.getTime() - sampling.pastDays * 86_400_000);
+  const url = vectorsUrl(horizonsId, CENTER_CODES[mission.centralBody], start, stop, sampling.stepMin);
+  return parseVectors(await query(url));
+}
+
 /** Little-endian Float64 bytes (explicit, whatever the host endianness). */
 export function float64LittleEndian(data: Float64Array): Buffer {
   const buf = Buffer.alloc(data.length * 8);

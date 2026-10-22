@@ -22,7 +22,7 @@ import {
 } from '../astro/track';
 import { add, scale, type Vec3 } from '../astro/vec3';
 import { makeSatrec, propagateTeme } from '../earth/sgp4';
-import type { Omm } from '../data/schemas';
+import type { EphemerisEntry, Mission, Omm } from '../data/schemas';
 import type { PublishedData } from './data';
 import type { ObjectRef } from './objects';
 import {
@@ -122,7 +122,7 @@ export async function satelliteElementsAt(
   date: Date,
   data: PublishedData,
 ): Promise<{ omm?: Omm; satrec?: NonNullable<ReturnType<typeof makeSatrec>>; provenance: Provenance }> {
-  const { entry, omm: elements } = await data.satelliteElements(norad);
+  const { entry, omm: elements, snapshot } = await data.satelliteElements(norad, date);
   if (!elements)
     return {
       provenance: provenance(
@@ -153,9 +153,28 @@ export async function satelliteElementsAt(
         dataFetchedAt: entry.fetchedAt,
         elementEpoch: new Date(epochMs).toISOString(),
         elementAgeDays: ageDays,
+        elementSet: snapshot ? `archive ${snapshot}` : 'current',
       },
     ),
   };
+}
+
+/**
+ * A mission's track around its central body (Horizons window; before it, the 30-day archive joins it: rows
+ * Horizons published on earlier days).
+ */
+export async function missionTrack(
+  m: Mission,
+  entry: EphemerisEntry,
+  tdbJd: number,
+  data: PublishedData,
+): Promise<EphemerisTrack> {
+  const main = await data.table(entry);
+  const tables = entry.past && tdbJd < entry.startTdbJd ? [await data.table(entry.past), main] : main;
+  return new EphemerisTrack(tables, {
+    muKm3S2: GM_KM3_S2[m.centralBody],
+    maxExtrapolationDays: m.lowOrbit ? LOW_ORBIT_MAX_EXTRAPOLATION_DAYS : HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS,
+  });
 }
 
 export async function helioState(ref: ObjectRef, date: Date, data: PublishedData): Promise<HelioState> {
@@ -246,12 +265,8 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
             m.sources.map((url) => ({ name: new URL(url).hostname, url })),
           ),
         };
-      const track = new EphemerisTrack(await data.table(entry), {
-        muKm3S2: GM_KM3_S2[m.centralBody],
-        maxExtrapolationDays: m.lowOrbit
-          ? LOW_ORBIT_MAX_EXTRAPOLATION_DAYS
-          : HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS,
-      });
+      const archived = entry.past !== undefined && tdbJd < entry.startTdbJd;
+      const track = await missionTrack(m, entry, tdbJd, data);
       const sample = track.sample(tdbJd);
       const centre =
         m.centralBody === 'sun'
@@ -261,7 +276,7 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
             : planetHelio('mars', date);
       const window = {
         dataFetchedAt: entry.fetchedAt,
-        validFrom: tdbJdToIso(entry.startTdbJd),
+        validFrom: tdbJdToIso(archived && entry.past ? entry.past.startTdbJd : entry.startTdbJd),
         validTo: tdbJdToIso(entry.endTdbJd),
         ...(sample.beyondS > 0 ? { hoursBeyondWindow: sample.beyondS / 3600 } : {}),
       };
@@ -270,7 +285,9 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
           state: sum(centre, sample.state),
           provenance: provenance(
             'horizons-interpolated',
-            `JPL Horizons state vectors (Horizons id ${entry.horizonsId}, centre ${entry.center}), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`,
+            archived
+              ? `Archived JPL Horizons state vectors (Horizons id ${entry.horizonsId}, centre ${entry.center}; fetched daily and kept 30 days), cubic Hermite interpolation between samples up to ${Math.round(entry.past?.stepMin ?? entry.stepMin)} min apart.`
+              : `JPL Horizons state vectors (Horizons id ${entry.horizonsId}, centre ${entry.center}), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`,
             'interpolated',
             [HORIZONS],
             window,
@@ -281,7 +298,7 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
           state: sum(centre, sample.state),
           provenance: provenance(
             'kepler-extrapolated',
-            `Two-body extrapolation from the last JPL Horizons state, ${(sample.beyondS / 3600).toFixed(1)} h beyond the published window.`,
+            `Two-body extrapolation from the nearest JPL Horizons state, ${(sample.beyondS / 3600).toFixed(1)} h beyond the published data.`,
             'extrapolated',
             [HORIZONS],
             window,

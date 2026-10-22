@@ -122,6 +122,11 @@ Cross-cutting features:
   - Highly elliptical orbiters (Queqiao-2, TGO high orbit, Hope): 10 min step.
   - Heliocentric probes: 1 d step (6 h for Parker Solar Probe near perihelion), window −60 d / +365 d. When the
     public ephemeris ends inside the window, the window is truncated (not shifted) so "now" stays covered.
+  - **30 days of past** for windows reaching back less than that (no extra request): each daily run keeps the rows
+    leaving the window in `data/ephem/past/<id>.bin` (`mergePast` in `pipeline/publish.ts`, oldest source first, a
+    later source owning its own span; rows older than 30 days dropped; manifest entry field `past`). Archived rows
+    are what Horizons published then (not reconstructed later). A one-time `horizons --bootstrap-past` (manual
+    dispatch of `data-horizons.yml`, one extra request per mission) fills the 30 days at once.
 - **Always resolve IDs through `horizons_lookup.api`**, never guess them. Record them in `catalog/missions.json`
   with the verification date.
 - Some missions have no public ephemerides (e.g. Tianwen-1, sometimes Queqiao-2) → see §5.3.
@@ -252,6 +257,13 @@ No single API provides "active probes + landing sites". We maintain:
   `src/render/SatellitePoints.ts`).
 - Objects with SGP4 errors (`satrec.error != 0`, decay): hidden and counted in an "invalid" counter.
 - Element age = `now - EPOCH`; beyond 14 days, flag as "stale elements".
+- **Past dates** (30 days): the pipeline keeps the last GP set of each UTC day (copied when the next day's first
+  run replaces it, with its shards: `data/earth/history/<date>.json.gz`, manifest top-level `earthHistory`; no
+  extra request; CelesTrak serves no past, so the archive builds up over 30 days). A date more than a day before
+  the current set uses the first copy fetched after it (`src/data/history.ts` `snapshotFor`): `EarthView` rebuilds
+  its satellites from it once the date has settled (500 ms), keeping filters, selection and following, and the
+  filter panel says "elements from the CelesTrak archive of <date>"; the engine reads that copy's shard and says
+  `elementSet: "archive <date>"`. The Service Worker keeps 3 copies at most.
 
 ### 5.2 Moon / Mars / solar-system views (ephemerides)
 - **Cubic Hermite** interpolation of position+velocity between Horizons samples (no high-order Lagrange).
@@ -261,6 +273,11 @@ No single API provides "active probes + landing sites". We maintain:
   quickly too — hide the position and keep the last known trajectory in grey (`src/astro/track.ts`).
 - Horizons coverage can end before "now" (e.g. CAPSTONE): the pipeline moves the window to the covered side once
   and the client shows the object as hidden/extrapolated accordingly.
+- The 30-day archive (§4.3) is fetched only when the shown date nears the window start (`PlanetaryView`
+  `loadPastIfNeeded`; the engine reads it for earlier dates); `EphemerisTrack` joins the tables and splits them into
+  segments at gaps longer than 1.5 × the steps around them (a missed run): the extrapolation and hiding rules apply
+  around each segment. The panel says "interpolated from archived JPL Horizons ephemerides" and gives the archive's
+  span.
 - Body rotation: `Astronomy.RotationAxis(body, time)` (IAU WGCCRE model) to orient the Moon and Mars; landing
   sites are placed in planetocentric coordinates then rotated with the body.
 - Phobos/Deimos: Horizons (IDs 401/402) like the probes.
@@ -387,7 +404,19 @@ the "up" vector and causes gimbal lock at the poles).
   the pipeline after each GP and SATCAT run (`writeStats`, `src/earth/stats.ts` over `buildCatalog`; an
   enhancement: a failure only warns). `perigee_describe_view` (`src/engine/describeView.ts`) turns a Perigee link
   into alternative text and a description (view, selection with its position state, date, rate, frame, filters,
-  hidden items; the camera framing is not in the URL). perigee-mcp 1.3.0 has 14 tools. Architecture, observability,
+  hidden items; the camera framing is not in the URL). `perigee_shadow` (`src/engine/shadow.ts`: sunlight,
+  penumbra or umbra from `sunlitFraction`, changes found by scan and bisection; Earth satellites in TEME, lunar and
+  Martian orbiters from their track and the centre on an hourly grid), `perigee_ground_track`
+  (`src/engine/groundTrack.ts`: ≤ 360 points, GeoJSON split at the antimeridian), `perigee_close_approach`
+  (`src/engine/closeApproach.ts`: adaptive scan, golden section to 20 ms; education only, says so),
+  `perigee_sky_conjunctions` (`src/engine/conjunctions.ts`: Moon, planets and bright ecliptic stars, topocentric
+  J2000, planets every 6 h and the Moon every hour; a satellite's passes sampled every 2 s) and `perigee_tonight`
+  (the night ahead: sky, visible passes of the ISS, Tiangong and Hubble, conjunctions, events) use the same engine;
+  the Worker caps close approaches at 1 day, conjunctions at 7 days and shadow searches at 12 hours. Answers meant
+  for the user follow `lang` (EN/FR: notes, warnings, highlights, labels in `src/engine/notes.ts`, compass points
+  with O for west in French texts); codes stay English in every language (`direction: "WNW"`, `light: "umbra"`),
+  with a localised label beside them where a person reads them. perigee-mcp
+  1.4.0 has 19 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
@@ -502,7 +531,8 @@ Rules:
   failed too (two in a row).
 - Output: `data/earth/gp-active.json.gz` (+ `gp-active/<shard>.json.gz`, `gp-names.txt.gz`),
   `data/earth/satcat.json.gz` (+ `satcat/<shard>.json.gz`), `data/ephem/<mission>.bin`
-  (compact Float64: t_TDB, x, y, z, vx, vy, vz), `data/sun/regions.json.gz` (NOAA SWPC
+  (compact Float64: t_TDB, x, y, z, vx, vy, vz; `data/ephem/past/<mission>.bin` the 30-day archive),
+  `data/earth/history/<date>.json.gz` (+ shards: the daily GP copies, 30 days), `data/sun/regions.json.gz` (NOAA SWPC
   `services.swpc.noaa.gov/json/solar_regions.json`, ~30 days of region reports) + `data/manifest.json`
   (timestamp, source, object count, hash).
   The client reads `manifest.json` first.

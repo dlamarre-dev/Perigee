@@ -55,7 +55,7 @@ export function temeToEcef([x, y, z]: Vec3, gmst: number): Vec3 {
   return [c * x + s * y, -s * x + c * y, z];
 }
 
-function lookAngles(targetEcef: Vec3, observerEcef: Vec3, o: Observer): LookAngles {
+export function lookAngles(targetEcef: Vec3, observerEcef: Vec3, o: Observer): LookAngles {
   const rho = sub(targetEcef, observerEcef);
   const sinLat = Math.sin(o.latRad);
   const cosLat = Math.cos(o.latRad);

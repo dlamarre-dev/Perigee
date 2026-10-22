@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,11 +7,15 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ManifestSchema } from '../src/data/schemas';
 import {
   AggregateShrinkError,
+  archiveGpSnapshot,
+  mergePast,
   publishDatasets,
   publishEphemerides,
   readManifest,
+  readRows,
   ShrinkGuardError,
 } from '../pipeline/publish';
+import { utcToTdbJd } from '../src/astro/time';
 
 let dir: string;
 beforeEach(async () => {
@@ -125,6 +129,121 @@ describe('publishEphemerides', () => {
     const m = await readManifest(dir);
     expect(m.ephemerides['a']?.count).toBe(120);
     expect(m.ephemerides['b']?.count).toBe(100);
+  });
+});
+
+describe('daily copies of earth.gp (30 days)', () => {
+  const sharded = (fetchedAt: string) => ({
+    ...dataset(600),
+    fetchedAt: new Date(fetchedAt),
+    shards: {
+      path: 'earth/gp-active/{shard}.json.gz',
+      norad: (o: { NORAD_CAT_ID: number }) => o.NORAD_CAT_ID,
+    },
+  });
+
+  it("keeps the last set of each UTC day, with its shards, when a later day's first run replaces it", async () => {
+    await publishDatasets(dir, [sharded('2026-10-01T08:00:00Z')]);
+    // Same day: nothing kept.
+    await archiveGpSnapshot(dir, new Date('2026-10-01T20:00:00Z'));
+    await publishDatasets(dir, [sharded('2026-10-01T20:00:00Z')]);
+    expect((await readManifest(dir)).earthHistory).toBeUndefined();
+    // Next day: the 20:00 set is kept as the copy of 2026-10-01.
+    await archiveGpSnapshot(dir, new Date('2026-10-02T00:05:00Z'));
+    await publishDatasets(dir, [sharded('2026-10-02T00:05:00Z')]);
+    const m = await readManifest(dir);
+    const snap = m.earthHistory?.snapshots[0];
+    expect(m.earthHistory?.snapshots).toHaveLength(1);
+    expect(snap).toMatchObject({ date: '2026-10-01', fetchedAt: '2026-10-01T20:00:00.000Z', count: 600 });
+    expect(existsSync(join(dir, 'earth/history/2026-10-01.json.gz'))).toBe(true);
+    expect(snap?.shards?.path).toBe('earth/history/2026-10-01/{shard}.json.gz');
+    expect(existsSync(join(dir, 'earth/history/2026-10-01/index.json.gz'))).toBe(true);
+    // The copy's shard index still names the copied set as its parent.
+    const index = JSON.parse(
+      gunzipSync(await readFile(join(dir, 'earth/history/2026-10-01/index.json.gz'))).toString(),
+    );
+    expect(index.parent).toBe(snap?.sha256);
+    // A second run the same day does not copy again.
+    await archiveGpSnapshot(dir, new Date('2026-10-02T04:05:00Z'));
+    expect((await readManifest(dir)).earthHistory?.snapshots).toHaveLength(1);
+  });
+
+  it('deletes the copies older than 30 days', async () => {
+    await publishDatasets(dir, [sharded('2026-10-01T20:00:00Z')]);
+    await archiveGpSnapshot(dir, new Date('2026-10-02T00:05:00Z'));
+    expect(existsSync(join(dir, 'earth/history/2026-10-01.json.gz'))).toBe(true);
+    await archiveGpSnapshot(dir, new Date('2026-11-05T00:05:00Z'));
+    expect((await readManifest(dir)).earthHistory).toBeUndefined();
+    expect(existsSync(join(dir, 'earth/history/2026-10-01.json.gz'))).toBe(false);
+    expect(existsSync(join(dir, 'earth/history/2026-10-01'))).toBe(false);
+  });
+});
+
+describe('ephemeris archive (30 days)', () => {
+  /** Rows every `stepDays` over [from, to] (JD TDB); x carries the time, to trace where a row came from. */
+  const rows = (from: number, to: number, stepDays: number, tag = 0): Float64Array => {
+    const out: number[] = [];
+    const n = Math.round((to - from) / stepDays);
+    for (let i = 0; i <= n; i++) out.push(from + i * stepDays, from + i * stepDays + tag, 0, 0, 0, 0, 0);
+    return Float64Array.from(out);
+  };
+  const times = (r: Float64Array): number[] => Array.from({ length: r.length / 7 }, (_, i) => r[i * 7] ?? 0);
+
+  it('merges oldest first, a later source owning its own span, and trims to the cutoff', () => {
+    const past = rows(10, 14, 1, 0.1); // archive
+    const main = rows(14, 20, 0.5, 0.2); // previous window
+    const fill = rows(12, 15, 0.25, 0.3); // one-time Horizons fill
+    const merged = mergePast([past, main, fill], 18, 11);
+    const t = times(merged);
+    expect(t[0]).toBe(11);
+    expect(t[t.length - 1]).toBeLessThan(18);
+    // Inside the fill's span only its own rows (tag 0.3), never interleaved with the others' grids.
+    for (let i = 0; i < merged.length; i += 7) {
+      const ti = merged[i] ?? 0;
+      const tag = (merged[i + 1] ?? 0) - ti;
+      if (ti >= 12 && ti <= 15) expect(tag).toBeCloseTo(0.3, 9);
+      if (ti > 15) expect(tag).toBeCloseTo(0.2, 9);
+      if (ti < 12) expect(tag).toBeCloseTo(0.1, 9);
+    }
+    expect([...t].sort((a, b) => a - b)).toEqual(t);
+    expect(new Set(t).size).toBe(t.length);
+  });
+
+  it('keeps the rows leaving the window run after run, and drops those older than 30 days', async () => {
+    const day0 = new Date('2026-10-01T00:00:00Z');
+    const window = (now: Date) => {
+      const jd = utcToTdbJd(now);
+      const data = rows(jd - 1, jd + 3, 1 / 24);
+      return {
+        missionId: 'lro',
+        horizonsId: '-85',
+        center: '500@301',
+        centralBody: 'moon' as const,
+        stepMin: 60,
+        source: 'https://example.test/h',
+        fetchedAt: now,
+        rows: data,
+        bytes: Buffer.from(data.buffer),
+      };
+    };
+    for (let d = 0; d < 3; d++) {
+      const now = new Date(day0.getTime() + d * 86_400_000);
+      await publishEphemerides(dir, [window(now)], now);
+    }
+    let m = await readManifest(dir);
+    const past = m.ephemerides['lro']?.past;
+    expect(past?.path).toBe('ephem/past/lro.bin');
+    // Two days left the window (day 0 and day 1's first day), hourly.
+    expect(past?.count).toBe(48);
+    expect(past?.endTdbJd).toBeLessThan(m.ephemerides['lro']?.startTdbJd ?? 0);
+    const file = readRows(await readFile(join(dir, past?.path ?? '')));
+    expect(file.length / 7).toBe(48);
+    // 42 days later (runs missed): every archived row is older than 30 days, so the archive goes.
+    const late = new Date(day0.getTime() + 42 * 86_400_000);
+    await publishEphemerides(dir, [window(late)], late);
+    m = await readManifest(dir);
+    expect(ManifestSchema.parse(m).ephemerides['lro']?.past).toBeUndefined();
+    expect(existsSync(join(dir, 'ephem/past/lro.bin'))).toBe(false);
   });
 });
 

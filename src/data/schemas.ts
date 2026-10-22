@@ -139,8 +139,26 @@ export const EphemerisEntrySchema = DatasetEntrySchema.extend({
   stepMin: z.number().positive(),
   /** End of the public Horizons ephemeris when it falls inside the requested window (ISO UTC). */
   coverageEnd: z.string().optional(),
+  /**
+   * Archive of the states before the window (data/ephem/past/<id>.bin, same rows), kept 30 days: each daily run
+   * appends the rows that left the window (pipeline/publish.ts `mergePast`). Loaded only for earlier dates. Its
+   * step can vary (`stepMin` is the largest) and it may have gaps (missed runs). An extra field: older clients
+   * ignore it.
+   */
+  past: z
+    .object({
+      path: z.string(),
+      bytes: z.number().int().nonnegative(),
+      sha256: z.string().regex(/^[0-9a-f]{64}$/),
+      count: z.number().int().positive(),
+      startTdbJd: z.number(),
+      endTdbJd: z.number(),
+      stepMin: z.number().positive(),
+    })
+    .optional(),
 });
 export type EphemerisEntry = z.infer<typeof EphemerisEntrySchema>;
+export type EphemerisPast = NonNullable<EphemerisEntry['past']>;
 
 /**
  * One moon's Horizons state vectors relative to its planet (solar view): data/ephem/moons/<id>.bin, same rows as
@@ -192,8 +210,37 @@ export const ManifestSchema = z.object({
       }),
     )
     .optional(),
+  /**
+   * Daily copies of earth.gp kept 30 days (data/earth/history/<YYYY-MM-DD>.json.gz and its shards): the last GP
+   * run of each UTC day, copied when the next day's first run replaces it (no extra request). Past dates use the
+   * copy taken just after them (src/data/history.ts). An extra field: older clients ignore it.
+   */
+  earthHistory: z
+    .object({
+      days: z.number().int().positive(),
+      snapshots: z.array(
+        z.object({
+          date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+          path: z.string(),
+          fetchedAt: z.string(),
+          count: z.number().int().nonnegative(),
+          bytes: z.number().int().nonnegative(),
+          sha256: z.string().regex(/^[0-9a-f]{64}$/),
+          shards: z
+            .object({
+              count: z.number().int().positive(),
+              path: z.string(),
+              index: z.string(),
+              indexSha256: z.string().regex(/^[0-9a-f]{64}$/),
+            })
+            .optional(),
+        }),
+      ),
+    })
+    .optional(),
 });
 export type Manifest = z.infer<typeof ManifestSchema>;
+export type EarthSnapshot = NonNullable<Manifest['earthHistory']>['snapshots'][number];
 
 const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i);
 const localized = z.object({ en: z.string(), fr: z.string() });

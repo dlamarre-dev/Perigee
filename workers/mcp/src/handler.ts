@@ -76,10 +76,15 @@ export const MAX_BATCH = 4;
  */
 export const TOOL_COST: Readonly<Record<string, number>> = {
   perigee_distance_series: 4,
+  perigee_tonight: 4,
   perigee_passes: 3,
   perigee_events: 3,
+  perigee_close_approach: 3,
+  perigee_sky_conjunctions: 3,
   perigee_sky: 2,
   perigee_find: 2,
+  perigee_shadow: 2,
+  perigee_ground_track: 2,
 };
 
 const CORS: Record<string, string> = {
@@ -224,6 +229,9 @@ export async function handle(request: Request, options: HandlerOptions): Promise
     maxSeriesSteps: 100,
     maxPassDays: 3,
     maxEventDays: 31,
+    maxApproachDays: 1,
+    maxConjunctionDays: 7,
+    maxShadowHours: 12,
     ...(options.disabledTools?.length ? { disabledTools: options.disabledTools } : {}),
     ...(options.fetchImage ? { fetchImage: options.fetchImage } : {}),
   });

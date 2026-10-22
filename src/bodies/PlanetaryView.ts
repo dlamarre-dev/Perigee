@@ -29,9 +29,10 @@ import {
   LOW_ORBIT_MAX_EXTRAPOLATION_DAYS,
   type TrackSample,
 } from '../astro/track';
+import type { EphemerisTable } from '../astro/hermite';
 import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
-import { datasetKey, ephemerisKey } from '../app/updates';
+import { datasetKey, ephemerisKey, ephemerisPastKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   RoverPositionsSchema,
@@ -128,6 +129,9 @@ interface Tracked {
   readonly index: number;
   track: EphemerisTrack;
   entry: EphemerisEntry | undefined;
+  /** The current window's table, and the 30-day archive's loading state (fetched once, for earlier dates). */
+  main: EphemerisTable | undefined;
+  past: 'loading' | 'loaded' | 'failed' | undefined;
   readonly line: Line<BufferGeometry, Material>;
   /** Small sphere for natural satellites. */
   readonly mesh: BodyMesh | undefined;
@@ -287,6 +291,8 @@ export class PlanetaryView implements View {
         mission,
         index,
         track: this.makeTrack(mission, undefined),
+        main: undefined,
+        past: undefined,
         entry: undefined,
         line,
         mesh,
@@ -409,6 +415,7 @@ export class PlanetaryView implements View {
     this.missionGroup.quaternion.set(sceneQ.x, sceneQ.y, sceneQ.z, sceneQ.w);
 
     for (const t of this.tracked) {
+      this.loadPastIfNeeded(t);
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
       if (s && !this.hiddenMissions.has(t.mission.id)) {
@@ -680,6 +687,32 @@ export class PlanetaryView implements View {
     });
   }
 
+  /**
+   * The mission's 30-day archive, fetched once when the shown date nears the start of its window (half a day
+   * before it); until it arrives the position stays "extrapolated", which is true.
+   */
+  private loadPastIfNeeded(t: Tracked): void {
+    const past = t.entry?.past;
+    const main = t.main;
+    if (!past || !main || t.past || !t.entry || this.tdbJd > t.entry.startTdbJd + 0.5) return;
+    t.past = 'loading';
+    loadEphemeris(this.host.baseUrl, past).then(
+      (table) => {
+        if (this.disposed) return;
+        t.track = this.makeTrack(t.mission, [table, main]);
+        t.past = 'loaded';
+        this.loadedData.set(ephemerisPastKey(t.mission.id), past.sha256);
+        // Trajectories rebuilt at the next frame (they may now be interpolated).
+        this.lastTrajectoryWallMs = -Infinity;
+        this.renderDetail(false);
+      },
+      (err: unknown) => {
+        t.past = 'failed';
+        console.warn(`Ephemeris archive unavailable: ${t.mission.id}`, err);
+      },
+    );
+  }
+
   private trackedFor(id: string): Tracked | undefined {
     return this.tracked.find((t) => t.mission.id === id);
   }
@@ -710,6 +743,7 @@ export class PlanetaryView implements View {
           this.loadedData.set(ephemerisKey(t.mission.id), entry.sha256);
           t.track = this.makeTrack(t.mission, table);
           t.entry = entry;
+          t.main = table;
           const fetched = new Date(entry.fetchedAt);
           if (!oldest || fetched < oldest) oldest = fetched;
         }),
@@ -1049,7 +1083,14 @@ export class PlanetaryView implements View {
     if (m.status === 'planned') badge = { text: t('ephem.planned'), state: 'invalid' };
     else if (!tracked || !sample || sample.kind === 'none')
       badge = { text: t('ephem.none'), state: 'invalid' };
-    else if (sample.kind === 'interpolated') badge = { text: t('ephem.interpolated'), state: 'fresh' };
+    else if (sample.kind === 'interpolated')
+      badge = {
+        // Before the current window: states from the 30-day archive (still Horizons, published then).
+        text: t(
+          tracked.entry && this.tdbJd < tracked.entry.startTdbJd ? 'ephem.archived' : 'ephem.interpolated',
+        ),
+        state: 'fresh',
+      };
     else if (sample.kind === 'extrapolated') {
       badge = {
         text: i18n.format('ephem.extrapolated', { h: num(sample.beyondS / 3600, 1) }),
@@ -1083,6 +1124,12 @@ export class PlanetaryView implements View {
         t('info.window'),
         `${i18n.dateTime(tdbJdToDate(entry.startTdbJd))} → ${i18n.dateTime(tdbJdToDate(entry.endTdbJd))}`,
       ]);
+      if (entry.past) {
+        rows.push([
+          t('info.archive'),
+          `${i18n.dateTime(tdbJdToDate(entry.past.startTdbJd))} → ${i18n.dateTime(tdbJdToDate(entry.past.endTdbJd))}`,
+        ]);
+      }
     }
     return {
       title: m.name[i18n.lang],

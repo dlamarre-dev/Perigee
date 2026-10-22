@@ -103,6 +103,11 @@ describe('MCP server', () => {
       'perigee_passes',
       'perigee_sky',
       'perigee_events',
+      'perigee_tonight',
+      'perigee_sky_conjunctions',
+      'perigee_shadow',
+      'perigee_ground_track',
+      'perigee_close_approach',
       'perigee_stats',
       'perigee_distance',
       'perigee_distance_series',
@@ -148,6 +153,69 @@ describe('MCP server', () => {
     expect(String(r.structured['iframe'])).toContain('&amp;');
     const map = await call('perigee_view', { id: 'star:sirius', star_map: true, compare: 'star:vega' });
     expect(String(map.structured['embedUrl'])).toMatch(/sel=star%3Asirius&map=1&pick=star%3Avega&embed=1$/);
+  });
+
+  it('answers the shadow, ground track, close approach, conjunction and tonight tools', async () => {
+    const at = '2026-09-26T10:00:00Z';
+    const shadow = await call('perigee_shadow', { id: '25544', date: at });
+    expect(shadow.isError).toBe(false);
+    expect(['sunlight', 'penumbra', 'umbra']).toContain(shadow.structured['light']);
+    // Two orbits: at least one entry into the shadow and one exit.
+    const changes = shadow.structured['changes'] as { to: string }[];
+    expect(changes.some((c) => c.to === 'umbra')).toBe(true);
+    expect(changes.some((c) => c.to === 'sunlight')).toBe(true);
+
+    const track = await call('perigee_ground_track', { id: '25544', start: at, points: 90 });
+    expect(track.structured['count']).toBe(91);
+    expect((track.structured['geojson'] as { type: string }).type).toBe('MultiLineString');
+
+    const approach = await call('perigee_close_approach', { from: '25544', to: '20580', start: at });
+    expect((approach.structured['closest'] as { distanceKm: number }).distanceKm).toBeGreaterThan(0);
+    expect(approach.structured['warning']).toMatch(/collision avoidance/);
+    expect((await call('perigee_close_approach', { from: '25544', to: '25544' })).isError).toBe(true);
+
+    const pairs = await call('perigee_sky_conjunctions', {
+      latitude: 45.5,
+      longitude: -73.57,
+      start: at,
+      days: 3,
+    });
+    expect(pairs.isError).toBe(false);
+    expect(Array.isArray(pairs.structured['conjunctions'])).toBe(true);
+
+    const night = await call('perigee_tonight', {
+      latitude: 45.5,
+      longitude: -73.57,
+      date: '2026-09-26T20:00:00Z',
+      time_zone: 'America/Toronto',
+      lang: 'fr',
+    });
+    expect(night.isError).toBe(false);
+    expect((night.structured['highlights'] as string[])[0]).toMatch(/^Nuit de /);
+    // French texts: west is O in compass points (the codes stay English in the fields).
+    for (const h of night.structured['highlights'] as string[])
+      expect(h).not.toMatch(/\((?:[NSE]*W[NSEW]*)[ ,→)]/);
+    expect(night.structured['notes']).toMatch(/^Nuit : /);
+
+    const ombre = await call('perigee_shadow', { id: '25544', date: at, lang: 'fr' });
+    expect(String(ombre.structured['lightLabel'])).toMatch(/soleil|ombre|pénombre/);
+    expect(ombre.structured['notes']).toMatch(/^Pénombre/);
+    const proche = await call('perigee_close_approach', {
+      from: '25544',
+      to: '20580',
+      start: at,
+      lang: 'fr',
+    });
+    expect(proche.structured['warning']).toMatch(/jamais pour éviter une collision/);
+    const passes = await call('perigee_passes', {
+      id: '25544',
+      latitude: 45.5,
+      longitude: -73.57,
+      start: at,
+      lang: 'fr',
+    });
+    expect(passes.structured['accuracy']).toMatch(/^Heures à quelques secondes/);
+    expect((night.structured['night'] as { from: { local: string } }).from.local).toMatch(/^2026-09-26 /);
   });
 
   it('defines terms and reports errors as tool errors', async () => {

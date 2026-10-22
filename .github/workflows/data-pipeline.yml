@@ -9,6 +9,11 @@ on:
         description: 'pipeline/run.ts command (gp | satcat | horizons | rovers | sun)'
         required: true
         type: string
+      args:
+        description: 'Extra flags for pipeline/run.ts (only --bootstrap-past, from data-horizons.yml)'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -45,7 +50,12 @@ jobs:
           fi
 
       - name: Fetch and validate
-        run: npx tsx pipeline/run.ts ${{ inputs.command }} --data-dir data-branch
+        run: |
+          # Only known flags pass (the value comes from a workflow input).
+          case "$ARGS" in ''|--bootstrap-past) ;; *) echo "Unknown args: $ARGS"; exit 1 ;; esac
+          npx tsx pipeline/run.ts ${{ inputs.command }} $ARGS --data-dir data-branch
+        env:
+          ARGS: ${{ inputs.args }}
 
       - name: Publish orphan data branch
         run: |

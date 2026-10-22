@@ -275,6 +275,7 @@ export const fr: Messages = {
   'stats.invalid': '{n} invalides',
   'stats.stale': '{n} périmés',
   'stats.fetched': 'Éléments récupérés le {date}',
+  'stats.archive': 'Date passée : éléments de l’archive CelesTrak du {date} (conservée 30 jours)',
 
   'regime.LEO': 'LEO — orbite basse',
   'regime.MEO': 'MEO — orbite moyenne',
@@ -342,6 +343,8 @@ export const fr: Messages = {
   'mission.natural': 'Satellite naturel',
 
   'ephem.interpolated': 'Position interpolée à partir des éphémérides JPL Horizons',
+  'ephem.archived':
+    'Position interpolée à partir des éphémérides JPL Horizons archivées (conservées 30 jours)',
   'ephem.extrapolated':
     'Extrapolée (Kepler à deux corps) {h} h au-delà de la fenêtre d’éphémérides : approximative',
   'ephem.hidden': 'Éphéméride vieille de {d} jours : position masquée, dernière trajectoire connue en gris',
@@ -359,6 +362,7 @@ export const fr: Messages = {
   'info.orbit': 'Orbite',
   'info.horizons': 'Identifiant JPL Horizons',
   'info.window': 'Fenêtre d’éphémérides',
+  'info.archive': 'Éphémérides archivées',
   'info.periapsis': 'Périapside / apoapside',
   'info.inclinationEquator': 'Inclinaison (sur l’équateur)',
   'info.mission': 'Mission',

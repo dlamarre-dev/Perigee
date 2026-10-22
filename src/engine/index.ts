@@ -7,9 +7,9 @@
  *   await engine.distance('earth', 'mars', new Date('2026-12-01T00:00:00Z'));
  */
 import { MOON_RADIUS_KM } from '../astro/bodies';
-import { AU_KM } from '../astro/constants';
+import { AU_KM, EARTH_EQUATORIAL_RADIUS_KM } from '../astro/constants';
 import { SUN_RADIUS_KM } from '../astro/planets';
-import { length, sub, type Vec3 } from '../astro/vec3';
+import { add, length, sub, type Vec3 } from '../astro/vec3';
 import { en, fr } from '../i18n';
 import { GLOSSARY, LABEL_TERMS, type GlossaryTerm } from '../i18n/glossary';
 import { LICENCES } from '../data/licences';
@@ -36,9 +36,17 @@ import {
   type GroundPoint,
   type OrbitDescription,
 } from './orbitTools';
-import { findPasses, type PassPoint } from './passes';
+import { findPasses, sunTeme, type PassPoint } from './passes';
+import { earthShadowFraction, lightChanges, lightOf } from './shadow';
+import { groundTrackPoints, trackGeoJson } from './groundTrack';
+import { closestApproaches } from './closeApproach';
+import { skyConjunctions } from './conjunctions';
+import { compassLabel, LIGHT_LABELS, NOTES } from './notes';
+import { propagateTeme } from '../earth/sgp4';
+import * as Astronomy from 'astronomy-engine';
 import { localTime } from './timeFormat';
-import { helioState, satelliteElementsAt } from './state';
+import { helioState, missionTrack, satelliteElementsAt } from './state';
+import { utcToTdbJd } from '../astro/time';
 
 export { DISCLAIMER, ACCURACY };
 export type { Provenance, FoundObject, ObjectRef };
@@ -86,12 +94,22 @@ export interface PassOptions {
   readonly minElevationDeg?: number;
   /** IANA time zone for local times (e.g. America/Toronto). */
   readonly timeZone?: string;
+  /** Language of the notes (default English). */
+  readonly lang?: Lang;
 }
 
 /** Longest pass search (days): the elements' accuracy fades within days anyway. */
 export const MAX_PASS_DAYS = 10;
 /** Longest event search (days). */
 export const MAX_EVENT_DAYS = 366;
+/** Longest close-approach search (days): the elements' accuracy fades within days. */
+export const MAX_APPROACH_DAYS = 7;
+/** Longest sky-conjunction search (days). */
+export const MAX_CONJUNCTION_DAYS = 31;
+/** Longest shadow search (hours). */
+export const MAX_SHADOW_HOURS = 48;
+/** Satellites whose visible passes "tonight" lists: the ISS, Tiangong and Hubble. */
+export const TONIGHT_SATELLITES = ['25544', '48274', '20580'] as const;
 
 export interface PlaceOptions {
   readonly latDeg: number;
@@ -501,8 +519,7 @@ export class Engine {
         sunlitShare: round(p.sunlitShare, 2),
       })),
       elementAgeDaysAtEnd: round((endMs - epochMs) / 86_400_000, 2),
-      accuracy:
-        "Times to within seconds for elements a few days old (low orbits drift by roughly a second per day of element age, more during strong solar activity); azimuth and elevation to a fraction of a degree. Refraction is ignored (it lifts objects by about 0.5 degrees at the horizon). Visible to the naked eye: the satellite is sunlit while the Sun is more than 6 degrees below the observer's horizon, above the minimum elevation; brightness is not estimated.",
+      accuracy: NOTES.passes[options.lang ?? 'en'],
       provenance: [h.provenance],
       disclaimer: DISCLAIMER,
     };
@@ -635,8 +652,7 @@ export class Engine {
       ...(zone ? { timeZone: zone } : {}),
       count: events.length,
       events,
-      notes:
-        'Times in UTC (and local time when a zone is given); astronomical events from astronomy-engine to within a minute. Supermoon: full Moon nearer than 360,000 km; micromoon: farther than 405,000 km. Mission events come from the curated catalogue (verified date given); a partial date ("2026-11") is placed at the start of its overlap with the period.',
+      notes: NOTES.events[options.lang ?? 'en'],
       provenance: [SKY_PROVENANCE],
       disclaimer: DISCLAIMER,
     };
@@ -719,6 +735,512 @@ export class Engine {
    * Student-level definitions (EN/FR) of the terms shown in Perigee's panels, with the panel labels they explain;
    * all of them without a term. Matches the term id or a label, ignoring case and accents.
    */
+  /**
+   * Sunlight or shadow of an object at a date (in sunlight, in the penumbra or in the umbra of the body it
+   * orbits, default the one it orbits), and its entries into and exits from the shadow over the next hours
+   * (default: two orbits, at most `maxHours`).
+   */
+  async shadow(
+    id: string,
+    options: {
+      readonly date?: Date | string;
+      readonly hours?: number;
+      readonly centre?: string;
+      readonly timeZone?: string;
+      readonly lang?: Lang;
+    } = {},
+    maxHours = MAX_SHADOW_HOURS,
+  ): Promise<Record<string, unknown>> {
+    const when = parseDate(options.date);
+    const lang = options.lang ?? 'en';
+    const ref = resolve(id);
+    const centreRef = resolve(options.centre ?? defaultCentre(ref));
+    const local = options.timeZone ? localTime(options.timeZone) : undefined;
+    let fraction: (ms: number) => number | Promise<number>;
+    let periodMin: number | undefined;
+    let provenance: readonly Provenance[];
+    if (ref.kind === 'satellite' && centreRef.id === 'earth') {
+      // SGP4 and the low-precision Sun, both in TEME: no heliocentric round trip.
+      const h = await satelliteElementsAt(ref.norad, when, this.data);
+      const satrec = h.satrec;
+      if (!h.omm || !satrec) throw new Error(`No usable elements for ${ref.id}: ${h.provenance.method}`);
+      periodMin = meanOrbit(h.omm).periodMin;
+      fraction = (ms) => {
+        const date = new Date(ms);
+        const teme = propagateTeme(satrec, date);
+        return teme ? earthShadowFraction(teme.posKm, sunTeme(date), EARTH_EQUATORIAL_RADIUS_KM) : Number.NaN;
+      };
+      provenance = [h.provenance];
+    } else {
+      const radius = radiusOf(centreRef);
+      if (radius === undefined)
+        throw new Error(`Shadows are given for objects around a body, not around ${centreRef.id}.`);
+      const first = await helioState(ref, when, this.data);
+      provenance = [first.provenance];
+      // The centre's heliocentric position on an hourly grid, linear in between (the Sun's direction from it
+      // turns by a few arcseconds an hour): one astronomy-engine call an hour instead of one a sample.
+      const grid = new Map<number, Vec3 | undefined>();
+      const node = async (i: number): Promise<Vec3 | undefined> => {
+        if (!grid.has(i))
+          grid.set(i, (await helioState(centreRef, new Date(i * 3_600_000), this.data)).state?.posKm);
+        return grid.get(i);
+      };
+      const centreAt = async (ms: number): Promise<Vec3 | undefined> => {
+        const k = Math.floor(ms / 3_600_000);
+        const [a, b] = [await node(k), await node(k + 1)];
+        if (!a || !b) return undefined;
+        const f = ms / 3_600_000 - k;
+        return [a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1]), a[2] + f * (b[2] - a[2])];
+      };
+      const entry =
+        ref.kind === 'mission' ? (await this.data.manifest()).ephemerides[ref.mission.id] : undefined;
+      if (
+        ref.kind === 'mission' &&
+        entry &&
+        ref.mission.centralBody !== 'sun' &&
+        centreRef.id === defaultCentre(ref)
+      ) {
+        // A lunar or Martian orbiter: its track around the centre, built once.
+        const track = await missionTrack(ref.mission, entry, utcToTdbJd(when), this.data);
+        fraction = async (ms) => {
+          const rel = track.sample(utcToTdbJd(new Date(ms))).state;
+          const c = await centreAt(ms);
+          return rel && c ? sunlight(add(c, rel.posKm), c, radius) : Number.NaN;
+        };
+      } else {
+        fraction = async (ms) => {
+          const a = await helioState(ref, new Date(ms), this.data);
+          const c = await centreAt(ms);
+          return a.state && c ? sunlight(a.state.posKm, c, radius) : Number.NaN;
+        };
+      }
+      const orbit = await this.orbit(id, when, centreRef.id).catch(() => undefined);
+      periodMin = orbit?.periodMin;
+    }
+    const hours = options.hours ?? Math.min(maxHours, Math.max(1, ((periodMin ?? 720) * 2) / 60));
+    if (!(hours > 0 && hours <= maxHours)) throw new Error(`hours must be between 0 and ${maxHours}`);
+    const startMs = when.getTime();
+    const endMs = startMs + hours * 3_600_000;
+    // About 240 samples an orbit (a 90-minute orbit: every 22 s), between 5 s and 10 min.
+    const stepMs = Math.min(600_000, Math.max(5_000, ((periodMin ?? 720) * 60_000) / 240));
+    const now = await fraction(startMs);
+    const changes = await lightChanges(fraction, startMs, endMs, stepMs);
+    const stamp = (ms: number) => ({
+      time: new Date(ms).toISOString(),
+      ...(local ? { local: local(ms) } : {}),
+    });
+    const entry = changes.find((c) => c.from === 'sunlight');
+    const exit = changes.find((c) => c.to === 'sunlight');
+    return {
+      id: ref.id,
+      centre: centreRef.id,
+      date: when.toISOString(),
+      ...(Number.isNaN(now)
+        ? {}
+        : {
+            light: lightOf(now),
+            lightLabel: LIGHT_LABELS[lightOf(now)][lang],
+            sunlitFraction: round(now, 3),
+          }),
+      window: {
+        from: new Date(startMs).toISOString(),
+        to: new Date(endMs).toISOString(),
+        hours: round(hours, 2),
+      },
+      ...(periodMin !== undefined ? { orbitPeriodMin: round(periodMin, 1) } : {}),
+      changes: changes.map((c) => ({
+        ...stamp(c.timeMs),
+        from: c.from,
+        to: c.to,
+        label: `${LIGHT_LABELS[c.from][lang]} → ${LIGHT_LABELS[c.to][lang]}`,
+      })),
+      ...(entry ? { nextShadowEntry: stamp(entry.timeMs) } : {}),
+      ...(exit ? { nextShadowExit: stamp(exit.timeMs) } : {}),
+      notes: NOTES.shadow[lang],
+      provenance,
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /** Ground track of an Earth satellite over one or two orbits: points (lat/lon/height) and a GeoJSON line. */
+  async groundTrack(
+    id: string,
+    options: {
+      readonly start?: Date | string;
+      readonly orbits?: number;
+      readonly points?: number;
+      readonly lang?: Lang;
+    } = {},
+  ): Promise<Record<string, unknown>> {
+    const lang = options.lang ?? 'en';
+    const ref = resolve(id);
+    if (ref.kind !== 'satellite')
+      throw new Error('Ground tracks are computed for Earth satellites (a NORAD number).');
+    const start = parseDate(options.start);
+    const orbits = options.orbits ?? 1;
+    if (!(orbits > 0 && orbits <= 2)) throw new Error('orbits must be between 0 and 2');
+    const h = await satelliteElementsAt(ref.norad, start, this.data);
+    if (!h.omm || !h.satrec) throw new Error(`No usable elements for ${ref.id}: ${h.provenance.method}`);
+    const orbit = meanOrbit(h.omm);
+    const periodMin = orbit.periodMin ?? 90;
+    const count = Math.max(10, Math.min(360, Math.round(options.points ?? 180 * orbits)));
+    const endMs = start.getTime() + orbits * periodMin * 60_000;
+    const points = groundTrackPoints(h.satrec, start.getTime(), endMs, count);
+    const ends = [points[0], points[points.length - 1]].map((p) =>
+      p
+        ? groundPoint(
+            'earth',
+            [0, 0, 0],
+            new Date(p.time),
+            propagateTeme(h.satrec as NonNullable<typeof h.satrec>, new Date(p.time))?.posKm,
+          )
+        : undefined,
+    );
+    return {
+      id: ref.id,
+      name: ref.curated?.name ?? { en: h.omm.OBJECT_NAME, fr: h.omm.OBJECT_NAME },
+      from: start.toISOString(),
+      to: new Date(endMs).toISOString(),
+      orbits,
+      periodMin: round(periodMin, 1),
+      inclinationDeg: orbit.inclinationDeg,
+      count: points.length,
+      points,
+      geojson: trackGeoJson(points),
+      ...(ends[0]?.over ? { startsOver: ends[0].over } : {}),
+      ...(ends[1]?.over ? { endsOver: ends[1].over } : {}),
+      notes: NOTES.groundTrack[lang],
+      provenance: [h.provenance],
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /**
+   * Closest approaches between two objects in space over a window (default: 1 day from the date, at most
+   * `maxDays`): the deepest minima of their distance, timed to 20 ms, with the relative speed for two Earth
+   * satellites. For education only, never for collision avoidance.
+   */
+  async closeApproach(
+    aId: string,
+    bId: string,
+    options: {
+      readonly start?: Date | string;
+      readonly days?: number;
+      readonly timeZone?: string;
+      readonly lang?: Lang;
+    } = {},
+    maxDays = MAX_APPROACH_DAYS,
+  ): Promise<Record<string, unknown>> {
+    const lang = options.lang ?? 'en';
+    const [a, b] = [resolve(aId), resolve(bId)];
+    if (a.id === b.id) throw new Error('Give two different objects.');
+    const start = parseDate(options.start);
+    const days = options.days ?? 1;
+    if (!(days > 0 && days <= maxDays)) throw new Error(`days must be between 0 and ${maxDays}`);
+    const startMs = start.getTime();
+    const endMs = startMs + days * 86_400_000;
+    const local = options.timeZone ? localTime(options.timeZone) : undefined;
+    let distanceKm: (ms: number) => number | Promise<number>;
+    let speed: ((ms: number) => number | undefined) | undefined;
+    let provenance: readonly Provenance[];
+    let search: { maxRelativeSpeedKmS: number; minStepMs: number; maxStepMs: number };
+    if (a.kind === 'satellite' && b.kind === 'satellite') {
+      const [ha, hb] = await Promise.all([
+        satelliteElementsAt(a.norad, start, this.data),
+        satelliteElementsAt(b.norad, start, this.data),
+      ]);
+      const [sa, sb] = [ha.satrec, hb.satrec];
+      if (!sa || !sb) throw new Error(`No usable elements for ${!sa ? a.id : b.id}.`);
+      const pair = (ms: number) => {
+        const date = new Date(ms);
+        const pa = propagateTeme(sa, date);
+        const pb = propagateTeme(sb, date);
+        return pa && pb ? { pa, pb } : undefined;
+      };
+      distanceKm = (ms) => {
+        const p = pair(ms);
+        return p ? length(sub(p.pa.posKm, p.pb.posKm)) : Number.NaN;
+      };
+      speed = (ms) => {
+        const p = pair(ms);
+        return p ? length(sub(p.pa.velKmS, p.pb.velKmS)) : undefined;
+      };
+      provenance = [ha.provenance, hb.provenance];
+      // Two Earth orbiters close in at most ~16 km/s (head-on in low orbit).
+      search = { maxRelativeSpeedKmS: 16, minStepMs: 1_000, maxStepMs: 600_000 };
+    } else {
+      const states = async (ms: number) => {
+        const date = new Date(ms);
+        return Promise.all([helioState(a, date, this.data), helioState(b, date, this.data)]);
+      };
+      const [first] = [await states(startMs)];
+      provenance = [first[0].provenance, first[1].provenance];
+      distanceKm = async (ms) => {
+        const [x, y] = await states(ms);
+        return x.state && y.state ? length(sub(x.state.posKm, y.state.posKm)) : Number.NaN;
+      };
+      // Any pair: about 600 samples over the window, then golden-section search.
+      const span = endMs - startMs;
+      search = { maxRelativeSpeedKmS: 1e9, minStepMs: span / 600, maxStepMs: span / 600 };
+    }
+    const minima = await closestApproaches({ distanceKm, startMs, endMs, limit: 5, ...search });
+    const describe = (m: { timeMs: number; distanceKm: number }) => {
+      const v = speed?.(m.timeMs);
+      return {
+        time: new Date(m.timeMs).toISOString(),
+        ...(local ? { local: local(m.timeMs) } : {}),
+        distanceKm: round(m.distanceKm, 3),
+        ...(v !== undefined ? { relativeSpeedKmS: round(v, 3) } : {}),
+      };
+    };
+    const closest = minima[0];
+    return {
+      from: a.id,
+      to: b.id,
+      window: { from: start.toISOString(), to: new Date(endMs).toISOString(), days },
+      ...(closest ? { closest: describe(closest) } : {}),
+      approaches: minima.map(describe),
+      warning: NOTES.approachWarning[lang],
+      provenance,
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /**
+   * Apparent close pairings seen from a place over a period (default 7 days, at most `maxDays`): the Moon and the
+   * planets with each other and with the bright stars near the ecliptic; with `satellite`, that satellite passing
+   * near them during its passes (within 1 day).
+   */
+  async skyConjunctions(
+    place: PlaceOptions & {
+      readonly start?: Date | string;
+      readonly days?: number;
+      readonly maxSeparationDeg?: number;
+      readonly satellite?: string;
+      readonly lang?: Lang;
+    },
+    maxDays = MAX_CONJUNCTION_DAYS,
+  ): Promise<Record<string, unknown>> {
+    checkPlace(place.latDeg, place.lonDeg);
+    const start = parseDate(place.start);
+    const days = place.days ?? (place.satellite ? 1 : 7);
+    const limit = place.satellite ? Math.min(1, maxDays) : maxDays;
+    if (!(days > 0 && days <= limit)) throw new Error(`days must be between 0 and ${limit}`);
+    const maxSeparationDeg = place.maxSeparationDeg ?? 5;
+    if (!(maxSeparationDeg > 0 && maxSeparationDeg <= 10))
+      throw new Error('max_separation must be between 0 and 10 degrees');
+    const zone = place.timeZone;
+    const lang = place.lang ?? 'en';
+    const provenance: Provenance[] = [SKY_PROVENANCE];
+    let satellite: Parameters<typeof skyConjunctions>[0]['satellite'];
+    if (place.satellite) {
+      const ref = resolve(place.satellite);
+      if (ref.kind !== 'satellite') throw new Error('satellite must be an Earth satellite (a NORAD number).');
+      const h = await satelliteElementsAt(ref.norad, start, this.data);
+      if (!h.omm || !h.satrec) throw new Error(`No usable elements for ${ref.id}: ${h.provenance.method}`);
+      satellite = {
+        id: ref.id,
+        name: ref.curated?.name ?? { en: h.omm.OBJECT_NAME, fr: h.omm.OBJECT_NAME },
+        satrec: h.satrec,
+      };
+      provenance.push(h.provenance);
+    }
+    const found = skyConjunctions({
+      latDeg: place.latDeg,
+      lonDeg: place.lonDeg,
+      ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+      startMs: start.getTime(),
+      endMs: start.getTime() + days * 86_400_000,
+      maxSeparationDeg,
+      lang,
+      ...(zone ? { local: localTime(zone) } : {}),
+      ...(satellite ? { satellite } : {}),
+    });
+    return {
+      place: { latDeg: place.latDeg, lonDeg: place.lonDeg },
+      from: start.toISOString(),
+      to: new Date(start.getTime() + days * 86_400_000).toISOString(),
+      ...(zone ? { timeZone: zone } : {}),
+      maxSeparationDeg,
+      count: found.length,
+      conjunctions: found,
+      notes: NOTES.conjunctions[lang],
+      provenance,
+      disclaimer: DISCLAIMER,
+    };
+  }
+
+  /**
+   * What to see tonight from a place: the coming night (dusk to dawn, civil twilight), the Moon, the planets
+   * visible to the naked eye, the visible passes of the ISS, Tiangong and Hubble, the conjunctions and the
+   * astronomical events of the night, with short highlights.
+   */
+  async tonight(
+    place: PlaceOptions & { readonly date?: Date | string; readonly lang?: Lang },
+  ): Promise<Record<string, unknown>> {
+    checkPlace(place.latDeg, place.lonDeg);
+    const lang = place.lang ?? 'en';
+    const fr = lang === 'fr';
+    const zone = place.timeZone;
+    const local = zone ? localTime(zone) : undefined;
+    const when = parseDate(place.date);
+    const observer = new Astronomy.Observer(place.latDeg, place.lonDeg, place.heightM ?? 0);
+    const t0 = Astronomy.MakeTime(when);
+    const sunEq = Astronomy.Equator(Astronomy.Body.Sun, t0, observer, true, true);
+    const sunAlt = Astronomy.Horizon(t0, observer, sunEq.ra, sunEq.dec, 'normal').altitude;
+    const dusk = sunAlt <= -6 ? t0 : Astronomy.SearchAltitude(Astronomy.Body.Sun, observer, -1, t0, 1.5, -6);
+    const dawn = dusk ? Astronomy.SearchAltitude(Astronomy.Body.Sun, observer, +1, dusk, 1.5, -6) : null;
+    const stamp = (ms: number) => ({
+      time: new Date(ms).toISOString(),
+      ...(local ? { local: local(ms) } : {}),
+    });
+    if (!dusk || !dawn) {
+      return {
+        place: { latDeg: place.latDeg, lonDeg: place.lonDeg },
+        date: when.toISOString(),
+        night: null,
+        highlights: [
+          fr
+            ? 'Pas de nuit noire dans les prochaines 36 heures (le Soleil ne descend pas à 6° sous l’horizon).'
+            : 'No dark night in the next 36 hours (the Sun does not go 6 degrees below the horizon).',
+        ],
+        provenance: [SKY_PROVENANCE],
+        disclaimer: DISCLAIMER,
+      };
+    }
+    const fromMs = dusk.date.getTime();
+    const toMs = dawn.date.getTime();
+    // The sky an hour into the night (or now, when it is already night).
+    const lookMs = Math.min(toMs, Math.max(when.getTime(), fromMs + 3_600_000));
+    const sky = skyFrom({
+      latDeg: place.latDeg,
+      lonDeg: place.lonDeg,
+      ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+      date: new Date(lookMs),
+      lang,
+      ...(local ? { local } : {}),
+    }) as {
+      moon: Record<string, unknown> & { phase: string; illuminatedPercent: number; aboveHorizon: boolean };
+      planets: (Record<string, unknown> & {
+        name: string;
+        nakedEyeNow: boolean;
+        direction: string;
+        altitudeDeg: number;
+      })[];
+    };
+    const planets = sky.planets.filter((p) => p.nakedEyeNow);
+    const passes: Record<string, unknown>[] = [];
+    const provenance: Provenance[] = [SKY_PROVENANCE];
+    for (const id of TONIGHT_SATELLITES) {
+      const ref = resolve(id);
+      if (ref.kind !== 'satellite') continue;
+      const h = await satelliteElementsAt(ref.norad, new Date(fromMs), this.data).catch(() => undefined);
+      if (!h?.omm || !h.satrec) continue;
+      const found = findPasses({
+        satrec: h.satrec,
+        observer: {
+          latRad: radians(place.latDeg),
+          lonRad: radians(place.lonDeg),
+          heightKm: (place.heightM ?? 0) / 1000,
+        },
+        startMs: fromMs,
+        endMs: toMs,
+        minElevationRad: radians(10),
+        limit: 10,
+      });
+      const name = ref.curated?.name[lang] ?? h.omm.OBJECT_NAME;
+      for (const p of found.passes) {
+        if (!p.visible) continue;
+        passes.push({
+          id: ref.id,
+          name,
+          from: stamp(p.visible.fromMs),
+          to: stamp(p.visible.toMs),
+          maxElevationDeg: degrees(p.visible.maxElevationRad, 1),
+          rise: compassPoint(p.rise.azimuthRad),
+          set: compassPoint(p.set.azimuthRad),
+        });
+      }
+      provenance.push(h.provenance);
+    }
+    passes.sort((x, y) =>
+      String((x['from'] as { time: string }).time).localeCompare(
+        String((y['from'] as { time: string }).time),
+      ),
+    );
+    const conjunctions = skyConjunctions({
+      latDeg: place.latDeg,
+      lonDeg: place.lonDeg,
+      ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+      startMs: fromMs,
+      endMs: toMs,
+      maxSeparationDeg: 5,
+      lang,
+      ...(local ? { local } : {}),
+    }).filter((c) => c['visibleFromPlace']);
+    // The sky's events only: the missions' milestones are dated to the day at best, not to a night.
+    const events = eventsBetween({
+      start: new Date(fromMs),
+      end: new Date(toMs),
+      lang,
+      kinds: ['moon', 'eclipse', 'season', 'planet'],
+      observer: {
+        latDeg: place.latDeg,
+        lonDeg: place.lonDeg,
+        ...(place.heightM !== undefined ? { heightM: place.heightM } : {}),
+      },
+      ...(local ? { local } : {}),
+    });
+    const at = (ms: number): string => local?.(ms) ?? new Date(ms).toISOString().slice(11, 16) + ' UTC';
+    const num = (n: unknown): string => (fr ? String(n).replace('.', ',') : String(n));
+    const highlights: string[] = [];
+    highlights.push(fr ? `Nuit de ${at(fromMs)} à ${at(toMs)}.` : `Night from ${at(fromMs)} to ${at(toMs)}.`);
+    highlights.push(
+      fr
+        ? `Lune : ${sky.moon.phase}, éclairée à ${sky.moon.illuminatedPercent} %${sky.moon.aboveHorizon ? '' : ' (sous l’horizon en début de nuit)'}.`
+        : `Moon: ${sky.moon.phase}, ${sky.moon.illuminatedPercent}% lit${sky.moon.aboveHorizon ? '' : ' (below the horizon early in the night)'}.`,
+    );
+    if (planets.length)
+      highlights.push(
+        (fr ? 'Planètes à l’œil nu : ' : 'Planets to the naked eye: ') +
+          planets
+            .map((p) => `${p.name} (${compassLabel(p.direction, lang)}, ${Math.round(p.altitudeDeg)}°)`)
+            .join(', ') +
+          '.',
+      );
+    for (const p of passes) {
+      const from = p['from'] as { time: string; local?: string };
+      highlights.push(
+        fr
+          ? `${String(p['name'])} visible à ${from.local ?? from.time.slice(11, 16)}, jusqu’à ${num(p['maxElevationDeg'])}° de hauteur (${compassLabel(String(p['rise']), lang)} → ${compassLabel(String(p['set']), lang)}).`
+          : `${String(p['name'])} visible at ${from.local ?? from.time.slice(11, 16)}, up to ${num(p['maxElevationDeg'])}° high (${compassLabel(String(p['rise']), lang)} → ${compassLabel(String(p['set']), lang)}).`,
+      );
+    }
+    for (const c of conjunctions) {
+      const objects = c['objects'] as { name: string }[];
+      highlights.push(
+        fr
+          ? `${objects.map((x) => x.name).join(' et ')} à ${num(c['separationDeg'])}° l’un de l’autre (${compassLabel(String(c['direction']), lang)}).`
+          : `${objects.map((x) => x.name).join(' and ')} ${String(c['separationDeg'])}° apart (${compassLabel(String(c['direction']), lang)}).`,
+      );
+    }
+    for (const e of events) highlights.push(e.title);
+    return {
+      place: { latDeg: place.latDeg, lonDeg: place.lonDeg },
+      ...(zone ? { timeZone: zone } : {}),
+      night: { from: stamp(fromMs), to: stamp(toMs), skyAt: stamp(lookMs) },
+      moon: sky.moon,
+      planets,
+      passes,
+      conjunctions,
+      events,
+      highlights,
+      notes: NOTES.tonight[lang],
+      provenance,
+      disclaimer: DISCLAIMER,
+    };
+  }
+
   define(term?: string, lang: Lang = 'en'): { term: string; labels: string[]; definition: string }[] {
     const messages = lang === 'fr' ? fr : en;
     const fold = (s: string): string =>

@@ -267,6 +267,7 @@ export const en = {
   'stats.invalid': '{n} invalid',
   'stats.stale': '{n} stale',
   'stats.fetched': 'Elements fetched {date}',
+  'stats.archive': 'Past date: elements from the CelesTrak archive of {date} (kept 30 days)',
 
   'regime.LEO': 'LEO — low orbit',
   'regime.MEO': 'MEO — medium orbit',
@@ -334,6 +335,7 @@ export const en = {
   'mission.natural': 'Natural satellite',
 
   'ephem.interpolated': 'Position interpolated from JPL Horizons ephemerides',
+  'ephem.archived': 'Position interpolated from archived JPL Horizons ephemerides (kept 30 days)',
   'ephem.extrapolated': 'Extrapolated (two-body Kepler) {h} h beyond the ephemeris window: approximate',
   'ephem.hidden': 'Ephemeris {d} days old: position not shown, last known trajectory in grey',
   'ephem.none': 'No public ephemeris: listed only, not shown in 3D',
@@ -350,6 +352,7 @@ export const en = {
   'info.orbit': 'Orbit',
   'info.horizons': 'JPL Horizons ID',
   'info.window': 'Ephemeris window',
+  'info.archive': 'Archived ephemeris',
   'info.periapsis': 'Periapsis / apoapsis',
   'info.inclinationEquator': 'Inclination (to the equator)',
   'info.mission': 'Mission',

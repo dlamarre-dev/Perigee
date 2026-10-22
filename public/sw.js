@@ -22,6 +22,8 @@ const RUNTIME = `perigee-runtime-${VERSION}`;
 // Module scripts carry an Origin header; responses may say "Vary: Origin". Same-origin only, so ignore it.
 const MATCH = { ignoreVary: true };
 const LIMITS = { [IMMUTABLE]: 200, [RUNTIME]: 80 };
+/** Daily copies of the Earth elements (data/earth/history/*) kept at most. */
+const HISTORY_COPIES = 3;
 /** Static files versioned by a content hash in their URL. */
 const VERSIONED_DIRS = ['data/', 'textures/', 'models/', 'shapes/'];
 
@@ -78,6 +80,13 @@ async function put(cacheName, request, response) {
     const path = new URL(request.url).pathname;
     for (const key of await cache.keys()) {
       if (new URL(key.url).pathname === path && key.url !== request.url) await cache.delete(key);
+    }
+    // Daily copies of the Earth elements (past dates, a new path each day): only the last few viewed are kept.
+    if (path.includes('/data/earth/history/')) {
+      const copies = (await cache.keys()).filter((k) =>
+        new URL(k.url).pathname.includes('/data/earth/history/'),
+      );
+      for (let i = 0; i < copies.length - HISTORY_COPIES + 1; i++) await cache.delete(copies[i]);
     }
   }
   await cache.put(request, response);

@@ -22,6 +22,12 @@ export interface ToolOptions {
   readonly maxPassDays?: number;
   /** Longest event search, days (default 366; fewer on the hosted endpoint). */
   readonly maxEventDays?: number;
+  /** Longest close-approach search, days (default 7; fewer on the hosted endpoint). */
+  readonly maxApproachDays?: number;
+  /** Longest sky-conjunction search, days (default 31; fewer on the hosted endpoint). */
+  readonly maxConjunctionDays?: number;
+  /** Longest shadow search, hours (default 48; fewer on the hosted endpoint). */
+  readonly maxShadowHours?: number;
   /**
    * Tools switched off (the hosted endpoint's circuit breaker): full names or their ends ("series" for
    * perigee_distance_series). They stay in tools/list marked unavailable, and calls to them get an error that
@@ -31,7 +37,7 @@ export interface ToolOptions {
 }
 
 const INSTRUCTIONS = `Perigee (https://perigee.info/) shows in 3D, in real time, the artificial objects orbiting the Earth, the Moon and Mars and the spacecraft crossing the solar system, for education.
-Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_sky for what is in the sky from a place, perigee_events for Moon phases, eclipses, oppositions and mission milestones, perigee_stats for counts of active satellites, perigee_view for a link or an embeddable live 3D view (perigee_describe_view puts one into words, e.g. for alternative text), perigee_define for student-level definitions.
+Use perigee_find to get an object's id (NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>"), then perigee_object for facts (goals, status, sources, an image with its credit), perigee_state (with the ground point below) / perigee_orbit / perigee_distance / perigee_distance_series for computed values, perigee_passes for when a satellite can be seen from a place, perigee_sky for what is in the sky from a place, perigee_tonight for a ready summary of the night ahead from a place, perigee_sky_conjunctions for close pairings of the Moon, planets, bright stars (and a satellite) in the sky, perigee_events for Moon phases, eclipses, oppositions and mission milestones, perigee_shadow for when a satellite enters or leaves the Earth's shadow, perigee_ground_track for the path below a satellite, perigee_close_approach for the closest distance between two objects in space (education only), perigee_stats for counts of active satellites, perigee_view for a link or an embeddable live 3D view (perigee_describe_view puts one into words, e.g. for alternative text), perigee_define for student-level definitions.
 Always tell the student how reliable a number is: quote the provenance (model, data state, data age, typical accuracy) and the sources. Positions are for education, not navigation.`;
 
 const lang = z.enum(['en', 'fr']).optional().describe('Language of names and texts (default en).');
@@ -92,6 +98,9 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
   const maxSteps = options.maxSeriesSteps ?? 1000;
   const maxPassDays = options.maxPassDays ?? 10;
   const maxEventDays = options.maxEventDays ?? 366;
+  const maxApproachDays = options.maxApproachDays ?? 7;
+  const maxConjunctionDays = options.maxConjunctionDays ?? 31;
+  const maxShadowHours = options.maxShadowHours ?? 48;
   const latitude = z.number().min(-90).max(90).describe('Observer latitude, degrees (north positive).');
   const longitude = z.number().min(-180).max(360).describe('Observer longitude, degrees (east positive).');
   const heightM = z.number().min(-500).max(9000).optional().describe('Observer height above sea level, m.');
@@ -195,25 +204,38 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
           .max(64)
           .optional()
           .describe('IANA time zone for local times, e.g. "America/Toronto".'),
+        lang,
       },
       annotations: readOnly,
     },
-    guard(async ({ id: objectId, latitude, longitude, height_m, start, days, min_elevation, time_zone }) =>
-      json(
-        await engine.passes(
-          objectId,
-          {
-            latDeg: latitude,
-            lonDeg: longitude,
-            ...(height_m !== undefined ? { heightM: height_m } : {}),
-            ...(start ? { start } : {}),
-            ...(days !== undefined ? { days } : {}),
-            ...(min_elevation !== undefined ? { minElevationDeg: min_elevation } : {}),
-            ...(time_zone ? { timeZone: time_zone } : {}),
-          },
-          maxPassDays,
+    guard(
+      async ({
+        id: objectId,
+        latitude,
+        longitude,
+        height_m,
+        start,
+        days,
+        min_elevation,
+        time_zone,
+        lang: l,
+      }) =>
+        json(
+          await engine.passes(
+            objectId,
+            {
+              latDeg: latitude,
+              lonDeg: longitude,
+              ...(height_m !== undefined ? { heightM: height_m } : {}),
+              ...(start ? { start } : {}),
+              ...(days !== undefined ? { days } : {}),
+              ...(min_elevation !== undefined ? { minElevationDeg: min_elevation } : {}),
+              ...(time_zone ? { timeZone: time_zone } : {}),
+              lang: l ?? 'en',
+            },
+            maxPassDays,
+          ),
         ),
-      ),
     ),
   );
 
@@ -282,6 +304,202 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
         ),
       );
     }),
+  );
+
+  server.registerTool(
+    'perigee_tonight',
+    {
+      title: 'Tonight from a place',
+      description:
+        "What there is to see tonight from a place (the coming night, or the current one): the night's start and end, the Moon (phase, illuminated share, rise and set), the planets visible to the naked eye, the visible passes of the ISS, Tiangong and Hubble, the close pairings of the Moon and planets, and the sky's events of the night, with short highlights ready to read. Give the place's latitude and longitude and, for local times, its IANA time zone.",
+      inputSchema: { latitude, longitude, height_m: heightM, date, time_zone: timeZone, lang },
+      annotations: readOnly,
+    },
+    guard(async ({ latitude: lat, longitude: lon, height_m, date: d, time_zone, lang: l }) =>
+      json(
+        await engine.tonight({
+          latDeg: lat,
+          lonDeg: lon,
+          ...(height_m !== undefined ? { heightM: height_m } : {}),
+          ...(d ? { date: d } : {}),
+          ...(time_zone ? { timeZone: time_zone } : {}),
+          lang: l ?? 'en',
+        }),
+      ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_sky_conjunctions',
+    {
+      title: 'Close pairings in the sky',
+      description: `Apparent close pairings seen from a place over a period (default 7 days, at most ${maxConjunctionDays}): the Moon and the planets with each other and with the bright stars near the ecliptic (Regulus, Spica, Antares, Aldebaran, Pollux…), at their closest, with where to look and whether the pair is visible (above the horizon, dark sky). With \`satellite\` (a NORAD number), that satellite passing near them during its passes over one day.`,
+      inputSchema: {
+        latitude,
+        longitude,
+        height_m: heightM,
+        start: date,
+        days: z
+          .number()
+          .min(0.05)
+          .max(maxConjunctionDays)
+          .optional()
+          .describe('Length of the period in days (default 7; 1 with a satellite).'),
+        max_separation: z
+          .number()
+          .min(0.1)
+          .max(10)
+          .optional()
+          .describe('Widest separation kept, degrees (default 5).'),
+        satellite: z
+          .string()
+          .max(20)
+          .optional()
+          .describe('An Earth satellite (NORAD number) to check against the Moon, planets and stars.'),
+        time_zone: timeZone,
+        lang,
+      },
+      annotations: readOnly,
+    },
+    guard(
+      async ({
+        latitude: lat,
+        longitude: lon,
+        height_m,
+        start,
+        days,
+        max_separation,
+        satellite,
+        time_zone,
+        lang: l,
+      }) =>
+        json(
+          await engine.skyConjunctions(
+            {
+              latDeg: lat,
+              lonDeg: lon,
+              ...(height_m !== undefined ? { heightM: height_m } : {}),
+              ...(start ? { start } : {}),
+              ...(days !== undefined ? { days } : {}),
+              ...(max_separation !== undefined ? { maxSeparationDeg: max_separation } : {}),
+              ...(satellite ? { satellite } : {}),
+              ...(time_zone ? { timeZone: time_zone } : {}),
+              lang: l ?? 'en',
+            },
+            maxConjunctionDays,
+          ),
+        ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_shadow',
+    {
+      title: 'Sunlight and shadow',
+      description: `Whether an object is in sunlight, in the penumbra or in the umbra of the body it orbits (Earth satellites: the Earth's shadow; lunar and Martian orbiters: the Moon's or Mars'), and when it next enters and leaves the shadow (default: over two orbits, at most ${maxShadowHours} hours). Explains why a satellite crossing the night sky suddenly fades out.`,
+      inputSchema: {
+        id,
+        date,
+        hours: z
+          .number()
+          .min(0.1)
+          .max(maxShadowHours)
+          .optional()
+          .describe('Length of the search in hours (default: two orbits).'),
+        centre: z
+          .string()
+          .optional()
+          .describe('Body casting the shadow (default: the one the object orbits).'),
+        time_zone: timeZone,
+        lang,
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ id: objectId, date: d, hours, centre, time_zone, lang: l }) =>
+      json(
+        await engine.shadow(
+          objectId,
+          {
+            ...(d ? { date: d } : {}),
+            ...(hours !== undefined ? { hours } : {}),
+            ...(centre ? { centre } : {}),
+            ...(time_zone ? { timeZone: time_zone } : {}),
+            lang: l ?? 'en',
+          },
+          maxShadowHours,
+        ),
+      ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_ground_track',
+    {
+      title: 'Ground track',
+      description:
+        'The path on the ground below an Earth satellite over one or two orbits: a list of points (time, latitude, longitude, height) and a GeoJSON MultiLineString split at the antimeridian, ready for a map. Up to 360 points.',
+      inputSchema: {
+        id,
+        start: date,
+        orbits: z.number().min(0.1).max(2).optional().describe('Number of orbits (default 1).'),
+        points: z
+          .number()
+          .int()
+          .min(10)
+          .max(360)
+          .optional()
+          .describe('Number of points (default 180 per orbit).'),
+        lang,
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ id: objectId, start, orbits, points, lang: l }) =>
+      json(
+        await engine.groundTrack(objectId, {
+          ...(start ? { start } : {}),
+          ...(orbits !== undefined ? { orbits } : {}),
+          ...(points !== undefined ? { points } : {}),
+          lang: l ?? 'en',
+        }),
+      ),
+    ),
+  );
+
+  server.registerTool(
+    'perigee_close_approach',
+    {
+      title: 'Closest approach in space',
+      description: `The closest distance between two objects in space over a period (default 1 day, at most ${maxApproachDays}): when, how close (timed to a fraction of a second) and, for two Earth satellites, how fast they pass each other. For education only: public orbits are not precise enough for collision avoidance, and the answer says so.`,
+      inputSchema: {
+        from: id.describe('First object id.'),
+        to: id.describe('Second object id.'),
+        start: date,
+        days: z
+          .number()
+          .min(0.01)
+          .max(maxApproachDays)
+          .optional()
+          .describe('Length of the search in days (default 1).'),
+        time_zone: timeZone,
+        lang,
+      },
+      annotations: readOnly,
+    },
+    guard(async ({ from, to, start, days, time_zone, lang: l }) =>
+      json(
+        await engine.closeApproach(
+          from,
+          to,
+          {
+            ...(start ? { start } : {}),
+            ...(days !== undefined ? { days } : {}),
+            ...(time_zone ? { timeZone: time_zone } : {}),
+            lang: l ?? 'en',
+          },
+          maxApproachDays,
+        ),
+      ),
+    ),
   );
 
   server.registerTool(

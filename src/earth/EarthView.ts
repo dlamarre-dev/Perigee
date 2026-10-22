@@ -18,13 +18,20 @@ import type { MessageKey } from '../i18n';
 import { pickRadiusPx } from '../render/pointer';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import { datasetKey } from '../app/updates';
-import { loadBulkDataset, loadManifest, loadOptionalDataset } from '../data/loader';
+import { snapshotFor } from '../data/history';
+import { loadBulkDataset, loadBulkFile, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
   GroupsSchema,
   EarthScienceCatalogSchema,
   LaunchSitesSchema,
   OperatorsCatalogSchema,
+  type DatasetEntry,
+  type EarthSnapshot,
+  type Groups,
   type LaunchSite,
+  type Manifest,
+  type Omm,
+  type SatcatRecord,
 } from '../data/schemas';
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
@@ -51,6 +58,10 @@ const SITE_FOLLOW_DISTANCE_KM = 2500;
 const SITE_PRIORITY_PX = 8;
 const MOON_PICK_PX = 14;
 const LIGHT_SPEED_KM_S = 299_792.458;
+/** A past date must call for the same element set this long (wall ms) before the satellites are rebuilt. */
+const SET_SETTLE_MS = 500;
+/** Daily element sets kept decoded in memory. */
+const ARCHIVED_SETS = 2;
 /** Sidereal and synodic months (days), NASA Moon fact sheet. */
 const MOON_SIDEREAL_DAYS = 27.3217;
 const MOON_SYNODIC_DAYS = 29.5306;
@@ -102,6 +113,22 @@ class EarthView implements View {
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
   private readonly loadedData = new Map<string, string>();
+  /** What the satellites were built from, to rebuild them from another element set (past dates). */
+  private bulk:
+    | {
+        readonly manifest: Manifest;
+        readonly gp: { readonly entry: DatasetEntry; readonly data: readonly Omm[] };
+        readonly satcat: readonly SatcatRecord[] | undefined;
+        readonly groups: Groups | undefined;
+      }
+    | undefined;
+  /** Element set drawn: "current" or the date of a daily copy (src/data/history.ts). */
+  private activeSet = 'current';
+  /** The set the shown date calls for, since when (wall ms): a switch waits for it to settle (scrubbing). */
+  private wantedSet: { readonly key: string; readonly sinceMs: number } | undefined;
+  private switchingSet = false;
+  /** Daily copies decoded, at most ARCHIVED_SETS kept (oldest dropped). */
+  private readonly archivedSets = new Map<string, Promise<readonly Omm[]>>();
 
   constructor(private readonly host: ViewHost) {
     const initial = parseEarthUrl(host.initialParams);
@@ -179,6 +206,7 @@ class EarthView implements View {
     this.moon.update(date, f.sceneFromInertial, this.sunScene);
     this.frameAngleRad = f.frame === 'fixed' ? -gmst : 0;
     this.sats?.update(f.nowMs, f.rate, f.clockEpoch, this.frameAngleRad);
+    this.followElementSet(f.nowMs);
     if (this.pendingFrame && this.sats) {
       const pos = this.sats.selectedWorldPositionKm(this.frameAngleRad);
       if (pos) this.host.frameObject(pos);
@@ -544,14 +572,8 @@ class EarthView implements View {
       this.loadedData.set(datasetKey('earth.gp'), gp.entry.sha256);
       if (satcat) this.loadedData.set(datasetKey('earth.satcat'), satcat.entry.sha256);
       if (groups) this.loadedData.set(datasetKey('earth.groups'), groups.entry.sha256);
-      const catalog = buildCatalog(
-        gp.data,
-        satcat?.data,
-        groups?.data,
-        this.operators,
-        this.launchSites,
-        EarthScienceCatalogSchema.parse(earthScienceJson).satellites,
-      );
+      this.bulk = { manifest, gp, satcat: satcat?.data, groups: groups?.data };
+      const catalog = this.satCatalog(gp.data);
       this.catalog = catalog;
       this.infoPanel.setLaunchSiteNames((code) => catalog.launchSiteByCode.get(code)?.name[host.i18n.lang]);
       const layer = new EarthSatellites(catalog, host.renderer.renderer);
@@ -567,8 +589,10 @@ class EarthView implements View {
       const panel = new FilterPanel(host.i18n, catalog, this.filters, new Date(gp.entry.fetchedAt), {
         onChange: (next) => {
           this.filters = next;
-          layer.setFilters(next);
-          panel.setResults(layer.filteredObjects(), layer.stats);
+          // The layer may have been rebuilt from another element set since (past dates).
+          const sats = this.sats ?? layer;
+          sats.setFilters(next);
+          panel.setResults(sats.filteredObjects(), sats.stats);
           host.syncUrl();
         },
         onSelect: (obj) => this.select(obj, { focus: true, frame: true }),
@@ -610,6 +634,100 @@ class EarthView implements View {
     } catch (err) {
       console.error(err);
       host.showNotice(host.i18n.t('sat.unavailable'));
+    }
+  }
+
+  private satCatalog(omm: readonly Omm[]): SatCatalog {
+    const b = this.bulk;
+    return buildCatalog(
+      omm,
+      b?.satcat,
+      b?.groups,
+      this.operators,
+      this.launchSites,
+      EarthScienceCatalogSchema.parse(earthScienceJson).satellites,
+    );
+  }
+
+  /**
+   * Past dates (CLAUDE.md §5.1): more than a day before the current elements, the satellites are rebuilt from the
+   * daily copy kept for that date (src/data/history.ts), once the shown date has called for the same set for
+   * SET_SETTLE_MS (scrubbing the time does not rebuild at every step).
+   */
+  private followElementSet(simMs: number): void {
+    const b = this.bulk;
+    if (!b || this.switchingSet || this.disposed) return;
+    const snap = snapshotFor(b.manifest.earthHistory, b.gp.entry.fetchedAt, simMs);
+    const key = snap?.date ?? 'current';
+    if (key === this.activeSet) {
+      this.wantedSet = undefined;
+      return;
+    }
+    const wall = performance.now();
+    if (this.wantedSet?.key !== key) {
+      this.wantedSet = { key, sinceMs: wall };
+      return;
+    }
+    if (wall - this.wantedSet.sinceMs < SET_SETTLE_MS) return;
+    this.wantedSet = undefined;
+    void this.useElementSet(key, snap);
+  }
+
+  private archivedSet(snap: EarthSnapshot): Promise<readonly Omm[]> {
+    let set = this.archivedSets.get(snap.date);
+    if (!set) {
+      set = loadBulkFile(this.host.baseUrl, snap, 'omm');
+      set.catch(() => this.archivedSets.delete(snap.date));
+      this.archivedSets.set(snap.date, set);
+      for (const key of this.archivedSets.keys()) {
+        if (this.archivedSets.size <= ARCHIVED_SETS) break;
+        this.archivedSets.delete(key);
+      }
+    }
+    return set;
+  }
+
+  /** Rebuilds the satellite layer from another element set, keeping the filters, the selection and following. */
+  private async useElementSet(key: string, snap: EarthSnapshot | undefined): Promise<void> {
+    const b = this.bulk;
+    if (!b) return;
+    this.switchingSet = true;
+    try {
+      const omm = snap ? await this.archivedSet(snap) : b.gp.data;
+      if (this.disposed) return;
+      const catalog = this.satCatalog(omm);
+      const layer = new EarthSatellites(catalog, this.host.renderer.renderer);
+      await layer.ready;
+      if (this.disposed) {
+        layer.dispose();
+        return;
+      }
+      const following = this.host.follow.active && this.selectedNorad !== undefined;
+      const old = this.sats;
+      if (old) {
+        this.host.renderer.scene.remove(old.group);
+        old.dispose();
+      }
+      this.sats = layer;
+      this.catalog = catalog;
+      this.activeSet = key;
+      this.host.renderer.scene.add(layer.group);
+      layer.setFilters(this.filters);
+      this.filterPanel?.setCatalog(catalog, new Date(snap?.fetchedAt ?? b.gp.entry.fetchedAt), snap?.date);
+      this.filterPanel?.setResults(layer.filteredObjects(), layer.stats);
+      // The selection carries over by NORAD number; an object absent from this set (launched later) is kept in
+      // the URL and shown again with a set that has it.
+      const obj = this.selectedNorad === undefined ? undefined : catalog.byNorad.get(this.selectedNorad);
+      layer.select(obj);
+      if (this.selectedNorad !== undefined) this.infoPanel.show(obj, false);
+      if (following && obj) this.startFollowing();
+      else if (following) this.host.follow.stop();
+    } catch (err) {
+      // Keep the set drawn: the shown date stays computed from it (labelled by element age).
+      console.warn(`Element set ${key} unavailable`, err);
+      this.activeSet = key;
+    } finally {
+      this.switchingSet = false;
     }
   }
 
