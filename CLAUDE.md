@@ -283,7 +283,10 @@ No single API provides "active probes + landing sites". We maintain:
   14 days for any other orbit, since two-body extrapolation of high or three-body orbits (NRHO, DRO) degrades
   quickly too — hide the position and keep the last known trajectory in grey (`src/astro/track.ts`).
 - Horizons coverage can end before "now" (e.g. CAPSTONE): the pipeline moves the window to the covered side once
-  and the client shows the object as hidden/extrapolated accordingly.
+  and the client shows the object as hidden/extrapolated accordingly. Coverage shorter than the window on both
+  sides (a new mission, e.g. MMX: launch to six weeks ahead) is clamped a second time from the other limit (a third
+  request). An answer with no usable vectors for one mission only warns and keeps its previous file; network and
+  HTTP errors still abort the run.
 - The 30-day archive (§4.3) is fetched only when the shown date nears the window start (`PlanetaryView`
   `loadPastIfNeeded`; the engine reads it for earlier dates); `EphemerisTrack` joins the tables and splits them into
   segments at gaps longer than 1.5 × the steps around them (a missed run): the extrapolation and hiding rules apply

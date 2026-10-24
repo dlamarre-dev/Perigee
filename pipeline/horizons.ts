@@ -172,6 +172,17 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
     url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
     result = await query(url);
     data = parseVectors(result);
+    // Coverage shorter than the window on both sides (a new mission: launch to a few weeks ahead): the second
+    // answer names the other limit, which truncates the window once more.
+    const other = data.length === 0 ? parseCoverageLimit(result) : undefined;
+    if (other && other.kind !== clamped.kind) {
+      ({ start, stop } = clampWindow(start, stop, other, marginMs, spanMs));
+      if (stop <= start) throw new ProviderError(`${mission.id}: empty window after clamping`, url, 200);
+      if (other.kind === 'after') clamped = other;
+      url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
+      result = await query(url);
+      data = parseVectors(result);
+    }
     if (data.length === 0) throw new ProviderError(`${mission.id}: no vectors after clamping`, url, 200);
   }
   return { data, url, clamped };

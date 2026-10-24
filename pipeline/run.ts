@@ -57,7 +57,7 @@ import {
   type AuditItem,
   type SatcatLaunchRow,
 } from './audit';
-import { politeGet } from './http';
+import { politeGet, ProviderError } from './http';
 import { readManifest } from './publish';
 import {
   NotUpdatedError,
@@ -304,9 +304,10 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
 }
 
 /**
- * One Horizons request per mission (a second one only when coverage ends inside the window), then one per
- * mean-element moon of catalog/moons.json (solar view). A mission failure aborts the run before anything is
- * published. Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
+ * One Horizons request per mission (a second one when coverage ends inside the window, a third when it ends on
+ * both sides), then one per mean-element moon of catalog/moons.json (solar view). A network or HTTP failure aborts
+ * the run before anything is published; an answer without usable vectors for one mission only warns (it keeps its
+ * previous file). Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
  * and only warns; the moons gathered are published, the others keep their previous file (the audit flags them).
  */
 async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void> {
@@ -317,7 +318,18 @@ async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void
   const out: EphemerisToWrite[] = [];
   for (const mission of catalog.missions) {
     if (mission.ephemeris !== 'horizons' || !mission.horizonsId || !mission.sampling) continue;
-    const { data, url, clamped } = await fetchMissionVectors(mission, now);
+    let vectors: Awaited<ReturnType<typeof fetchMissionVectors>>;
+    try {
+      vectors = await fetchMissionVectors(mission, now);
+    } catch (err) {
+      // Horizons answered (HTTP 200) but gave nothing usable for this mission (e.g. a new entry whose ephemeris
+      // does not match its window): warn, keep its previous file, publish the others. Network and HTTP errors
+      // still abort the run (provider policy).
+      if (!(err instanceof ProviderError) || err.status !== 200) throw err;
+      console.warn(`::warning::${mission.id}: ${err.message} (${err.url}); previous file kept`);
+      continue;
+    }
+    const { data, url, clamped } = vectors;
     if (clamped) {
       console.warn(
         `${mission.id}: Horizons coverage ends ${clamped.kind} ${clamped.date.toISOString()}; window moved`,

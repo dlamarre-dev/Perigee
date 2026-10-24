@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { ManifestSchema } from '../src/data/schemas';
+import { ManifestSchema, MissionSchema } from '../src/data/schemas';
 import {
   AggregateShrinkError,
   archiveGpSnapshot,
@@ -339,6 +339,37 @@ describe('Horizons window clamping', () => {
     const w = clampWindow(start, stop, limit, day, span);
     expect(w.start.toISOString()).toBe('2026-09-02T00:00:00.000Z');
     expect(w.stop).toEqual(stop);
+  });
+
+  it('clamps both ends when coverage is shorter than the window (MMX, October 2026)', async () => {
+    const { fetchMissionVectors } = await import('../pipeline/horizons');
+    const answers = [
+      { error: 'No ephemeris for target "MMX (spacecraft)" prior to A.D. 2026-OCT-19 19:42:09.1831 TDB' },
+      { error: 'No ephemeris for target "MMX (spacecraft)" after A.D. 2026-DEC-02 00:01:09.1831 TDB' },
+      { result: '$$SOE\n2461340.5, A.D. 2026-Oct-21 00:00:00.0000, 1, 2, 3, 4, 5, 6,\n$$EOE' },
+    ];
+    const urls: string[] = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = ((url: string) => {
+      urls.push(url);
+      return Promise.resolve(new Response(JSON.stringify(answers[urls.length - 1])));
+    }) as typeof fetch;
+    try {
+      const mission = MissionSchema.parse({
+        ...JSON.parse(readFileSync('catalog/missions.json', 'utf8')).missions.find(
+          (m: { id: string }) => m.id === 'mmx',
+        ),
+      });
+      const v = await fetchMissionVectors(mission, new Date('2026-10-24T11:21:00Z'));
+      expect(v.data.length).toBe(7);
+      expect(urls).toHaveLength(3);
+      expect(decodeURIComponent(urls[2] ?? '')).toMatch(
+        /START_TIME='2026-10-20 19:42'.*STOP_TIME='2026-12-01 00:01'/,
+      );
+      expect(v.clamped?.kind).toBe('after');
+    } finally {
+      globalThis.fetch = realFetch;
+    }
   });
 });
 
