@@ -153,7 +153,7 @@ The hosted limits keep each request within the free plan's 10 ms of CPU (see [`m
   dependencies external) into `mcp/dist/perigee-mcp.js`.
 - Released by pushing a `mcp-v<version>` tag: `.github/workflows/mcp-release.yml` checks the version, runs the
   engine and MCP tests, builds and publishes through npm trusted publishing with provenance
-  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.4.0: 19 tools).
+  ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.5.0: 19 tools).
 
 ## Hosted endpoint (`workers/mcp/`)
 
