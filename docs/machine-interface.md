@@ -149,8 +149,10 @@ The hosted limits keep each request within the free plan's 10 ms of CPU (see [`m
   `perigee-mcp/<version>`.
 - `mcp/src/diskCache.ts`: files cached on disk by path and content hash (`%LOCALAPPDATA%\perigee-mcp`,
   `~/Library/Caches/perigee-mcp`, `~/.cache/perigee-mcp`; `PERIGEE_MCP_CACHE`), older versions of a file removed.
-- Built by `npm run mcp:build` (Vite SSR bundle, minified: the catalogues and region outlines are inlined; npm
-  dependencies external) into `mcp/dist/perigee-mcp.js`.
+- Built by `npm run mcp:build` (Vite SSR bundle, minified: the catalogues and region outlines are inlined, with the npm
+  dependencies: no dependencies to install, only the SDK parts the stdio server uses; its ajv validator,
+  elicitation only, replaced by a stub, `mcp/src/noJsonSchemaValidator.ts`) into `mcp/dist/perigee-mcp.js`. A
+  dependency fix reaches users with the next release.
 - Released by pushing a `mcp-v<version>` tag: `.github/workflows/mcp-release.yml` checks the version, runs the
   engine and MCP tests, builds and publishes through npm trusted publishing with provenance
   ([`mcp-publishing.md`](mcp-publishing.md)). The package has its own semver (1.5.1: 19 tools).

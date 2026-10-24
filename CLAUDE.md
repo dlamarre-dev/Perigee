@@ -388,7 +388,7 @@ the "up" vector and causes gimbal lock at the poles).
   `perigee-mcp`, own semver, stdio, `@modelcontextprotocol/sdk`): tools `perigee_find`, `_object` (optional image),
   `_state`, `_distance`, `_distance_series`, `_view` (links, iframe), `_define`, `_about` in `mcp/src/tools.ts`
   (shared with a hosted endpoint); disk cache keyed by content hash (`mcp/src/diskCache.ts`); bundled by
-  `npm run mcp:build` (npm dependencies external), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
+  `npm run mcp:build` (npm dependencies bundled too: the package installs nothing else; the SDK's ajv validator, elicitation only, is stubbed), published by `mcp-release.yml` on a `mcp-v<version>` tag (npm trusted publishing, `docs/mcp-publishing.md`).
   Hosted endpoint `workers/mcp/` (Cloudflare Worker, https://perigee-mcp.perigeeinfo.workers.dev/mcp,
   `docs/mcp-hosted.md`): the same tools over stateless
   Streamable HTTP at `/mcp`, parsed data of the current version in isolate memory (the Cache API is a no-op on
