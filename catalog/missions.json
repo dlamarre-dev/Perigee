@@ -69,15 +69,16 @@
         "fr": "L’orbiteur de Chandrayaan-2 étudie la Lune depuis une orbite polaire basse grâce à huit instruments scientifiques. Il cartographie les minéraux et les éléments chimiques de la surface, recherche des molécules d’eau et de la glace dans les régions polaires et analyse la très ténue atmosphère lunaire. Ces données aident à comprendre comment la Lune s’est formée et a évolué."
       },
       "notes": {
-        "en": "Planned 7-year life reached around mid-2026; no end-of-mission announcement found as of 2026-09-26.",
-        "fr": "Durée de vie prévue de 7 ans atteinte vers la mi-2026 ; aucune annonce de fin de mission au 2026-09-26."
+        "en": "Planned 7-year life reached around mid-2026; no end-of-mission announcement found as of 2026-10-24. ISRO's own page still describes the orbiter performing its scheduled science experiments.",
+        "fr": "Durée de vie prévue de 7 ans atteinte vers la mi-2026 ; aucune annonce de fin de mission au 2026-10-24. La page de l'ISRO décrit toujours l'orbiteur en train de mener ses expériences scientifiques prévues."
       },
       "website": {
         "url": "https://www.isro.gov.in/Chandrayaan_2.html"
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.isro.gov.in/Chandrayaan_2.html",
+        "https://www.isro.gov.in/Update_on_Chandrayaan_2.html",
         "https://www.planetary.org/space-missions/chandrayaan-2",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Chandrayaan-2&group=sct"
       ]
@@ -118,7 +119,7 @@
       "website": {
         "url": "https://www.kari.re.kr/eng/contents/193"
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.koreaherald.com/article/10416318",
         "https://en.wikipedia.org/wiki/Danuri",
@@ -157,9 +158,10 @@
       "website": {
         "url": "https://artemis.igpp.ucla.edu/"
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://artemis.igpp.ucla.edu/",
+        "https://science.nasa.gov/mission/themis-artemis",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=THEMIS-B&group=sct"
       ]
     },
@@ -195,9 +197,10 @@
       "website": {
         "url": "https://artemis.igpp.ucla.edu/"
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://artemis.igpp.ucla.edu/",
+        "https://science.nasa.gov/mission/themis-artemis",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=THEMIS-C&group=sct"
       ]
     },
@@ -237,7 +240,7 @@
       "website": {
         "url": "https://www.nasa.gov/smallspacecraft/capstone/"
       },
-      "verified": "2026-10-17",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
@@ -277,7 +280,7 @@
         "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
         "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
-      "verified": "2026-10-17",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
         "https://space.skyrocket.de/doc_sdat/swc-1.htm",
@@ -310,7 +313,7 @@
         "en": "No public ephemeris (not in JPL Horizons); orbit figures come from independent tracking only.",
         "fr": "Aucune éphéméride publique (absent de JPL Horizons) ; les paramètres d’orbite proviennent seulement de suivis indépendants."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.cnsa.gov.cn/english/n6465652/n6465653/c10489434/content.html",
         "https://en.wikipedia.org/wiki/Queqiao-2"
@@ -338,7 +341,7 @@
         "en": "Tiandu-2 is a small experimental satellite launched with Queqiao-2 to test technologies for a future Chinese navigation and communication constellation around the Moon. Flying in formation with Tiandu-1, it carries a communication payload and navigation devices to test links between the two craft and with Earth.",
         "fr": "Tiandu-2 est un petit satellite expérimental lancé avec Queqiao-2 pour tester les technologies d’une future constellation chinoise de navigation et de communication autour de la Lune. Volant en formation avec Tiandu-1, il emporte une charge de communication et des équipements de navigation pour tester les liaisons entre les deux engins et avec la Terre."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": ["https://space.skyrocket.de/doc_sdat/tiandu-1.htm", "https://en.wikipedia.org/wiki/Tiandu"]
     },
     {
@@ -363,7 +366,7 @@
         "en": "Tiandu-1 is an experimental satellite from China’s Deep Space Exploration Laboratory, a pathfinder for a future navigation and communication constellation around the Moon. It tests high-speed radio links, an in-space data router and laser ranging from Earth using a reflector on board, together with its smaller companion Tiandu-2.",
         "fr": "Tiandu-1 est un satellite expérimental du Laboratoire chinois d’exploration de l’espace lointain, précurseur d’une future constellation de navigation et de communication autour de la Lune. Avec son petit compagnon Tiandu-2, il teste des liaisons radio à haut débit, un routeur de données spatial et la télémétrie laser depuis la Terre grâce à un réflecteur embarqué."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://news.cgtn.com/news/2025-05-28/China-s-Tiandu-1-satellite-enters-historic-Earth-moon-resonant-orbit-1DKj9SqRaSc/p.html",
         "https://en.wikipedia.org/wiki/Tiandu"
@@ -391,8 +394,15 @@
         "en": "Queqiao was the first relay satellite placed beyond the Moon, near the Earth–Moon L2 point. It was built so that China’s Chang’e-4 lander and Yutu-2 rover, the first to land on the far side of the Moon, could communicate with Earth, which never sees that side. It also carried a Dutch–Chinese low-frequency radio instrument for astronomy.",
         "fr": "Queqiao a été le premier satellite relais placé au-delà de la Lune, près du point L2 Terre–Lune. Il a été conçu pour que l’atterrisseur chinois Chang’e-4 et le rover Yutu-2, premiers à se poser sur la face cachée de la Lune, puissent communiquer avec la Terre, qui ne voit jamais cette face. Il emportait aussi un instrument sino-néerlandais de radioastronomie à basse fréquence."
       },
-      "verified": "2026-09-26",
-      "sources": ["https://en.wikipedia.org/wiki/Queqiao_relay_satellite"]
+      "notes": {
+        "en": "Well past its 5-year design life (launched 2018); no end-of-mission announcement found as of 2026-10-24, and Queqiao-2 (2024) now carries most of the relay traffic.",
+        "fr": "Bien au-delà de sa durée de vie prévue de 5 ans (lancé en 2018) ; aucune annonce de fin de mission au 2026-10-24, et Queqiao-2 (2024) assure désormais l'essentiel du relais."
+      },
+      "verified": "2026-10-24",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Queqiao_relay_satellite",
+        "https://www.futura-sciences.com/sciences/actualites/exploration-queqiao-2-pas-avant-exploration-lunaire-chinoise-112261/"
+      ]
     },
     {
       "id": "dro-a",
@@ -416,10 +426,11 @@
         "en": "DRO-A is an experimental satellite of the Chinese Academy of Sciences sent to a distant retrograde orbit, a very stable orbit around the Moon. With DRO-B and the DRO-L satellite in Earth orbit, it forms a three-satellite test network that tests precise navigation and radio links between spacecraft across Earth–Moon distances.",
         "fr": "DRO-A est un satellite expérimental de l’Académie chinoise des sciences placé sur une orbite rétrograde distante, une orbite très stable autour de la Lune. Avec DRO-B et le satellite DRO-L en orbite terrestre, il forme un réseau d’essai de trois satellites qui teste la navigation de précision et les liaisons radio entre engins à l’échelle des distances Terre–Lune."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://space.skyrocket.de/doc_sdat/dro-a.htm",
-        "https://www.chinadaily.com.cn/a/202504/16/WS67ff8351a3104d9fd381fbbb.html"
+        "https://www.chinadaily.com.cn/a/202504/16/WS67ff8351a3104d9fd381fbbb.html",
+        "https://english.cas.cn/newsroom/cas-in-media/202603/t20260326_1153818.shtml"
       ]
     },
     {
@@ -444,8 +455,11 @@
         "en": "DRO-B is the twin of DRO-A, launched together to test spacecraft operations in the space between the Earth and the Moon. With DRO-A and DRO-L, it forms a three-satellite network that tests high-precision relative navigation and microwave links between spacecraft.",
         "fr": "DRO-B est le jumeau de DRO-A, lancé avec lui pour tester l’exploitation d’engins dans l’espace entre la Terre et la Lune. Avec DRO-A et DRO-L, il forme un réseau de trois satellites qui teste la navigation relative de haute précision et les liaisons micro-ondes entre engins."
       },
-      "verified": "2026-09-26",
-      "sources": ["https://space.skyrocket.de/doc_sdat/dro-a.htm"]
+      "verified": "2026-10-24",
+      "sources": [
+        "https://space.skyrocket.de/doc_sdat/dro-a.htm",
+        "https://english.cas.cn/newsroom/cas-in-media/202603/t20260326_1153818.shtml"
+      ]
     },
     {
       "id": "icube-q",
@@ -473,7 +487,7 @@
         "en": "Contact lost around July 2024; a published study predicted lunar impact by about April 2025.",
         "fr": "Contact perdu vers juillet 2024 ; une étude publiée prévoyait un impact lunaire vers avril 2025."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://en.wikipedia.org/wiki/ICUBE-Q",
         "https://journal.hep.com.cn/jdse/EN/10.15982/j.issn.2096-9287.2025.20240054"
@@ -496,10 +510,10 @@
         "fr": "Chang'e-7 est une mission robotique chinoise vers le pôle Sud de la Lune, composée d'un orbiteur, d'un atterrisseur, d'un rover et d'une petite sonde sauteuse. Elle doit surtout rechercher de la glace d'eau et d'autres substances volatiles dans les cratères plongés dans une ombre permanente, et étudier la composition du sol, l'environnement et le relief de la région. Ces résultats aideront à préparer une future station de recherche lunaire."
       },
       "notes": {
-        "en": "Not launched: the August 2026 window was lost to Typhoon Narra; launch postponed to 2027.",
-        "fr": "Pas lancée : la fenêtre d’août 2026 a été perdue à cause du typhon Narra ; lancement reporté à 2027."
+        "en": "Not launched: the August 2026 window was lost to Typhoon Narra; launch postponed to 2027, with no official new date confirmed as of 2026-10-24.",
+        "fr": "Pas lancée : la fenêtre d’août 2026 a été perdue à cause du typhon Narra ; lancement reporté à 2027, sans nouvelle date officielle confirmée au 2026-10-24."
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-24",
       "sources": [
         "https://en.wikipedia.org/wiki/Chang'e_7",
         "https://www.scientificamerican.com/article/china-delays-ambitious-change-7-moon-mission-until-2027/"
@@ -913,30 +927,39 @@
       "agency": "JAXA",
       "country": "jp",
       "launchDate": "2026-10-19",
-      "centralBody": "mars",
-      "status": "planned",
+      "centralBody": "sun",
+      "status": "cruise",
       "orbit": {
-        "en": "Planned: arrival in the Mars system in 2027 (~1-year cruise), Phobos observation and sampling 2027–2030, departure 2030, Earth return FY2031",
-        "fr": "Prévu : arrivée dans le système martien en 2027 (~1 an de croisière), observation et prélèvement sur Phobos 2027–2030, départ en 2030, retour sur Terre en AF 2031"
+        "en": "Heliocentric cruise after a successful October 2026 launch; arrival in the Mars system in 2027 (~1-year cruise), Phobos observation and sampling 2027–2030, departure 2030, Earth return FY2031",
+        "fr": "Croisière héliocentrique après un lancement réussi en octobre 2026 ; arrivée dans le système martien en 2027 (~1 an de croisière), observation et prélèvement sur Phobos 2027–2030, départ en 2030, retour sur Terre en AF 2031"
       },
-      "ephemeris": "none",
+      "ephemeris": "horizons",
+      "horizonsId": "-239",
+      "norad": 101109,
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
       "lowOrbit": false,
       "goals": {
         "en": "MMX (Martian Moons eXploration) is a Japanese mission to Phobos and Deimos, the two moons of Mars. It will study both moons from close up, land on Phobos to collect at least 10 grams of its surface and bring them back to Earth, to find out whether these moons are captured asteroids or debris from a giant impact on Mars. It carries IDEFIX, a small French–German rover.",
         "fr": "MMX (Martian Moons eXploration) est une mission japonaise vers Phobos et Deimos, les deux lunes de Mars. Elle étudiera de près les deux lunes, se posera sur Phobos pour y prélever au moins 10 grammes de sol et les rapporter sur Terre, afin de savoir si ces lunes sont des astéroïdes capturés ou des débris d'un impact géant sur Mars. Elle emporte IDEFIX, un petit rover franco-allemand."
       },
       "notes": {
-        "en": "Launch scheduled 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; reserve period 2026-10-21 to 2026-11-07. Carries the CNES/DLR IDEFIX rover and NASA MEGANE.",
-        "fr": "Lancement prévu le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; période de réserve du 2026-10-21 au 2026-11-07. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA)."
+        "en": "Launched 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; the rocket placed MMX into its planned orbit about 71 minutes after liftoff. Carries the CNES/DLR IDEFIX rover and NASA MEGANE. NORAD 101109 / COSPAR 2026-236A; centred on the Sun during the heliocentric cruise (switches to Mars once in the Martian system).",
+        "fr": "Lancée le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; la fusée a placé MMX sur son orbite prévue environ 71 minutes après le décollage. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA). NORAD 101109 / COSPAR 2026-236A ; centrée sur le Soleil pendant la croisière héliocentrique (passera à Mars une fois dans le système martien)."
       },
       "website": {
         "url": "https://www.mmx.jaxa.jp/en/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-24",
       "sources": [
         "https://global.jaxa.jp/press/2026/08/20260820-1_e.html",
         "https://mmx-news.isas.jaxa.jp/?p=2753",
-        "https://www.mmx.jaxa.jp/en/"
+        "https://www.mmx.jaxa.jp/en/",
+        "https://www.nippon.com/en/news/yjj2026102000118/japan-successfully-launches-rocket-with-martian-moon-probe.html",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=MMX"
       ]
     },
     {
@@ -1298,7 +1321,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/bepi_mcs/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/BepiColombo/Latest_updates_BepiColombo_s_arrival_at_Mercury",
         "https://www.esa.int/Enabling_Support/Operations/BepiColombo_begins_Mercury_arrival_with_MTM_separation_success",
@@ -1573,7 +1596,7 @@
       "website": {
         "url": "https://www.esa.int/Space_Safety/Hera"
       },
-      "verified": "2026-10-17",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.esa.int/Space_Safety/Hera/ESA_s_Hera_targets_early_arrival_at_Didymos_asteroids",
         "https://www.esa.int/Enabling_Support/Operations/Hera_operations",
@@ -1698,7 +1721,7 @@
       "website": {
         "url": "https://www.isro.gov.in/Aditya_L1.html"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.isro.gov.in/Aditya_L1_Catches_the_Suns_Early_Warning_Signs.html",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Aditya-L1"
@@ -1741,7 +1764,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/soho/"
       },
-      "verified": "2026-10-17",
+      "verified": "2026-10-24",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
         "https://www.esa.int/Science_Exploration/Space_Science/SOHO/SOHO_overview",
@@ -1993,7 +2016,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/imap/"
       },
-      "verified": "2026-10-17",
+      "verified": "2026-10-24",
       "sources": [
         "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
         "https://science.nasa.gov/blogs/imap/2026/08",
