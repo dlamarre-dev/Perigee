@@ -19,6 +19,7 @@ import {
   findInCatalogs,
   imageOf,
   resolve,
+  sitesByBody,
   viewOf,
   type FoundObject,
   type ObjectRef,
@@ -178,7 +179,7 @@ function defaultCentre(ref: ObjectRef): string {
     case 'launch':
       return 'earth';
     case 'site':
-      return ref.body === 'moon' ? 'moon:moon' : 'mars';
+      return ref.body === 'moon' ? 'moon:moon' : ref.body === 'titan' ? 'moon:titan' : ref.body;
     case 'mission':
       return ref.mission.centralBody === 'moon' ? 'moon:moon' : ref.mission.centralBody;
     case 'moon':
@@ -1313,7 +1314,7 @@ export class Engine {
       catalogues: {
         missions: catalogs.missions.length,
         scienceSatellites: catalogs.science.length,
-        landingSites: catalogs.moonSites.length + catalogs.marsSites.length,
+        landingSites: sitesByBody().reduce((n, [, sites]) => n + sites.length, 0),
         launchSites: catalogs.launchSites.length,
       },
       frame:

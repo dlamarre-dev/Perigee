@@ -131,6 +131,10 @@ export const fr: Messages = {
   'map.venus.main': 'Sommet des nuages (vue d’artiste, Solar System Scope, CC BY 4.0)',
   'map.venus.alt':
     'La surface sous les nuages, d’après les images radar de Magellan (NASA) (Solar System Scope, CC BY 4.0) ; couleurs indicatives',
+  'sites.show': 'Sites d’atterrissage et d’impact ({n})',
+  'sites.showLanding': 'Site d’atterrissage',
+  'sites.showImpact': 'Site d’impact',
+  'sites.tab': 'Site',
   'preview.body': 'Même carte que dans la vue 3D, éclairée de côté ; glisser pour la tourner',
   'preview.star': 'Illustration : la couleur de sa surface à {t} K (pas une photographie)',
   'preview.starWithSun':

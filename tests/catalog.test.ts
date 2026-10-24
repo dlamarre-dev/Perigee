@@ -1,11 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import missionsJson from '../catalog/missions.json';
 import moonSitesJson from '../catalog/landing-sites/moon.json';
+import marsSitesJson from '../catalog/landing-sites/mars.json';
+import mercurySitesJson from '../catalog/landing-sites/mercury.json';
+import venusSitesJson from '../catalog/landing-sites/venus.json';
+import titanSitesJson from '../catalog/landing-sites/titan.json';
 import { LandingSitesSchema, MissionsCatalogSchema } from '../src/data/schemas';
+
+/** Every landing-site file: `site:<id>` is one namespace across them. */
+const ALL_SITES = [moonSitesJson, marsSitesJson, mercurySitesJson, venusSitesJson, titanSitesJson].flatMap(
+  (f) => LandingSitesSchema.parse(f).sites,
+);
 
 describe('curated catalogues', () => {
   const missions = MissionsCatalogSchema.parse(missionsJson);
-  const sites = LandingSitesSchema.parse(moonSitesJson);
+  const sites = { sites: ALL_SITES };
 
   it('missions have unique ids and Horizons missions have an id and sampling', () => {
     const ids = missions.missions.map((m) => m.id);
@@ -32,15 +41,11 @@ describe('3D models catalogue', () => {
   it('every model target exists, and each model file is published', async () => {
     const { existsSync } = await import('node:fs');
     const models = (await import('../catalog/models.json')).default;
-    const marsSites = (await import('../catalog/landing-sites/mars.json')).default;
     const moonsCatalog = (await import('../catalog/moons.json')).default;
     const { ModelsCatalogSchema } = await import('../src/data/schemas');
     const parsed = ModelsCatalogSchema.parse(models);
     const missionIds = new Set(MissionsCatalogSchema.parse(missionsJson).missions.map((m) => m.id));
-    const siteIds = new Set([
-      ...LandingSitesSchema.parse(marsSites).sites.map((s) => s.id),
-      ...LandingSitesSchema.parse(moonSitesJson).sites.map((s) => s.id),
-    ]);
+    const siteIds = new Set(ALL_SITES.map((s) => s.id));
     const moonIds = new Set(moonsCatalog.moons.map((m: { id: string }) => m.id));
     const ids = new Set<string>();
     for (const m of parsed.models) {
@@ -62,7 +67,6 @@ describe('panel images catalogue', () => {
     const { existsSync } = await import('node:fs');
     const images = (await import('../catalog/images.json')).default;
     const models = (await import('../catalog/models.json')).default;
-    const marsSites = (await import('../catalog/landing-sites/mars.json')).default;
     const launchSites = (await import('../catalog/launch-sites.json')).default;
     const science = (await import('../catalog/earth-science.json')).default;
     const { ImagesCatalogSchema, ModelsCatalogSchema, LaunchSitesSchema, EarthScienceCatalogSchema } =
@@ -70,8 +74,7 @@ describe('panel images catalogue', () => {
     const parsed = ImagesCatalogSchema.parse(images);
     const known = new Set([
       ...MissionsCatalogSchema.parse(missionsJson).missions.map((m) => `mission:${m.id}`),
-      ...LandingSitesSchema.parse(marsSites).sites.map((s) => `site:${s.id}`),
-      ...LandingSitesSchema.parse(moonSitesJson).sites.map((s) => `site:${s.id}`),
+      ...ALL_SITES.map((s) => `site:${s.id}`),
       ...LaunchSitesSchema.parse(launchSites).sites.map((s) => `launch:${s.id}`),
       ...EarthScienceCatalogSchema.parse(science).satellites.map((s) => `norad:${s.norad}`),
     ]);

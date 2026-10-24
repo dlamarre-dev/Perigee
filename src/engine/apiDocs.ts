@@ -13,7 +13,7 @@ import { MAX_ABS_RATE, VIEW_IDS } from '../app/urlState';
 import { EMBED_PROTOCOL } from '../app/embedApi';
 import { Engine } from './index';
 import { PublishedData } from './data';
-import { catalogs, imageOf, resolve } from './objects';
+import { catalogs, imageOf, resolve, sitesByBody } from './objects';
 import { ACCURACY, DISCLAIMER } from './provenance';
 
 export interface BuildInfo {
@@ -75,9 +75,8 @@ function build(site: string, info: BuildInfo) {
     ),
     ...catalogs.missions.map((m) => entry(m.id, 'mission', omit(m, ['id', 'color', 'sampling']))),
     ...catalogs.science.map((s) => entry(String(s.norad), 'satellite', omit(s, ['id']))),
-    ...catalogs.moonSites.map((s) => entry(`site:${s.id}`, 'site', { body: 'moon', ...omit(s, ['id']) })),
-    ...catalogs.marsSites.map((s) =>
-      entry(`site:${s.id}`, 'site', { body: 'mars', ...omit(s, ['id', 'feed']) }),
+    ...sitesByBody().flatMap(([body, sites]) =>
+      sites.map((s) => entry(`site:${s.id}`, 'site', { body, ...omit(s, ['id', 'feed']) })),
     ),
     ...catalogs.launchSites.map((s) => entry(`launch:${s.id}`, 'launch-site', omit(s, ['id']))),
     ...catalogs.stars.map((s) => {
@@ -180,7 +179,7 @@ function interfaceDoc(site: string, header: object): object {
     },
     ids: {
       description:
-        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet or dwarf planet id ("mars", "ceres"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for Moon and Mars landing sites, "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars. The `view` and `embed` links of each catalogue object open it.',
+        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet or dwarf planet id ("mars", "ceres"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for landing and impact sites on the Moon, Mars, Mercury, Venus and Titan (Mercury, Venus and Titan in the solar view, where the site opens in the second tab of the info panel), "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars. The `view` and `embed` links of each catalogue object open it.',
     },
     url: {
       base: site,
@@ -324,7 +323,7 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
   };
   section('Missions beyond Earth orbit', ['mission']);
   section('Featured Earth science satellites', ['satellite']);
-  section('Landing and impact sites (Moon, Mars)', ['site']);
+  section('Landing and impact sites (Moon, Mars, Mercury, Venus, Titan)', ['site']);
   section('Launch sites', ['launch-site']);
   lines.push('## Glossary', '');
   for (const g of b.glossary) lines.push(`- **${g.labels.en.join(' / ') || g.term}**: ${g.definition.en}`);

@@ -1493,6 +1493,24 @@ h2[tabindex='-1']:focus {
   font-size: 12px;
 }
 
+/* Detail panel tabs (DetailPanel `tabs`): the body and one of its landing sites, side by side. */
+.detail-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 10px 0 8px;
+}
+
+.detail-list-row[hidden],
+.detail-tabs[hidden] {
+  display: none;
+}
+
+.detail-tabs .btn {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Enlarged image (src/ui/ImageViewer.ts), in About's frame. */
 .image-viewer {
   max-width: min(1100px, calc(100% - 2 * var(--gutter)));

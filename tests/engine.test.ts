@@ -335,6 +335,24 @@ describe('engine view descriptions', () => {
     expect(text).toMatch(/temps arrêté/);
   });
 
+  it('places the Mercury, Venus and Titan sites on their body, shown in the solar view', async () => {
+    const venera = await engine.state('site:venera-13', '2026-09-26T00:00:00Z');
+    expect(venera.centre).toBe('venus');
+    expect(venera.distanceKm).toBeCloseTo(6051.8, 0);
+    expect(venera.provenance[0]?.model).toBe('site-coordinates');
+    const messenger = await engine.state('site:messenger-impact', '2026-09-26T00:00:00Z');
+    expect(messenger.centre).toBe('mercury');
+    expect(messenger.distanceKm).toBeCloseTo(2439.7, 0);
+    const huygens = await engine.state('site:huygens', '2026-09-26T00:00:00Z');
+    expect(huygens.centre).toBe('moon:titan');
+    expect(huygens.distanceKm).toBeCloseTo(2574.7, 0);
+    const found = await engine.find('Huygens');
+    expect(found.map((r) => r.id)).toContain('site:huygens');
+    const view = await engine.describeView('?view=solar&sel=site:venera-13&sites=1', 'en');
+    expect(String(view['description'])).toMatch(/Venera 13/);
+    expect(String(view['description'])).toMatch(/marked on its surface/);
+  });
+
   it('names a landing site and says when a position is unknown', async () => {
     const site = await engine.describeView('?view=moon&sel=site:apollo-11', 'en');
     expect(String(site['description'])).toMatch(/Apollo 11, crewed landing site, 1969-07-20/);

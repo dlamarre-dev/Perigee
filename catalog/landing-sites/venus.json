@@ -1,0 +1,278 @@
+{
+  "verified": "2026-10-23",
+  "sites": [
+    {
+      "id": "venera-7",
+      "name": {
+        "en": "Venera 7",
+        "fr": "Venera 7"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1970-12-15",
+      "type": "soft",
+      "latDeg": -5.0,
+      "lonDeg": -9.0,
+      "note": {
+        "en": "First spacecraft to send data from the surface of another planet: about 475 °C. Its parachute tore and it struck the ground at about 17 m/s, yet it kept transmitting a weak signal for 23 minutes. Position known to about 1° (some 100 km).",
+        "fr": "Premier engin à transmettre des données depuis la surface d’une autre planète : environ 475 °C. Son parachute s’étant déchiré, il a heurté le sol à environ 17 m/s, mais a continué d’émettre un faible signal pendant 23 minutes. Position connue à environ 1° près (une centaine de km)."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1970-060A"]
+    },
+    {
+      "id": "venera-8",
+      "name": {
+        "en": "Venera 8",
+        "fr": "Venera 8"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1972-07-22",
+      "type": "soft",
+      "latDeg": -10.7,
+      "lonDeg": -24.75,
+      "note": {
+        "en": "First landing on the day side (63 minutes on the surface): it showed that enough sunlight reaches the ground to take pictures, and measured the potassium, uranium and thorium of the soil. Position: centre of a landing area about 150 km in radius.",
+        "fr": "Premier atterrissage du côté jour (63 minutes au sol) : il a montré qu’assez de lumière atteint le sol pour photographier, et a mesuré le potassium, l’uranium et le thorium du sol. Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1972-021A",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "venera-9",
+      "name": {
+        "en": "Venera 9",
+        "fr": "Venera 9"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1975-10-22",
+      "type": "soft",
+      "latDeg": 31.01,
+      "lonDeg": -68.36,
+      "note": {
+        "en": "Took the first pictures ever from the surface of another planet (53 minutes on the surface): a slope strewn with sharp-edged rocks near Beta Regio. Position: centre of a landing area about 150 km in radius.",
+        "fr": "A pris les toutes premières images depuis la surface d’une autre planète (53 minutes au sol) : une pente couverte de roches anguleuses près de Beta Regio. Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-050D",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "venera-10",
+      "name": {
+        "en": "Venera 10",
+        "fr": "Venera 10"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1975-10-25",
+      "type": "soft",
+      "latDeg": 15.42,
+      "lonDeg": -68.49,
+      "note": {
+        "en": "Photographed flat slabs of rock some 2,200 km from Venera 9 and found a rock similar to basalt (65 minutes on the surface). Position: centre of a landing area about 150 km in radius.",
+        "fr": "A photographié des dalles rocheuses à quelque 2 200 km de Venera 9 et trouvé une roche proche du basalte (65 minutes au sol). Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-054D",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "venera-11",
+      "name": {
+        "en": "Venera 11",
+        "fr": "Venera 11"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1978-12-25",
+      "type": "soft",
+      "latDeg": -14.0,
+      "lonDeg": -61.0,
+      "note": {
+        "en": "Studied the atmosphere and detected what may be lightning during its descent; its camera covers did not open and its soil sample was lost (95 minutes on the surface). Position known to about 1° (some 100 km).",
+        "fr": "A étudié l’atmosphère et détecté de possibles éclairs pendant sa descente ; ses caméras sont restées fermées et son échantillon de sol a été perdu (95 minutes au sol). Position connue à environ 1° près (une centaine de km)."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-084D"]
+    },
+    {
+      "id": "venera-12",
+      "name": {
+        "en": "Venera 12",
+        "fr": "Venera 12"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1978-12-21",
+      "type": "soft",
+      "latDeg": -7.0,
+      "lonDeg": -66.0,
+      "note": {
+        "en": "Twin of Venera 11: it measured the make-up and electrical activity of the atmosphere, but its camera covers did not open either (110 minutes on the surface). Position known to about 1° (some 100 km).",
+        "fr": "Jumelle de Venera 11 : elle a mesuré la composition et l’activité électrique de l’atmosphère, mais ses caméras ne se sont pas ouvertes non plus (110 minutes au sol). Position connue à environ 1° près (une centaine de km)."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-086C"]
+    },
+    {
+      "id": "venera-13",
+      "name": {
+        "en": "Venera 13",
+        "fr": "Venera 13"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1982-03-01",
+      "type": "soft",
+      "latDeg": -7.55,
+      "lonDeg": -56.31,
+      "note": {
+        "en": "First colour pictures of the surface of Venus; it drilled a soil sample and analysed it on board (a basalt rich in potassium). Built for 32 minutes, it lasted 127. Position: centre of a landing area about 150 km in radius.",
+        "fr": "Premières images en couleur du sol de Vénus ; il a foré un échantillon et l’a analysé à bord (un basalte riche en potassium). Conçu pour 32 minutes, il en a tenu 127. Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1981-106D",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "venera-14",
+      "name": {
+        "en": "Venera 14",
+        "fr": "Venera 14"
+      },
+      "agency": "USSR (Lavochkin)",
+      "country": "su",
+      "date": "1982-03-05",
+      "type": "soft",
+      "latDeg": -13.05,
+      "lonDeg": -49.81,
+      "note": {
+        "en": "Landed on a plain of layered rock some 950 km from Venera 13 and took colour pictures (57 minutes on the surface); by bad luck, its soil probe hit its own ejected lens cap. Position: centre of a landing area about 150 km in radius.",
+        "fr": "S’est posé sur une plaine de roches litées à quelque 950 km de Venera 13 et a pris des images en couleur (57 minutes au sol) ; par malchance, sa sonde de sol a touché son propre cache d’objectif éjecté. Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1981-110D",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "vega-1-lander",
+      "name": {
+        "en": "Vega 1 lander",
+        "fr": "Atterrisseur de Vega 1"
+      },
+      "agency": "USSR (IKI, Lavochkin), with CNES",
+      "country": "su",
+      "date": "1985-06-11",
+      "type": "soft",
+      "latDeg": 8.1,
+      "lonDeg": 175.85,
+      "note": {
+        "en": "Dropped on the way to Halley’s Comet, with a balloon that floated in the clouds; its soil drill started too early, during the descent, so no surface sample was analysed (56 minutes on the surface). Position: centre of a landing area about 150 km in radius.",
+        "fr": "Largué en route vers la comète de Halley, avec un ballon qui a flotté dans les nuages ; son foret s’est déclenché trop tôt, pendant la descente, et aucun échantillon de sol n’a été analysé (56 minutes au sol). Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1984-125E",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "vega-2-lander",
+      "name": {
+        "en": "Vega 2 lander",
+        "fr": "Atterrisseur de Vega 2"
+      },
+      "agency": "USSR (IKI, Lavochkin), with CNES",
+      "country": "su",
+      "date": "1985-06-15",
+      "type": "soft",
+      "latDeg": -7.14,
+      "lonDeg": 177.67,
+      "note": {
+        "en": "Analysed a rock of a kind rare on the plains of Venus (anorthosite-troctolite), before its spacecraft flew on to Halley’s Comet. NASA’s catalogue gives 164.5° E; the refined position is used here. Position: centre of a landing area about 150 km in radius.",
+        "fr": "A analysé une roche rare dans les plaines de Vénus (anorthosite-troctolite), avant que sa sonde ne poursuive vers la comète de Halley. Le catalogue de la NASA donne 164,5° E ; la position affinée est utilisée ici. Position : centre d’une zone d’atterrissage d’environ 150 km de rayon."
+      },
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1984-128E",
+        "https://ntrs.nasa.gov/citations/19930005108"
+      ]
+    },
+    {
+      "id": "pioneer-venus-large-probe",
+      "name": {
+        "en": "Pioneer Venus Large Probe",
+        "fr": "Pioneer Venus, grande sonde"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "date": "1978-12-09",
+      "type": "hard",
+      "latDeg": 4.4,
+      "lonDeg": -56.0,
+      "note": {
+        "en": "Measured the composition of the clouds under its parachute, then fell freely to the ground; like the three small probes, it was not built to survive the impact.",
+        "fr": "A mesuré la composition des nuages sous son parachute, puis est tombée librement jusqu’au sol ; comme les trois petites sondes, elle n’était pas conçue pour survivre à l’impact."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-078D"]
+    },
+    {
+      "id": "pioneer-venus-north-probe",
+      "name": {
+        "en": "Pioneer Venus North Probe",
+        "fr": "Pioneer Venus, sonde Nord"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "date": "1978-12-09",
+      "type": "hard",
+      "latDeg": 59.3,
+      "lonDeg": 4.8,
+      "note": {
+        "en": "Sounded the atmosphere at high northern latitudes, on the night side, down to the ground.",
+        "fr": "A sondé l’atmosphère aux hautes latitudes nord, côté nuit, jusqu’au sol."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-078E"]
+    },
+    {
+      "id": "pioneer-venus-day-probe",
+      "name": {
+        "en": "Pioneer Venus Day Probe",
+        "fr": "Pioneer Venus, sonde Jour"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "date": "1978-12-09",
+      "type": "hard",
+      "latDeg": -31.3,
+      "lonDeg": -43.0,
+      "note": {
+        "en": "Sounded the day side; though not built to survive the impact, it kept transmitting from the ground for 67 minutes.",
+        "fr": "A sondé le côté jour ; bien qu’elle ne soit pas conçue pour survivre à l’impact, elle a émis depuis le sol pendant 67 minutes."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-078G"]
+    },
+    {
+      "id": "pioneer-venus-night-probe",
+      "name": {
+        "en": "Pioneer Venus Night Probe",
+        "fr": "Pioneer Venus, sonde Nuit"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "date": "1978-12-09",
+      "type": "hard",
+      "latDeg": -28.7,
+      "lonDeg": 56.7,
+      "note": {
+        "en": "Sounded the night side at southern mid-latitudes; it went on transmitting for 2 seconds after the impact.",
+        "fr": "A sondé le côté nuit aux latitudes moyennes sud ; elle a encore émis 2 secondes après l’impact."
+      },
+      "sources": ["https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1978-078F"]
+    }
+  ]
+}

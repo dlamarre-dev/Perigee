@@ -344,6 +344,12 @@ export async function describeView(
       );
       facts['logScale'] = true;
     }
+    if (p.get('sites') === '1')
+      extra.push(
+        fr
+          ? 'Les sites d’atterrissage et d’impact de l’astre sélectionné (Mercure, Vénus, Titan) sont marqués à sa surface.'
+          : 'The landing and impact sites of the selected body (Mercury, Venus, Titan) are marked on its surface.',
+      );
     if (p.get('stars') === '1')
       extra.push(
         fr ? 'Les étoiles brillantes sont nommées sur le ciel.' : 'The bright stars are named on the sky.',

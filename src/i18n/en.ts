@@ -126,6 +126,10 @@ export const en = {
   'map.venus.main': 'Cloud tops (artist’s impression, Solar System Scope, CC BY 4.0)',
   'map.venus.alt':
     'The surface below the clouds, from NASA Magellan radar images (Solar System Scope, CC BY 4.0); colours are illustrative',
+  'sites.show': 'Landing and impact sites ({n})',
+  'sites.showLanding': 'Landing site',
+  'sites.showImpact': 'Impact site',
+  'sites.tab': 'Site',
   'preview.body': 'Same map as in the 3D view, lit from one side; drag to turn it',
   'preview.star': 'Illustration: the colour of its surface at {t} K (not a photograph)',
   'preview.starWithSun':

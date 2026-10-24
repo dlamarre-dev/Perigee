@@ -1,0 +1,23 @@
+{
+  "verified": "2026-10-23",
+  "sites": [
+    {
+      "id": "messenger-impact",
+      "name": { "en": "MESSENGER", "fr": "MESSENGER" },
+      "agency": "NASA",
+      "country": "us",
+      "date": "2015-04-30",
+      "type": "impact",
+      "latDeg": 54.4,
+      "lonDeg": -149.9,
+      "note": {
+        "en": "First spacecraft to orbit Mercury (2011–2015): it mapped the whole planet and found water ice in permanently shadowed polar craters. Out of propellant, it struck the surface at 3.91 km/s on the far side as seen from the Earth, on a ridge north-east of the Shakespeare basin, making a crater about 16 m wide. Position: NASA's prediction 24 hours before the impact (54.4° N, 210.1° E); the crater has not been photographed yet.",
+        "fr": "Premier engin en orbite autour de Mercure (2011–2015) : il a cartographié toute la planète et trouvé de la glace d’eau dans des cratères polaires toujours à l’ombre. À court de carburant, il s’est écrasé à 3,91 km/s sur la face cachée vue de la Terre, sur une crête au nord-est du bassin Shakespeare, en creusant un cratère d’environ 16 m. Position : prévision de la NASA 24 heures avant l’impact (54,4° N, 210,1° E) ; le cratère n’a pas encore été photographié."
+      },
+      "sources": [
+        "https://photojournal.jpl.nasa.gov/catalog/PIA19443",
+        "https://science.nasa.gov/photojournal/overview-of-the-impact-region/"
+      ]
+    }
+  ]
+}

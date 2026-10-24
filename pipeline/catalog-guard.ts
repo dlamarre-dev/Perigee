@@ -71,6 +71,18 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
     schema: LandingSitesSchema,
     entries: (p) => byId((p as z.infer<typeof LandingSitesSchema>).sites),
   },
+  'catalog/landing-sites/mercury.json': {
+    schema: LandingSitesSchema,
+    entries: (p) => byId((p as z.infer<typeof LandingSitesSchema>).sites),
+  },
+  'catalog/landing-sites/venus.json': {
+    schema: LandingSitesSchema,
+    entries: (p) => byId((p as z.infer<typeof LandingSitesSchema>).sites),
+  },
+  'catalog/landing-sites/titan.json': {
+    schema: LandingSitesSchema,
+    entries: (p) => byId((p as z.infer<typeof LandingSitesSchema>).sites),
+  },
   'catalog/models.json': {
     schema: ModelsCatalogSchema,
     entries: (p) => byId((p as z.infer<typeof ModelsCatalogSchema>).models),

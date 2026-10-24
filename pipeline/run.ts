@@ -436,6 +436,9 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   const missionsCatalog = MissionsCatalogSchema.parse(await readJson('catalog/missions.json'));
   const moon = LandingSitesSchema.parse(await readJson('catalog/landing-sites/moon.json'));
   const mars = LandingSitesSchema.parse(await readJson('catalog/landing-sites/mars.json'));
+  const mercury = LandingSitesSchema.parse(await readJson('catalog/landing-sites/mercury.json'));
+  const venus = LandingSitesSchema.parse(await readJson('catalog/landing-sites/venus.json'));
+  const titan = LandingSitesSchema.parse(await readJson('catalog/landing-sites/titan.json'));
   const moons = MoonsCatalogSchema.parse(await readJson('catalog/moons.json'));
   const stars = StarsCatalogSchema.parse(await readJson('catalog/stars.json'));
   const earthScience = EarthScienceCatalogSchema.parse(await readJson('catalog/earth-science.json'));
@@ -500,6 +503,9 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/operators.json', verified: operators.verified },
         { path: 'catalog/landing-sites/moon.json', verified: moon.verified },
         { path: 'catalog/landing-sites/mars.json', verified: mars.verified },
+        { path: 'catalog/landing-sites/mercury.json', verified: mercury.verified },
+        { path: 'catalog/landing-sites/venus.json', verified: venus.verified },
+        { path: 'catalog/landing-sites/titan.json', verified: titan.verified },
         { path: 'catalog/moons.json', verified: moons.verified },
         { path: 'catalog/earth-science.json', verified: earthScience.verified },
         { path: 'catalog/stars.json', verified: stars.verified },

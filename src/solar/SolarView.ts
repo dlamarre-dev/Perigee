@@ -16,6 +16,7 @@ import {
   LineDashedMaterial,
   LineSegments,
   Sprite,
+  type PerspectiveCamera,
   type Material,
 } from 'three';
 import missionsJson from '../../catalog/missions.json';
@@ -42,14 +43,7 @@ import {
   logScalePosition,
   type PlanetInfo,
 } from '../astro/planets';
-import {
-  QUAT_IDENTITY,
-  quatFromAxisAngle,
-  quatFromBasis,
-  quatMultiply,
-  quatRotate,
-  type Quat,
-} from '../astro/quat';
+import { QUAT_IDENTITY, quatFromAxisAngle, quatMultiply, quatRotate, type Quat } from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
 import { EphemerisTrack, HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS, type TrackSample } from '../astro/track';
 import { nearSampleTimes } from '../astro/trajectory';
@@ -64,6 +58,10 @@ import {
   withModel,
 } from '../render/models';
 import { withImage } from '../render/images';
+import mercurySitesJson from '../../catalog/landing-sites/mercury.json';
+import venusSitesJson from '../../catalog/landing-sites/venus.json';
+import titanSitesJson from '../../catalog/landing-sites/titan.json';
+import { SurfaceSites } from './SurfaceSites';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
@@ -81,6 +79,8 @@ import {
   type Manifest,
   type Star,
   type SunRegions,
+  type LandingSite,
+  LandingSitesSchema,
 } from '../data/schemas';
 import { formatDec, formatRa, isBrightStar, isNearbyStar, starDirectionEqj } from '../astro/stars';
 import { altShown, MAP_VARIANTS, onMapVariantChange } from '../render/mapVariants';
@@ -94,9 +94,9 @@ import {
   sunspotGroups,
 } from '../astro/sunspots';
 import { effectEnabled } from '../render/effects';
-import { moonState } from '../astro/moons';
+import { moonState, tidalOrientationEqj } from '../astro/moons';
 import { EphemerisTable, hermite, type StateVector } from '../astro/hermite';
-import type { MessageKey } from '../i18n';
+import type { I18n, MessageKey } from '../i18n';
 import { BodyMesh, bodySphere, type GasProfile } from '../render/BodyMesh';
 import { attachRelief, reliefStrength } from '../render/relief';
 import { createEarthMesh } from '../render/earthMesh';
@@ -109,7 +109,7 @@ import { RingMesh } from '../render/RingMesh';
 import { textureLevels } from '../render/textureLevels';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
 import { countryName } from '../ui/countries';
-import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
+import { DetailPanel, type BadgeState, type DetailContent, type DetailTab } from '../ui/DetailPanel';
 import { SolarPanel } from '../ui/SolarPanel';
 import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
 import { setLinePositions } from '../render/lineBuffers';
@@ -177,6 +177,15 @@ const DEFAULT_PROBE_COLOR = '#e0e0e0';
 const LIGHT_SPEED_KM_S = 299_792.458;
 /** Textures (and rings) load once the body is closer than this many radii (apparent size ≳ 0.04°). */
 const TEXTURE_LOAD_RADII = 3000;
+/** "Landing and impact sites (14)", or the kind of the only one ("Landing site"). */
+function sitesLabel(i18n: I18n, sites: readonly LandingSite[]): string {
+  const [only] = sites;
+  if (sites.length !== 1 || !only) return i18n.format('sites.show', { n: sites.length });
+  return i18n.t(only.type === 'impact' || only.type === 'hard' ? 'sites.showImpact' : 'sites.showLanding');
+}
+
+/** The selected body's site names (besides the selected site's) once its disc is this large (CSS px radius). */
+const SITE_LABELS_MIN_DISC_PX = 120;
 
 type Selection =
   | { readonly kind: 'sun' }
@@ -354,6 +363,13 @@ class SolarView implements View {
   private readonly stars: readonly StarObject[];
   /** Name the bright stars on the sky (URL `stars=1`); a selected star is named in any case. */
   private showStars: boolean;
+  /** Landing and impact sites of the bodies that have some (Venus, Titan), by body id. */
+  private readonly surfaceSites = new Map<string, SurfaceSites>();
+  /** The site described in the detail panel's second tab, on the selected body (which stays followed). */
+  private site: LandingSite | undefined;
+  private detailTab: DetailTab = 'main';
+  /** Every site of the selected body marked and listed (detail panel checkbox, URL `sites=1`). */
+  private showSites: boolean;
   /** Name the stars within 20 light-years on the sky (URL `nearby=1`). */
   private showNearbyStars: boolean;
   /** The selected star's 3D map is open (URL `map=1`), with this star picked for comparison (`pick`). */
@@ -392,6 +408,7 @@ class SolarView implements View {
   constructor(private readonly host: ViewHost) {
     this.logScale = host.initialParams.get('log') === '1';
     this.showStars = host.initialParams.get('stars') === '1';
+    this.showSites = host.initialParams.get('sites') === '1';
     this.showNearbyStars = host.initialParams.get('nearby') === '1';
     this.stars = StarsCatalogSchema.parse(starsJson).stars.map((star) => ({
       star,
@@ -663,6 +680,23 @@ class SolarView implements View {
     host.i18n.onChange(() => {
       if (!this.disposed) this.refreshLabels();
     });
+    for (const [bodyId, json] of [
+      ['mercury', mercurySitesJson],
+      ['venus', venusSitesJson],
+      ['titan', titanSitesJson],
+    ] as const) {
+      const mesh =
+        this.planets.find((x) => x.info.id === bodyId)?.mesh ??
+        this.moons.find((m) => m.moon.id === bodyId)?.mesh;
+      const radiusKm =
+        this.planets.find((x) => x.info.id === bodyId)?.info.radiusKm ??
+        this.moons.find((m) => m.moon.id === bodyId)?.moon.radiusKm;
+      if (mesh && radiusKm)
+        this.surfaceSites.set(
+          bodyId,
+          new SurfaceSites(bodyId, LandingSitesSchema.parse(json), mesh, radiusKm),
+        );
+    }
     this.refreshLabels();
     this.restoreFromUrl(host.initialParams);
     void this.loadEphemerides();
@@ -696,6 +730,7 @@ class SolarView implements View {
       const orientation =
         p.info.id === 'earth' ? earthOrientation(date) : bodyOrientationEqj(p.info.body, date);
       p.mesh.setOrientation(quatMultiply(this.sceneQ, orientation));
+      this.surfaceSites.get(p.info.id)?.update(p.scene, quatMultiply(this.sceneQ, orientation));
       p.mesh.setSunDirection(normalize(scale(p.scene, -1)));
       p.mesh.mesh.visible = !this.logScale;
     }
@@ -842,6 +877,7 @@ class SolarView implements View {
       }
     }
     this.placeMoons(rel);
+    this.placeSites();
     // A followed body seen large names itself: no marker or ring over its disc (as for its label).
     const large = this.followedBodyLarge();
     const selKey = this.selection ? selectionKey(this.selection) : undefined;
@@ -930,6 +966,12 @@ class SolarView implements View {
   }
 
   click(xCss: number, yCss: number, double: boolean): void {
+    // A site of the selected body: described in the panel's second tab, the body stays selected and followed.
+    const site = this.siteAt(xCss, yCss);
+    if (site) {
+      this.pickSite(site);
+      return;
+    }
     let best: { sel: Selection; d: number; depth: number } | undefined;
     const consider = (sel: Selection, scene: Vec3 | undefined): void => {
       if (!scene || !sel) return;
@@ -979,9 +1021,12 @@ class SolarView implements View {
     const sel = this.selection;
     if (sel?.kind === 'sun') p.set('sel', 'sun');
     if (sel?.kind === 'planet') p.set('sel', sel.planet.id);
+    if (this.showSites) p.set('sites', '1');
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
     if (sel?.kind === 'star') p.set('sel', `star:${sel.star.id}`);
+    // A site shown in the second tab: its body is implied (selectId resolves it).
+    if (this.site && this.detailTab === 'sub') p.set('sel', `site:${this.site.id}`);
     if (this.logScale) p.set('log', '1');
     if (this.showStars) p.set('stars', '1');
     if (this.showNearbyStars) p.set('nearby', '1');
@@ -995,6 +1040,7 @@ class SolarView implements View {
   dispose(): void {
     this.disposed = true;
     this.offMapVariant();
+    for (const sites of this.surfaceSites.values()) sites.dispose();
     const scene = this.host.renderer.scene;
     scene.remove(
       this.sun.mesh,
@@ -1502,6 +1548,9 @@ class SolarView implements View {
         text: m.moon.name[lang],
         className: 'label-planet',
       })),
+      ...[...this.surfaceSites.values()].flatMap((sites) =>
+        sites.sites.map((site) => ({ id: `ls:${site.id}`, text: site.name[lang], className: 'label-site' })),
+      ),
       ...this.stars.map((s) => {
         const selected = this.selection?.kind === 'star' && this.selection.star.id === s.star.id;
         return {
@@ -1642,6 +1691,7 @@ class SolarView implements View {
         selected ? LabelPriority.Selected : MOON_PRIORITY,
       );
     }
+    this.placeSiteLabels(camera, w, hgt);
     for (const s of this.stars) {
       const selected = sel?.kind === 'star' && sel.star.id === s.star.id;
       const r = this.starNamed(s) ? this.starRender(s) : undefined;
@@ -1733,6 +1783,13 @@ class SolarView implements View {
       this.select({ kind: 'moon', moon }, { frame: true });
       return true;
     }
+    for (const [bodyId, sites] of this.surfaceSites) {
+      const site = sites.sites.find((x) => `site:${x.id}` === sel);
+      if (!site) continue;
+      if (!this.selectBody(bodyId, { frame: true })) return false;
+      this.pickSite(site);
+      return true;
+    }
     const star = this.stars.find((s) => `star:${s.star.id}` === sel)?.star;
     if (star) {
       this.select({ kind: 'star', star }, { frame: true });
@@ -1746,7 +1803,11 @@ class SolarView implements View {
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
     const cur = this.selection;
     const same = selectionKey(sel) === selectionKey(cur);
-    if (!same) this.host.follow.stop();
+    if (!same) {
+      this.host.follow.stop();
+      this.site = undefined;
+      this.detailTab = 'main';
+    }
     this.selection = sel;
     this.panel.setSelected(selectionKey(sel));
     this.styleOrbits();
@@ -1777,7 +1838,8 @@ class SolarView implements View {
     else if (this.selection) this.startFollowing();
   }
 
-  private startFollowing(): void {
+  /** `viewFrom`: scene direction from the object towards the camera, instead of its day side. */
+  private startFollowing(viewFrom?: Vec3): void {
     const sel = this.selection;
     // Stars are at infinity: nothing to follow.
     if (!sel || sel.kind === 'star' || !this.scenePositionOf(sel)) return;
@@ -1804,13 +1866,13 @@ class SolarView implements View {
     // The Sun is seen from the Earth's side, where its spots were observed.
     const pos = this.scenePositionOf(sel) ?? [1, 0, 0];
     const sunward = sel.kind === 'sun' ? normalize(this.earthScene()) : normalize(scale(pos, -1));
-    const viewFrom = sel.kind === 'sun' ? sunward : add(scale(sunward, Math.SQRT1_2), [0, 0, Math.SQRT1_2]);
+    const daySide = sel.kind === 'sun' ? sunward : add(scale(sunward, Math.SQRT1_2), [0, 0, Math.SQRT1_2]);
     this.detail.following = this.host.follow.start(
       () => this.scenePositionOf(this.selection === sel ? sel : undefined),
       distanceKm,
       () => (this.detail.following = false),
       {
-        viewFrom,
+        viewFrom: viewFrom ?? daySide,
         ...(body
           ? { minDistanceKm: body.minDistanceKm, surfaceRadiusKm: body.surfaceRadiusKm }
           : modelMinDistance(sel.kind === 'mission' ? `mission:${sel.mission.id}` : '')),
@@ -1858,7 +1920,168 @@ class SolarView implements View {
             : sel.kind === 'star'
               ? this.starDetail(sel.star)
               : this.missionDetail(sel.mission);
-    this.detail.show(content, focus);
+    this.detail.show(this.withSites(content), focus);
+  }
+
+  /** The selected body's id when it has landing sites (Venus, Titan), with them. */
+  private selectedSites(): SurfaceSites | undefined {
+    const sel = this.selection;
+    const id = sel?.kind === 'planet' ? sel.planet.id : sel?.kind === 'moon' ? sel.moon.id : undefined;
+    return id === undefined ? undefined : this.surfaceSites.get(id);
+  }
+
+  /** Scene position and radius of a body with sites, when drawn (not in log scale, moon shown). */
+  private sitesBody(sites: SurfaceSites): { scene: Vec3 } | undefined {
+    if (this.logScale) return undefined;
+    const planet = this.planets.find((p) => p.info.id === sites.bodyId);
+    if (planet) return { scene: planet.scene };
+    const moon = this.moons.find((m) => m.moon.id === sites.bodyId);
+    return moon?.shown && moon.scene ? { scene: moon.scene } : undefined;
+  }
+
+  /** Markers of the selected body's sites: all of them with the checkbox, else only the site in the second tab. */
+  private placeSites(): void {
+    const selected = this.selectedSites();
+    for (const sites of this.surfaceSites.values()) {
+      const body = sites === selected ? this.sitesBody(sites) : undefined;
+      sites.place(body !== undefined, this.showSites, this.site, this.originKm, body?.scene ?? [0, 0, 0]);
+    }
+  }
+
+  /** The drawn site marker under the pointer, if any. */
+  private siteAt(xCss: number, yCss: number): LandingSite | undefined {
+    const sites = this.selectedSites();
+    const body = sites && this.sitesBody(sites);
+    if (!sites || !body) return undefined;
+    let best: { site: LandingSite; d: number } | undefined;
+    for (const site of sites.sites) {
+      if (!sites.drawn(site, this.showSites, this.site)) continue;
+      const scene = sites.sceneOf(site, this.originKm, body.scene);
+      const p = scene && this.project(scene, sites.bodyId);
+      if (!p) continue;
+      const d = Math.hypot(p.x - xCss, p.y - yCss);
+      if (d <= pickRadiusPx(PICK_RADIUS_PX) && (!best || d < best.d)) best = { site, d };
+    }
+    return best?.site;
+  }
+
+  /**
+   * Describes a site of the selected body in the panel's second tab; the camera keeps on the body. `aim`: follow the
+   * body seen from above the site (picked from the list, where it may be on the far side).
+   */
+  private pickSite(site: LandingSite, aim = false): void {
+    this.site = site;
+    this.detailTab = 'sub';
+    this.renderDetail(false);
+    const sites = this.selectedSites();
+    const body = sites && this.sitesBody(sites);
+    const up = body && sites.directionOf(site, body.scene);
+    if (aim && up) this.startFollowing(up);
+    this.host.syncUrl();
+  }
+
+  private selectBody(bodyId: string, options: { frame?: boolean }): boolean {
+    const planet = PLANETS.find((x) => x.id === bodyId);
+    const moon = this.moons.find((m) => m.moon.id === bodyId)?.moon;
+    if (planet) this.select({ kind: 'planet', planet }, options);
+    else if (moon) this.select({ kind: 'moon', moon }, options);
+    return planet !== undefined || moon !== undefined;
+  }
+
+  /** Site names: the selected one, and the others once the body is large enough on screen for them to fit. */
+  private placeSiteLabels(camera: PerspectiveCamera, w: number, hgt: number): void {
+    const sites = this.selectedSites();
+    const body = sites && this.sitesBody(sites);
+    if (!sites || !body) return;
+    const o = this.originKm;
+    const radiusKm =
+      this.planets.find((p) => p.info.id === sites.bodyId)?.info.radiusKm ??
+      this.moons.find((m) => m.moon.id === sites.bodyId)?.moon.radiusKm ??
+      0;
+    const discPx = (radiusKm / Math.max(1, length(sub(body.scene, o)))) * this.focalPx();
+    for (const site of sites.sites) {
+      const selected = this.site === site;
+      if (!sites.drawn(site, this.showSites, this.site) || (!selected && discPx < SITE_LABELS_MIN_DISC_PX))
+        continue;
+      const scene = sites.sceneOf(site, o, body.scene);
+      this.labels.place(
+        `ls:${site.id}`,
+        scene && sub(scene, o),
+        scene,
+        camera,
+        o,
+        0,
+        w,
+        hgt,
+        selected ? LabelPriority.Selected : LabelPriority.Site,
+      );
+    }
+  }
+
+  /** A body with landing sites: the two tabs (the body, a site) and the list of its sites behind a checkbox. */
+  private withSites(content: DetailContent): DetailContent {
+    const sites = this.selectedSites();
+    if (!sites) return content;
+    const { i18n } = this.host;
+    const lang = i18n.lang;
+    const site = this.site;
+    const tabs = {
+      main: content.title,
+      sub: site?.name[lang],
+      subPlaceholder: i18n.t('sites.tab'),
+      active: site ? this.detailTab : ('main' as const),
+      onSelect: (tab: DetailTab) => {
+        this.detailTab = tab;
+        this.renderDetail(false);
+        this.host.syncUrl();
+      },
+    };
+    if (site && this.detailTab === 'sub')
+      return { ...this.siteDetail(site, sites), title: content.title, tabs };
+    return {
+      ...content,
+      tabs,
+      list: {
+        label: sitesLabel(i18n, sites.sites),
+        open: this.showSites,
+        onToggle: (open) => {
+          this.showSites = open;
+          this.host.syncUrl();
+        },
+        items: sites.sites.map((s) => ({
+          key: s.id,
+          name: s.name[lang],
+          detail: `${i18n.maybe(`site.${s.type}`) ?? s.type} · ${s.date.slice(0, 4)}`,
+        })),
+        current: site?.id,
+        onPick: (id) => {
+          const picked = sites.sites.find((s) => s.id === id);
+          if (picked) this.pickSite(picked, true);
+        },
+      },
+    };
+  }
+
+  /** A landing or impact site, as in the Moon and Mars views (its body stays followed). */
+  private siteDetail(site: LandingSite, sites: SurfaceSites): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const rows: [string, string][] = [
+      [t('info.type'), i18n.maybe(`site.${site.type}`) ?? site.type],
+      [t('info.date'), site.date],
+      [t('info.agency'), site.agency],
+    ];
+    if (site.country) rows.push([t('info.country'), countryName(i18n, site.country)]);
+    rows.push([t('info.coordinates'), i18n.latLon(site.latDeg, site.lonDeg)]);
+    return {
+      title: site.name[i18n.lang],
+      rows,
+      ...(site.note ? { notes: site.note[i18n.lang] } : {}),
+      sources: site.sources,
+      footnote: i18n.format('info.verified', { date: sites.verified }),
+      followable: true,
+      ...withImage(`site:${site.id}`),
+    };
   }
 
   private scaleBadge(): { text: string; state: BadgeState } | undefined {
@@ -2088,7 +2311,9 @@ class SolarView implements View {
       const s = m.state;
       if (!s || !m.scene) continue;
       m.mesh.setSunDirection(normalize(scale(m.scene, -1)));
-      m.mesh.setOrientation(quatMultiply(this.sceneQ, this.moonOrientation(m, s, date)));
+      const moonQ = quatMultiply(this.sceneQ, this.moonOrientation(m, s, date));
+      m.mesh.setOrientation(moonQ);
+      this.surfaceSites.get(m.moon.id)?.update(m.scene, moonQ);
       const periodMs =
         (m.moon.elements?.periodDays ?? osculatingElements(s, this.moonMu(m, s)).periodS ?? 0) * 1000;
       const period = m.moon.elements ? periodMs * SECONDS_PER_DAY : periodMs;
@@ -2132,10 +2357,7 @@ class SolarView implements View {
    */
   private moonOrientation(m: MoonObject, s: StateVector, date: Date): Quat {
     if (m.moon.id === 'moon') return bodyOrientationEqj(Astronomy.Body.Moon, date);
-    const x = normalize(scale(s.posKm, -1));
-    const z = normalize(cross(s.posKm, s.velKmS));
-    const y = cross(z, x);
-    return quatFromBasis(x, y, z);
+    return tidalOrientationEqj(s);
   }
 
   /** Shows a moon once its orbit is wide enough on screen, and hides what bodies cover. */

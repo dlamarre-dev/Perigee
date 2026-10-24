@@ -34,12 +34,20 @@ response and never overwrites published data with a file under 50 % of the previ
 | Planet positions                                   | [astronomy-engine](https://github.com/cosinekitty/astronomy) (computed in the browser)                                                                                                                                                                           | —                                 | —                      |
 | Planet radii and periods                           | [NASA planetary fact sheets](https://nssdc.gsfc.nasa.gov/planetary/factsheet/)                                                                                                                                                                                   | curated                           | `src/astro/planets.ts` |
 | Spacecraft state vectors (ICRF, heliocentric, TDB) | [NASA/JPL-Caltech Horizons](https://ssd.jpl.nasa.gov/horizons/), CENTER=500@10                                                                                                                                                                                   | daily, 1 request per probe        | `data/ephem/<id>.bin`  |
+| Mercury, Venus and Titan landing and impact sites  | Curated in `catalog/landing-sites/mercury.json`, `venus.json` and `titan.json` (see below)                                                                                                                                                                       | reviewed by PR                    | —                      |
 | Missions and statuses                              | Curated in `catalog/missions.json` (NASA, ESA, JAXA, CNSA, ISRO sources)                                                                                                                                                                                         | reviewed by PR                    | —                      |
 | Moon, Galilean moons                               | astronomy-engine (ELP/MPP02 and E5 theories, computed in the browser)                                                                                                                                                                                            | —                                 | —                      |
 | Other moons: mean orbital elements                 | [JPL SSD planetary satellite mean elements](https://ssd.jpl.nasa.gov/sats/elem/) and [physical parameters](https://ssd.jpl.nasa.gov/sats/phys_par/), epoch angles re-anchored on [Horizons](https://ssd.jpl.nasa.gov/horizons/) states (`tools/moons/anchor.ts`) | re-anchored about yearly, by hand | `catalog/moons.json`   |
 | Named stars (sky)                                  | [SIMBAD](https://simbad.cds.unistra.fr/simbad/) (CDS): ICRS J2000 position, V magnitude, spectral type; physical values from the cited literature                                                                                                                | curated                           | `catalog/stars.json`   |
 
 The optional logarithmic distance scale is a visual aid only and is flagged as "not to scale" in the interface.
+
+Venus and Titan sites: [NASA NSSDCA](https://nssdc.gsfc.nasa.gov/nmc/) entries, with the refined Venera and Vega
+positions of [Basilevsky & Weitz 1992](https://ntrs.nasa.gov/citations/19930005108) (each the centre of a landing
+area about 150 km in radius) and Huygens from the 2010 trajectory reconstruction
+([Atkinson et al., EGU 2015](https://meetingorganizer.copernicus.org/EGU2015/EGU2015-162-2.pdf)); placed on the IAU
+frame of Venus and on Titan's synchronous frame. MESSENGER's impact on Mercury: NASA's prediction 24 hours before
+impact ([PIA19443](https://photojournal.jpl.nasa.gov/catalog/PIA19443)), on Mercury's IAU frame. Their images are listed with the others below.
 
 ### Planet, dwarf-planet, moon and ring textures
 

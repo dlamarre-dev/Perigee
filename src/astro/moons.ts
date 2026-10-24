@@ -12,12 +12,23 @@ import { iauOrientationEqj } from './bodies';
 import { AU_KM, DEG_TO_RAD, SECONDS_PER_DAY } from './constants';
 import type { StateVector } from './hermite';
 import { OBLIQUITY_J2000_RAD } from './planets';
-import { quatFromAxisAngle, quatMultiply, quatRotate, type Quat } from './quat';
+import { quatFromAxisAngle, quatFromBasis, quatMultiply, quatRotate, type Quat } from './quat';
+import { cross, normalize, scale } from './vec3';
 
 const DAYS_PER_YEAR = 365.25;
 const AU_PER_DAY_TO_KM_S = AU_KM / SECONDS_PER_DAY;
 
 /** Solves Kepler's equation M = E − e sin E (radians), Newton iterations. */
+/**
+ * Body-fixed frame of a tidally locked moon (EQJ ← body), from its state relative to its planet: x (longitude 0)
+ * towards the planet, z along the orbit normal. Close to the IAU frames, whose prime meridians face the planet.
+ */
+export function tidalOrientationEqj(rel: StateVector): Quat {
+  const x = normalize(scale(rel.posKm, -1));
+  const z = normalize(cross(rel.posKm, rel.velKmS));
+  return quatFromBasis(x, cross(z, x), z);
+}
+
 export function solveKepler(meanAnomalyRad: number, e: number): number {
   const m = (((meanAnomalyRad % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
   let E = e < 0.8 ? m : Math.PI * Math.sign(m || 1);

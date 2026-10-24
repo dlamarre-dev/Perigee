@@ -11,7 +11,7 @@ import { AU_KM, DEG_TO_RAD, J2000_JD, SECONDS_PER_DAY } from '../astro/constants
 import { latLonToUnit } from '../astro/frames';
 import type { StateVector } from '../astro/hermite';
 import { GM_KM3_S2 } from '../astro/kepler';
-import { moonState } from '../astro/moons';
+import { moonState, tidalOrientationEqj } from '../astro/moons';
 import { heliocentricState, PLANETS } from '../astro/planets';
 import { quatRotate } from '../astro/quat';
 import { utcToTdbJd } from '../astro/time';
@@ -20,11 +20,11 @@ import {
   HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS,
   LOW_ORBIT_MAX_EXTRAPOLATION_DAYS,
 } from '../astro/track';
-import { add, scale, type Vec3 } from '../astro/vec3';
+import { add, scale, sub, type Vec3 } from '../astro/vec3';
 import { makeSatrec, propagateTeme } from '../earth/sgp4';
 import type { EphemerisEntry, Mission, Omm } from '../data/schemas';
 import type { PublishedData } from './data';
-import type { ObjectRef } from './objects';
+import { catalogs, type ObjectRef } from './objects';
 import {
   ACCURACY,
   ASTRONOMY_ENGINE,
@@ -342,18 +342,48 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
     }
 
     case 'site': {
-      const body = ref.body === 'moon' ? Astronomy.Body.Moon : Astronomy.Body.Mars;
-      const radiusKm = ref.body === 'moon' ? MOON_RADIUS_KM : MARS_RADIUS_KM;
-      const centre = ref.body === 'moon' ? moonHelio(date) : planetHelio('mars', date);
-      const local = scale(latLonToUnit(ref.site.latDeg * DEG_TO_RAD, ref.site.lonDeg * DEG_TO_RAD), radiusKm);
+      const local = latLonToUnit(ref.site.latDeg * DEG_TO_RAD, ref.site.lonDeg * DEG_TO_RAD);
+      const coordinates = `(${ref.site.latDeg.toFixed(3)}°, ${ref.site.lonDeg.toFixed(3)}°)`;
+      if (ref.body === 'titan') {
+        // Titan's frame as the solar view draws it: tidally locked, longitude 0 towards Saturn.
+        const titan = catalogs.moons.find((m) => m.id === 'titan');
+        const moon = titan && (await helioState({ kind: 'moon', id: 'moon:titan', moon: titan }, date, data));
+        if (!titan || !moon?.state)
+          return {
+            state: undefined,
+            provenance:
+              moon?.provenance ?? provenance('site-coordinates', 'No position for Titan.', 'none', []),
+          };
+        const saturn = planetHelio('saturn', date);
+        const rel = {
+          posKm: sub(moon.state.posKm, saturn.posKm),
+          velKmS: sub(moon.state.velKmS, saturn.velKmS),
+        };
+        return {
+          state: {
+            posKm: add(moon.state.posKm, quatRotate(tidalOrientationEqj(rel), scale(local, titan.radiusKm))),
+            velKmS: moon.state.velKmS,
+          },
+          provenance: provenance(
+            'site-coordinates',
+            `Catalogued planetocentric coordinates ${coordinates} on Titan, synchronous rotation (longitude 0 towards Saturn); Titan's position: ${moon.provenance.method}`,
+            moon.provenance.state,
+            ref.site.sources.map((url) => ({ name: new URL(url).hostname, url })),
+          ),
+        };
+      }
+      const planet = PLANETS.find((p) => p.id === ref.body);
+      const body = ref.body === 'moon' ? Astronomy.Body.Moon : (planet?.body ?? Astronomy.Body.Mars);
+      const radiusKm = ref.body === 'moon' ? MOON_RADIUS_KM : (planet?.radiusKm ?? MARS_RADIUS_KM);
+      const centre = ref.body === 'moon' ? moonHelio(date) : planetHelio(ref.body, date);
       return {
         state: {
-          posKm: add(centre.posKm, quatRotate(bodyOrientationEqj(body, date), local)),
+          posKm: add(centre.posKm, quatRotate(bodyOrientationEqj(body, date), scale(local, radiusKm))),
           velKmS: centre.velKmS,
         },
         provenance: provenance(
           'site-coordinates',
-          `Catalogued planetocentric coordinates (${ref.site.latDeg.toFixed(3)}°, ${ref.site.lonDeg.toFixed(3)}°) on the IAU rotation model.`,
+          `Catalogued planetocentric coordinates ${coordinates} on the IAU rotation model.`,
           'fresh',
           ref.site.sources.map((url) => ({ name: new URL(url).hostname, url })),
         ),

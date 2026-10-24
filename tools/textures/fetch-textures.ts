@@ -52,6 +52,11 @@ interface TextureSource {
   readonly dropEdge?: boolean;
   /** Linear EXR sources: scale before the sRGB encoding. */
   readonly exposure?: number;
+  /**
+   * Drawn upside down: the south pole at the top and longitudes increasing westward, as with Venus's pole taken by
+   * the right-hand rule instead of the IAU north. Turned by 180° about the centre.
+   */
+  readonly southUp?: boolean;
 }
 
 /** Elevation model turned into a normal map (linear data, UASTC KTX2). */
@@ -168,6 +173,8 @@ const BODIES: Record<string, readonly Source[]> = {
       name: 'surface',
       url: `${SSS_COMMONS}/1/1c/Solarsystemscope_texture_8k_venus_surface.jpg`,
       quality: 85,
+      // Maxwell Montes (65° N, 3° E) appears at 64° S, 5° W, with Lakshmi Planum east of it instead of west.
+      southUp: true,
     },
   ],
   jupiter: [
@@ -457,7 +464,10 @@ async function prepared(file: string, source: TextureSource): Promise<Sharp> {
   const out = Buffer.alloc(width * height * ch);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const from = (y * srcWidth + ((x + shift) % width)) * ch;
+      const sx = (x + shift) % width;
+      const from = source.southUp
+        ? ((height - 1 - y) * srcWidth + (width - 1 - sx)) * ch
+        : (y * srcWidth + sx) * ch;
       raw.data.copy(out, (y * width + x) * ch, from, from + ch);
     }
   }

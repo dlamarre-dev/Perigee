@@ -8,7 +8,10 @@ import earthScienceJson from '../../catalog/earth-science.json';
 import imagesJson from '../../catalog/images.json';
 import launchSitesJson from '../../catalog/launch-sites.json';
 import marsSitesJson from '../../catalog/landing-sites/mars.json';
+import mercurySitesJson from '../../catalog/landing-sites/mercury.json';
 import moonSitesJson from '../../catalog/landing-sites/moon.json';
+import titanSitesJson from '../../catalog/landing-sites/titan.json';
+import venusSitesJson from '../../catalog/landing-sites/venus.json';
 import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
 import starsJson from '../../catalog/stars.json';
@@ -39,6 +42,9 @@ export const catalogs = {
   stars: StarsCatalogSchema.parse(starsJson).stars,
   moonSites: LandingSitesSchema.parse(moonSitesJson).sites,
   marsSites: LandingSitesSchema.parse(marsSitesJson).sites,
+  mercurySites: LandingSitesSchema.parse(mercurySitesJson).sites,
+  venusSites: LandingSitesSchema.parse(venusSitesJson).sites,
+  titanSites: LandingSitesSchema.parse(titanSitesJson).sites,
   launchSites: LaunchSitesSchema.parse(launchSitesJson).sites,
   images: ImagesCatalogSchema.parse(imagesJson).images,
   operators: OperatorsCatalogSchema.parse(operatorsJson),
@@ -56,9 +62,23 @@ export type ObjectRef =
       readonly norad: number;
       readonly curated?: EarthScienceSatellite;
     }
-  | { readonly kind: 'site'; readonly id: string; readonly site: LandingSite; readonly body: 'moon' | 'mars' }
+  | { readonly kind: 'site'; readonly id: string; readonly site: LandingSite; readonly body: SiteBody }
   | { readonly kind: 'launch'; readonly id: string; readonly site: LaunchSite }
   | { readonly kind: 'star'; readonly id: string; readonly star: Star };
+
+/** Bodies with catalogued landing or impact sites. */
+export type SiteBody = 'moon' | 'mars' | 'mercury' | 'venus' | 'titan';
+
+/** Sites of each body (`site:<id>` is one namespace across them). */
+export function sitesByBody(): readonly (readonly [SiteBody, readonly LandingSite[]])[] {
+  return [
+    ['moon', catalogs.moonSites],
+    ['mars', catalogs.marsSites],
+    ['mercury', catalogs.mercurySites],
+    ['venus', catalogs.venusSites],
+    ['titan', catalogs.titanSites],
+  ];
+}
 
 export class UnknownObjectError extends Error {
   constructor(id: string) {
@@ -69,7 +89,7 @@ export class UnknownObjectError extends Error {
 
 /**
  * Resolves an identifier: "sun", a planet id ("mars"), "moon:<id>" or a moon id ("moon", "titan"), a mission id
- * ("lro"), a NORAD number ("25544"), "site:<id>" (Moon or Mars), "launch:<id>", "star:<id>".
+ * ("lro"), a NORAD number ("25544"), "site:<id>" (Moon, Mars, Mercury, Venus, Titan), "launch:<id>", "star:<id>".
  */
 export function resolve(id: string): ObjectRef {
   const key = id.trim().toLowerCase();
@@ -81,10 +101,10 @@ export function resolve(id: string): ObjectRef {
   }
   const [prefix, rest = ''] = key.includes(':') ? key.split(/:(.*)/s) : ['', key];
   if (prefix === 'site') {
-    const moonSite = catalogs.moonSites.find((s) => s.id === rest);
-    if (moonSite) return { kind: 'site', id: key, site: moonSite, body: 'moon' };
-    const marsSite = catalogs.marsSites.find((s) => s.id === rest);
-    if (marsSite) return { kind: 'site', id: key, site: marsSite, body: 'mars' };
+    for (const [body, sites] of sitesByBody()) {
+      const site = sites.find((s) => s.id === rest);
+      if (site) return { kind: 'site', id: key, site, body };
+    }
   }
   if (prefix === 'launch') {
     const site = catalogs.launchSites.find((s) => s.id === rest);
@@ -132,8 +152,9 @@ export function findInCatalogs(query: string): FoundObject[] {
     ...catalogs.moons.map((m) => ({ id: `moon:${m.id}`, kind: 'moon' as const, name: m.name })),
     ...catalogs.missions.map((m) => ({ id: m.id, kind: 'mission' as const, name: m.name })),
     ...catalogs.science.map((s) => ({ id: String(s.norad), kind: 'satellite' as const, name: s.name })),
-    ...catalogs.moonSites.map((s) => ({ id: `site:${s.id}`, kind: 'site' as const, name: s.name })),
-    ...catalogs.marsSites.map((s) => ({ id: `site:${s.id}`, kind: 'site' as const, name: s.name })),
+    ...sitesByBody().flatMap(([, sites]) =>
+      sites.map((s) => ({ id: `site:${s.id}`, kind: 'site' as const, name: s.name })),
+    ),
     ...catalogs.launchSites.map((s) => ({ id: `launch:${s.id}`, kind: 'launch' as const, name: s.name })),
     ...catalogs.stars.map((s) => ({ id: `star:${s.id}`, kind: 'star' as const, name: s.name })),
   ];
@@ -174,7 +195,11 @@ export function viewOf(ref: ObjectRef): { view: 'earth' | 'moon' | 'mars' | 'sol
     case 'launch':
       return { view: 'earth', sel: `site:${ref.site.id}` };
     case 'site':
-      return { view: ref.body, sel: `site:${ref.site.id}` };
+      // Mercury, Venus and Titan are bodies of the solar view, which describes their sites in the panel's second tab.
+      return {
+        view: ref.body === 'moon' || ref.body === 'mars' ? ref.body : 'solar',
+        sel: `site:${ref.site.id}`,
+      };
     case 'mission':
       return {
         view: ref.mission.centralBody === 'sun' ? 'solar' : ref.mission.centralBody,

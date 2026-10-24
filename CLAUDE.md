@@ -143,8 +143,16 @@ No single API provides "active probes + landing sites". We maintain:
   `verified`, `sources`.
   Shown first in the filters, with curated names in the list and the info panel; re-verified monthly like the
   missions; the audit flags new members of the CelesTrak group.
-- `catalog/landing-sites/moon.json`, `catalog/landing-sites/mars.json`: planetocentric lat/lon, date, mission,
-  type (`soft|hard|impact|crewed|rover-last-known`), source.
+- `catalog/landing-sites/moon.json`, `catalog/landing-sites/mars.json`, `mercury.json`, `venus.json`, `titan.json`: planetocentric
+  lat/lon (east-positive, −180…180: Titan's west longitudes converted), date, mission, type
+  (`soft|hard|impact|crewed|rover-last-known`), source; `site:<id>` is one namespace across the files. Mercury, Venus
+  and Titan sites live in the solar view (`src/solar/SurfaceSites.ts`): the selected body's detail panel lists them
+  behind a checkbox (URL `sites=1`, markers on its surface) and describes a picked site (marker or list) in a
+  second tab, with its image, while the camera stays on the body (`sel=site:<id>`; picked from the list, the
+  follow turns to look down on it; the checkbox names a single site's kind). Mercury and Venus on their IAU frames, Titan on the tidal frame (`tidalOrientationEqj`,
+  longitude 0 towards Saturn). Venera 3 (no published impact point), Venera 4–6 and the Pioneer Venus bus
+  (destroyed in the atmosphere), Magellan, Pioneer Venus Orbiter and Venus Express (no location) are left out; MESSENGER is NASA's
+  prediction 24 h before impact (crater not imaged yet).
 - Every entry must cite at least one source (NASA, ESA, JAXA, CNSA, ISRO, KARI, LROC, Wikipedia as last resort).
 - Every catalog text shown to visitors (names, notes, orbits, purposes…) is a `{ en, fr }` object, enforced by the
   zod schemas: a plain string fails validation, so updates cannot add English-only text.

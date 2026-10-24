@@ -60,6 +60,7 @@ import { DistantSun } from '../render/SunMesh';
 import { LabelLayer, LabelPriority, occludedBySphere, occludedBySphereAt } from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
+import { SITE_COLORS } from '../render/siteColors';
 import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
 import { attachRelief, reliefStrength } from '../render/relief';
@@ -109,13 +110,6 @@ const TRAJECTORY_REFRESH_MS = 250;
 const PICK_RADIUS_PX = 14;
 /** A followed spacecraft's or moon's label is hidden while its model or disc covers more than this (CSS px). */
 const MODEL_LABEL_MAX_PX = 10;
-const SITE_COLORS: Record<LandingSite['type'], string> = {
-  crewed: '#ffd54f',
-  soft: '#aed581',
-  'rover-last-known': '#4fc3f7',
-  hard: '#ff8a65',
-  impact: '#b0bec5',
-};
 const DEFAULT_MISSION_COLOR = '#e0e0e0';
 const NATURAL_COLOR = '#c9b8a6';
 

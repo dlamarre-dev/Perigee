@@ -1,0 +1,27 @@
+{
+  "verified": "2026-10-23",
+  "sites": [
+    {
+      "id": "huygens",
+      "name": {
+        "en": "Huygens",
+        "fr": "Huygens"
+      },
+      "agency": "ESA (with NASA and ASI)",
+      "country": "eu",
+      "date": "2005-01-14",
+      "type": "soft",
+      "latDeg": -10.573,
+      "lonDeg": 167.665,
+      "note": {
+        "en": "First landing in the outer Solar System: it photographed rounded pebbles of ice on damp ground near Adiri, below channels carved by liquid methane, and sent 72 minutes of data from the surface through Cassini. Position from the 2010 trajectory reconstruction (10.573° S, 192.335° W in Titan’s west longitudes).",
+        "fr": "Premier atterrissage dans le Système solaire externe : il a photographié des galets de glace arrondis sur un sol humide près d’Adiri, sous des chenaux creusés par du méthane liquide, et a transmis 72 minutes de données depuis le sol par Cassini. Position issue de la reconstitution de trajectoire de 2010 (10,573° S, 192,335° O en longitudes ouest de Titan)."
+      },
+      "sources": [
+        "https://sci.esa.int/web/cassini-huygens/-/36368-huygens-lands-on-titan",
+        "https://meetingorganizer.copernicus.org/EGU2015/EGU2015-162-2.pdf",
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1997-061C"
+      ]
+    }
+  ]
+}

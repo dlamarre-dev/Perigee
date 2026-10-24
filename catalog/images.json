@@ -1277,6 +1277,159 @@
       "licence": "cc-by-sa-4.0",
       "verified": "2026-10-19",
       "sources": ["https://commons.wikimedia.org/wiki/File:Chinese_Tiangong_Space_Station.jpg"]
+    },
+    {
+      "id": "site-huygens",
+      "target": "site:huygens",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Huygens_surface_color.jpg",
+      "credit": "ESA/NASA/JPL/University of Arizona",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Huygens_surface_color.jpg"]
+    },
+    {
+      "id": "site-venera-7",
+      "target": "site:venera-7",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/2/28/Venera-7.jpg",
+      "credit": "Stanislav Kozlovskiy",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Venera-7.jpg"]
+    },
+    {
+      "id": "site-venera-9",
+      "target": "site:venera-9",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Foto_de_Venera_9.png",
+      "credit": "USSR Academy of Sciences, processing by Ted Stryk",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Foto_de_Venera_9.png"]
+    },
+    {
+      "id": "site-venera-10",
+      "target": "site:venera-10",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Venera10surface.gif",
+      "credit": "USSR Academy of Sciences / NASA NSSDC",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Venera10surface.gif"]
+    },
+    {
+      "id": "site-venera-11",
+      "target": "site:venera-11",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Cut-away_model_of_a_Soviet_Venera_12_lander.jpg",
+      "credit": "Don S. Montgomery, U.S. Navy (Ret.)",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Cut-away_model_of_a_Soviet_Venera_12_lander.jpg"]
+    },
+    {
+      "id": "site-venera-12",
+      "target": "site:venera-12",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Cut-away_model_of_a_Soviet_Venera_12_lander.jpg",
+      "credit": "Don S. Montgomery, U.S. Navy (Ret.)",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Cut-away_model_of_a_Soviet_Venera_12_lander.jpg"]
+    },
+    {
+      "id": "site-venera-13",
+      "target": "site:venera-13",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/7/74/Surface_of_Venus_from_Venera_13.jpg",
+      "credit": "Lunar and Planetary Institute, prepared for NASA by Stephen Paul Meszaros",
+      "licence": "cc-by-2.0",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Surface_of_Venus_from_Venera_13.jpg"]
+    },
+    {
+      "id": "site-venera-14",
+      "target": "site:venera-14",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/2/21/Venera_14_surface_image.jpg",
+      "credit": "Lunar and Planetary Institute, prepared for NASA by Stephen Paul Meszaros",
+      "licence": "cc-by-2.0",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Venera_14_surface_image.jpg"]
+    },
+    {
+      "id": "site-vega-1-lander",
+      "target": "site:vega-1-lander",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Vega_Spuskaemiy_apparat_vega.jpg",
+      "credit": "Emerezhko",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Vega_Spuskaemiy_apparat_vega.jpg"]
+    },
+    {
+      "id": "site-vega-2-lander",
+      "target": "site:vega-2-lander",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Vega_Spuskaemiy_apparat_vega.jpg",
+      "credit": "Emerezhko",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Vega_Spuskaemiy_apparat_vega.jpg"]
+    },
+    {
+      "id": "site-pioneer-venus-large-probe",
+      "target": "site:pioneer-venus-large-probe",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Pioneer_Venus_Multiprobe_%28ARC-1978-AC78-9245%29.jpg",
+      "credit": "NASA/Paul Hudson",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Pioneer_Venus_Multiprobe_(ARC-1978-AC78-9245).jpg"]
+    },
+    {
+      "id": "site-pioneer-venus-north-probe",
+      "target": "site:pioneer-venus-north-probe",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Pioneer_Venus_Multiprobe_%28ARC-1978-AC78-9245%29.jpg",
+      "credit": "NASA/Paul Hudson",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Pioneer_Venus_Multiprobe_(ARC-1978-AC78-9245).jpg"]
+    },
+    {
+      "id": "site-pioneer-venus-day-probe",
+      "target": "site:pioneer-venus-day-probe",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Pioneer_Venus_Multiprobe_%28ARC-1978-AC78-9245%29.jpg",
+      "credit": "NASA/Paul Hudson",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Pioneer_Venus_Multiprobe_(ARC-1978-AC78-9245).jpg"]
+    },
+    {
+      "id": "site-pioneer-venus-night-probe",
+      "target": "site:pioneer-venus-night-probe",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Pioneer_Venus_Multiprobe_%28ARC-1978-AC78-9245%29.jpg",
+      "credit": "NASA/Paul Hudson",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Pioneer_Venus_Multiprobe_(ARC-1978-AC78-9245).jpg"]
+    },
+    {
+      "id": "site-messenger-impact",
+      "target": "site:messenger-impact",
+      "kind": "orbital",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Details_of_MESSENGER%27s_Impact_Location.jpg",
+      "credit": "NASA/Johns Hopkins University Applied Physics Laboratory/Carnegie Institution of Washington",
+      "licence": "public-domain",
+      "verified": "2026-10-23",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Details_of_MESSENGER%27s_Impact_Location.jpg",
+        "https://photojournal.jpl.nasa.gov/catalog/PIA19443"
+      ]
     }
   ]
 }

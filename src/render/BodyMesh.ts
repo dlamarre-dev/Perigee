@@ -583,7 +583,9 @@ export class BodyMesh {
     const target = want && this.altReady ? 1 : 0;
     const step = dtS / ALT_FADE_S;
     uniform.value =
-      target > uniform.value ? Math.min(target, uniform.value + step) : Math.max(target, uniform.value - step);
+      target > uniform.value
+        ? Math.min(target, uniform.value + step)
+        : Math.max(target, uniform.value - step);
   }
 
   setNightMap(texture: Texture): void {
