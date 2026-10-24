@@ -4,9 +4,17 @@ import { checkChanges, MAX_CHANGED_ENTRIES } from '../pipeline/catalog-guard';
 
 const MISSIONS = 'catalog/missions.json';
 const base = readFileSync(MISSIONS, 'utf8');
-const TODAY = '2026-09-28';
-
 type Catalog = { verified: string; missions: Record<string, unknown>[] };
+
+/**
+ * The guard's "today": after every date already in the catalogue, so re-dating any entry to it is a new verified
+ * date. A fixed date fell behind the entries the maintenance agent re-verifies (it then skipped LRO, the first).
+ */
+const latestVerified = [
+  (JSON.parse(base) as Catalog).verified,
+  ...(JSON.parse(base) as Catalog).missions.map((m) => String(m['verified'] ?? '')),
+].reduce((a, b) => (b > a ? b : a));
+const TODAY = new Date(Date.parse(`${latestVerified}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
 const edit = (fn: (c: Catalog) => void): string => {
   const c = JSON.parse(base) as Catalog;
   fn(c);
