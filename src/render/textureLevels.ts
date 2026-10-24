@@ -30,7 +30,8 @@ export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, Tex
   moon: { color: photo([2, 4], [2, 4, 8]), normal: photo([2, 4]) },
   mars: { color: photo([2, 4], [2, 4, 8]), normal: photo([2, 4]) },
   mercury: { color: photo([2]), normal: photo([2]) },
-  venus: { color: photo([2, 4]) },
+  // Venus: cloud tops (default) and the radar surface below them (map toggle, src/render/mapVariants.ts).
+  venus: { color: photo([2, 4]), surface: photo([2, 4]) },
   jupiter: { color: photo([2, 4]) },
   saturn: { color: photo([2, 4]) },
   uranus: { color: procedural(2) },
@@ -47,7 +48,8 @@ export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, Tex
   tethys: { color: photo([2]) },
   dione: { color: photo([2]) },
   rhea: { color: photo([2]) },
-  titan: { color: photo([2]) },
+  // Titan: its haze in visible light (default, procedural) and the Cassini near-infrared surface mosaic.
+  titan: { color: procedural(1), infrared: photo([2]) },
   hyperion: { color: photo([2]) },
   iapetus: { color: photo([2]) },
   phoebe: { color: photo([2]) },

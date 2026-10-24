@@ -117,6 +117,23 @@ export const PROCEDURAL: Record<string, BandedStyle> = {
   eris: { stops: uniform([230, 228, 223]), noise: 0.05, stretch: 1, seed: 11 },
   haumea: { stops: uniform([232, 230, 226]), noise: 0.05, stretch: 1, seed: 12 },
   makemake: { stops: uniform([216, 184, 154]), noise: 0.07, stretch: 1, seed: 13 },
+  // Titan in visible light (illustrative): its thick orange haze hides the surface entirely; Cassini true-colour
+  // images show a nearly uniform butterscotch disc, a little darker and browner towards the poles (polar hoods),
+  // with faint zonal banding of the haze.
+  titan: {
+    stops: [
+      [-90, [178, 132, 78]],
+      [-60, [196, 146, 80]],
+      [-30, [210, 158, 84]],
+      [0, [214, 162, 86]],
+      [30, [210, 158, 84]],
+      [60, [194, 144, 82]],
+      [90, [172, 130, 82]],
+    ],
+    noise: 0.015,
+    stretch: 6,
+    seed: 30,
+  },
   // Uranus (illustrative): Voyager 2's pale cyan, with the faint zonal bands and the bright north polar cap
   // (dark collar near 55–60°N) seen by Hubble and JWST in 2022–2024, and the bright southern collar near 45°S
   // Voyager saw in 1986 (the south is now in darkness). Contrast kept low, as in true-colour images.

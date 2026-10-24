@@ -1478,6 +1478,21 @@ h2[tabindex='-1']:focus {
   height: auto;
 }
 
+/* A body's map switch under its preview (src/render/mapVariants.ts: Titan infrared, Venus radar). */
+.model-preview .preview-map-switch {
+  display: flex;
+  justify-content: center;
+  margin: 6px auto 0;
+}
+
+.model-preview .preview-map-switch[hidden] {
+  display: none;
+}
+
+.model-preview .preview-map-switch .btn {
+  font-size: 12px;
+}
+
 /* Enlarged image (src/ui/ImageViewer.ts), in About's frame. */
 .image-viewer {
   max-width: min(1100px, calc(100% - 2 * var(--gutter)));

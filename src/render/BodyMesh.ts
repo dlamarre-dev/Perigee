@@ -54,6 +54,9 @@ const vertexShader = /* glsl */ `
 const fragmentShader = /* glsl */ `
   #include <logdepthbuf_pars_fragment>
   uniform sampler2D dayMap;
+  // Second map of the body (src/render/mapVariants.ts: Titan in infrared, Venus's radar surface), cross-faded in.
+  uniform sampler2D altMap;
+  uniform float altMix;
   uniform sampler2D nightMap;
   uniform float nightStrength;
   uniform float ambient;
@@ -168,6 +171,7 @@ const fragmentShader = /* glsl */ `
     // Soft terminator (about ±5°); airless bodies use a sharper one via ambient.
     float dayMix = smoothstep(-0.09, 0.09, cosSun);
     vec3 day = dayColor();
+    if (altMix > 0.0) day = mix(day, texture2D(altMap, vUv).rgb, altMix);
     vec3 night = texture2D(nightMap, vUv).rgb;
     // Diffuse light from the relief when drawn; the day/night mix stays on the sphere, so slopes facing the Sun
     // beyond the terminator do not light up the night side.
@@ -237,6 +241,9 @@ const surfaceProbe = new Mesh(new BufferGeometry(), new MeshBasicMaterial({ side
 const PATCH_CAP_RAD = 0.01;
 /** Facets whose centre lies this far beyond the cap are included, so the patch covers the whole cap. */
 const PATCH_MARGIN_RAD = 0.05;
+
+/** Cross-fade between a body's two maps (s). */
+const ALT_FADE_S = 0.8;
 
 const LIGHT_BELOW_PX = 40;
 const FULL_ABOVE_PX = 56;
@@ -312,6 +319,8 @@ export class BodyMesh {
       defines: { ...this.defines },
       uniforms: {
         dayMap: { value: o.dayMap },
+        altMap: { value: o.nightMap },
+        altMix: { value: 0 },
         nightMap: { value: o.nightMap },
         nightStrength: { value: o.nightStrength ?? 0 },
         ambient: { value: o.ambient ?? 0.06 },
@@ -351,6 +360,7 @@ export class BodyMesh {
     // light sphere below LIGHT_BELOW_PX of screen radius, back above FULL_ABOVE_PX. Takes effect next frame.
     const gas = o.gasFlow ? material.uniforms : undefined;
     this.mesh.onBeforeRender = (renderer, _scene, camera) => {
+      this.stepAltMix();
       if (gas) {
         const cycle = layerCycle(simTimeMs(), GAS_CYCLE_S);
         (gas['gasAgeA'] as { value: number }).value = cycle.ageA;
@@ -530,6 +540,52 @@ export class BodyMesh {
     this.setMap('dayMap', texture);
   }
 
+  /**
+   * A second map the body can show instead (src/render/mapVariants.ts): `wanted` says whether it should show,
+   * `load` fetches it the first time it is wanted (and calls setAltMap). It then cross-fades in or out over
+   * ALT_FADE_S, as long as the body is drawn.
+   */
+  setAltVariant(wanted: () => boolean, load: () => void): void {
+    this.altWanted = wanted;
+    this.altLoad = load;
+  }
+
+  setAltMap(texture: Texture): void {
+    if (this.disposed) {
+      texture.dispose();
+      return;
+    }
+    const uniform = this.mesh.material.uniforms['altMap'];
+    if (!uniform) return;
+    // The progressive loader frees the level it replaces.
+    uniform.value = texture;
+    this.altReady = true;
+  }
+
+  private altWanted: (() => boolean) | undefined;
+  private altLoad: (() => void) | undefined;
+  private altReady = false;
+  private altLastMs = 0;
+
+  private stepAltMix(): void {
+    if (!this.altWanted) return;
+    const want = this.altWanted();
+    if (want && this.altLoad) {
+      const load = this.altLoad;
+      this.altLoad = undefined;
+      load();
+    }
+    const now = performance.now();
+    const dtS = this.altLastMs ? Math.min(0.1, (now - this.altLastMs) / 1000) : 0;
+    this.altLastMs = now;
+    const uniform = this.mesh.material.uniforms['altMix'] as { value: number };
+    // Waits for the map before fading in (until then the main map stays).
+    const target = want && this.altReady ? 1 : 0;
+    const step = dtS / ALT_FADE_S;
+    uniform.value =
+      target > uniform.value ? Math.min(target, uniform.value + step) : Math.max(target, uniform.value - step);
+  }
+
   setNightMap(texture: Texture): void {
     this.setMap('nightMap', texture);
   }
@@ -572,6 +628,7 @@ export class BodyMesh {
     for (const name of ['dayMap', 'nightMap', 'normalMap'] as const) {
       (this.mesh.material.uniforms[name]?.value as Texture | null | undefined)?.dispose();
     }
+    if (this.altReady) (this.mesh.material.uniforms['altMap']?.value as Texture | undefined)?.dispose();
     this.setLocalPatch(undefined);
     this.mesh.material.dispose();
     this.occluder.material.dispose();

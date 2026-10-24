@@ -16,7 +16,8 @@
  * - Pluto: New Horizons LORRI global map (NASA Photojournal PIA20658)
  * - Ceres: Dawn FC global mosaic, 20 px/deg (USGS Astrogeology / DLR)
  * - Saturn rings: Voyager 2 ISS I/F profile and PPS occultation optical depth (PDS Rings Node)
- * - Venus cloud tops, Saturn, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
+ * - Venus cloud tops and radar surface, Saturn, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
+ * - Titan: near-infrared Cassini ISS mosaic (USGS Astrogeology); visible light: procedural haze (see procedural.ts)
  * - Uranus: procedural, illustrative (see procedural.ts); Uranus and Neptune rings from the NASA fact sheets
  * - Eris, Haumea, Makemake: procedural (see procedural.ts)
  * - Relief normal maps (see normals.ts): Moon LOLA (CGI Moon Kit `ldem_16`), Mars MOLA MEGDR 16 px/deg (PDS
@@ -162,6 +163,12 @@ const BODIES: Record<string, readonly Source[]> = {
       url: `${SSS_COMMONS}/5/57/Solarsystemscope_texture_4k_venus_atmosphere.jpg`,
       quality: 85,
     },
+    // The surface below the clouds, from NASA Magellan radar imagery (shown with the panel's map toggle).
+    {
+      name: 'surface',
+      url: `${SSS_COMMONS}/1/1c/Solarsystemscope_texture_8k_venus_surface.jpg`,
+      quality: 85,
+    },
   ],
   jupiter: [
     { name: 'color', url: `${PHOTOJOURNAL}/pia07/pia07782/PIA07782.jpg`, quality: 85, dropEdge: true },
@@ -293,9 +300,12 @@ const BODIES: Record<string, readonly Source[]> = {
       quality: 85,
     },
   ],
+  // Titan in visible light is an orange haze with no surface detail (procedural); the Cassini ISS mosaic is
+  // near-infrared (938 nm), seeing through the haze (shown with the panel's map toggle).
   titan: [
+    { name: 'color', procedural: 'titan' },
     {
-      name: 'color',
+      name: 'infrared',
       url: 'https://planetarymaps.usgs.gov/mosaic/Titan_ISS_P19658_Mosaic_Global_4km.tif',
       quality: 85,
       centerLonDeg: 180,

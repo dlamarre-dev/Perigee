@@ -39,6 +39,7 @@ import { drawStar } from '../render/starImage';
 import { placeholderTexture, progressiveTexture } from '../render/textures';
 import { h } from './dom';
 import { imageCaption, openImage } from './ImageViewer';
+import { altShown, MAP_VARIANTS, onMapVariantChange, setAltShown } from '../render/mapVariants';
 
 /** A celestial body drawn as in the 3D view. */
 export interface BodyPreview {
@@ -172,6 +173,15 @@ export class ModelPreview {
     [this.starCanvas],
   );
   private readonly image = h('img', { class: 'preview-image', decoding: 'async' });
+  /** Switches a body between its two maps (shown for those of src/render/mapVariants.ts). */
+  /** Two-way switch between a body's two maps (src/render/mapVariants.ts), like the top bar's switches. */
+  private readonly mapMain = h('button', { type: 'button', class: 'btn' });
+  private readonly mapAlt = h('button', { type: 'button', class: 'btn' });
+  private readonly mapSwitch = h(
+    'div',
+    { class: 'segmented preview-map-switch', role: 'group', hidden: true },
+    [this.mapMain, this.mapAlt],
+  );
   /** The image opens larger in a dialog (src/ui/ImageViewer.ts). */
   private readonly imageButton = h('button', { type: 'button', class: 'preview-image-button' }, [this.image]);
   private captionKey = '';
@@ -192,7 +202,24 @@ export class ModelPreview {
     private readonly i18n: I18n,
     private readonly baseUrl: string,
   ) {
-    this.element = h('figure', { class: 'model-preview', hidden: true }, [this.canvasBox, this.caption]);
+    this.element = h('figure', { class: 'model-preview', hidden: true }, [
+      this.canvasBox,
+      this.mapSwitch,
+      this.caption,
+    ]);
+    // A body with two maps (src/render/mapVariants.ts): the button switches both the preview and the 3D view.
+    for (const [button, alt] of [
+      [this.mapMain, false],
+      [this.mapAlt, true],
+    ] as const) {
+      button.addEventListener('click', () => {
+        if (this.subject?.kind === 'body') setAltShown(this.subject.body.id, alt);
+      });
+    }
+    onMapVariantChange((body) => {
+      if (this.subject?.kind === 'body' && this.subject.body.id === body)
+        this.bodyCaption(this.subject.body.id);
+    });
     this.imageButton.addEventListener('click', () => {
       if (this.subject?.kind !== 'image') return;
       openImage(this.i18n, this.baseUrl, this.subject.entry, this.subject.title, this.image.currentSrc);
@@ -222,11 +249,12 @@ export class ModelPreview {
     }
     const key = subjectKey(subject);
     this.element.hidden = false;
+    if (subject.kind !== 'body') this.mapSwitch.hidden = true;
     this.subject = subject;
     if (subject.kind === 'model') {
       this.caption.textContent = this.i18n.format('model.credit', { credit: subject.entry.credit });
     } else if (subject.kind === 'body') {
-      this.caption.textContent = this.i18n.t('preview.body');
+      this.bodyCaption(subject.body.id);
     } else if (subject.kind === 'image') {
       this.imageCaption(subject.entry);
     }
@@ -237,6 +265,23 @@ export class ModelPreview {
       this.yaw = 0.6;
     }
     this.update();
+  }
+
+  /** Caption and map button of a body: what its map shows, and the other map to switch to. */
+  private bodyCaption(id: string): void {
+    const variant = MAP_VARIANTS[id];
+    this.mapSwitch.hidden = !variant;
+    if (!variant) {
+      this.caption.textContent = this.i18n.t('preview.body');
+      return;
+    }
+    const alt = altShown(id);
+    this.caption.textContent = this.i18n.t(alt ? variant.altCaption : variant.mainCaption);
+    this.mapSwitch.setAttribute('aria-label', this.i18n.t('map.group'));
+    this.mapMain.textContent = this.i18n.t(variant.mainLabel);
+    this.mapAlt.textContent = this.i18n.t(variant.altLabel);
+    this.mapMain.setAttribute('aria-pressed', String(!alt));
+    this.mapAlt.setAttribute('aria-pressed', String(alt));
   }
 
   dragStart(x: number, y: number): void {
@@ -428,6 +473,13 @@ export class ModelPreview {
       });
     };
     texture(b.map ?? 'color', hexRgb(b.color), (t) => mesh.setDayMap(t));
+    const variant = MAP_VARIANTS[b.id];
+    if (variant) {
+      mesh.setAltVariant(
+        () => altShown(b.id),
+        () => texture(variant.alt, hexRgb(b.color), (t) => mesh.setAltMap(t)),
+      );
+    }
     if (b.map === 'day') texture('night', [0, 0, 0], (t) => mesh.setNightMap(t));
     if (b.shapeGrid) {
       void loadShape(this.baseUrl, b.id).then((grid) => {

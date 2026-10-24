@@ -111,12 +111,21 @@ export const en = {
   'texture.uranus':
     'Illustrative map: true-colour hue (Voyager 2) with the faint bands and bright north polar cap seen by Hubble and JWST (2022–2024)',
   'texture.artist': "Artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
-  'texture.artistVenus':
-    "Cloud tops, artist's impression based on NASA imagery (Solar System Scope, CC BY 4.0)",
   'texture.handDrawn': 'Hand-drawn relief map from spacecraft images (P. Stooke), not a photograph',
-  'texture.titanInfrared': 'Surface seen through the haze in near-infrared (Cassini, 938 nm), greyscale',
   'info.shape': 'Shape',
   'shape.pds': 'Measured irregular shape (PDS shape model from spacecraft images)',
+  'map.titan.altLabel': 'Infrared',
+  'map.titan.mainLabel': 'Visible light',
+  'map.titan.main':
+    'Visible light: a thick orange haze hides the surface (illustration after Cassini true-colour images)',
+  'map.titan.alt':
+    'Near infrared (938 nm): the surface through the haze, Cassini ISS global mosaic (NASA/JPL/SSI, USGS)',
+  'map.venus.altLabel': 'Radar (surface)',
+  'map.venus.mainLabel': 'Clouds',
+  'map.group': 'Map shown',
+  'map.venus.main': 'Cloud tops (artist’s impression, Solar System Scope, CC BY 4.0)',
+  'map.venus.alt':
+    'The surface below the clouds, from NASA Magellan radar images (Solar System Scope, CC BY 4.0); colours are illustrative',
   'preview.body': 'Same map as in the 3D view, lit from one side; drag to turn it',
   'preview.star': 'Illustration: the colour of its surface at {t} K (not a photograph)',
   'preview.starWithSun':

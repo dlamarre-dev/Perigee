@@ -115,14 +115,22 @@ export const fr: Messages = {
   'texture.uranus':
     'Carte illustrative : teinte en couleurs réelles (Voyager 2), avec les bandes discrètes et la calotte polaire nord claire vues par Hubble et le JWST (2022–2024)',
   'texture.artist': 'Vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
-  'texture.artistVenus':
-    'Sommet des nuages, vue d’artiste d’après des images de la NASA (Solar System Scope, CC BY 4.0)',
   'texture.handDrawn':
     'Carte du relief dessinée à la main d’après des images de sondes (P. Stooke), pas une photographie',
-  'texture.titanInfrared':
-    'Surface vue à travers la brume dans le proche infrarouge (Cassini, 938 nm), en niveaux de gris',
   'info.shape': 'Forme',
   'shape.pds': 'Forme irrégulière mesurée (modèle de forme PDS tiré d’images de sondes)',
+  'map.titan.altLabel': 'Infrarouge',
+  'map.titan.mainLabel': 'Lumière visible',
+  'map.titan.main':
+    'Lumière visible : une épaisse brume orangée cache la surface (illustration d’après les images en couleurs vraies de Cassini)',
+  'map.titan.alt':
+    'Proche infrarouge (938 nm) : la surface à travers la brume, mosaïque globale Cassini ISS (NASA/JPL/SSI, USGS)',
+  'map.venus.altLabel': 'Radar (surface)',
+  'map.venus.mainLabel': 'Nuages',
+  'map.group': 'Carte affichée',
+  'map.venus.main': 'Sommet des nuages (vue d’artiste, Solar System Scope, CC BY 4.0)',
+  'map.venus.alt':
+    'La surface sous les nuages, d’après les images radar de Magellan (NASA) (Solar System Scope, CC BY 4.0) ; couleurs indicatives',
   'preview.body': 'Même carte que dans la vue 3D, éclairée de côté ; glisser pour la tourner',
   'preview.star': 'Illustration : la couleur de sa surface à {t} K (pas une photographie)',
   'preview.starWithSun':

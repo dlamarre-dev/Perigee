@@ -83,6 +83,7 @@ import {
   type SunRegions,
 } from '../data/schemas';
 import { formatDec, formatRa, isBrightStar, isNearbyStar, starDirectionEqj } from '../astro/stars';
+import { altShown, MAP_VARIANTS, onMapVariantChange } from '../render/mapVariants';
 import { temperatureFromSpectralType } from '../render/starImage';
 import type { PreviewSubject } from '../ui/ModelPreview';
 import {
@@ -123,8 +124,14 @@ const STAR_LEADER_PX = 26;
 /** Beyond every body of the view (km): a star's direction is tested for occlusion with a point this far out. */
 const STAR_TEST_DISTANCE_KM = 1e13;
 /** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
+/** What the body's map shows: the note above, or the caption of the map variant on screen (src/render/mapVariants.ts). */
+function textureNote(id: string): MessageKey | undefined {
+  const variant = MAP_VARIANTS[id];
+  if (variant) return altShown(id) ? variant.altCaption : variant.mainCaption;
+  return TEXTURE_NOTES[id];
+}
+
 const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
-  venus: 'texture.artistVenus',
   saturn: 'texture.artist',
   uranus: 'texture.uranus',
   neptune: 'texture.artist',
@@ -133,7 +140,6 @@ const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   makemake: 'texture.uniform',
   amalthea: 'texture.handDrawn',
   hyperion: 'texture.handDrawn',
-  titan: 'texture.titanInfrared',
   miranda: 'texture.uniform',
   ariel: 'texture.uniform',
   umbriel: 'texture.uniform',
@@ -367,6 +373,7 @@ class SolarView implements View {
   private selection: Selection;
   private trajectoriesKey = '';
   private disposed = false;
+  private readonly offMapVariant: () => void;
   private readonly ring: SelectionMarker;
   /** Spheres that hide what is behind them this frame (scene km); rebuilt in placeOrigin. */
   private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
@@ -639,6 +646,11 @@ class SolarView implements View {
     });
     host.mount(this.panel.element);
     host.mount(this.detail.element);
+    this.offMapVariant = onMapVariantChange((body) => {
+      const sel = this.selection;
+      const id = sel?.kind === 'planet' ? sel.planet.id : sel?.kind === 'moon' ? sel.moon.id : undefined;
+      if (id === body) this.renderDetail(false);
+    });
     host.mount(this.labels.element);
     host.setPanelToggle(
       'toolbar.missions',
@@ -982,6 +994,7 @@ class SolarView implements View {
 
   dispose(): void {
     this.disposed = true;
+    this.offMapVariant();
     const scene = this.host.renderer.scene;
     scene.remove(
       this.sun.mesh,
@@ -1058,6 +1071,25 @@ class SolarView implements View {
         if (!this.disposed) mesh.setDayMap(tex);
       },
     });
+    // A second map chosen from the info panel (Titan in infrared, Venus's radar surface): loaded when first wanted.
+    const variant = MAP_VARIANTS[id];
+    if (variant) {
+      mesh.setAltVariant(
+        () => altShown(id),
+        () =>
+          loadProgressiveTexture({
+            baseUrl: this.host.baseUrl,
+            body: id,
+            name: variant.alt,
+            maxTextureSize: renderer.maxTextureSize,
+            anisotropy: renderer.renderer.capabilities.getMaxAnisotropy(),
+            placeholderRgb: hexToRgb(color),
+            onUpdate: (tex) => {
+              if (!this.disposed) mesh.setAltMap(tex);
+            },
+          }),
+      );
+    }
   }
 
   /** Sunspots are an enhancement: without the dataset the Sun is drawn without them. */
@@ -1965,7 +1997,7 @@ class SolarView implements View {
         ? `${i18n.number(info.periodDays, 1)} ${t('unit.days')}`
         : `${i18n.number(years, 2)} ${t('unit.years')}`,
     ]);
-    const texture = TEXTURE_NOTES[info.id];
+    const texture = textureNote(info.id);
     if (texture) rows.push([t('info.texture'), t(texture)]);
     // How the position is obtained, as for the moons: astronomy-engine's VSOP87 series for the planets, a
     // numerical integration under the giant planets' attraction for Pluto.
@@ -2191,7 +2223,7 @@ class SolarView implements View {
       ]);
     }
     if (m?.scene && s && m.planet) rows.push(...this.distanceRows(add(m.planet.eqj, s.posKm)));
-    const texture = TEXTURE_NOTES[moon.id];
+    const texture = textureNote(moon.id);
     if (texture) rows.push([t('info.texture'), t(texture)]);
     if (moon.shape === 'grid') rows.push([t('info.shape'), t('shape.pds')]);
     const badge: { text: string; state: BadgeState } = this.logScale
@@ -2227,7 +2259,7 @@ class SolarView implements View {
       const shape = this.shapeRow(m.radiiKm);
       if (shape) rows.push(shape);
       if (m.orbit) rows.push([t('info.orbit'), m.orbit[i18n.lang]]);
-      const texture = TEXTURE_NOTES[m.id];
+      const texture = textureNote(m.id);
       if (texture) rows.push([t('info.texture'), t(texture)]);
     } else {
       rows.push([t('info.status'), i18n.maybe(`mission.status.${m.status}`) ?? m.status]);
