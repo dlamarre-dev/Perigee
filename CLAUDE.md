@@ -509,7 +509,7 @@ the "up" vector and causes gimbal lock at the poles).
 
 Weekly maintenance (hands-off):
 - `pipeline/audit.ts` (`npm run data:audit`) compares published data and a few upstream lists (CelesTrak index
-  page, this year's SATCAT launches, IERS leap seconds, Horizons lookups for new deep-space payloads) with the
+  page, this year's SATCAT launches, IERS leap seconds (else the IANA tzdb `leap-seconds.list`; neither answering is an audit item, not a failure), Horizons lookups for new deep-space payloads) with the
   catalog: unknown launch-site/owner codes, new CelesTrak groups, deep-space payloads missing from
   `missions.json`, public ephemerides ending (`coverageEnd` in the manifest), stale `verified` dates (missions
   monthly, at most 15 per week; files after 180 days), leap seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`

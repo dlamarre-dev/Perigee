@@ -381,10 +381,44 @@ export function parseIersLeapSeconds(text: string): {
   return { ...last, ...(exp ? { expires: exp } : {}) };
 }
 
+/** Seconds from the NTP epoch (1900-01-01) to the Unix epoch. */
+const NTP_UNIX_OFFSET_S = 2_208_988_800;
+
+/**
+ * IANA tzdb leap-seconds.list (the same IERS bulletin C data, as NTP timestamps): last TAI − UTC step and the
+ * expiry date (`#@` line). Fallback when the IERS server is unreachable.
+ */
+export function parseIanaLeapSeconds(text: string): {
+  lastUnixMs: number;
+  taiMinusUtcS: number;
+  expires?: string;
+} {
+  let last: { lastUnixMs: number; taiMinusUtcS: number } | undefined;
+  let expires: string | undefined;
+  for (const line of text.split(/\r?\n/)) {
+    const exp = /^#@\s+(\d+)/.exec(line);
+    if (exp) expires = new Date((Number(exp[1]) - NTP_UNIX_OFFSET_S) * 1000).toISOString().slice(0, 10);
+    const m = /^(\d+)\s+(\d+)/.exec(line);
+    if (m) last = { lastUnixMs: (Number(m[1]) - NTP_UNIX_OFFSET_S) * 1000, taiMinusUtcS: Number(m[2]) };
+  }
+  if (!last) throw new Error('No leap-second entries in the IANA file');
+  return { ...last, ...(expires ? { expires } : {}) };
+}
+
+/** Neither leap-second source answered: said in the report, the rest of the audit goes on. */
+export function leapSecondsUnreachable(urls: readonly string[], error: string): AuditItem {
+  return {
+    kind: 'leap-second',
+    key: 'unreachable',
+    summary: `No leap-second list could be read (${urls.join(', ')}): ${error}. Check by hand that no leap second was announced`,
+  };
+}
+
 export function checkLeapSeconds(
   iers: { lastUnixMs: number; taiMinusUtcS: number; expires?: string },
   table: { effectiveUnixMs: number; taiMinusUtcS: number },
   now: Date,
+  source = 'https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat',
 ): AuditItem[] {
   const items: AuditItem[] = [];
   if (iers.taiMinusUtcS !== table.taiMinusUtcS || iers.lastUnixMs !== table.effectiveUnixMs) {
@@ -392,14 +426,14 @@ export function checkLeapSeconds(
       kind: 'leap-second',
       key: `tai-utc-${iers.taiMinusUtcS}`,
       summary: `IERS announces TAI − UTC = ${iers.taiMinusUtcS} s from ${new Date(iers.lastUnixMs).toISOString().slice(0, 10)}; src/astro/leapSeconds.ts ends at ${table.taiMinusUtcS} s`,
-      details: { source: 'https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat' },
+      details: { source },
     });
   }
   if (iers.expires && Date.parse(iers.expires) < now.getTime()) {
     items.push({
       kind: 'leap-second',
       key: 'expired',
-      summary: `The IERS leap-second file expired on ${iers.expires}: check that IERS is still publishing it`,
+      summary: `The leap-second file (${source}) expired on ${iers.expires}: check that it is still published`,
     });
   }
   return items;

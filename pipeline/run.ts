@@ -50,7 +50,9 @@ import {
   checkStaleVerification,
   deepSpaceCandidates,
   parseCelestrakGroups,
+  parseIanaLeapSeconds,
   parseIersLeapSeconds,
+  leapSecondsUnreachable,
   renderMarkdown,
   type AuditItem,
   type SatcatLaunchRow,
@@ -414,6 +416,33 @@ async function runSun(dataDir: string): Promise<void> {
 
 const CELESTRAK_INDEX_URL = 'https://celestrak.org/NORAD/elements/';
 const IERS_LEAP_SECONDS_URL = 'https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat';
+/** Same data in the IANA time zone database, used when the IERS server is down (offline in October 2026). */
+const IANA_LEAP_SECONDS_URL = 'https://data.iana.org/time-zones/tzdb/leap-seconds.list';
+
+/**
+ * The latest leap second from IERS, else from IANA. An enhancement: when neither answers, the audit reports it as
+ * an item and goes on.
+ */
+async function leapSecondItems(now: Date): Promise<AuditItem[]> {
+  const errors: string[] = [];
+  for (const [url, parse] of [
+    [IERS_LEAP_SECONDS_URL, parseIersLeapSeconds],
+    [IANA_LEAP_SECONDS_URL, parseIanaLeapSeconds],
+  ] as const) {
+    try {
+      return checkLeapSeconds(
+        parse(await politeGet(url, { accept: 'text/plain' })),
+        LATEST_LEAP_SECOND,
+        now,
+        url,
+      );
+    } catch (err) {
+      console.warn(`Leap seconds: ${url} unavailable (${String(err)})`);
+      errors.push(String(err));
+    }
+  }
+  return [leapSecondsUnreachable([IERS_LEAP_SECONDS_URL, IANA_LEAP_SECONDS_URL], errors.join('; '))];
+}
 const satcatLaunchesUrl = (year: number): string =>
   `https://celestrak.org/satcat/records.php?INTDES=${year}&FORMAT=JSON`;
 const horizonsLookupUrl = (cospar: string): string =>
@@ -472,7 +501,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
       ) as SatcatLaunchRow[]),
     );
   }
-  const iers = parseIersLeapSeconds(await politeGet(IERS_LEAP_SECONDS_URL, { accept: 'text/plain' }));
+  const leapSeconds = await leapSecondItems(now);
 
   const candidates = deepSpaceCandidates(launches, missions);
   const matches = new Map<string, { name: string; spkid: string }[]>();
@@ -517,7 +546,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ...checkEarthScienceMembers(publishedGroups, earthScience.satellites, satcatNames),
     ...checkMoonAnchors(moons.moons, now),
     ...checkMoonEphemerides(manifest, moons.moons, now),
-    ...checkLeapSeconds(iers, LATEST_LEAP_SECOND, now),
+    ...leapSeconds,
   ];
   const report = { generatedAt: now.toISOString(), items };
   await writeFile(join(dataDir, 'audit.json'), `${JSON.stringify(report, null, 2)}\n`);

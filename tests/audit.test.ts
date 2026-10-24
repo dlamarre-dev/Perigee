@@ -10,6 +10,8 @@ import {
   checkStaleVerification,
   deepSpaceCandidates,
   parseCelestrakGroups,
+  leapSecondsUnreachable,
+  parseIanaLeapSeconds,
   parseIersLeapSeconds,
   renderMarkdown,
   type SatcatLaunchRow,
@@ -260,6 +262,24 @@ describe('maintenance audit', () => {
     expect(
       checkLeapSeconds(newer, { effectiveUnixMs: Date.UTC(2017, 0, 1), taiMinusUtcS: 37 }, NOW),
     ).toHaveLength(1);
+  });
+
+  it('reads the IANA leap-second list when IERS is down', () => {
+    const text = [
+      '#$\t3945196800',
+      '3644697600      36      # 1 Jul 2015',
+      '3692217600      37      # 1 Jan 2017',
+      '#@\t4023129600',
+    ].join('\n');
+    const iana = parseIanaLeapSeconds(text);
+    expect(iana).toEqual({ lastUnixMs: Date.UTC(2017, 0, 1), taiMinusUtcS: 37, expires: '2027-06-28' });
+    const url = 'https://data.iana.org/time-zones/tzdb/leap-seconds.list';
+    expect(
+      checkLeapSeconds(iana, { effectiveUnixMs: Date.UTC(2017, 0, 1), taiMinusUtcS: 37 }, NOW, url),
+    ).toEqual([]);
+    const item = leapSecondsUnreachable(['https://a.test', 'https://b.test'], 'fetch failed');
+    expect(item.kind).toBe('leap-second');
+    expect(item.summary).toMatch(/No leap-second list could be read/);
   });
 
   it('renders a checklist, or "nothing to do"', () => {
