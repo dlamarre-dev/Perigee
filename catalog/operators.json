@@ -1,5 +1,5 @@
 {
-  "verified": "2026-10-05",
+  "verified": "2026-10-24",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
@@ -365,6 +365,18 @@
     {
       "file": "transporter-18",
       "reason": "Temporary post-deployment set of one launch (2026-10-01); its satellites move to the regular data within weeks"
+    },
+    {
+      "file": "bandwagon-5",
+      "reason": "Temporary post-deployment set of one rideshare launch (2026-10-20); its satellites move to the regular data within weeks"
+    },
+    {
+      "file": "starlink-g15-15",
+      "reason": "Temporary per-launch post-deployment set (Starlink launch 2026-10-23); satellites move into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-16",
+      "reason": "Temporary per-launch pre-launch set for a Starlink mission not yet flown (planned 2026-10-26); superseded by a post-deployment set once it launches"
     }
   ],
   "nameRules": [

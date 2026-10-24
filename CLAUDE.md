@@ -644,7 +644,8 @@ the audit flags:
   2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06, mission declared over
   2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE Blue/Gold: launched
   2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept 2027. MMX (JAXA):
-  launch 2026-10-19 19:41 UTC (H3 F10). Phobos (401) and Deimos (402) come from Horizons like the probes.
+  launched 2026-10-19 19:41 UTC (H3 F10) into its planned trajectory; heliocentric cruise, Mars arrival 2027
+  (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the probes.
 - Interplanetary (verified 2026-10-10, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
   (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
   step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
