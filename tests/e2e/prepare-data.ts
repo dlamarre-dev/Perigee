@@ -7,7 +7,7 @@ import { rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { float64LittleEndian, moonStepMin } from '../../pipeline/horizons';
 import {
-  publishCometEphemerides,
+  publishSmallBodyEphemerides,
   publishDatasets,
   publishEphemerides,
   publishMoonEphemerides,
@@ -170,11 +170,12 @@ for (let k = -60; k <= 365; k++) {
   comet.push(centreTdbJd + k, ...s.posKm, ...s.velKmS);
 }
 const cometRows = Float64Array.from(comet);
-await publishCometEphemerides(
+await publishSmallBodyEphemerides(
   dataDir,
+  'comets',
   [
     {
-      cometId: 'encke',
+      bodyId: 'encke',
       horizonsId: 'DES=2P;CAP;NOFRAG',
       stepMin: 1440,
       source: 'fixture (synthetic Kepler orbit)',
@@ -186,6 +187,36 @@ await publishCometEphemerides(
     },
   ],
   new Set(['encke']),
+);
+
+// A synthetic Vesta (circular orbit at 2.36 AU): drawn once the asteroids box is ticked. Not real Horizons data.
+const vesta: number[] = [];
+const vestaStart = {
+  posKm: [2.36 * AU, 0, 0] as const,
+  velKmS: [0, Math.sqrt(GM_KM3_S2.sun / (2.36 * AU)), 0] as const,
+};
+for (let k = -60; k <= 365; k++) {
+  const s = propagateKepler(vestaStart, k * 86_400, GM_KM3_S2.sun);
+  vesta.push(centreTdbJd + k, ...s.posKm, ...s.velKmS);
+}
+const vestaRows = Float64Array.from(vesta);
+await publishSmallBodyEphemerides(
+  dataDir,
+  'asteroids',
+  [
+    {
+      bodyId: '4-vesta',
+      horizonsId: '4;',
+      stepMin: 1440,
+      source: 'fixture (synthetic Kepler orbit)',
+      fetchedAt,
+      rows: vestaRows,
+      bytes: float64LittleEndian(vestaRows),
+      h: 3.25,
+      g: 0.32,
+    },
+  ],
+  new Set(['4-vesta']),
 );
 
 // Titan "Horizons" vectors (solar view): its own mean-element state, ±2 days around the frozen time, so the

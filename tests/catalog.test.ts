@@ -47,6 +47,9 @@ describe('3D models catalogue', () => {
     const missionIds = new Set(MissionsCatalogSchema.parse(missionsJson).missions.map((m) => m.id));
     const siteIds = new Set(ALL_SITES.map((s) => s.id));
     const moonIds = new Set(moonsCatalog.moons.map((m: { id: string }) => m.id));
+    const asteroidIds = new Set(
+      (await import('../catalog/asteroids.json')).default.asteroids.map((a: { id: string }) => a.id),
+    );
     const ids = new Set<string>();
     for (const m of parsed.models) {
       expect(ids.has(m.id), m.id).toBe(false);
@@ -57,6 +60,7 @@ describe('3D models catalogue', () => {
         if (kind === 'mission') expect(missionIds.has(id), t).toBe(true);
         if (kind === 'site') expect(siteIds.has(id), t).toBe(true);
         if (kind === 'moon') expect(moonIds.has(id), t).toBe(true);
+        if (kind === 'asteroid') expect(asteroidIds.has(id), t).toBe(true);
       }
     }
   });
@@ -70,12 +74,14 @@ describe('panel images catalogue', () => {
     const launchSites = (await import('../catalog/launch-sites.json')).default;
     const science = (await import('../catalog/earth-science.json')).default;
     const comets = (await import('../catalog/comets.json')).default;
+    const asteroids = (await import('../catalog/asteroids.json')).default;
     const {
       ImagesCatalogSchema,
       ModelsCatalogSchema,
       LaunchSitesSchema,
       EarthScienceCatalogSchema,
       CometsCatalogSchema,
+      AsteroidsCatalogSchema,
     } = await import('../src/data/schemas');
     const parsed = ImagesCatalogSchema.parse(images);
     const known = new Set([
@@ -84,6 +90,7 @@ describe('panel images catalogue', () => {
       ...LaunchSitesSchema.parse(launchSites).sites.map((s) => `launch:${s.id}`),
       ...EarthScienceCatalogSchema.parse(science).satellites.map((s) => `norad:${s.norad}`),
       ...CometsCatalogSchema.parse(comets).comets.map((c) => `comet:${c.id}`),
+      ...AsteroidsCatalogSchema.parse(asteroids).asteroids.map((a) => `asteroid:${a.id}`),
     ]);
     const modelled = new Set(ModelsCatalogSchema.parse(models).models.flatMap((m) => m.targets));
     const targets = new Set<string>();

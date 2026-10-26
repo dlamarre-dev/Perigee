@@ -1,6 +1,7 @@
 /**
- * Comets (solar view): their osculating conic drawn from a Horizons state, perihelion passages and the estimated
- * brightness. Positions themselves come from Horizons vectors (EphemerisTrack), like the probes. Pure, Float64.
+ * Comets and asteroids (solar view): their osculating conic drawn from a Horizons state, perihelion passages and the
+ * estimated brightness. Positions themselves come from Horizons vectors (EphemerisTrack), like the probes. Pure,
+ * Float64.
  */
 import { cross, dot, length, scale, sub } from './vec3';
 import type { StateVector } from './hermite';
@@ -135,4 +136,21 @@ export function perihelionPassages(state: StateVector, muKm3S2: number, tTdbJd: 
  */
 export function cometMagnitude(m1: number, k1: number, rAu: number, deltaAu: number): number {
   return m1 + 5 * Math.log10(deltaAu) + 2.5 * k1 * Math.log10(rAu);
+}
+
+/**
+ * Visual magnitude of an asteroid from the IAU H–G phase law (Bowell et al. 1989): H absolute magnitude, G slope,
+ * r and Δ in au, α the Sun–asteroid–Earth phase angle.
+ */
+export function asteroidMagnitude(
+  h: number,
+  g: number,
+  rAu: number,
+  deltaAu: number,
+  phaseRad: number,
+): number {
+  const t = Math.tan(phaseRad / 2);
+  const phi1 = Math.exp(-3.33 * t ** 0.63);
+  const phi2 = Math.exp(-1.87 * t ** 1.22);
+  return h + 5 * Math.log10(rAu * deltaAu) - 2.5 * Math.log10((1 - g) * phi1 + g * phi2);
 }

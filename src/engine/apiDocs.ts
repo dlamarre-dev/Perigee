@@ -88,6 +88,7 @@ function build(site: string, info: BuildInfo) {
       const { kind: cometType, ...rest } = omit(c, ['id', 'sampling']);
       return entry(`comet:${c.id}`, 'comet', { ...rest, cometType });
     }),
+    ...catalogs.asteroids.map((a) => entry(`asteroid:${a.id}`, 'asteroid', omit(a, ['id', 'sampling']))),
   ];
 
   const images = catalogs.images.map((i) => ({
@@ -184,7 +185,7 @@ function interfaceDoc(site: string, header: object): object {
     },
     ids: {
       description:
-        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet or dwarf planet id ("mars", "ceres"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for landing and impact sites on the Moon, Mars, Mercury, Venus and Titan (Mercury, Venus and Titan in the solar view, where the site opens in the second tab of the info panel), "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars, "comet:<id>" for comets (solar view). The `view` and `embed` links of each catalogue object open it.',
+        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet or dwarf planet id ("mars", "ceres"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for landing and impact sites on the Moon, Mars, Mercury, Venus and Titan (Mercury, Venus and Titan in the solar view, where the site opens in the second tab of the info panel), "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars, "comet:<id>" for comets and "asteroid:<id>" for notable asteroids (solar view). The `view` and `embed` links of each catalogue object open it.',
     },
     url: {
       base: site,
@@ -211,6 +212,11 @@ function interfaceDoc(site: string, header: object): object {
         nearby: {
           values: ['1'],
           description: 'Name the stars within 20 light-years of the Sun (solar view).',
+        },
+        asteroids: {
+          values: ['1'],
+          description:
+            'Draw and list the notable asteroids of the catalogue (the largest, and the spacecraft targets), from JPL Horizons vectors (solar view; a selected asteroid is drawn in any case).',
         },
         comets: {
           values: ['1'],
@@ -308,7 +314,8 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
     lines.push(`## ${title}`, '');
     for (const o of b.objects.filter((x) => kinds.includes(String(x['kind'])) && keep(x))) {
       const facts = [
-        o['kind'] === 'comet' && `designation ${String(o['designation'])}`,
+        (o['kind'] === 'comet' || o['kind'] === 'asteroid') && `designation ${String(o['designation'])}`,
+        o['diameterKm'] && `diameter ${String(o['diameterKm'])} km`,
         o['discovered'] && `discovered ${String(o['discovered'])}`,
         o['agency'] && `agency ${String(o['agency'])}`,
         o['country'] && `country ${String(o['country'])}`,
@@ -348,6 +355,7 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
   section('Landing and impact sites (Moon, Mars, Mercury, Venus, Titan)', ['site']);
   section('Launch sites', ['launch-site']);
   section('Comets (solar view; positions from JPL Horizons)', ['comet']);
+  section('Notable asteroids (solar view; positions from JPL Horizons)', ['asteroid']);
   lines.push('## Glossary', '');
   for (const g of b.glossary) lines.push(`- **${g.labels.en.join(' / ') || g.term}**: ${g.definition.en}`);
   lines.push('');

@@ -8,8 +8,8 @@ import {
   parseSbdbComets,
   type SbdbComet,
 } from '../pipeline/audit';
-import { float64LittleEndian, parseCometPhysical } from '../pipeline/horizons';
-import { publishCometEphemerides, readManifest } from '../pipeline/publish';
+import { float64LittleEndian, parseSmallBodyPhysical } from '../pipeline/horizons';
+import { publishSmallBodyEphemerides, readManifest } from '../pipeline/publish';
 import cometsJson from '../catalog/comets.json';
 import { CometsCatalogSchema } from '../src/data/schemas';
 
@@ -19,12 +19,12 @@ describe('comet object data from Horizons', () => {
   it('reads the magnitude law and the radius, and leaves out what is missing', () => {
     const header =
       'Comet physical (GM= km^3/s^2; RAD= km):\n   GM= n.a.                RAD= 5.5\n   M1=  5.5      M2=  13.6     k1=  8.     k2=  5.      PHCOF=  .030\n';
-    expect(parseCometPhysical(header)).toEqual({ m1: 5.5, k1: 8, radiusKm: 5.5 });
-    expect(parseCometPhysical('   GM= n.a.  RAD= n.a.\n   M1=  12.3   k1=  4.5\n')).toEqual({
+    expect(parseSmallBodyPhysical(header)).toEqual({ m1: 5.5, k1: 8, radiusKm: 5.5 });
+    expect(parseSmallBodyPhysical('   GM= n.a.  RAD= n.a.\n   M1=  12.3   k1=  4.5\n')).toEqual({
       m1: 12.3,
       k1: 4.5,
     });
-    expect(parseCometPhysical('no object data')).toEqual({});
+    expect(parseSmallBodyPhysical('no object data')).toEqual({});
   });
 });
 
@@ -44,7 +44,7 @@ describe('comet ephemerides', () => {
     const write = (id: string, n: number) => {
       const data = rows(n);
       return {
-        cometId: id,
+        bodyId: id,
         horizonsId: `DES=${id};CAP;NOFRAG`,
         stepMin: 1440,
         source: 'test',
@@ -55,13 +55,18 @@ describe('comet ephemerides', () => {
         k1: 8,
       };
     };
-    await publishCometEphemerides(dir, [write('halley', 10), write('old', 10)], new Set(['halley', 'old']));
-    const m = await publishCometEphemerides(dir, [write('halley', 10)], new Set(['halley']));
+    await publishSmallBodyEphemerides(
+      dir,
+      'comets',
+      [write('halley', 10), write('old', 10)],
+      new Set(['halley', 'old']),
+    );
+    const m = await publishSmallBodyEphemerides(dir, 'comets', [write('halley', 10)], new Set(['halley']));
     expect(Object.keys(m.comets)).toEqual(['halley']);
     expect(m.comets['halley']).toMatchObject({ count: 10, m1: 5.5, k1: 8, center: '500@10' });
     expect((await readFile(join(dir, 'ephem/comets/halley.bin'))).byteLength).toBe(10 * 56);
     // A much shorter table keeps the previous file (warning only).
-    const kept = await publishCometEphemerides(dir, [write('halley', 3)], new Set(['halley']));
+    const kept = await publishSmallBodyEphemerides(dir, 'comets', [write('halley', 3)], new Set(['halley']));
     expect(kept.comets['halley']?.count).toBe(10);
     expect((await readManifest(dir)).comets['halley']?.count).toBe(10);
   });

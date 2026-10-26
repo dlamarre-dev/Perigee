@@ -1,12 +1,20 @@
 /**
  * Side panel of the solar-system view: planets (their moons folded underneath, unfolded while the planet or
  * one of its moons is selected), well-known stars in two groups (the bright ones, and those within 20 light-years;
- * each named on the sky when ticked), comets (drawn and listed when ticked, brightest first), spacecraft (status,
+ * each named on the sky when ticked), comets (drawn and listed when ticked, brightest first), notable asteroids
+ * (likewise, largest first), spacecraft (status,
  * ephemeris availability), log scale.
  */
 import type { PlanetInfo } from '../astro/planets';
 import { isBrightStar, isNearbyStar, NEARBY_STAR_MAX_LY } from '../astro/stars';
-import { isInactiveMission, type Comet, type Mission, type Moon, type Star } from '../data/schemas';
+import {
+  isInactiveMission,
+  type Asteroid,
+  type Comet,
+  type Mission,
+  type Moon,
+  type Star,
+} from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { MissionToggles } from './missionToggles';
@@ -24,6 +32,9 @@ export interface SolarPanelCallbacks {
   /** Draws the comets of catalog/comets.json (off by default). */
   readonly onToggleComets: (on: boolean) => void;
   readonly onSelectComet: (c: Comet) => void;
+  /** Draws the asteroids of catalog/asteroids.json (off by default). */
+  readonly onToggleAsteroids: (on: boolean) => void;
+  readonly onSelectAsteroid: (a: Asteroid) => void;
   readonly onToggleLogScale: (on: boolean) => void;
   /** Spacecraft whose markers, trajectories and labels are not drawn. */
   readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
@@ -46,6 +57,9 @@ export class SolarPanel {
   private readonly cometsToggle = h('input', { type: 'checkbox', id: 'toggle-comets' });
   private readonly cometsLabel = h('label', { for: 'toggle-comets' });
   private readonly cometsList = h('ul', { class: 'results moon-list star-list', id: 'comet-list' });
+  private readonly asteroidsToggle = h('input', { type: 'checkbox', id: 'toggle-asteroids' });
+  private readonly asteroidsLabel = h('label', { for: 'toggle-asteroids' });
+  private readonly asteroidsList = h('ul', { class: 'results moon-list star-list', id: 'asteroid-list' });
   /** Estimated magnitude now, by comet id (from their vectors, once loaded). */
   private cometMagnitudes: ReadonlyMap<string, number> = new Map();
   private readonly missionsTitle = h('h3', { class: 'results-title' });
@@ -73,6 +87,8 @@ export class SolarPanel {
     showNearbyStars = false,
     private readonly comets: readonly Comet[] = [],
     showComets = false,
+    private readonly asteroids: readonly Asteroid[] = [],
+    showAsteroids = false,
   ) {
     this.toggles = new MissionToggles(
       i18n,
@@ -103,6 +119,13 @@ export class SolarPanel {
       callbacks.onToggleComets(this.cometsToggle.checked);
     });
     this.cometsList.hidden = !showComets;
+    this.asteroidsToggle.checked = showAsteroids;
+    this.asteroidsToggle.setAttribute('aria-controls', 'asteroid-list');
+    this.asteroidsToggle.addEventListener('change', () => {
+      this.asteroidsList.hidden = !this.asteroidsToggle.checked;
+      callbacks.onToggleAsteroids(this.asteroidsToggle.checked);
+    });
+    this.asteroidsList.hidden = !showAsteroids;
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'solar-panel-title' },
       [
@@ -118,6 +141,8 @@ export class SolarPanel {
         this.nearbyList,
         h('p', { class: 'search-row' }, [this.cometsToggle, this.cometsLabel]),
         this.cometsList,
+        h('p', { class: 'search-row' }, [this.asteroidsToggle, this.asteroidsLabel]),
+        this.asteroidsList,
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
@@ -183,6 +208,7 @@ export class SolarPanel {
           (el.dataset['sun'] !== undefined && key === 'sun') ||
           (el.dataset['star'] !== undefined && `star:${el.dataset['star']}` === key) ||
           (el.dataset['comet'] !== undefined && `comet:${el.dataset['comet']}` === key) ||
+          (el.dataset['asteroid'] !== undefined && `asteroid:${el.dataset['asteroid']}` === key) ||
           (el.dataset['moon'] !== undefined && `moon:${el.dataset['moon']}` === key)),
       scroll,
     );
@@ -264,6 +290,23 @@ export class SolarPanel {
             ]),
           ]);
           b.addEventListener('click', () => this.callbacks.onSelectComet(c));
+          return h('li', {}, [b]);
+        }),
+    );
+    this.asteroidsLabel.textContent = t('solar.asteroids');
+    this.asteroidsList.replaceChildren(
+      ...[...this.asteroids]
+        .sort((a, b) => b.diameterKm - a.diameterKm)
+        .map((a) => {
+          const b = h('button', { type: 'button', class: 'result', 'data-asteroid': a.id }, [
+            h('span', { class: 'result-name' }, [a.name[lang]]),
+            h('span', { class: 'result-id' }, [
+              this.i18n.format('asteroid.diameterShort', {
+                d: this.i18n.number(a.diameterKm, a.diameterKm < 10 ? 1 : 0),
+              }),
+            ]),
+          ]);
+          b.addEventListener('click', () => this.callbacks.onSelectAsteroid(a));
           return h('li', {}, [b]);
         }),
     );

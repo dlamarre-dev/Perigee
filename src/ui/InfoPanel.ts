@@ -5,7 +5,16 @@ import { displayName, elementAgeDays, isStale, type SatObject } from '../earth/c
 import type { OperatorsCatalog } from '../data/schemas';
 import type { TemeState } from '../earth/sgp4';
 import type { I18n, MessageKey } from '../i18n';
-import { h, panelToggle, setPanelCollapsed, setText, sidePanel, sourceItems, syncRows } from './dom';
+import {
+  h,
+  panelToggle,
+  scrollPanelToTop,
+  setPanelCollapsed,
+  setText,
+  sidePanel,
+  sourceItems,
+  syncRows,
+} from './dom';
 import { imageFor } from '../render/images';
 import { modelFor } from '../render/models';
 import { enableDefinitions, labelDefinitions } from './Glossary';
@@ -80,7 +89,10 @@ export class InfoPanel {
 
   show(object: SatObject | undefined, focus = false): void {
     // A newly selected object opens the sheet fully (phones).
-    if (object !== this.object) setPanelCollapsed(this.element, false);
+    if (object !== this.object) {
+      setPanelCollapsed(this.element, false);
+      scrollPanelToTop(this.element);
+    }
     this.object = object;
     this.element.hidden = !object;
     this.render();

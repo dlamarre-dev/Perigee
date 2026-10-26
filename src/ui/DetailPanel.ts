@@ -4,6 +4,7 @@ import {
   h,
   markCurrent,
   panelToggle,
+  scrollPanelToTop,
   setPanelCollapsed,
   setText,
   sidePanel,
@@ -120,6 +121,7 @@ export class DetailPanel {
   private listPicked: ((key: string) => void) | undefined;
   private followingValue = false;
   private lastSourcesKey = '';
+  private subject: string | undefined;
   private readonly preview: ModelPreview;
   private readonly define: ReturnType<typeof labelDefinitions>;
 
@@ -183,11 +185,19 @@ export class DetailPanel {
     this.preview.show(undefined);
   }
 
-  show(content: DetailContent, focus = false): void {
+  /**
+   * `subject` identifies what the panel describes (a selection key, plus the part shown in a second tab): a new one
+   * starts at the top, while the periodic refreshes of the same one keep the scroll position.
+   */
+  show(content: DetailContent, focus = false, subject?: string): void {
     const wasHidden = this.element.hidden;
     this.element.hidden = false;
     // Opening (not the periodic refresh) shows the whole sheet on phones.
     if (wasHidden) setPanelCollapsed(this.element, false);
+    if (subject !== this.subject) {
+      this.subject = subject;
+      scrollPanelToTop(this.element);
+    }
     setText(this.title, content.title);
     this.preview.show(
       content.model

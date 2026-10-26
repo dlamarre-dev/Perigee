@@ -203,6 +203,19 @@ No single API provides "active probes + landing sites". We maintain:
   Sun, dust tail lagging behind the motion; length from r and M1, true scale only, labelled). The panel gives the
   osculating q, e, ecliptic inclination, period and perihelia (`perihelionPassages`, two-body, years 1000–9999
   only) and a photo from `catalog/images.json` (`comet:<id>` targets) when one is freely licensed.
+- `catalog/asteroids.json`: notable asteroids of the solar view, from Wikipedia's "List of exceptional asteroids":
+  the largest (over 250 km; Ceres stays a dwarf planet of `missions.json`) and the spacecraft targets. EN/FR name,
+  designation, `horizonsId` `<number>;`, group (main belt, Mars-crosser, near-Earth, Jupiter trojan), spectral type,
+  diameter and measured dimensions, rotation, discovery, moons, spacecraft visits (`missionId` links
+  `missions.json`), student notes, sources. Fetched by the same `horizons` run as the comets (`OBJ_DATA=YES` for H and
+  G), but only when their file is a week old or its window ends within 300 days (`ASTEROID_REFRESH_DAYS`):
+  `data/ephem/asteroids/<id>.bin`, manifest top-level `asteroids`; the audit flags them after 10 days
+  (`asteroid-ephemeris-stale`). Shown like the comets (`SmallBodyObject` in `SolarView`: box "Show the notable
+  asteroids", URL `asteroids=1`, list sorted by size, `sel=asteroid:<id>`, osculating orbits, no tail); the panel
+  gives group, size, rotation, visits, osculating a/q/e/i/period and the H–G magnitude (`asteroidMagnitude`). Four
+  have a NASA shape model (Vesta, Bennu, Eros, Itokawa: `asteroid:` model targets, shown in the panel and in place of
+  the marker when close, turning about z at the catalogued period, orientation illustrative); 20 others an image
+  (ESO VLT/SPHERE for the large ones, spacecraft views for the visited ones).
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models

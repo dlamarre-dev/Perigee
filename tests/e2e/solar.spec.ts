@@ -213,6 +213,25 @@ test('comets are drawn on demand, listed with their magnitude, and selectable', 
   await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
 });
 
+test('notable asteroids are listed by size and selectable', async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  await expect(page.locator('#asteroid-list')).toBeHidden();
+  await page.getByLabel('Show the notable asteroids').check();
+  await expect(page).toHaveURL(/asteroids=1/);
+  // Largest first: Vesta (Ceres stays among the dwarf planets).
+  await expect(page.locator('#asteroid-list [data-asteroid]').first()).toHaveAttribute(
+    'data-asteroid',
+    '4-vesta',
+  );
+  await expect(page.locator('#asteroid-list [data-asteroid="1-ceres"]')).toHaveCount(0);
+  await page.locator('#asteroid-list [data-asteroid="4-vesta"]').click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Vesta');
+  await expect(info).toContainText('Dawn');
+  await expect(info).toContainText('Estimated magnitude', { timeout: 15_000 });
+  await expect(page).toHaveURL(/sel=asteroid%3A4-vesta|sel=asteroid:4-vesta/);
+});
+
 test("a star's illustration opens a 3D map with the Sun and the distance between them", async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&sel=star:sirius&${FROZEN}`);
   await page.locator('aside.info:visible .star-map-button').click();

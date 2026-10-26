@@ -1055,7 +1055,11 @@ export class PlanetaryView implements View {
     const sel = this.selection;
     if (!sel) return;
     const content = sel.kind === 'mission' ? this.missionDetail(sel.mission) : this.siteDetail(sel.site);
-    this.detail.show(content, focus);
+    this.detail.show(
+      content,
+      focus,
+      sel.kind === 'mission' ? `mission:${sel.mission.id}` : `site:${sel.site.id}`,
+    );
   }
 
   private missionDetail(m: Mission): DetailContent {

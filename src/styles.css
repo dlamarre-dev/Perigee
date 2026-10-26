@@ -1460,6 +1460,24 @@ h2[tabindex='-1']:focus {
   max-width: 100%;
 }
 
+.model-preview .preview-image-button[hidden] {
+  display: none;
+}
+
+/* While a new image loads (src/ui/ModelPreview.ts): its place, without the previous object's image. */
+.model-preview .preview-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  aspect-ratio: 1 / 0.62;
+  border: 1px solid var(--line);
+}
+
+.model-preview .preview-loading[hidden] {
+  display: none;
+}
+
 .model-preview .preview-image-button:hover,
 .model-preview .preview-image-button:focus-visible {
   border-color: var(--accent);
@@ -2019,6 +2037,12 @@ h2[tabindex='-1']:focus {
 .label-comet {
   border-left-color: #9fe8d8;
   color: #d4f6ee;
+}
+
+/* Notable asteroids (solar view): the colour of their markers and orbits. */
+.label-asteroid {
+  border-left-color: #d8c3a5;
+  color: #efe2cf;
 }
 
 /* Stars on the sky (solar view): no marker, a thin leader from the star to its label. */

@@ -176,10 +176,11 @@ export const MoonEphemerisEntrySchema = DatasetEntrySchema.extend({
 export type MoonEphemerisEntry = z.infer<typeof MoonEphemerisEntrySchema>;
 
 /**
- * One comet's heliocentric Horizons state vectors (solar view): data/ephem/comets/<id>.bin, same rows as
- * EphemerisEntry (Horizons integrates the comet with the planets' perturbations).
+ * A comet's or an asteroid's heliocentric Horizons state vectors (solar view): data/ephem/comets/<id>.bin or
+ * data/ephem/asteroids/<id>.bin, same rows as EphemerisEntry (Horizons integrates the body with the planets'
+ * perturbations), with the object data Horizons gives for it.
  */
-export const CometEphemerisEntrySchema = DatasetEntrySchema.extend({
+export const SmallBodyEphemerisEntrySchema = DatasetEntrySchema.extend({
   horizonsId: z.string(),
   center: z.string(),
   startTdbJd: z.number(),
@@ -190,10 +191,13 @@ export const CometEphemerisEntrySchema = DatasetEntrySchema.extend({
   /** Total-magnitude law m = M1 + 5 log Δ + 2.5 k1 log r, from Horizons' object data (when given). */
   m1: z.number().optional(),
   k1: z.number().optional(),
-  /** Nucleus radius from Horizons' object data (when given). */
+  /** Asteroid absolute magnitude H and slope G (H–G phase law), from Horizons' object data. */
+  h: z.number().optional(),
+  g: z.number().optional(),
+  /** Nucleus or body radius from Horizons' object data (when given). */
   radiusKm: z.number().positive().optional(),
 });
-export type CometEphemerisEntry = z.infer<typeof CometEphemerisEntrySchema>;
+export type SmallBodyEphemerisEntry = z.infer<typeof SmallBodyEphemerisEntrySchema>;
 
 export const ManifestSchema = z.object({
   version: z.literal(1),
@@ -203,7 +207,9 @@ export const ManifestSchema = z.object({
   /** Moons positioned from Horizons in the solar view (the others use astronomy-engine). */
   moons: z.record(z.string(), MoonEphemerisEntrySchema).default({}),
   /** Comets of catalog/comets.json (solar view). An extra field: older clients ignore it. */
-  comets: z.record(z.string(), CometEphemerisEntrySchema).default({}),
+  comets: z.record(z.string(), SmallBodyEphemerisEntrySchema).default({}),
+  /** Asteroids of catalog/asteroids.json (solar view), refreshed weekly. An extra field: older clients ignore it. */
+  asteroids: z.record(z.string(), SmallBodyEphemerisEntrySchema).default({}),
   /**
    * CelesTrak supplemental GP sets merged into earth.gp: when each was last downloaded, how many records it had
    * and how many replaced the GP elements.
@@ -472,6 +478,58 @@ export const CometsCatalogSchema = z
   .refine((c) => new Set(c.comets.map((x) => x.id)).size === c.comets.length, {
     message: 'duplicate comet id',
   });
+
+/**
+ * Notable asteroids shown in the solar-system view (catalog/asteroids.json): the largest (over 250 km, Ceres apart:
+ * it is a dwarf planet of missions.json) and the spacecraft targets, positioned from JPL Horizons state vectors
+ * (`horizonsId`: "<number>;", the small-body record), refreshed weekly.
+ */
+export const AsteroidSchema = z.object({
+  /** "<number>-<name>", e.g. "4-vesta". */
+  id: z.string().regex(/^\d+-[a-z0-9-]+$/),
+  number: z.number().int().positive(),
+  /** As written, e.g. "4 Vesta". */
+  designation: z.string(),
+  name: localized,
+  horizonsId: z.string().regex(/^\d+;$/),
+  sampling: z.object({
+    stepMin: z.number().positive(),
+    pastDays: z.number().nonnegative(),
+    futureDays: z.number().positive(),
+  }),
+  group: z.enum(['main-belt', 'mars-crosser', 'near-earth', 'jupiter-trojan']),
+  spectralType: z.string().optional(),
+  /** Mean diameter. */
+  diameterKm: z.number().positive(),
+  /** Longest to shortest axis, when a shape was measured. */
+  dimensionsKm: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]).optional(),
+  rotationHours: z.number().positive().optional(),
+  discovered: partialDate.optional(),
+  discoverer: z.string().optional(),
+  /** Spacecraft encounters (flyby, orbit, landing, sample return, impact). */
+  visits: z
+    .array(
+      z.object({
+        mission: localized,
+        /** Its catalog/missions.json id, when listed there. */
+        missionId: z.string().optional(),
+        year: z.string(),
+        kind: localized,
+      }),
+    )
+    .optional(),
+  moons: z.array(localized).optional(),
+  notes: localized,
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type Asteroid = z.infer<typeof AsteroidSchema>;
+
+export const AsteroidsCatalogSchema = z
+  .object({ verified: isoDate, sources: z.array(z.url()).min(1), asteroids: z.array(AsteroidSchema) })
+  .refine((c) => new Set(c.asteroids.map((x) => x.id)).size === c.asteroids.length, {
+    message: 'duplicate asteroid id',
+  });
 export const StarsCatalogSchema = z.object({
   verified: isoDate,
   sources: z.array(z.url()).min(1),
@@ -489,7 +547,11 @@ export const ModelEntrySchema = z.object({
   url: z.url(),
   /** What it depicts: a mission, a landing/rover site, or Earth satellites by NORAD number. */
   targets: z
-    .array(z.string().regex(/^(mission:[a-z0-9-]+|moon:[a-z0-9-]+|site:[a-z0-9-]+|norad:\d+)$/))
+    .array(
+      z
+        .string()
+        .regex(/^(mission:[a-z0-9-]+|moon:[a-z0-9-]+|site:[a-z0-9-]+|asteroid:[a-z0-9-]+|norad:\d+)$/),
+    )
     .min(1),
   /** Largest real dimension (m): sanity check of the model's units, and the scale when they are off. */
   sizeM: z.number().positive(),
@@ -562,7 +624,7 @@ export type ImageKind = z.infer<typeof ImageKindSchema>;
 /** Representative image of an object without a 3D model (public/images/<id>.webp, tools/images). */
 export const ImageEntrySchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
-  target: z.string().regex(/^(mission|site|launch|comet):[a-z0-9-]+$|^norad:\d+$/),
+  target: z.string().regex(/^(mission|site|launch|comet|asteroid):[a-z0-9-]+$|^norad:\d+$/),
   kind: ImageKindSchema,
   /** Original file, downloaded and resized by tools/images. */
   file: z.url(),

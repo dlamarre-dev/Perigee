@@ -58,6 +58,9 @@ to do anything unless you explicitly ask for help.
    - `comet-ephemeris-stale`: comets whose Horizons vectors were not refreshed for days (their requests only
      warn). Read the last `data-horizons` run logs: an orbit solution renamed or a fragment split may need a
      new `DES=` record (check it with `horizons_lookup.api`); otherwise list it under "Needs a human".
+   - `asteroid-ephemeris-stale`: asteroids whose Horizons vectors (refreshed weekly) are more than 10 days old.
+     Read the last `data-horizons` run logs; if Horizons rejected one record, check its number with
+     `horizons_lookup.api` and fix `catalog/asteroids.json` with the source, otherwise list it under "Needs a human".
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:

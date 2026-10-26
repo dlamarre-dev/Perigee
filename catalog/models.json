@@ -498,6 +498,54 @@
       "credit": "NASA",
       "verified": "2026-10-25",
       "sources": ["https://science.nasa.gov/3d-resources/deep-space-1/"]
+    },
+    {
+      "id": "vesta",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/v/Vesta_1_100.glb",
+      "targets": ["asteroid:4-vesta"],
+      "sizeM": 572600,
+      "credit": "NASA",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://science.nasa.gov/resource/vesta-3d-model/",
+        "https://doi.org/10.1126/science.1219381"
+      ]
+    },
+    {
+      "id": "bennu",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/b/Bennu_1_1.glb",
+      "targets": ["asteroid:101955-bennu"],
+      "sizeM": 565,
+      "credit": "NASA",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://science.nasa.gov/resource/bennu-3d-model/",
+        "https://doi.org/10.1038/s41561-019-0330-x"
+      ]
+    },
+    {
+      "id": "eros",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/e/Eros_1_10.glb",
+      "targets": ["asteroid:433-eros"],
+      "sizeM": 34400,
+      "credit": "NASA",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://science.nasa.gov/resource/eros-3d-model/",
+        "https://doi.org/10.1006/icar.2001.6753"
+      ]
+    },
+    {
+      "id": "itokawa",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/i/Itokawa_1_1.glb",
+      "targets": ["asteroid:25143-itokawa"],
+      "sizeM": 535,
+      "credit": "NASA",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://science.nasa.gov/resource/asteroid-itokawa-3d-model/",
+        "https://doi.org/10.1126/science.1125841"
+      ]
     }
   ]
 }

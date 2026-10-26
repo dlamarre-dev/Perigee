@@ -26,6 +26,12 @@ export function sidePanel(attrs: Attrs, children: readonly Child[]): HTMLElement
   return h('aside', attrs, [grab, h('div', { class: 'panel-body' }, children)]);
 }
 
+/** Brings a side panel's scrolling body back to its top (another object shown). */
+export function scrollPanelToTop(panel: HTMLElement): void {
+  const body = panel.querySelector<HTMLElement>(':scope > .panel-body');
+  if (body) body.scrollTop = 0;
+}
+
 /**
  * Button collapsing its side panel to its header (larger screens; phones keep the first lines of the sheet) and
  * back. The panel, its selection and its scroll position are kept.

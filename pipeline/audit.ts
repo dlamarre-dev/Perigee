@@ -9,6 +9,7 @@
  */
 import { z } from 'zod';
 import type {
+  Asteroid,
   Comet,
   EarthScienceSatellite,
   LaunchSites,
@@ -32,6 +33,7 @@ export type AuditKind =
   | 'moon-anchor'
   | 'moon-ephemeris-stale'
   | 'comet-ephemeris-stale'
+  | 'asteroid-ephemeris-stale'
   | 'comet-candidate'
   | 'earth-science-member'
   | 'leap-second';
@@ -392,6 +394,35 @@ export function checkCometEphemerides(manifest: Manifest, comets: readonly Comet
   ];
 }
 
+/** Asteroids are refreshed weekly: flagged once their vectors are more than ASTEROID_EPHEMERIS_STALE_DAYS old. */
+export const ASTEROID_EPHEMERIS_STALE_DAYS = 10;
+
+export function checkAsteroidEphemerides(
+  manifest: Manifest,
+  asteroids: readonly Asteroid[],
+  now: Date,
+): AuditItem[] {
+  const stale = asteroids.filter((a) => {
+    const info = manifest.asteroids[a.id];
+    return !info || (now.getTime() - Date.parse(info.fetchedAt)) / DAY_MS > ASTEROID_EPHEMERIS_STALE_DAYS;
+  });
+  if (stale.length === 0) return [];
+  return [
+    {
+      kind: 'asteroid-ephemeris-stale',
+      key: 'data/ephem/asteroids',
+      summary: `${stale.length} asteroids have no Horizons vectors from the last ${ASTEROID_EPHEMERIS_STALE_DAYS} days (${stale.map((a) => a.id).join(', ')}): check the Horizons runs`,
+      details: {
+        asteroids: stale.map((a) => ({
+          id: a.id,
+          horizonsId: a.horizonsId,
+          fetchedAt: manifest.asteroids[a.id]?.fetchedAt ?? null,
+        })),
+      },
+    },
+  ];
+}
+
 /** JPL SBDB query of every comet's perihelion and absolute magnitude (one request per audit; no positions). */
 export const SBDB_COMETS_URL =
   'https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,pdes,prefix,q,e,tp,M1&sb-kind=c';
@@ -584,6 +615,7 @@ const TITLES: Record<AuditKind, string> = {
   'supgp-stale': 'Supplemental GP sets not refreshed',
   'moon-ephemeris-stale': 'Moons without recent Horizons vectors',
   'comet-ephemeris-stale': 'Comets without recent Horizons vectors',
+  'asteroid-ephemeris-stale': 'Asteroids without recent Horizons vectors',
   'comet-candidate': 'Comets near perihelion not in catalog/comets.json',
   'deep-space-candidate': 'Deep-space payloads not in catalog/missions.json',
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',

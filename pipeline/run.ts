@@ -18,6 +18,7 @@ import { dirname, join, resolve } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
 import { z } from 'zod';
 import { LATEST_LEAP_SECOND } from '../src/astro/leapSeconds';
+import { utcToTdbJd } from '../src/astro/time';
 import {
   LandingSitesSchema,
   LaunchSitesSchema,
@@ -26,6 +27,7 @@ import {
   GroupsSchema,
   MoonsCatalogSchema,
   CometsCatalogSchema,
+  AsteroidsCatalogSchema,
   StarsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
@@ -49,6 +51,7 @@ import {
   checkMoonAnchors,
   checkMoonEphemerides,
   checkCometEphemerides,
+  checkAsteroidEphemerides,
   checkCometCandidates,
   cometCandidatesUnreachable,
   parseSbdbComets,
@@ -81,7 +84,7 @@ import {
   fetchMissionPast,
   fetchMissionVectors,
   fetchMoonVectors,
-  parseCometPhysical,
+  parseSmallBodyPhysical,
   float64LittleEndian,
 } from './horizons';
 import {
@@ -90,12 +93,12 @@ import {
   publishDatasets,
   publishEphemerides,
   publishMoonEphemerides,
-  publishCometEphemerides,
+  publishSmallBodyEphemerides,
   writeStats,
   writeSupplementalInfo,
   type EphemerisToWrite,
   type MoonEphemerisToWrite,
-  type CometEphemerisToWrite,
+  type SmallBodyEphemerisToWrite,
 } from './publish';
 import { mergeSupplemental } from './supgp';
 import { fetchRoverPositions } from './rovers';
@@ -320,6 +323,9 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
  * previous file). Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
  * and only warns; the moons gathered are published, the others keep their previous file (the audit flags them).
  */
+/** Asteroid vectors are fetched again once they are this old (they move smoothly; a weekly refresh is plenty). */
+const ASTEROID_REFRESH_DAYS = 7;
+
 async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void> {
   const catalog = MissionsCatalogSchema.parse(
     JSON.parse(await readFile(resolve('catalog/missions.json'), 'utf8')),
@@ -394,28 +400,45 @@ async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void
   }
   await publishMoonEphemerides(dataDir, moonOut);
 
-  // Comets (catalog/comets.json): like the missions, with the coverage clamping; an enhancement like the moons,
-  // so a failure only warns (a network or HTTP error stops the remaining comet requests).
+  // Comets and asteroids (catalog/comets.json, catalog/asteroids.json): like the missions, with the coverage
+  // clamping and Horizons' object data; enhancements like the moons, so a failure only warns (a network or HTTP
+  // error stops the remaining small-body requests). Asteroids barely change from day to day: refreshed weekly.
   const comets = CometsCatalogSchema.parse(
     JSON.parse(await readFile(resolve('catalog/comets.json'), 'utf8')),
   );
-  const cometOut: CometEphemerisToWrite[] = [];
-  for (const comet of comets.comets) {
+  const asteroids = AsteroidsCatalogSchema.parse(
+    JSON.parse(await readFile(resolve('catalog/asteroids.json'), 'utf8')),
+  );
+  const previous = await readManifest(dataDir);
+  const nowJd = utcToTdbJd(now);
+  const due = (kind: 'comets' | 'asteroids', id: string): boolean => {
+    const entry = previous[kind][id];
+    if (kind === 'comets' || !entry) return true;
+    const ageDays = (now.getTime() - Date.parse(entry.fetchedAt)) / 86_400_000;
+    return ageDays >= ASTEROID_REFRESH_DAYS || entry.endTdbJd < nowJd + 300;
+  };
+  const bodies = [
+    ...comets.comets.map((b) => ({ kind: 'comets' as const, body: b })),
+    ...asteroids.asteroids.map((b) => ({ kind: 'asteroids' as const, body: b })),
+  ];
+  const smallOut: Record<'comets' | 'asteroids', SmallBodyEphemerisToWrite[]> = { comets: [], asteroids: [] };
+  for (const { kind, body } of bodies) {
+    if (!due(kind, body.id)) continue;
     try {
       const { data, url, clamped, result } = await fetchMissionVectors(
-        { ...comet, centralBody: 'sun' },
+        { ...body, centralBody: 'sun' },
         now,
         true,
       );
       if (clamped)
         console.warn(
-          `comet ${comet.id}: Horizons coverage ends ${clamped.kind} ${clamped.date.toISOString()}`,
+          `${kind} ${body.id}: Horizons coverage ends ${clamped.kind} ${clamped.date.toISOString()}`,
         );
-      cometOut.push({
-        cometId: comet.id,
-        ...parseCometPhysical(result),
-        horizonsId: comet.horizonsId,
-        stepMin: comet.sampling.stepMin,
+      smallOut[kind].push({
+        bodyId: body.id,
+        ...parseSmallBodyPhysical(result),
+        horizonsId: body.horizonsId,
+        stepMin: body.sampling.stepMin,
         source: url,
         fetchedAt: now,
         rows: data,
@@ -423,14 +446,25 @@ async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void
         ...(clamped?.kind === 'after' ? { coverageEnd: clamped.date } : {}),
       });
     } catch (err) {
-      console.warn(`::warning::comet ${comet.id}: ${String(err)}`);
+      console.warn(`::warning::${kind} ${body.id}: ${String(err)}`);
       if (!(err instanceof ProviderError) || err.status !== 200) {
-        console.warn('::warning::remaining comets skipped this run');
+        console.warn('::warning::remaining comets and asteroids skipped this run');
         break;
       }
     }
   }
-  await publishCometEphemerides(dataDir, cometOut, new Set(comets.comets.map((c) => c.id)));
+  await publishSmallBodyEphemerides(
+    dataDir,
+    'comets',
+    smallOut.comets,
+    new Set(comets.comets.map((c) => c.id)),
+  );
+  await publishSmallBodyEphemerides(
+    dataDir,
+    'asteroids',
+    smallOut.asteroids,
+    new Set(asteroids.asteroids.map((a) => a.id)),
+  );
   await publishEphemerides(dataDir, out, now);
 }
 
@@ -574,6 +608,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
   const leapSeconds = await leapSecondItems(now);
   const comets = CometsCatalogSchema.parse(await readJson('catalog/comets.json'));
   const cometItems = await cometCandidateItems(comets.comets, now);
+  const asteroids = AsteroidsCatalogSchema.parse(await readJson('catalog/asteroids.json'));
 
   const candidates = deepSpaceCandidates(launches, missions);
   const matches = new Map<string, { name: string; spkid: string }[]>();
@@ -611,6 +646,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/earth-science.json', verified: earthScience.verified },
         { path: 'catalog/stars.json', verified: stars.verified },
         { path: 'catalog/comets.json', verified: comets.verified },
+        { path: 'catalog/asteroids.json', verified: asteroids.verified },
       ],
       missions,
       now,
@@ -620,6 +656,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ...checkMoonAnchors(moons.moons, now),
     ...checkMoonEphemerides(manifest, moons.moons, now),
     ...checkCometEphemerides(manifest, comets.comets, now),
+    ...checkAsteroidEphemerides(manifest, asteroids.asteroids, now),
     ...cometItems,
     ...leapSeconds,
   ];

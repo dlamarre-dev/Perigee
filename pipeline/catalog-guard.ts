@@ -22,6 +22,7 @@ import {
   MoonsCatalogSchema,
   StarsCatalogSchema,
   CometsCatalogSchema,
+  AsteroidsCatalogSchema,
   OperatorsCatalogSchema,
 } from '../src/data/schemas';
 
@@ -99,6 +100,10 @@ const CATALOGS: Readonly<Record<string, EntryList>> = {
   'catalog/moons.json': {
     schema: MoonsCatalogSchema,
     entries: (p) => byId((p as z.infer<typeof MoonsCatalogSchema>).moons),
+  },
+  'catalog/asteroids.json': {
+    schema: AsteroidsCatalogSchema,
+    entries: (p) => byId((p as z.infer<typeof AsteroidsCatalogSchema>).asteroids),
   },
   'catalog/comets.json': {
     schema: CometsCatalogSchema,

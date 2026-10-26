@@ -1,7 +1,7 @@
 /**
  * The objects the engine knows, by identifier, from Perigee's curated catalogues (bundled) and the published
  * satellite elements (fetched): the Sun, planets and dwarf planets, moons, spacecraft beyond Earth orbit, Earth
- * satellites (NORAD number), landing and launch sites, named stars, comets. Identifiers follow the app's `sel` URL
+ * satellites (NORAD number), landing and launch sites, named stars, comets, notable asteroids. Identifiers follow the app's `sel` URL
  * parameter, so an answer can link to the matching view.
  */
 import earthScienceJson from '../../catalog/earth-science.json';
@@ -16,9 +16,11 @@ import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
 import starsJson from '../../catalog/stars.json';
 import cometsJson from '../../catalog/comets.json';
+import asteroidsJson from '../../catalog/asteroids.json';
 import operatorsJson from '../../catalog/operators.json';
 import { PLANETS, type PlanetInfo } from '../astro/planets';
 import {
+  AsteroidsCatalogSchema,
   CometsCatalogSchema,
   EarthScienceCatalogSchema,
   ImagesCatalogSchema,
@@ -28,6 +30,7 @@ import {
   MoonsCatalogSchema,
   OperatorsCatalogSchema,
   StarsCatalogSchema,
+  type Asteroid,
   type Comet,
   type EarthScienceSatellite,
   type ImageEntry,
@@ -44,6 +47,7 @@ export const catalogs = {
   moons: MoonsCatalogSchema.parse(moonsJson).moons,
   stars: StarsCatalogSchema.parse(starsJson).stars,
   comets: CometsCatalogSchema.parse(cometsJson).comets,
+  asteroids: AsteroidsCatalogSchema.parse(asteroidsJson).asteroids,
   moonSites: LandingSitesSchema.parse(moonSitesJson).sites,
   marsSites: LandingSitesSchema.parse(marsSitesJson).sites,
   mercurySites: LandingSitesSchema.parse(mercurySitesJson).sites,
@@ -69,7 +73,8 @@ export type ObjectRef =
   | { readonly kind: 'site'; readonly id: string; readonly site: LandingSite; readonly body: SiteBody }
   | { readonly kind: 'launch'; readonly id: string; readonly site: LaunchSite }
   | { readonly kind: 'star'; readonly id: string; readonly star: Star }
-  | { readonly kind: 'comet'; readonly id: string; readonly comet: Comet };
+  | { readonly kind: 'comet'; readonly id: string; readonly comet: Comet }
+  | { readonly kind: 'asteroid'; readonly id: string; readonly asteroid: Asteroid };
 
 /** Bodies with catalogued landing or impact sites. */
 export type SiteBody = 'moon' | 'mars' | 'mercury' | 'venus' | 'titan';
@@ -95,7 +100,7 @@ export class UnknownObjectError extends Error {
 /**
  * Resolves an identifier: "sun", a planet id ("mars"), "moon:<id>" or a moon id ("moon", "titan"), a mission id
  * ("lro"), a NORAD number ("25544"), "site:<id>" (Moon, Mars, Mercury, Venus, Titan), "launch:<id>", "star:<id>",
- * "comet:<id>".
+ * "comet:<id>", "asteroid:<id>".
  */
 export function resolve(id: string): ObjectRef {
   const key = id.trim().toLowerCase();
@@ -123,6 +128,10 @@ export function resolve(id: string): ObjectRef {
   if (prefix === 'comet') {
     const comet = catalogs.comets.find((c) => c.id === rest);
     if (comet) return { kind: 'comet', id: `comet:${comet.id}`, comet };
+  }
+  if (prefix === 'asteroid') {
+    const asteroid = catalogs.asteroids.find((a) => a.id === rest);
+    if (asteroid) return { kind: 'asteroid', id: `asteroid:${asteroid.id}`, asteroid };
   }
   if (prefix === 'moon') {
     const moon = catalogs.moons.find((m) => m.id === rest);
@@ -172,6 +181,11 @@ export function findInCatalogs(query: string): FoundObject[] {
       kind: 'comet' as const,
       name: { en: `${c.name.en} ${c.designation}`, fr: `${c.name.fr} ${c.designation}` },
     })),
+    ...catalogs.asteroids.map((a) => ({
+      id: `asteroid:${a.id}`,
+      kind: 'asteroid' as const,
+      name: { en: `${a.designation} (${a.name.en})`, fr: `${a.designation} (${a.name.fr})` },
+    })),
   ];
   const score = (o: FoundObject): number => {
     const names = [o.name.en, o.name.fr, o.id].map(fold);
@@ -196,7 +210,7 @@ export function imageOf(ref: ObjectRef): ImageEntry | undefined {
         ? `norad:${ref.norad}`
         : ref.kind === 'site'
           ? ref.id
-          : ref.kind === 'launch' || ref.kind === 'comet'
+          : ref.kind === 'launch' || ref.kind === 'comet' || ref.kind === 'asteroid'
             ? ref.id
             : undefined;
   return target ? catalogs.images.find((i) => i.target === target) : undefined;
@@ -230,6 +244,8 @@ export function viewOf(ref: ObjectRef): { view: 'earth' | 'moon' | 'mars' | 'sol
       return { view: 'solar', sel: `star:${ref.star.id}` };
     case 'comet':
       return { view: 'solar', sel: `comet:${ref.comet.id}` };
+    case 'asteroid':
+      return { view: 'solar', sel: `asteroid:${ref.asteroid.id}` };
     case 'sun':
       return { view: 'solar', sel: 'sun' };
   }

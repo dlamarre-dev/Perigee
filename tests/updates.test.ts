@@ -30,6 +30,7 @@ function manifest(gp: string, lro: string): Manifest {
     datasets: { 'earth.gp': entry(gp) },
     moons: {},
     comets: {},
+    asteroids: {},
     ephemerides: {
       lro: {
         ...entry(lro),

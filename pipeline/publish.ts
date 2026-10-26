@@ -42,6 +42,7 @@ export async function readManifest(dataDir: string): Promise<Manifest> {
       ephemerides: {},
       moons: {},
       comets: {},
+      asteroids: {},
     };
   return ManifestSchema.parse(JSON.parse(await readFile(file, 'utf8')));
 }
@@ -517,8 +518,8 @@ export async function publishMoonEphemerides(
   return next;
 }
 
-export interface CometEphemerisToWrite {
-  readonly cometId: string;
+export interface SmallBodyEphemerisToWrite {
+  readonly bodyId: string;
   readonly horizonsId: string;
   readonly stepMin: number;
   readonly source: string;
@@ -527,40 +528,42 @@ export interface CometEphemerisToWrite {
   readonly rows: Float64Array;
   readonly bytes: Buffer;
   readonly coverageEnd?: Date;
-  /** Magnitude law and nucleus radius from Horizons' object data. */
+  /** Object data from Horizons: a comet's magnitude law, an asteroid's H and G, the radius. */
   readonly m1?: number;
   readonly k1?: number;
+  readonly h?: number;
+  readonly g?: number;
   readonly radiusKm?: number;
 }
 
 /**
- * Writes data/ephem/comets/<id>.bin and the manifest's `comets` entries, with the moons' guard (refusals only
- * warn: a comet keeps its previous file). Entries of comets no longer in the catalogue (`catalogIds`) are dropped.
+ * Writes data/ephem/comets/<id>.bin or data/ephem/asteroids/<id>.bin and the manifest's `comets` or `asteroids`
+ * entries, with the moons' guard (refusals only warn: the body keeps its previous file). Entries of bodies no longer
+ * in the catalogue (`catalogIds`) are dropped; the others not in `list` are kept.
  */
-export async function publishCometEphemerides(
+export async function publishSmallBodyEphemerides(
   dataDir: string,
-  list: readonly CometEphemerisToWrite[],
+  kind: 'comets' | 'asteroids',
+  list: readonly SmallBodyEphemerisToWrite[],
   catalogIds: ReadonlySet<string>,
 ): Promise<Manifest> {
   const manifest = await readManifest(dataDir);
-  const next: Manifest = {
-    ...manifest,
-    comets: Object.fromEntries(Object.entries(manifest.comets).filter(([id]) => catalogIds.has(id))),
-  };
+  const entries = Object.fromEntries(Object.entries(manifest[kind]).filter(([id]) => catalogIds.has(id)));
+  const next: Manifest = { ...manifest, [kind]: entries };
   for (const c of list) {
     const count = c.rows.length / 7;
-    const prev = manifest.comets[c.cometId];
+    const prev = manifest[kind][c.bodyId];
     if (count === 0 || (prev && count < prev.count * MIN_RATIO_VS_PREVIOUS && !(c.stepMin > prev.stepMin))) {
       console.warn(
-        `comet ${c.cometId}: ${count} states is below half of the previous ${prev?.count ?? 0}; kept`,
+        `${kind} ${c.bodyId}: ${count} states is below half of the previous ${prev?.count ?? 0}; kept`,
       );
       continue;
     }
-    const path = `ephem/comets/${c.cometId}.bin`;
+    const path = `ephem/${kind}/${c.bodyId}.bin`;
     const file = join(dataDir, path);
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, c.bytes);
-    next.comets[c.cometId] = {
+    entries[c.bodyId] = {
       path,
       source: c.source,
       fetchedAt: c.fetchedAt.toISOString(),
@@ -575,6 +578,8 @@ export async function publishCometEphemerides(
       ...(c.coverageEnd ? { coverageEnd: c.coverageEnd.toISOString() } : {}),
       ...(c.m1 !== undefined ? { m1: c.m1 } : {}),
       ...(c.k1 !== undefined ? { k1: c.k1 } : {}),
+      ...(c.h !== undefined ? { h: c.h } : {}),
+      ...(c.g !== undefined ? { g: c.g } : {}),
       ...(c.radiusKm !== undefined ? { radiusKm: c.radiusKm } : {}),
     };
     console.log(`wrote ${path}: ${count} states, ${(c.bytes.byteLength / 1024).toFixed(0)} KiB`);

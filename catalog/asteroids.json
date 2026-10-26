@@ -1,0 +1,1283 @@
+{
+  "verified": "2026-10-26",
+  "sources": [
+    "https://ssd.jpl.nasa.gov/horizons/",
+    "https://en.wikipedia.org/wiki/List_of_exceptional_asteroids"
+  ],
+  "asteroids": [
+    {
+      "id": "4-vesta",
+      "number": 4,
+      "designation": "4 Vesta",
+      "name": {
+        "en": "Vesta",
+        "fr": "Vesta"
+      },
+      "horizonsId": "4;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "V",
+      "diameterKm": 525.4,
+      "dimensionsKm": [572.6, 557.2, 446.4],
+      "rotationHours": 5.342,
+      "discovered": "1807-03-29",
+      "discoverer": "Heinrich Wilhelm Olbers",
+      "visits": [
+        {
+          "mission": {
+            "en": "Dawn",
+            "fr": "Dawn"
+          },
+          "missionId": "dawn",
+          "year": "2011–2012",
+          "kind": {
+            "en": "orbit",
+            "fr": "orbite"
+          }
+        }
+      ],
+      "notes": {
+        "en": "The second-largest body of the asteroid belt after the dwarf planet Ceres, and the brightest asteroid seen from Earth: at its best it can just be seen with the naked eye under a dark sky. NASA’s Dawn orbited it in 2011–2012 and mapped Rheasilvia, an impact basin about 500 km across around its south pole, with a central peak more than 20 km high. Debris from such impacts reaches the Earth as the HED meteorites, so pieces of Vesta are kept in museums.",
+        "fr": "Le deuxième plus gros corps de la ceinture d’astéroïdes après la planète naine Cérès, et l’astéroïde le plus brillant vu de la Terre : au mieux, il est tout juste visible à l’œil nu sous un ciel noir. La sonde Dawn de la NASA l’a mis en orbite en 2011–2012 et a cartographié Rheasilvia, un bassin d’impact d’environ 500 km autour de son pôle Sud, dont le pic central dépasse 20 km de haut. Des débris de tels impacts tombent sur la Terre sous forme de météorites HED : des morceaux de Vesta sont conservés dans les musées."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=4",
+        "https://science.nasa.gov/solar-system/asteroids/4-vesta/",
+        "https://science.nasa.gov/mission/dawn/",
+        "https://en.wikipedia.org/wiki/4_Vesta"
+      ]
+    },
+    {
+      "id": "2-pallas",
+      "number": 2,
+      "designation": "2 Pallas",
+      "name": {
+        "en": "Pallas",
+        "fr": "Pallas"
+      },
+      "horizonsId": "2;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "B",
+      "diameterKm": 511,
+      "dimensionsKm": [568, 532, 448],
+      "rotationHours": 7.813,
+      "discovered": "1802-03-28",
+      "discoverer": "Heinrich Wilhelm Olbers",
+      "notes": {
+        "en": "The second asteroid ever discovered, by Heinrich Olbers on 1802-03-28, and the third-largest body of the asteroid belt. Its orbit is tilted by about 35° to the plane of the planets, which makes it hard to reach: no spacecraft has visited it. Images from ESO’s Very Large Telescope show a surface riddled with large craters, which earned it the nickname “golf ball asteroid”.",
+        "fr": "Le deuxième astéroïde découvert, par Heinrich Olbers le 1802-03-28, et le troisième plus gros corps de la ceinture d’astéroïdes. Son orbite est inclinée d’environ 35° sur le plan des planètes, ce qui le rend difficile à atteindre : aucune sonde ne l’a visité. Les images du Very Large Telescope de l’ESO montrent une surface criblée de grands cratères, d’où son surnom d’« astéroïde balle de golf »."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/2_Pallas"
+      ]
+    },
+    {
+      "id": "10-hygiea",
+      "number": 10,
+      "designation": "10 Hygiea",
+      "name": {
+        "en": "Hygiea",
+        "fr": "Hygie"
+      },
+      "horizonsId": "10;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 433,
+      "dimensionsKm": [450, 430, 424],
+      "rotationHours": 13.83,
+      "discovered": "1849-04-12",
+      "discoverer": "Annibale de Gasparis",
+      "notes": {
+        "en": "The fourth-largest body of the asteroid belt, dark and rich in carbon, discovered by Annibale de Gasparis in Naples on 1849-04-12. Images from ESO’s Very Large Telescope in 2017–2018 showed that it is nearly round, so it might qualify as the smallest dwarf planet of the Solar System; the International Astronomical Union has not reclassified it. It is the largest member of the Hygiea family, asteroids born from a giant impact on it.",
+        "fr": "Le quatrième plus gros corps de la ceinture d’astéroïdes, sombre et riche en carbone, découvert par Annibale de Gasparis à Naples le 1849-04-12. Les images du Very Large Telescope de l’ESO prises en 2017–2018 ont montré qu’il est presque rond : il pourrait être la plus petite planète naine du Système solaire, mais l’Union astronomique internationale ne l’a pas reclassé. C’est le plus gros membre de la famille d’Hygie, des astéroïdes nés d’un impact géant sur lui."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=10",
+        "https://www.eso.org/public/news/eso1918/",
+        "https://en.wikipedia.org/wiki/10_Hygiea"
+      ]
+    },
+    {
+      "id": "704-interamnia",
+      "number": 704,
+      "designation": "704 Interamnia",
+      "name": {
+        "en": "Interamnia",
+        "fr": "Interamnia"
+      },
+      "horizonsId": "704;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "F",
+      "diameterKm": 332,
+      "dimensionsKm": [362, 348, 310],
+      "rotationHours": 8.727,
+      "discovered": "1910-10-02",
+      "discoverer": "Vincenzo Cerulli",
+      "notes": {
+        "en": "With a mean diameter of about 332 km, the fifth-largest asteroid after Ceres, Vesta, Pallas and Hygiea, yet one of the least studied. Discovered by Vincenzo Cerulli on 1910-10-02, it bears the Latin name of Teramo, the Italian town where he worked. Its low density and the water-bearing minerals on its surface suggest that it may contain ice.",
+        "fr": "Avec un diamètre moyen d’environ 332 km, c’est le cinquième plus gros astéroïde après Cérès, Vesta, Pallas et Hygie, et pourtant l’un des moins étudiés. Découvert par Vincenzo Cerulli le 1910-10-02, il porte le nom latin de Teramo, la ville italienne où il travaillait. Sa faible densité et les minéraux hydratés de sa surface laissent penser qu’il pourrait contenir de la glace."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=704",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/704_Interamnia"
+      ]
+    },
+    {
+      "id": "52-europa",
+      "number": 52,
+      "designation": "52 Europa",
+      "name": {
+        "en": "Europa",
+        "fr": "Europe"
+      },
+      "horizonsId": "52;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 319,
+      "dimensionsKm": [378, 336, 255],
+      "rotationHours": 5.63,
+      "discovered": "1858-02-04",
+      "discoverer": "Hermann Goldschmidt",
+      "notes": {
+        "en": "One of the largest asteroids, about 319 km across, dark and rich in carbon. Hermann Goldschmidt discovered it from his balcony in Paris on 1858-02-04. It shares its name with Jupiter’s moon Europa: both honour the same figure of Greek mythology.",
+        "fr": "L’un des plus gros astéroïdes, d’environ 319 km, sombre et riche en carbone. Hermann Goldschmidt l’a découvert depuis son balcon à Paris le 1858-02-04. Il porte le même nom que la lune Europe de Jupiter : tous deux honorent la même figure de la mythologie grecque."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=52",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/52_Europa"
+      ]
+    },
+    {
+      "id": "511-davida",
+      "number": 511,
+      "designation": "511 Davida",
+      "name": {
+        "en": "Davida",
+        "fr": "Davida"
+      },
+      "horizonsId": "511;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 298,
+      "dimensionsKm": [357, 294, 231],
+      "rotationHours": 5.13,
+      "discovered": "1903-05-30",
+      "discoverer": "Raymond Smith Dugan",
+      "notes": {
+        "en": "One of the largest asteroids, about 298 km across, and one of the most massive: a dark body made of carbon-rich rock. Raymond Smith Dugan discovered it at Heidelberg on 1903-05-30 and named it after David Peck Todd, an astronomy professor at Amherst College.",
+        "fr": "L’un des plus gros astéroïdes, d’environ 298 km, et l’un des plus massifs : un corps sombre fait de roches riches en carbone. Raymond Smith Dugan l’a découvert à Heidelberg le 1903-05-30 et l’a nommé en l’honneur de David Peck Todd, professeur d’astronomie au collège Amherst."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=511",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/511_Davida"
+      ]
+    },
+    {
+      "id": "87-sylvia",
+      "number": 87,
+      "designation": "87 Sylvia",
+      "name": {
+        "en": "Sylvia",
+        "fr": "Sylvia"
+      },
+      "horizonsId": "87;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "P",
+      "diameterKm": 271,
+      "dimensionsKm": [363, 249, 191],
+      "rotationHours": 5.184,
+      "discovered": "1866-05-16",
+      "discoverer": "Norman Robert Pogson",
+      "moons": [
+        {
+          "en": "Romulus",
+          "fr": "Romulus"
+        },
+        {
+          "en": "Remus",
+          "fr": "Rémus"
+        }
+      ],
+      "notes": {
+        "en": "A dark asteroid about 271 km across, orbiting in the outer belt with the Cybele group. It was the first asteroid known to have two moons: Romulus, found in 2001, and Remus, announced in 2005. Norman Pogson, who discovered it at Madras (now Chennai, India) on 1866-05-16, named it after Rhea Silvia, the mother of the twins Romulus and Remus.",
+        "fr": "Un astéroïde sombre d’environ 271 km, qui orbite dans la partie externe de la ceinture avec le groupe de Cybèle. C’est le premier astéroïde connu pour avoir deux lunes : Romulus, trouvée en 2001, et Rémus, annoncée en 2005. Norman Pogson, qui l’a découvert à Madras (aujourd’hui Chennai, en Inde) le 1866-05-16, l’a nommé d’après Rhea Silvia, la mère des jumeaux Romulus et Rémus."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=87",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/87_Sylvia"
+      ]
+    },
+    {
+      "id": "15-eunomia",
+      "number": 15,
+      "designation": "15 Eunomia",
+      "name": {
+        "en": "Eunomia",
+        "fr": "Eunomie"
+      },
+      "horizonsId": "15;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 270,
+      "dimensionsKm": [340, 248, 229],
+      "rotationHours": 6.083,
+      "discovered": "1851-07-29",
+      "discoverer": "Annibale de Gasparis",
+      "notes": {
+        "en": "The largest stony (S-type) asteroid, about 270 km across, elongated and irregular; it turns once every 6 hours and 5 minutes. Discovered by Annibale de Gasparis in Naples on 1851-07-29, it gives its name to the Eunomia family, one of the largest groups of asteroids sharing its orbit and composition, fragments of an ancient collision.",
+        "fr": "Le plus gros astéroïde rocheux (de type S), d’environ 270 km, allongé et irrégulier; il fait un tour sur lui-même en 6 heures et 5 minutes. Découvert par Annibale de Gasparis à Naples le 1851-07-29, il donne son nom à la famille d’Eunomie, l’un des plus grands groupes d’astéroïdes partageant son orbite et sa composition, fragments d’une ancienne collision."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=15",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/15_Eunomia"
+      ]
+    },
+    {
+      "id": "31-euphrosyne",
+      "number": 31,
+      "designation": "31 Euphrosyne",
+      "name": {
+        "en": "Euphrosyne",
+        "fr": "Euphrosyne"
+      },
+      "horizonsId": "31;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 268,
+      "dimensionsKm": [294, 280, 248],
+      "rotationHours": 5.53,
+      "discovered": "1854-09-01",
+      "discoverer": "James Ferguson",
+      "moons": [
+        {
+          "en": "S/2019 (31) 1",
+          "fr": "S/2019 (31) 1"
+        }
+      ],
+      "notes": {
+        "en": "A dark, nearly round asteroid about 268 km across, discovered by James Ferguson at the US Naval Observatory in Washington on 1854-09-01. Its orbit is steeply tilted, by about 26°. In 2019, images from ESO’s Very Large Telescope revealed a small moon about 8 km across.",
+        "fr": "Un astéroïde sombre et presque rond d’environ 268 km, découvert par James Ferguson à l’Observatoire naval des États-Unis, à Washington, le 1854-09-01. Son orbite est fortement inclinée, d’environ 26°. En 2019, des images du Very Large Telescope de l’ESO ont révélé une petite lune d’environ 8 km."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=31",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/31_Euphrosyne"
+      ]
+    },
+    {
+      "id": "65-cybele",
+      "number": 65,
+      "designation": "65 Cybele",
+      "name": {
+        "en": "Cybele",
+        "fr": "Cybèle"
+      },
+      "horizonsId": "65;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "P",
+      "diameterKm": 263,
+      "dimensionsKm": [297, 291, 213],
+      "rotationHours": 6.081,
+      "discovered": "1861-03-08",
+      "discoverer": "Wilhelm Tempel",
+      "notes": {
+        "en": "A dark asteroid about 263 km across in the outer belt, thought to be a primordial body left almost intact since the birth of the Solar System. It gives its name to the Cybele group, asteroids orbiting beyond the 2:1 resonance with Jupiter. Wilhelm Tempel discovered it at Marseille on 1861-03-08; it was first named “Maximiliana” after a Bavarian king, a modern name that astronomers rejected.",
+        "fr": "Un astéroïde sombre d’environ 263 km dans la partie externe de la ceinture, considéré comme un corps primitif resté presque intact depuis la naissance du Système solaire. Il donne son nom au groupe de Cybèle, des astéroïdes qui orbitent au-delà de la résonance 2:1 avec Jupiter. Wilhelm Tempel l’a découvert à Marseille le 1861-03-08; on l’a d’abord nommé « Maximiliana », d’après un roi de Bavière, un nom moderne que les astronomes ont refusé."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=65",
+        "https://en.wikipedia.org/wiki/65_Cybele"
+      ]
+    },
+    {
+      "id": "624-hektor",
+      "number": 624,
+      "designation": "624 Hektor",
+      "name": {
+        "en": "Hektor",
+        "fr": "Hector"
+      },
+      "horizonsId": "624;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "jupiter-trojan",
+      "spectralType": "D",
+      "diameterKm": 256,
+      "rotationHours": 6.921,
+      "discovered": "1907-02-10",
+      "discoverer": "August Kopff",
+      "moons": [
+        {
+          "en": "Skamandrios",
+          "fr": "Skamandrios"
+        }
+      ],
+      "notes": {
+        "en": "The largest Jupiter trojan: it shares Jupiter’s orbit around the Sun, about 60° ahead of the planet (the L4 point). It is strongly elongated, about 400 km long, possibly two lobes in contact, and in 2006 the Keck telescope found a small moon about 12 km across, Skamandrios. Discovered by August Kopff at Heidelberg on 1907-02-10, it is named after the Trojan hero Hector.",
+        "fr": "Le plus gros des troyens de Jupiter : il partage l’orbite de Jupiter autour du Soleil, environ 60° en avant de la planète (le point L4). Très allongé, il mesure environ 400 km de long et pourrait être formé de deux lobes collés; en 2006, le télescope Keck lui a trouvé une petite lune d’environ 12 km, Skamandrios. Découvert par August Kopff à Heidelberg le 1907-02-10, il porte le nom du héros troyen Hector."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=624",
+        "https://en.wikipedia.org/wiki/624_Hektor"
+      ]
+    },
+    {
+      "id": "3-juno",
+      "number": 3,
+      "designation": "3 Juno",
+      "name": {
+        "en": "Juno",
+        "fr": "Junon"
+      },
+      "horizonsId": "3;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 254,
+      "dimensionsKm": [288, 250, 225],
+      "rotationHours": 7.21,
+      "discovered": "1804-09-01",
+      "discoverer": "Karl Ludwig Harding",
+      "notes": {
+        "en": "The third asteroid discovered, by Karl Ludwig Harding on 1804-09-01; like Ceres, Pallas and Vesta, it was counted as a planet for decades. About 254 km across, it is one of the two largest stony (S-type) asteroids.",
+        "fr": "Le troisième astéroïde découvert, par Karl Ludwig Harding le 1804-09-01; comme Cérès, Pallas et Vesta, il a été compté parmi les planètes pendant des décennies. D’environ 254 km, c’est l’un des deux plus gros astéroïdes rocheux (de type S)."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=3",
+        "https://www.eso.org/public/images/eso2114a/",
+        "https://en.wikipedia.org/wiki/3_Juno"
+      ]
+    },
+    {
+      "id": "451-patientia",
+      "number": 451,
+      "designation": "451 Patientia",
+      "name": {
+        "en": "Patientia",
+        "fr": "Patientia"
+      },
+      "horizonsId": "451;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "diameterKm": 254,
+      "rotationHours": 9.727,
+      "discovered": "1899-12-04",
+      "discoverer": "Auguste Charlois",
+      "notes": {
+        "en": "One of the largest asteroids, about 254 km across, yet little studied. Auguste Charlois discovered it at Nice on 1899-12-04; it turns once every 9.7 hours. At favourable oppositions it reaches magnitude 10.4, within reach of small telescopes.",
+        "fr": "L’un des plus gros astéroïdes, d’environ 254 km, et pourtant peu étudié. Auguste Charlois l’a découvert à Nice le 1899-12-04; il fait un tour sur lui-même en 9,7 heures. Lors des oppositions favorables, il atteint la magnitude 10,4, à la portée de petits télescopes."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=451",
+        "https://en.wikipedia.org/wiki/451_Patientia"
+      ]
+    },
+    {
+      "id": "107-camilla",
+      "number": 107,
+      "designation": "107 Camilla",
+      "name": {
+        "en": "Camilla",
+        "fr": "Camille"
+      },
+      "horizonsId": "107;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 254,
+      "dimensionsKm": [340, 249, 197],
+      "rotationHours": 4.844,
+      "discovered": "1868-11-17",
+      "discoverer": "Norman Robert Pogson",
+      "moons": [
+        {
+          "en": "S/2001 (107) 1",
+          "fr": "S/2001 (107) 1"
+        },
+        {
+          "en": "S/2016 (107) 1",
+          "fr": "S/2016 (107) 1"
+        }
+      ],
+      "notes": {
+        "en": "A dark asteroid about 254 km across in the outer belt (Cybele group), discovered by Norman Pogson at Madras (now Chennai, India) on 1868-11-17. It has two small moons, found in 2001 (about 13 km across) and 2016 (about 4 km across), which makes it a triple system.",
+        "fr": "Un astéroïde sombre d’environ 254 km dans la partie externe de la ceinture (groupe de Cybèle), découvert par Norman Pogson à Madras (aujourd’hui Chennai, en Inde) le 1868-11-17. Il a deux petites lunes, trouvées en 2001 (environ 13 km) et en 2016 (environ 4 km) : c’est un système triple."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=107",
+        "https://en.wikipedia.org/wiki/107_Camilla"
+      ]
+    },
+    {
+      "id": "21-lutetia",
+      "number": 21,
+      "designation": "21 Lutetia",
+      "name": {
+        "en": "Lutetia",
+        "fr": "Lutèce"
+      },
+      "horizonsId": "21;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "M",
+      "diameterKm": 98,
+      "dimensionsKm": [121, 101, 75],
+      "rotationHours": 8.166,
+      "discovered": "1852-11-15",
+      "discoverer": "Hermann Goldschmidt",
+      "visits": [
+        {
+          "mission": {
+            "en": "Rosetta",
+            "fr": "Rosetta"
+          },
+          "missionId": "rosetta",
+          "year": "2010",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "ESA’s Rosetta flew past it on 2010-07-10 at about 3,160 km, on its way to comet 67P: about 121 km long, it was then the largest asteroid seen up close by a spacecraft. Its images show a very old, heavily cratered surface. Hermann Goldschmidt discovered it in Paris on 1852-11-15 and named it after Lutetia, the Latin name of the city.",
+        "fr": "La sonde Rosetta de l’ESA l’a survolé le 2010-07-10 à environ 3 160 km, en route vers la comète 67P : avec ses quelque 121 km de long, c’était alors le plus gros astéroïde observé de près par une sonde. Ses images montrent une surface très ancienne, couverte de cratères. Hermann Goldschmidt l’a découvert à Paris le 1852-11-15 et l’a nommé d’après Lutèce, le nom latin de la ville."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=21",
+        "https://sci.esa.int/web/rosetta/-/47389-21-lutetia",
+        "https://www.esa.int/Science_Exploration/Space_Science/Rosetta",
+        "https://en.wikipedia.org/wiki/21_Lutetia"
+      ]
+    },
+    {
+      "id": "243-ida",
+      "number": 243,
+      "designation": "243 Ida",
+      "name": {
+        "en": "Ida",
+        "fr": "Ida"
+      },
+      "horizonsId": "243;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 31.4,
+      "dimensionsKm": [59.8, 25.4, 18.6],
+      "rotationHours": 4.63,
+      "discovered": "1884-09-29",
+      "discoverer": "Johann Palisa",
+      "visits": [
+        {
+          "mission": {
+            "en": "Galileo",
+            "fr": "Galileo"
+          },
+          "missionId": "galileo",
+          "year": "1993",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "moons": [
+        {
+          "en": "Dactyl",
+          "fr": "Dactyle"
+        }
+      ],
+      "notes": {
+        "en": "NASA’s Galileo flew past this stony asteroid, about 60 km long, on 1993-08-28 on its way to Jupiter. Its images revealed Dactyl, a moon about 1.4 km across: the first moon ever found around an asteroid. Ida was discovered by Johann Palisa in Vienna on 1884-09-29.",
+        "fr": "La sonde Galileo de la NASA a survolé cet astéroïde rocheux d’environ 60 km de long le 1993-08-28, en route vers Jupiter. Ses images ont révélé Dactyle, une lune d’environ 1,4 km : la première lune jamais découverte autour d’un astéroïde. Ida a été découvert par Johann Palisa à Vienne le 1884-09-29."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=243",
+        "https://science.nasa.gov/solar-system/asteroids/243-ida/",
+        "https://science.nasa.gov/mission/galileo/",
+        "https://en.wikipedia.org/wiki/243_Ida"
+      ]
+    },
+    {
+      "id": "253-mathilde",
+      "number": 253,
+      "designation": "253 Mathilde",
+      "name": {
+        "en": "Mathilde",
+        "fr": "Mathilde"
+      },
+      "horizonsId": "253;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 52.8,
+      "dimensionsKm": [66, 48, 46],
+      "rotationHours": 417.7,
+      "discovered": "1885-11-12",
+      "discoverer": "Johann Palisa",
+      "visits": [
+        {
+          "mission": {
+            "en": "NEAR Shoemaker",
+            "fr": "NEAR Shoemaker"
+          },
+          "missionId": "near-shoemaker",
+          "year": "1997",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "NASA’s NEAR Shoemaker flew past it on 1997-06-27, on its way to Eros. Mathilde is very dark and rich in carbon, with craters almost as wide as itself, and its low density shows that it is porous, perhaps a pile of rubble. It turns very slowly, once every 17.4 days.",
+        "fr": "La sonde NEAR Shoemaker de la NASA l’a survolé le 1997-06-27, en route vers Éros. Mathilde est très sombre et riche en carbone, avec des cratères presque aussi larges que lui, et sa faible densité montre qu’il est poreux, peut-être un amas de débris. Il tourne très lentement sur lui-même, en 17,4 jours."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=253",
+        "https://science.nasa.gov/solar-system/asteroids/253-mathilde/",
+        "https://science.nasa.gov/mission/near-shoemaker/",
+        "https://en.wikipedia.org/wiki/253_Mathilde"
+      ]
+    },
+    {
+      "id": "433-eros",
+      "number": 433,
+      "designation": "433 Eros",
+      "name": {
+        "en": "Eros",
+        "fr": "Éros"
+      },
+      "horizonsId": "433;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "S",
+      "diameterKm": 16.84,
+      "dimensionsKm": [34.4, 11.2, 11.2],
+      "rotationHours": 5.27,
+      "discovered": "1898-08-13",
+      "discoverer": "Carl Gustav Witt",
+      "visits": [
+        {
+          "mission": {
+            "en": "NEAR Shoemaker",
+            "fr": "NEAR Shoemaker"
+          },
+          "missionId": "near-shoemaker",
+          "year": "1998",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        },
+        {
+          "mission": {
+            "en": "NEAR Shoemaker",
+            "fr": "NEAR Shoemaker"
+          },
+          "missionId": "near-shoemaker",
+          "year": "2000–2001",
+          "kind": {
+            "en": "orbit and landing",
+            "fr": "orbite et atterrissage"
+          }
+        }
+      ],
+      "notes": {
+        "en": "The first near-Earth asteroid discovered, by Carl Gustav Witt in Berlin on 1898-08-13: a stony, potato-shaped body about 34 km long. NASA’s NEAR Shoemaker flew past it in 1998, orbited it from 2000-02-14 and, at the end of its mission on 2001-02-12, landed on it: the first spacecraft to orbit an asteroid and to land on one.",
+        "fr": "Le premier astéroïde géocroiseur découvert, par Carl Gustav Witt à Berlin le 1898-08-13 : un corps rocheux en forme de pomme de terre d’environ 34 km de long. La sonde NEAR Shoemaker de la NASA l’a survolé en 1998, s’est placée en orbite autour de lui le 2000-02-14 puis, à la fin de sa mission, s’y est posée le 2001-02-12 : la première sonde à orbiter autour d’un astéroïde et à s’y poser."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=433",
+        "https://science.nasa.gov/solar-system/asteroids/433-eros/",
+        "https://science.nasa.gov/mission/near-shoemaker/",
+        "https://en.wikipedia.org/wiki/433_Eros"
+      ]
+    },
+    {
+      "id": "951-gaspra",
+      "number": 951,
+      "designation": "951 Gaspra",
+      "name": {
+        "en": "Gaspra",
+        "fr": "Gaspra"
+      },
+      "horizonsId": "951;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 12.2,
+      "dimensionsKm": [18.2, 10.5, 8.9],
+      "rotationHours": 7.042,
+      "discovered": "1916-07-30",
+      "discoverer": "Grigory Neujmin",
+      "visits": [
+        {
+          "mission": {
+            "en": "Galileo",
+            "fr": "Galileo"
+          },
+          "missionId": "galileo",
+          "year": "1991",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "The first asteroid visited by a spacecraft: NASA’s Galileo flew past it on 1991-10-29 at about 1,600 km, on its way to Jupiter. This irregular stony asteroid, about 18 km long, is covered with small craters but few large ones, a sign of a fairly young surface. Grigory Neujmin discovered it at Simeiz, in Crimea, on 1916-07-30.",
+        "fr": "Le premier astéroïde visité par une sonde : Galileo, de la NASA, l’a survolé le 1991-10-29 à environ 1 600 km, en route vers Jupiter. Cet astéroïde rocheux irrégulier d’environ 18 km de long est couvert de petits cratères mais de peu de grands, signe d’une surface assez jeune. Grigori Neujmin l’a découvert à Simeïz, en Crimée, le 1916-07-30."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=951",
+        "https://science.nasa.gov/mission/galileo/",
+        "https://en.wikipedia.org/wiki/951_Gaspra"
+      ]
+    },
+    {
+      "id": "2867-steins",
+      "number": 2867,
+      "designation": "2867 Šteins",
+      "name": {
+        "en": "Šteins",
+        "fr": "Šteins"
+      },
+      "horizonsId": "2867;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "E",
+      "diameterKm": 5.3,
+      "dimensionsKm": [6.83, 5.7, 4.42],
+      "rotationHours": 6.049,
+      "discovered": "1969-11-04",
+      "discoverer": "Nikolai Chernykh",
+      "visits": [
+        {
+          "mission": {
+            "en": "Rosetta",
+            "fr": "Rosetta"
+          },
+          "missionId": "rosetta",
+          "year": "2008",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "A small asteroid about 6.8 km wide, shaped like a cut diamond, that ESA’s Rosetta flew past on 2008-09-05 at about 800 km. It is a rare, bright E-type asteroid; a crater about 2 km wide marks its south pole. Discovered by Nikolai Chernykh in Crimea on 1969-11-04, it is named after the Latvian astronomer Kārlis Šteins.",
+        "fr": "Un petit astéroïde d’environ 6,8 km de large, en forme de diamant taillé, que la sonde Rosetta de l’ESA a survolé le 2008-09-05 à environ 800 km. C’est un astéroïde rare et clair, de type E; un cratère d’environ 2 km de large marque son pôle Sud. Découvert par Nikolaï Tchernykh en Crimée le 1969-11-04, il porte le nom de l’astronome letton Kārlis Šteins."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2867",
+        "https://esa.int/Science_Exploration/Space_Science/Rosetta/Rosetta_spacecraft_meets_asteroid_Steins",
+        "https://sci.esa.int/web/rosetta/-/43356-2867-steins",
+        "https://en.wikipedia.org/wiki/2867_%C5%A0teins"
+      ]
+    },
+    {
+      "id": "4179-toutatis",
+      "number": 4179,
+      "designation": "4179 Toutatis",
+      "name": {
+        "en": "Toutatis",
+        "fr": "Toutatis"
+      },
+      "horizonsId": "4179;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "S",
+      "diameterKm": 2.45,
+      "dimensionsKm": [4.26, 2.03, 1.7],
+      "discovered": "1989-01-04",
+      "discoverer": "Christian Pollas",
+      "visits": [
+        {
+          "mission": {
+            "en": "Chang’e 2",
+            "fr": "Chang’e 2"
+          },
+          "year": "2012",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "An elongated near-Earth asteroid about 4.5 km long that tumbles slowly instead of spinning around one axis. Christian Pollas discovered it at Caussols, France, on 1989-01-04 and named it after a Gaulish god. Radar mapped it from Earth during its close passes, and China’s Chang’e 2, after leaving the Moon, flew close past it on 2012-12-13: the first Chinese probe to visit an asteroid.",
+        "fr": "Un astéroïde géocroiseur allongé d’environ 4,5 km de long, qui culbute lentement au lieu de tourner autour d’un seul axe. Christian Pollas l’a découvert à Caussols, en France, le 1989-01-04 et l’a nommé d’après un dieu gaulois. Le radar l’a cartographié depuis la Terre lors de ses passages rapprochés, et la sonde chinoise Chang’e 2, après avoir quitté la Lune, l’a survolé de très près le 2012-12-13 : la première sonde chinoise à visiter un astéroïde."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=4179",
+        "https://www.planetary.org/articles/12141551-change-2-imaging-of-toutatis",
+        "https://en.wikipedia.org/wiki/4179_Toutatis"
+      ]
+    },
+    {
+      "id": "5535-annefrank",
+      "number": 5535,
+      "designation": "5535 Annefrank",
+      "name": {
+        "en": "Annefrank",
+        "fr": "Annefrank"
+      },
+      "horizonsId": "5535;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 4.8,
+      "dimensionsKm": [6.6, 5, 3.4],
+      "rotationHours": 15.12,
+      "discovered": "1942-03-23",
+      "discoverer": "Karl Reinmuth",
+      "visits": [
+        {
+          "mission": {
+            "en": "Stardust",
+            "fr": "Stardust"
+          },
+          "missionId": "stardust",
+          "year": "2002",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "NASA’s Stardust flew past it on 2002-11-02 at about 3,080 km, a rehearsal for its encounter with comet Wild 2. Its images showed an irregular stony asteroid about 6.6 km long. Karl Reinmuth discovered it at Heidelberg on 1942-03-23; it is named after Anne Frank, the young diarist who died in a Nazi camp.",
+        "fr": "La sonde Stardust de la NASA l’a survolé le 2002-11-02 à environ 3 080 km, une répétition avant sa rencontre avec la comète Wild 2. Ses images ont montré un astéroïde rocheux irrégulier d’environ 6,6 km de long. Karl Reinmuth l’a découvert à Heidelberg le 1942-03-23; il porte le nom d’Anne Frank, la jeune autrice du célèbre journal, morte dans un camp nazi."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=5535",
+        "https://science.nasa.gov/mission/stardust/",
+        "https://en.wikipedia.org/wiki/5535_Annefrank"
+      ]
+    },
+    {
+      "id": "9969-braille",
+      "number": 9969,
+      "designation": "9969 Braille",
+      "name": {
+        "en": "Braille",
+        "fr": "Braille"
+      },
+      "horizonsId": "9969;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "mars-crosser",
+      "spectralType": "Q",
+      "diameterKm": 1.6,
+      "dimensionsKm": [2.1, 1, 1],
+      "rotationHours": 226,
+      "discovered": "1992-05-27",
+      "discoverer": "Eleanor Helin, Kenneth Lawrence",
+      "visits": [
+        {
+          "mission": {
+            "en": "Deep Space 1",
+            "fr": "Deep Space 1"
+          },
+          "missionId": "deep-space-1",
+          "year": "1999",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "NASA’s Deep Space 1 flew past it on 1999-07-29 at only 26 km, but its camera lost track of it during the approach and the close-up images were missed. Braille is about 2 km long and its orbit crosses that of Mars. Discovered at Palomar by Eleanor Helin and Kenneth Lawrence on 1992-05-27, it is named after Louis Braille, who invented the writing system used by blind people.",
+        "fr": "La sonde Deep Space 1 de la NASA l’a survolé le 1999-07-29 à seulement 26 km, mais sa caméra en a perdu la trace pendant l’approche et les images rapprochées ont été manquées. Braille mesure environ 2 km de long et son orbite croise celle de Mars. Découvert au mont Palomar par Eleanor Helin et Kenneth Lawrence le 1992-05-27, il porte le nom de Louis Braille, inventeur de l’écriture utilisée par les personnes aveugles."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=9969",
+        "https://science.nasa.gov/mission/deep-space-1/",
+        "https://en.wikipedia.org/wiki/9969_Braille"
+      ]
+    },
+    {
+      "id": "25143-itokawa",
+      "number": 25143,
+      "designation": "25143 Itokawa",
+      "name": {
+        "en": "Itokawa",
+        "fr": "Itokawa"
+      },
+      "horizonsId": "25143;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "S",
+      "diameterKm": 0.33,
+      "dimensionsKm": [0.535, 0.294, 0.209],
+      "rotationHours": 12.132,
+      "discovered": "1998-09-26",
+      "discoverer": "LINEAR",
+      "visits": [
+        {
+          "mission": {
+            "en": "Hayabusa",
+            "fr": "Hayabusa"
+          },
+          "missionId": "hayabusa",
+          "year": "2005",
+          "kind": {
+            "en": "rendezvous and sample return",
+            "fr": "rendez-vous et retour d’échantillons"
+          }
+        }
+      ],
+      "notes": {
+        "en": "A small, peanut-shaped near-Earth asteroid about 535 m long, explored by JAXA’s Hayabusa in 2005. Its images showed a rubble pile: boulders and gravel held together by its very weak gravity. Hayabusa touched down on it in November 2005 and brought back to Earth, on 2010-06-13, the first grains ever collected from an asteroid. It is named after Hideo Itokawa, a pioneer of Japanese rocketry.",
+        "fr": "Un petit astéroïde géocroiseur en forme d’arachide, d’environ 535 m de long, exploré par la sonde Hayabusa de la JAXA en 2005. Ses images ont montré un amas de débris : des blocs et du gravier retenus par sa très faible gravité. Hayabusa s’y est posée en novembre 2005 et a rapporté sur Terre, le 2010-06-13, les premiers grains jamais prélevés sur un astéroïde. Il porte le nom de Hideo Itokawa, pionnier des fusées japonaises."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=25143",
+        "https://science.nasa.gov/solar-system/asteroids/25143-itokawa/",
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/past/hayabusa.html",
+        "https://en.wikipedia.org/wiki/25143_Itokawa"
+      ]
+    },
+    {
+      "id": "162173-ryugu",
+      "number": 162173,
+      "designation": "162173 Ryugu",
+      "name": {
+        "en": "Ryugu",
+        "fr": "Ryugu"
+      },
+      "horizonsId": "162173;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "C",
+      "diameterKm": 0.896,
+      "rotationHours": 7.633,
+      "discovered": "1999-05-10",
+      "discoverer": "LINEAR",
+      "visits": [
+        {
+          "mission": {
+            "en": "Hayabusa2",
+            "fr": "Hayabusa2"
+          },
+          "missionId": "hayabusa2",
+          "year": "2018–2019",
+          "kind": {
+            "en": "rendezvous and sample return",
+            "fr": "rendez-vous et retour d’échantillons"
+          }
+        }
+      ],
+      "notes": {
+        "en": "A dark, carbon-rich near-Earth asteroid about 900 m across, shaped like a spinning top. JAXA’s Hayabusa2 explored it in 2018–2019: it dropped small hopping rovers and the MASCOT lander, blasted an artificial crater and collected samples during two touchdowns. Its capsule, holding 5.4 g of Ryugu, landed in Australia on 2020-12-06; the samples contain water-bearing minerals and organic molecules.",
+        "fr": "Un astéroïde géocroiseur sombre et riche en carbone, d’environ 900 m, en forme de toupie. La sonde Hayabusa2 de la JAXA l’a exploré en 2018–2019 : elle y a largué de petits robots sauteurs et l’atterrisseur MASCOT, a creusé un cratère artificiel et a prélevé des échantillons lors de deux contacts. Sa capsule, avec 5,4 g de Ryugu, s’est posée en Australie le 2020-12-06; les échantillons contiennent des minéraux hydratés et des molécules organiques."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=162173",
+        "https://www.hayabusa2.jaxa.jp/en/",
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hayabusa2.html",
+        "https://en.wikipedia.org/wiki/162173_Ryugu"
+      ]
+    },
+    {
+      "id": "101955-bennu",
+      "number": 101955,
+      "designation": "101955 Bennu",
+      "name": {
+        "en": "Bennu",
+        "fr": "Bennu"
+      },
+      "horizonsId": "101955;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "B",
+      "diameterKm": 0.49,
+      "dimensionsKm": [0.565, 0.535, 0.508],
+      "rotationHours": 4.296,
+      "discovered": "1999-09-11",
+      "discoverer": "LINEAR",
+      "visits": [
+        {
+          "mission": {
+            "en": "OSIRIS-REx",
+            "fr": "OSIRIS-REx"
+          },
+          "missionId": "osiris-apex",
+          "year": "2018–2021",
+          "kind": {
+            "en": "orbit and sample return",
+            "fr": "orbite et retour d’échantillons"
+          }
+        }
+      ],
+      "notes": {
+        "en": "A near-Earth asteroid about 490 m across, shaped like a spinning top and made of loosely bound rubble. NASA’s OSIRIS-REx orbited it from 2018-12-03, collected a sample on 2020-10-20 and dropped it in Utah on 2023-09-24: 121.6 g, the largest asteroid sample ever returned. The sample contains amino acids and all five nucleobases of DNA and RNA. Bennu has a small chance, about 1 in 2,700, of hitting the Earth in 2182.",
+        "fr": "Un astéroïde géocroiseur d’environ 490 m, en forme de toupie et fait de débris peu liés. La sonde OSIRIS-REx de la NASA s’est placée en orbite autour de lui le 2018-12-03, y a prélevé un échantillon le 2020-10-20 et l’a largué au-dessus de l’Utah le 2023-09-24 : 121,6 g, le plus gros échantillon d’astéroïde jamais rapporté. On y a trouvé des acides aminés et les cinq bases azotées de l’ADN et de l’ARN. Bennu a une faible probabilité, environ 1 sur 2 700, de percuter la Terre en 2182."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=101955",
+        "https://science.nasa.gov/solar-system/asteroids/101955-bennu/",
+        "https://science.nasa.gov/mission/osiris-rex/",
+        "https://en.wikipedia.org/wiki/101955_Bennu"
+      ]
+    },
+    {
+      "id": "65803-didymos",
+      "number": 65803,
+      "designation": "65803 Didymos",
+      "name": {
+        "en": "Didymos",
+        "fr": "Didymos"
+      },
+      "horizonsId": "65803;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "S",
+      "diameterKm": 0.765,
+      "dimensionsKm": [0.851, 0.849, 0.62],
+      "rotationHours": 2.26,
+      "discovered": "1996-04-11",
+      "discoverer": "Spacewatch",
+      "visits": [
+        {
+          "mission": {
+            "en": "DART",
+            "fr": "DART"
+          },
+          "missionId": "dart",
+          "year": "2022",
+          "kind": {
+            "en": "impact on Dimorphos",
+            "fr": "impact sur Dimorphos"
+          }
+        },
+        {
+          "mission": {
+            "en": "LICIACube",
+            "fr": "LICIACube"
+          },
+          "year": "2022",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "moons": [
+        {
+          "en": "Dimorphos",
+          "fr": "Dimorphos"
+        }
+      ],
+      "notes": {
+        "en": "A near-Earth asteroid about 770 m across with a small moon, Dimorphos, about 150 m across, which circled it in 11 hours 55 minutes. On 2022-09-26 NASA’s DART spacecraft struck Dimorphos on purpose and shortened its orbit by about 32 minutes: the first test of deflecting an asteroid. Italy’s LICIACube CubeSat photographed the impact; ESA’s Hera is due to survey the pair from late 2026.",
+        "fr": "Un astéroïde géocroiseur d’environ 770 m doté d’une petite lune, Dimorphos, d’environ 150 m, qui en faisait le tour en 11 heures 55 minutes. Le 2022-09-26, la sonde DART de la NASA a percuté Dimorphos volontairement et raccourci son orbite d’environ 32 minutes : le premier essai de déviation d’un astéroïde. Le CubeSat italien LICIACube a photographié l’impact; la sonde Hera de l’ESA doit étudier le couple à partir de la fin de 2026."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=65803",
+        "https://science.nasa.gov/solar-system/asteroids/didymos/",
+        "https://science.nasa.gov/mission/dart/",
+        "https://www.asi.it/en/planets-stars-universe/solar-system-and-beyond/liciacube/",
+        "https://www.esa.int/Space_Safety/Hera",
+        "https://en.wikipedia.org/wiki/65803_Didymos"
+      ]
+    },
+    {
+      "id": "152830-dinkinesh",
+      "number": 152830,
+      "designation": "152830 Dinkinesh",
+      "name": {
+        "en": "Dinkinesh",
+        "fr": "Dinkinesh"
+      },
+      "horizonsId": "152830;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "S",
+      "diameterKm": 0.738,
+      "dimensionsKm": [0.91, 0.87, 0.716],
+      "rotationHours": 3.739,
+      "discovered": "1999-11-04",
+      "discoverer": "LINEAR",
+      "visits": [
+        {
+          "mission": {
+            "en": "Lucy",
+            "fr": "Lucy"
+          },
+          "missionId": "lucy",
+          "year": "2023",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "moons": [
+        {
+          "en": "Selam",
+          "fr": "Selam"
+        }
+      ],
+      "notes": {
+        "en": "A small main-belt asteroid about 740 m across, the first target of NASA’s Lucy, which flew 425 km from it on 2023-11-01. Lucy discovered that it has a moon, Selam, about 220 m across and itself made of two lobes in contact: the first contact-binary moon ever seen. Its name means “you are wonderful” in Amharic: it is the Ethiopian name of the Lucy fossil.",
+        "fr": "Un petit astéroïde de la ceinture principale d’environ 740 m, première cible de la sonde Lucy de la NASA, passée à 425 km de lui le 2023-11-01. Lucy a découvert qu’il a une lune, Selam, d’environ 220 m, elle-même formée de deux lobes collés : la première lune binaire de contact jamais observée. Son nom signifie « tu es merveilleuse » en amharique : c’est le nom éthiopien du fossile Lucy."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=152830",
+        "https://science.nasa.gov/solar-system/asteroids/dinkinesh/",
+        "https://science.nasa.gov/mission/lucy/",
+        "https://en.wikipedia.org/wiki/152830_Dinkinesh"
+      ]
+    },
+    {
+      "id": "52246-donaldjohanson",
+      "number": 52246,
+      "designation": "52246 Donaldjohanson",
+      "name": {
+        "en": "Donaldjohanson",
+        "fr": "Donaldjohanson"
+      },
+      "horizonsId": "52246;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "main-belt",
+      "spectralType": "C",
+      "diameterKm": 4.8,
+      "dimensionsKm": [8.8, 4.4, 3.1],
+      "discovered": "1981-03-02",
+      "discoverer": "Schelte J. Bus",
+      "visits": [
+        {
+          "mission": {
+            "en": "Lucy",
+            "fr": "Lucy"
+          },
+          "missionId": "lucy",
+          "year": "2025",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "An elongated main-belt asteroid about 8.8 km long, made of two lobes joined by a narrow neck. NASA’s Lucy flew past it at 960 km on 2025-04-20, a rehearsal before the Jupiter trojans. It tumbles slowly, turning end over end about once every 10.5 days. It is named after Donald Johanson, who discovered the Lucy fossil in 1974: the first asteroid named after a living person to be visited by a spacecraft.",
+        "fr": "Un astéroïde allongé de la ceinture principale d’environ 8,8 km de long, formé de deux lobes reliés par un col étroit. La sonde Lucy de la NASA l’a survolé à 960 km le 2025-04-20, une répétition avant les troyens de Jupiter. Il culbute lentement, en faisant un tour sur lui-même environ tous les 10,5 jours. Il porte le nom de Donald Johanson, qui a découvert le fossile Lucy en 1974 : c’est le premier astéroïde nommé d’après une personne vivante à être visité par une sonde."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=52246",
+        "https://science.nasa.gov/solar-system/asteroids/donaldjohanson/",
+        "https://science.nasa.gov/mission/lucy/",
+        "https://en.wikipedia.org/wiki/52246_Donaldjohanson"
+      ]
+    },
+    {
+      "id": "98943-torifune",
+      "number": 98943,
+      "designation": "98943 Torifune",
+      "name": {
+        "en": "Torifune",
+        "fr": "Torifune"
+      },
+      "horizonsId": "98943;",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "group": "near-earth",
+      "spectralType": "S",
+      "diameterKm": 0.54,
+      "rotationHours": 5.022,
+      "discovered": "2001-02-03",
+      "discoverer": "LINEAR",
+      "visits": [
+        {
+          "mission": {
+            "en": "Hayabusa2",
+            "fr": "Hayabusa2"
+          },
+          "missionId": "hayabusa2",
+          "year": "2026",
+          "kind": {
+            "en": "flyby",
+            "fr": "survol"
+          }
+        }
+      ],
+      "notes": {
+        "en": "A small near-Earth asteroid, about 840 m long and 340 m wide, discovered by LINEAR on 2001-02-03 (designation 2001 CC21). JAXA’s Hayabusa2 flew past it on 2026-07-05 about 400 m from its surface, the closest flyby of any Solar System body so far, steered by new on-board guidance software. Its name comes from Ame-no-torifune, a god and his ship in Japanese mythology.",
+        "fr": "Un petit astéroïde géocroiseur d’environ 840 m de long et 340 m de large, découvert par LINEAR le 2001-02-03 (désignation 2001 CC21). La sonde Hayabusa2 de la JAXA l’a survolé le 2026-07-05 à environ 400 m de sa surface, le survol le plus rapproché d’un corps du Système solaire à ce jour, guidée par un nouveau logiciel de navigation embarqué. Son nom vient d’Ame-no-torifune, un dieu et son navire dans la mythologie japonaise."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=98943",
+        "https://global.jaxa.jp/press/2026/07/20260730-1_e.html",
+        "https://www.hayabusa2.jaxa.jp/topics/20260705_flyby/",
+        "https://en.wikipedia.org/wiki/98943_Torifune"
+      ]
+    }
+  ]
+}

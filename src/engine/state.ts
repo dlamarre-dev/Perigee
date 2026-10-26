@@ -423,14 +423,20 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
       };
     }
 
-    case 'comet': {
-      const entry = (await data.manifest()).comets[ref.comet.id];
+    case 'comet':
+    case 'asteroid': {
+      const manifest = await data.manifest();
+      const entry =
+        ref.kind === 'comet' ? manifest.comets[ref.comet.id] : manifest.asteroids[ref.asteroid.id];
       if (!entry)
         return {
           state: undefined,
-          provenance: provenance('horizons-interpolated', 'Comet vectors not published right now.', 'none', [
-            HORIZONS,
-          ]),
+          provenance: provenance(
+            'horizons-interpolated',
+            `${ref.kind === 'comet' ? 'Comet' : 'Asteroid'} vectors not published right now.`,
+            'none',
+            [HORIZONS],
+          ),
         };
       const sample = new EphemerisTrack(await data.table(entry), {
         muKm3S2: GM_KM3_S2.sun,
@@ -447,7 +453,9 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
           state: sample.state,
           provenance: provenance(
             'horizons-interpolated',
-            `JPL Horizons heliocentric state vectors of the comet's current orbit solution (${entry.horizonsId}; integrated with the planets' perturbations and the non-gravitational forces Horizons models), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`,
+            ref.kind === 'comet'
+              ? `JPL Horizons heliocentric state vectors of the comet's current orbit solution (${entry.horizonsId}; integrated with the planets' perturbations and the non-gravitational forces Horizons models), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`
+              : `JPL Horizons heliocentric state vectors of the asteroid (${entry.horizonsId}; integrated with the planets' perturbations, refreshed weekly), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`,
             'interpolated',
             [HORIZONS],
             window,
@@ -468,7 +476,7 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
         state: undefined,
         provenance: provenance(
           'kepler-extrapolated',
-          `Too far beyond the published comet vectors (${(sample.beyondS / SECONDS_PER_DAY).toFixed(0)} days): no position.`,
+          `Too far beyond the published vectors (${(sample.beyondS / SECONDS_PER_DAY).toFixed(0)} days): no position.`,
           'hidden',
           [HORIZONS],
           window,

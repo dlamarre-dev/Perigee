@@ -306,6 +306,7 @@ describe('moon ephemeris freshness', () => {
       ephemerides: {},
       moons: { titan: entry('2026-10-07T12:00:00Z'), rhea: entry('2026-10-01T12:00:00Z') },
       comets: {},
+      asteroids: {},
     } as const;
     const items = checkMoonEphemerides(
       manifest,

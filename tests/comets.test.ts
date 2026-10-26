@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { conicOffsetsAround, cometMagnitude, perihelionPassages } from '../src/astro/comets';
+import {
+  asteroidMagnitude,
+  conicOffsetsAround,
+  cometMagnitude,
+  perihelionPassages,
+} from '../src/astro/comets';
 import { GM_KM3_S2, osculatingElements, propagateKepler } from '../src/astro/kepler';
 import type { StateVector } from '../src/astro/hermite';
 import { length } from '../src/astro/vec3';
@@ -77,6 +82,15 @@ describe('comet orbits', () => {
     const coming = perihelionPassages(before, MU, t0 - 30);
     expect(coming.nextTdbJd).toBeCloseTo(t0, 4);
     expect(coming.lastTdbJd).toBeUndefined();
+  });
+
+  it('estimates an asteroid magnitude with the H–G law', () => {
+    // At opposition-like geometry (no phase), m = H + 5 log(r Δ).
+    expect(asteroidMagnitude(3.2, 0.32, 2.36, 1.36, 0)).toBeCloseTo(3.2 + 5 * Math.log10(2.36 * 1.36), 10);
+    // A phase angle dims it.
+    expect(asteroidMagnitude(3.2, 0.32, 2.36, 1.36, 0.3)).toBeGreaterThan(
+      asteroidMagnitude(3.2, 0.32, 2.36, 1.36, 0),
+    );
   });
 
   it('estimates the magnitude with the usual comet law', () => {

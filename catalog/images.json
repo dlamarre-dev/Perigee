@@ -1699,6 +1699,267 @@
         "https://commons.wikimedia.org/wiki/File:C-2014UN271-BB_Hubble_2022Mar28_unannotated.png",
         "https://archive.stsci.edu/proposal_search.php?id=16878&mission=hst"
       ]
+    },
+    {
+      "id": "asteroid-2-pallas",
+      "target": "asteroid:2-pallas",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/f1/2_Pallas_-_ESO_-_Potw2008a.tif",
+      "credit": "ESO/M. Marsset, P. Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:2_Pallas_-_ESO_-_Potw2008a.tif",
+        "https://www.eso.org/public/images/potw2008a/"
+      ]
+    },
+    {
+      "id": "asteroid-10-hygiea",
+      "target": "asteroid:10-hygiea",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/8/88/SPHERE_image_of_Hygiea.jpg",
+      "credit": "ESO/P. Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:SPHERE_image_of_Hygiea.jpg",
+        "https://www.eso.org/public/images/eso1918a/"
+      ]
+    },
+    {
+      "id": "asteroid-704-interamnia",
+      "target": "asteroid:704-interamnia",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/b/be/%28704%29_Interamnia_VLTSPHERE.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:(704)_Interamnia_VLTSPHERE.png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-52-europa",
+      "target": "asteroid:52-europa",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/e/ed/%2852%29_Europa_VLTSPHERE.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:(52)_Europa_VLTSPHERE.png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-511-davida",
+      "target": "asteroid:511-davida",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/4/4c/%28511%29_Davida_VLTSPHERE.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:(511)_Davida_VLTSPHERE.png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-87-sylvia",
+      "target": "asteroid:87-sylvia",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/0/07/Sylvia_VLT.png",
+      "credit": "ESO/Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Sylvia_VLT.png",
+        "https://www.eso.org/public/images/eso2114d/"
+      ]
+    },
+    {
+      "id": "asteroid-15-eunomia",
+      "target": "asteroid:15-eunomia",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/4/42/%2815%29_Eunomia_VLTSPHERE.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:(15)_Eunomia_VLTSPHERE.png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-65-cybele",
+      "target": "asteroid:65-cybele",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Cybele_ZIMPOL.png",
+      "credit": "M. Marsset et al. 2023 (A&A 670, A52), ESO VLT/SPHERE-ZIMPOL",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Cybele_ZIMPOL.png",
+        "https://www.aanda.org/articles/aa/full_html/2023/02/aa43859-22/F1.html"
+      ]
+    },
+    {
+      "id": "asteroid-3-juno",
+      "target": "asteroid:3-juno",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/61/3_Juno_VLT_%282021%29.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:3_Juno_VLT_(2021).png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-21-lutetia",
+      "target": "asteroid:21-lutetia",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/31/%2821%29_Lutetia_VLTSPHERE.png",
+      "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:(21)_Lutetia_VLTSPHERE.png",
+        "https://doi.org/10.1051/0004-6361/202141781"
+      ]
+    },
+    {
+      "id": "asteroid-243-ida",
+      "target": "asteroid:243-ida",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/32/Ida_and_Dactyl_by_Galileo_%28P-44131%29.jpg",
+      "credit": "NASA/JPL",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Ida_and_Dactyl_by_Galileo_(P-44131).jpg",
+        "https://nssdc.gsfc.nasa.gov/imgcat/html/object_page/gal_p44131.html"
+      ]
+    },
+    {
+      "id": "asteroid-253-mathilde",
+      "target": "asteroid:253-mathilde",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/e/ed/253_Mathilde_HQ.png",
+      "credit": "NASA/JHU APL (NEAR)",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:253_Mathilde_HQ.png",
+        "https://science.nasa.gov/photojournal/two-very-different-asteroids/"
+      ]
+    },
+    {
+      "id": "asteroid-951-gaspra",
+      "target": "asteroid:951-gaspra",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Galileo_Gaspra_Mosaic.jpg",
+      "credit": "NASA/JPL",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Galileo_Gaspra_Mosaic.jpg",
+        "https://photojournal.jpl.nasa.gov/catalog/PIA00119"
+      ]
+    },
+    {
+      "id": "asteroid-4179-toutatis",
+      "target": "asteroid:4179-toutatis",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/0/06/Asteroid_4179_Toutatis_close-up.jpg",
+      "credit": "CNSA Chang'e 2; Y. Jiang, J. Ji et al. 2015 (Scientific Reports 5, 16029)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Asteroid_4179_Toutatis_close-up.jpg",
+        "https://doi.org/10.1038/srep16029"
+      ]
+    },
+    {
+      "id": "asteroid-5535-annefrank",
+      "target": "asteroid:5535-annefrank",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Stardust_-_Annefrank.jpg",
+      "credit": "NASA/JPL-Caltech",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Stardust_-_Annefrank.jpg",
+        "https://stardust.jpl.nasa.gov/"
+      ]
+    },
+    {
+      "id": "asteroid-9969-braille",
+      "target": "asteroid:9969-braille",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/c/c3/PIA01345.jpg",
+      "credit": "NASA/JPL-Caltech/UMD",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:PIA01345.jpg",
+        "https://photojournal.jpl.nasa.gov/catalog/PIA01345"
+      ]
+    },
+    {
+      "id": "asteroid-162173-ryugu",
+      "target": "asteroid:162173-ryugu",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/5/5b/162173_Ryugu.png",
+      "credit": "JAXA/ISAS Hayabusa2 ONC team (DARTS archive), processed by Anonymsiy",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:162173_Ryugu.png",
+        "https://data.darts.isas.jaxa.jp/pub/pds4/data/hyb2/hyb2_onc/data_calibrated/proximity/20180911/",
+        "https://www.isas.jaxa.jp/en/researchers/data-policy/"
+      ]
+    },
+    {
+      "id": "asteroid-65803-didymos",
+      "target": "asteroid:65803-didymos",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Didymos_-_North_Up.png",
+      "credit": "NASA/Johns Hopkins APL",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Didymos_-_North_Up.png",
+        "https://dart.jhuapl.edu/Gallery/"
+      ]
+    },
+    {
+      "id": "asteroid-152830-dinkinesh",
+      "target": "asteroid:152830-dinkinesh",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/7/77/Dinkinesh_First_Look_L%27LORRI.png",
+      "credit": "NASA/Goddard/SwRI/Johns Hopkins APL/NOIRLab",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Dinkinesh_First_Look_L%27LORRI.png",
+        "https://www.nasa.gov/image-article/nasas-lucy-spacecraft-discovers-2nd-asteroid-during-dinkinesh-flyby/"
+      ]
+    },
+    {
+      "id": "asteroid-52246-donaldjohanson",
+      "target": "asteroid:52246-donaldjohanson",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Donaldjohanson_closest_approach.png",
+      "credit": "NASA/Goddard/SwRI/Johns Hopkins APL/NOIRLab",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Donaldjohanson_closest_approach.png",
+        "https://science.nasa.gov/image-article/nasas-lucy-spacecraft-images-asteroid-donaldjohanson/"
+      ]
     }
   ]
 }

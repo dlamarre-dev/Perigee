@@ -129,6 +129,23 @@ const manifest = {
       k1: 8,
     },
   },
+  asteroids: {
+    '4-vesta': {
+      path: 'ephem/asteroids/4-vesta.bin',
+      source: 'Horizons',
+      fetchedAt: '2026-09-26T03:00:00Z',
+      count: ephem.length / 56,
+      bytes: ephem.length,
+      sha256: sha(ephem),
+      horizonsId: '4;',
+      center: '500@10',
+      startTdbJd: WINDOW_JD,
+      endTdbJd: START_JD + 10,
+      stepMin: 60,
+      h: 3.25,
+      g: 0.32,
+    },
+  },
 };
 
 const files: Record<string, Buffer> = {
@@ -137,6 +154,7 @@ const files: Record<string, Buffer> = {
   'data/ephem/voyager-1.bin': ephem,
   'data/ephem/past/voyager-1.bin': ephemPast,
   'data/ephem/comets/halley.bin': ephem,
+  'data/ephem/asteroids/4-vesta.bin': ephem,
   ...history.files,
 };
 const requested: string[] = [];
@@ -306,6 +324,19 @@ describe('engine comets', () => {
     expect(d.view).toBe('https://example.test/?view=solar&sel=comet%3Ahalley&lang=fr');
     const v = await engine.describeView('https://perigee.info/?view=solar&sel=comet:halley&comets=1');
     expect(JSON.stringify(v)).toMatch(/comets are drawn/);
+  });
+});
+
+describe('engine asteroids', () => {
+  it('finds an asteroid, interpolates its vectors and describes it', async () => {
+    expect((await engine.find('Vesta')).map((o) => o.id)).toContain('asteroid:4-vesta');
+    const s = await engine.state('asteroid:4-vesta', '2026-09-26T00:30:00Z', 'sun');
+    expect(s.provenance[0]?.state).toBe('interpolated');
+    expect(s.provenance[0]?.method).toMatch(/asteroid/);
+    const d = await engine.describe('asteroid:4-vesta', 'fr');
+    expect(d.designation).toBe('4 Vesta');
+    expect(d.absoluteMagnitude).toEqual({ h: 3.25, g: 0.32 });
+    expect(d.view).toBe('https://example.test/?view=solar&sel=asteroid%3A4-vesta&lang=fr');
   });
 });
 

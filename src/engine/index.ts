@@ -379,6 +379,38 @@ export class Engine {
           sources: ref.comet.sources,
         };
       }
+      case 'asteroid': {
+        const a = ref.asteroid;
+        const entry = (await this.data.manifest()).asteroids[a.id];
+        return {
+          ...base,
+          name: a.name[lang],
+          designation: a.designation,
+          group: a.group,
+          ...(a.spectralType ? { spectralType: a.spectralType } : {}),
+          diameterKm: a.diameterKm,
+          ...(a.dimensionsKm ? { dimensionsKm: a.dimensionsKm } : {}),
+          ...(a.rotationHours ? { rotationHours: a.rotationHours } : {}),
+          ...(a.discovered ? { discovered: a.discovered } : {}),
+          ...(a.discoverer ? { discoverer: a.discoverer } : {}),
+          ...(a.moons?.length ? { moons: a.moons.map((m) => m[lang]) } : {}),
+          ...(a.visits?.length
+            ? {
+                visits: a.visits.map((v) => ({
+                  mission: v.mission[lang],
+                  ...(v.missionId ? { missionId: v.missionId } : {}),
+                  year: v.year,
+                  kind: v.kind[lang],
+                })),
+              }
+            : {}),
+          horizonsId: a.horizonsId,
+          // m = H + 5 log(r Δ) − 2.5 log((1 − G) Φ1 + G Φ2) (IAU H–G law).
+          ...(entry?.h !== undefined ? { absoluteMagnitude: { h: entry.h, g: entry.g ?? 0.15 } } : {}),
+          notes: localized(a.notes),
+          sources: a.sources,
+        };
+      }
       case 'sun':
         return {
           ...base,

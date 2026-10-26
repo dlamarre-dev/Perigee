@@ -113,8 +113,17 @@ export interface MissionVectors {
   readonly result: string;
 }
 
-/** A comet's total-magnitude law and nucleus radius from a Horizons header ("M1=  5.5 … k1=  8.", "RAD= 5.5"). */
-export function parseCometPhysical(result: string): { m1?: number; k1?: number; radiusKm?: number } {
+/**
+ * A small body's object data from a Horizons header: a comet's total-magnitude law ("M1=  5.5 … k1=  8."), an
+ * asteroid's H and G ("H= 3.25  G= .32"), the radius ("RAD= 5.5").
+ */
+export function parseSmallBodyPhysical(result: string): {
+  m1?: number;
+  k1?: number;
+  h?: number;
+  g?: number;
+  radiusKm?: number;
+} {
   const num = (re: RegExp): number | undefined => {
     const v = Number(re.exec(result)?.[1]);
     return Number.isFinite(v) ? v : undefined;
@@ -122,9 +131,13 @@ export function parseCometPhysical(result: string): { m1?: number; k1?: number; 
   const m1 = num(/\bM1=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
   const k1 = num(/\bk1=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
   const radiusKm = num(/\bRAD=\s*(\d+(?:\.\d*)?|\.\d+)/);
+  const h = num(/\bH=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
+  const g = num(/\bG=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
   return {
     ...(m1 !== undefined ? { m1 } : {}),
     ...(k1 !== undefined ? { k1 } : {}),
+    ...(h !== undefined ? { h } : {}),
+    ...(g !== undefined ? { g } : {}),
     ...(radiusKm !== undefined && radiusKm > 0 ? { radiusKm } : {}),
   };
 }

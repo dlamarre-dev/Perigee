@@ -13,12 +13,12 @@ working offline once visited.
 
 ## What you can see
 
-| View             | Contents                                                                                                                                                                                                                                        |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Earth**        | Every active catalogued satellite (~16,000), propagated with SGP4 from CelesTrak elements refreshed every 4 hours, and 30 orbital launch sites.                                                                                                 |
-| **Moon**         | Active lunar orbiters from JPL Horizons ephemerides, the Earth at its true position, and 50+ landing and impact sites.                                                                                                                          |
-| **Mars**         | Mars orbiters, Phobos and Deimos, landing sites and the latest positions of the Curiosity and Perseverance rovers.                                                                                                                              |
-| **Solar system** | The Sun, the planets, five dwarf planets, 28 of their moons (shown when you come close), 20+ interplanetary spacecraft and famous retired ones, and 20 comets, with distances and light travel time. An optional logarithmic scale fits it all. |
+| View             | Contents                                                                                                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Earth**        | Every active catalogued satellite (~16,000), propagated with SGP4 from CelesTrak elements refreshed every 4 hours, and 30 orbital launch sites.                                                                                                                      |
+| **Moon**         | Active lunar orbiters from JPL Horizons ephemerides, the Earth at its true position, and 50+ landing and impact sites.                                                                                                                                               |
+| **Mars**         | Mars orbiters, Phobos and Deimos, landing sites and the latest positions of the Curiosity and Perseverance rovers.                                                                                                                                                   |
+| **Solar system** | The Sun, the planets, five dwarf planets, 28 of their moons (shown when you come close), 20+ interplanetary spacecraft and famous retired ones, 20 comets and 30 notable asteroids, with distances and light travel time. An optional logarithmic scale fits it all. |
 
 <table>
   <tr>
@@ -67,10 +67,10 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
 
 ### Up close
 
-- **3D models**: the ISS, Hubble, the Mars rovers and some 45 other spacecraft (NASA 3D Resources) replace their
+- **3D models**: the ISS, Hubble, the Mars rovers, some 45 other spacecraft and four asteroids (NASA 3D Resources) replace their
   marker when you come close; follow one and the camera comes to a few times its size. Their attitude is
   illustrative.
-- **Pictures**: some 160 probes, comets, landing sites, launch sites and science satellites without a 3D model
+- **Pictures**: some 180 probes, comets, asteroids, landing sites, launch sites and science satellites without a 3D model
   show a photo, a view from orbit or an artist's impression (Wikimedia Commons, NASA, ESA, LROC), each with its
   author and licence; click it to see it larger.
 - **Bodies**: NASA and USGS maps of the planets and their moons, the giants and a few small bodies drawn with
@@ -89,6 +89,10 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   the current telescope targets, listed by estimated brightness. Each is placed from JPL Horizons, with its orbit
   (open orbits too) and illustrative ion and dust tails; its panel gives its perihelion, period, distances,
   estimated magnitude and, for 15 of them, a photo.
+- **Asteroids**: tick _Show the notable asteroids_ for the largest ones (Vesta, Pallas, Hygiea…; Ceres is listed
+  with the dwarf planets) and those visited by spacecraft (Eros, Itokawa, Ryugu, Bennu, Didymos, Dinkinesh…), listed
+  by size and placed from JPL Horizons. Their panel gives size, rotation, moons, the missions that visited them and
+  their orbit; Vesta, Bennu, Eros and Itokawa come with a NASA shape model, most others with a picture.
 - **Retired spacecraft**: below the active probes, an _Inactive spacecraft_ section lists famous ended missions
   (Pioneer 10 and 11, Ulysses, Spitzer, Kepler, Planck, Herschel, Gaia, Galileo, Cassini, Rosetta, Dawn…). Those
   JPL Horizons still follows are drawn on their predicted path; the others are listed with their story. They are
@@ -162,22 +166,22 @@ Linux, Option on a Mac, or the touch gestures on a phone or a tablet.
 
 The address bar always describes what you see, so a link reproduces it:
 
-| Parameter                                      | Meaning                                                                                                                                                                           |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `view=earth\|moon\|mars\|solar`                | View                                                                                                                                                                              |
-| `lang=en\|fr`                                  | Language                                                                                                                                                                          |
-| `frame=fixed\|inertial`                        | Reference frame                                                                                                                                                                   |
-| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                                                                                                           |
-| `sel=<id>`                                     | Selected object: NORAD number or `moon` (Earth), mission or planet id, `sun`, `site:<id>` for a site, `moon:<id>` for a moon, `star:<id>` for a star, or `comet:<id>` for a comet |
-| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                                                                                            |
-| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                                                                                           |
-| `sites=1`                                      | Mark the landing and impact sites of the selected body (Mercury, Venus, Titan in the solar-system view)                                                                           |
-| `log=1`                                        | Logarithmic distances in the solar-system view                                                                                                                                    |
-| `stars=1`, `nearby=1`                          | Name the bright stars, or the stars within 20 light-years, on the sky (solar-system view)                                                                                         |
-| `map=1`, `pick=star:<id>`                      | With `sel=star:<id>`: open that star's 3D map with the Sun, with another star to compare                                                                                          |
-| `comets=1`                                     | Draw and list the comets (solar-system view)                                                                                                                                      |
-| `hide=<id>,<id>`, `show=<id>,<id>`             | Active missions not drawn, and inactive ones drawn (hidden by default), in the Moon, Mars and solar-system views                                                                  |
-| `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                                                                                 |
+| Parameter                                      | Meaning                                                                                                                                                                                                            |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `view=earth\|moon\|mars\|solar`                | View                                                                                                                                                                                                               |
+| `lang=en\|fr`                                  | Language                                                                                                                                                                                                           |
+| `frame=fixed\|inertial`                        | Reference frame                                                                                                                                                                                                    |
+| `t=<ISO 8601 UTC>`, `rate=<n>`                 | Simulated time and speed (absent: live)                                                                                                                                                                            |
+| `sel=<id>`                                     | Selected object: NORAD number or `moon` (Earth), mission or planet id, `sun`, `site:<id>` for a site, `moon:<id>` for a moon, `star:<id>` for a star, `comet:<id>` for a comet, or `asteroid:<id>` for an asteroid |
+| `q`, `op`, `own`, `grp`, `reg`, `type`, `site` | Earth-view search and filters (comma-separated values)                                                                                                                                                             |
+| `ls=0`, `sites=0`                              | Hide launch sites (Earth) or landing sites (Moon, Mars)                                                                                                                                                            |
+| `sites=1`                                      | Mark the landing and impact sites of the selected body (Mercury, Venus, Titan in the solar-system view)                                                                                                            |
+| `log=1`                                        | Logarithmic distances in the solar-system view                                                                                                                                                                     |
+| `stars=1`, `nearby=1`                          | Name the bright stars, or the stars within 20 light-years, on the sky (solar-system view)                                                                                                                          |
+| `map=1`, `pick=star:<id>`                      | With `sel=star:<id>`: open that star's 3D map with the Sun, with another star to compare                                                                                                                           |
+| `comets=1`, `asteroids=1`                      | Draw and list the comets, or the notable asteroids (solar-system view)                                                                                                                                             |
+| `hide=<id>,<id>`, `show=<id>,<id>`             | Active missions not drawn, and inactive ones drawn (hidden by default), in the Moon, Mars and solar-system views                                                                                                   |
+| `quality=high\|medium\|low`                    | Rendering quality (absent: chosen for the device)                                                                                                                                                                  |
 
 ## For AI assistants
 
@@ -196,7 +200,7 @@ The address bar always describes what you see, so a link reproduces it:
 
 ## Data and credits
 
-Satellite elements come from [CelesTrak](https://celestrak.org) (T.S. Kelso); spacecraft and comet ephemerides
+Satellite elements come from [CelesTrak](https://celestrak.org) (T.S. Kelso); spacecraft, comet and asteroid ephemerides
 from [NASA/JPL Horizons](https://ssd.jpl.nasa.gov/horizons/); planet positions from
 [astronomy-engine](https://github.com/cosinekitty/astronomy); solar active regions from
 [NOAA SWPC](https://www.swpc.noaa.gov/); imagery and 3D models from NASA and USGS, plus a few planet maps by

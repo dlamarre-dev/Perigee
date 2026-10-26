@@ -38,7 +38,7 @@ import { RingMesh } from '../render/RingMesh';
 import { applyShape, loadShape } from '../render/shapeGeometry';
 import { drawStar } from '../render/starImage';
 import { placeholderTexture, progressiveTexture } from '../render/textures';
-import { h } from './dom';
+import { h, setText } from './dom';
 import { imageCaption, openImage } from './ImageViewer';
 import { altShown, MAP_VARIANTS, onMapVariantChange, setAltShown } from '../render/mapVariants';
 
@@ -190,6 +190,8 @@ export class ModelPreview {
   );
   /** The image opens larger in a dialog (src/ui/ImageViewer.ts). */
   private readonly imageButton = h('button', { type: 'button', class: 'preview-image-button' }, [this.image]);
+  /** Shown in place of the image until the new one has loaded, so the previous object's image never lingers. */
+  private readonly imageLoading = h('p', { class: 'muted small preview-loading', hidden: true });
   private captionKey = '';
   private readonly size = new Vector2();
   private current: string | undefined;
@@ -226,6 +228,12 @@ export class ModelPreview {
       if (this.subject?.kind === 'body' && this.subject.body.id === body)
         this.bodyCaption(this.subject.body.id);
     });
+    const imageSettled = (): void => {
+      this.imageLoading.hidden = true;
+      this.imageButton.hidden = false;
+    };
+    this.image.addEventListener('load', imageSettled);
+    this.image.addEventListener('error', imageSettled);
     this.imageButton.addEventListener('click', () => {
       if (this.subject?.kind !== 'image') return;
       openImage(this.i18n, this.baseUrl, this.subject.entry, this.subject.title, this.image.currentSrc);
@@ -323,6 +331,7 @@ export class ModelPreview {
       return;
     }
     this.imageButton.remove();
+    this.imageLoading.remove();
     this.starButton.remove();
     this.starCanvas.remove();
     this.starDrawn = '';
@@ -347,9 +356,15 @@ export class ModelPreview {
   private showImage(entry: ImageEntry): void {
     const shared = getSharedIfAny();
     if (shared?.owner === this) shared.owner = undefined;
-    if (this.imageButton.parentElement !== this.canvasBox) this.canvasBox.replaceChildren(this.imageButton);
+    if (this.imageButton.parentElement !== this.canvasBox)
+      this.canvasBox.replaceChildren(this.imageButton, this.imageLoading);
     const src = imageUrl(this.baseUrl, entry);
-    if (this.image.getAttribute('src') !== src) this.image.src = src;
+    if (this.image.getAttribute('src') !== src) {
+      this.imageButton.hidden = true;
+      this.imageLoading.hidden = false;
+      this.image.src = src;
+    }
+    setText(this.imageLoading, this.i18n.t('app.loading'));
     this.image.alt = this.i18n.t(`image.kind.${entry.kind}`);
     const hint = this.i18n.t('image.enlarge');
     if (this.imageButton.title !== hint) {
