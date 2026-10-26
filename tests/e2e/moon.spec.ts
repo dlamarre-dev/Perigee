@@ -81,11 +81,13 @@ test('missions can be hidden one by one or all at once, and the choice is kept i
   await box.uncheck();
   await expect(page).toHaveURL(/hide=lro/);
   await expect(label).toHaveAttribute('data-shown', 'false');
-  await page.getByRole('button', { name: 'Show all' }).click();
+  // The active missions' toolbar (the inactive ones, ICUBE-Q here, have their own).
+  const active = page.locator('#side-panel .mission-toggles').first();
+  await active.getByRole('button', { name: 'Show all' }).click();
   await expect(box).toBeChecked();
   await expect(page).not.toHaveURL(/hide=/);
   await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
-  await page.getByRole('button', { name: 'Hide all' }).click();
+  await active.getByRole('button', { name: 'Hide all' }).click();
   await expect(page).toHaveURL(/hide=[^&]*lro/);
   // A fresh load of the shared URL (page.reload can race the page's own history updates in CI).
   await page.goto(page.url());
