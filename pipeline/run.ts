@@ -25,10 +25,12 @@ import {
   EarthScienceCatalogSchema,
   GroupsSchema,
   MoonsCatalogSchema,
+  CometsCatalogSchema,
   StarsCatalogSchema,
   OperatorsCatalogSchema,
   SatcatListSchema,
   SupGpRecordSchema,
+  type Comet,
   type Groups,
   type Omm,
   type SatcatRecord,
@@ -46,6 +48,11 @@ import {
   checkEarthScienceMembers,
   checkMoonAnchors,
   checkMoonEphemerides,
+  checkCometEphemerides,
+  checkCometCandidates,
+  cometCandidatesUnreachable,
+  parseSbdbComets,
+  SBDB_COMETS_URL,
   checkOwnerCodes,
   checkStaleVerification,
   deepSpaceCandidates,
@@ -74,6 +81,7 @@ import {
   fetchMissionPast,
   fetchMissionVectors,
   fetchMoonVectors,
+  parseCometPhysical,
   float64LittleEndian,
 } from './horizons';
 import {
@@ -82,10 +90,12 @@ import {
   publishDatasets,
   publishEphemerides,
   publishMoonEphemerides,
+  publishCometEphemerides,
   writeStats,
   writeSupplementalInfo,
   type EphemerisToWrite,
   type MoonEphemerisToWrite,
+  type CometEphemerisToWrite,
 } from './publish';
 import { mergeSupplemental } from './supgp';
 import { fetchRoverPositions } from './rovers';
@@ -383,6 +393,44 @@ async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void
     }
   }
   await publishMoonEphemerides(dataDir, moonOut);
+
+  // Comets (catalog/comets.json): like the missions, with the coverage clamping; an enhancement like the moons,
+  // so a failure only warns (a network or HTTP error stops the remaining comet requests).
+  const comets = CometsCatalogSchema.parse(
+    JSON.parse(await readFile(resolve('catalog/comets.json'), 'utf8')),
+  );
+  const cometOut: CometEphemerisToWrite[] = [];
+  for (const comet of comets.comets) {
+    try {
+      const { data, url, clamped, result } = await fetchMissionVectors(
+        { ...comet, centralBody: 'sun' },
+        now,
+        true,
+      );
+      if (clamped)
+        console.warn(
+          `comet ${comet.id}: Horizons coverage ends ${clamped.kind} ${clamped.date.toISOString()}`,
+        );
+      cometOut.push({
+        cometId: comet.id,
+        ...parseCometPhysical(result),
+        horizonsId: comet.horizonsId,
+        stepMin: comet.sampling.stepMin,
+        source: url,
+        fetchedAt: now,
+        rows: data,
+        bytes: float64LittleEndian(data),
+        ...(clamped?.kind === 'after' ? { coverageEnd: clamped.date } : {}),
+      });
+    } catch (err) {
+      console.warn(`::warning::comet ${comet.id}: ${String(err)}`);
+      if (!(err instanceof ProviderError) || err.status !== 200) {
+        console.warn('::warning::remaining comets skipped this run');
+        break;
+      }
+    }
+  }
+  await publishCometEphemerides(dataDir, cometOut, new Set(comets.comets.map((c) => c.id)));
   await publishEphemerides(dataDir, out, now);
 }
 
@@ -435,6 +483,16 @@ const IANA_LEAP_SECONDS_URL = 'https://data.iana.org/time-zones/tzdb/leap-second
  * The latest leap second from IERS, else from IANA. An enhancement: when neither answers, the audit reports it as
  * an item and goes on.
  */
+/** Comet candidates from one JPL SBDB query; an unreachable SBDB is an audit item, not a failure. */
+async function cometCandidateItems(comets: readonly Comet[], now: Date): Promise<AuditItem[]> {
+  try {
+    const json: unknown = JSON.parse(await politeGet(SBDB_COMETS_URL, { accept: 'application/json' }));
+    return checkCometCandidates(parseSbdbComets(json), comets, now);
+  } catch (err) {
+    return [cometCandidatesUnreachable(String(err))];
+  }
+}
+
 async function leapSecondItems(now: Date): Promise<AuditItem[]> {
   const errors: string[] = [];
   for (const [url, parse] of [
@@ -514,6 +572,8 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     );
   }
   const leapSeconds = await leapSecondItems(now);
+  const comets = CometsCatalogSchema.parse(await readJson('catalog/comets.json'));
+  const cometItems = await cometCandidateItems(comets.comets, now);
 
   const candidates = deepSpaceCandidates(launches, missions);
   const matches = new Map<string, { name: string; spkid: string }[]>();
@@ -550,6 +610,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
         { path: 'catalog/moons.json', verified: moons.verified },
         { path: 'catalog/earth-science.json', verified: earthScience.verified },
         { path: 'catalog/stars.json', verified: stars.verified },
+        { path: 'catalog/comets.json', verified: comets.verified },
       ],
       missions,
       now,
@@ -558,6 +619,8 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
     ...checkEarthScienceMembers(publishedGroups, earthScience.satellites, satcatNames),
     ...checkMoonAnchors(moons.moons, now),
     ...checkMoonEphemerides(manifest, moons.moons, now),
+    ...checkCometEphemerides(manifest, comets.comets, now),
+    ...cometItems,
     ...leapSeconds,
   ];
   const report = { generatedAt: now.toISOString(), items };

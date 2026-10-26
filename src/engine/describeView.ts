@@ -355,6 +355,12 @@ export async function describeView(
       extra.push(
         fr ? 'Les étoiles brillantes sont nommées sur le ciel.' : 'The bright stars are named on the sky.',
       );
+    if (p.get('comets') === '1')
+      extra.push(
+        fr
+          ? 'Les comètes du catalogue sont dessinées avec leur orbite et des queues illustratives.'
+          : 'The catalogue comets are drawn with their orbits and illustrative tails.',
+      );
     if (p.get('nearby') === '1')
       extra.push(
         fr

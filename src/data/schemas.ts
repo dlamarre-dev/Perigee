@@ -175,6 +175,26 @@ export const MoonEphemerisEntrySchema = DatasetEntrySchema.extend({
 });
 export type MoonEphemerisEntry = z.infer<typeof MoonEphemerisEntrySchema>;
 
+/**
+ * One comet's heliocentric Horizons state vectors (solar view): data/ephem/comets/<id>.bin, same rows as
+ * EphemerisEntry (Horizons integrates the comet with the planets' perturbations).
+ */
+export const CometEphemerisEntrySchema = DatasetEntrySchema.extend({
+  horizonsId: z.string(),
+  center: z.string(),
+  startTdbJd: z.number(),
+  endTdbJd: z.number(),
+  stepMin: z.number().positive(),
+  /** End of the Horizons orbit solution when it falls inside the requested window (ISO UTC). */
+  coverageEnd: z.string().optional(),
+  /** Total-magnitude law m = M1 + 5 log Δ + 2.5 k1 log r, from Horizons' object data (when given). */
+  m1: z.number().optional(),
+  k1: z.number().optional(),
+  /** Nucleus radius from Horizons' object data (when given). */
+  radiusKm: z.number().positive().optional(),
+});
+export type CometEphemerisEntry = z.infer<typeof CometEphemerisEntrySchema>;
+
 export const ManifestSchema = z.object({
   version: z.literal(1),
   generatedAt: z.string(),
@@ -182,6 +202,8 @@ export const ManifestSchema = z.object({
   ephemerides: z.record(z.string(), EphemerisEntrySchema).default({}),
   /** Moons positioned from Horizons in the solar view (the others use astronomy-engine). */
   moons: z.record(z.string(), MoonEphemerisEntrySchema).default({}),
+  /** Comets of catalog/comets.json (solar view). An extra field: older clients ignore it. */
+  comets: z.record(z.string(), CometEphemerisEntrySchema).default({}),
   /**
    * CelesTrak supplemental GP sets merged into earth.gp: when each was last downloaded, how many records it had
    * and how many replaced the GP elements.
@@ -418,6 +440,38 @@ export const StarSchema = z.object({
   sources: z.array(z.url()).min(1),
 });
 export type Star = z.infer<typeof StarSchema>;
+
+/**
+ * Comets shown in the solar-system view (catalog/comets.json): a curated list, positioned from JPL Horizons state
+ * vectors fetched daily (`horizonsId`: a DES=…;CAP;NOFRAG record, the current apparition's orbit).
+ */
+export const CometSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  /** Official designation as written, e.g. "1P/Halley", "C/1995 O1 (Hale-Bopp)". */
+  designation: z.string(),
+  name: localized,
+  horizonsId: z.string().regex(/^DES=[^;]+;CAP;NOFRAG$/),
+  sampling: z.object({
+    stepMin: z.number().positive(),
+    pastDays: z.number().nonnegative(),
+    futureDays: z.number().positive(),
+  }),
+  /** Periodic (P/, numbered) or long-period (C/), as designated; the orbit itself may be hyperbolic. */
+  kind: z.enum(['periodic', 'long-period']),
+  discovered: partialDate.optional(),
+  /** Mean nucleus diameter when measured. */
+  nucleusKm: z.number().positive().optional(),
+  notes: localized,
+  verified: isoDate,
+  sources: z.array(z.url()).min(1),
+});
+export type Comet = z.infer<typeof CometSchema>;
+
+export const CometsCatalogSchema = z
+  .object({ verified: isoDate, sources: z.array(z.url()).min(1), comets: z.array(CometSchema) })
+  .refine((c) => new Set(c.comets.map((x) => x.id)).size === c.comets.length, {
+    message: 'duplicate comet id',
+  });
 export const StarsCatalogSchema = z.object({
   verified: isoDate,
   sources: z.array(z.url()).min(1),
@@ -508,7 +562,7 @@ export type ImageKind = z.infer<typeof ImageKindSchema>;
 /** Representative image of an object without a 3D model (public/images/<id>.webp, tools/images). */
 export const ImageEntrySchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
-  target: z.string().regex(/^(mission|site|launch):[a-z0-9-]+$|^norad:\d+$/),
+  target: z.string().regex(/^(mission|site|launch|comet):[a-z0-9-]+$|^norad:\d+$/),
   kind: ImageKindSchema,
   /** Original file, downloaded and resized by tools/images. */
   file: z.url(),

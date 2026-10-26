@@ -2015,6 +2015,12 @@ h2[tabindex='-1']:focus {
   color: #ffe9b8;
 }
 
+/* Comets (solar view): the colour of their markers and orbits. */
+.label-comet {
+  border-left-color: #9fe8d8;
+  color: #d4f6ee;
+}
+
 /* Stars on the sky (solar view): no marker, a thin leader from the star to its label. */
 .label-star {
   z-index: 0;

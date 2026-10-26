@@ -21,6 +21,7 @@ import { utcToTdbJd } from '../src/astro/time';
 import { buildCatalog } from '../src/earth/catalog';
 import { satelliteStats } from '../src/earth/stats';
 import { SHARD_COUNT, shardOf, shardPath } from '../src/data/shards';
+import { CENTER_CODES } from './horizons';
 
 export const MIN_RATIO_VS_PREVIOUS = 0.5;
 
@@ -34,7 +35,14 @@ export class ShrinkGuardError extends Error {
 export async function readManifest(dataDir: string): Promise<Manifest> {
   const file = join(dataDir, 'manifest.json');
   if (!existsSync(file))
-    return { version: 1, generatedAt: new Date(0).toISOString(), datasets: {}, ephemerides: {}, moons: {} };
+    return {
+      version: 1,
+      generatedAt: new Date(0).toISOString(),
+      datasets: {},
+      ephemerides: {},
+      moons: {},
+      comets: {},
+    };
   return ManifestSchema.parse(JSON.parse(await readFile(file, 'utf8')));
 }
 
@@ -502,6 +510,74 @@ export async function publishMoonEphemerides(
       stepMin: m.stepMin,
     };
     console.log(`wrote ${path}: ${count} states, ${(m.bytes.byteLength / 1024).toFixed(0)} KiB`);
+  }
+  next.generatedAt = new Date().toISOString();
+  ManifestSchema.parse(next);
+  await writeFile(join(dataDir, 'manifest.json'), `${JSON.stringify(next, null, 2)}\n`);
+  return next;
+}
+
+export interface CometEphemerisToWrite {
+  readonly cometId: string;
+  readonly horizonsId: string;
+  readonly stepMin: number;
+  readonly source: string;
+  readonly fetchedAt: Date;
+  /** Rows of 7 Float64: t_TDB JD, x, y, z, vx, vy, vz (heliocentric, km, km/s). */
+  readonly rows: Float64Array;
+  readonly bytes: Buffer;
+  readonly coverageEnd?: Date;
+  /** Magnitude law and nucleus radius from Horizons' object data. */
+  readonly m1?: number;
+  readonly k1?: number;
+  readonly radiusKm?: number;
+}
+
+/**
+ * Writes data/ephem/comets/<id>.bin and the manifest's `comets` entries, with the moons' guard (refusals only
+ * warn: a comet keeps its previous file). Entries of comets no longer in the catalogue (`catalogIds`) are dropped.
+ */
+export async function publishCometEphemerides(
+  dataDir: string,
+  list: readonly CometEphemerisToWrite[],
+  catalogIds: ReadonlySet<string>,
+): Promise<Manifest> {
+  const manifest = await readManifest(dataDir);
+  const next: Manifest = {
+    ...manifest,
+    comets: Object.fromEntries(Object.entries(manifest.comets).filter(([id]) => catalogIds.has(id))),
+  };
+  for (const c of list) {
+    const count = c.rows.length / 7;
+    const prev = manifest.comets[c.cometId];
+    if (count === 0 || (prev && count < prev.count * MIN_RATIO_VS_PREVIOUS && !(c.stepMin > prev.stepMin))) {
+      console.warn(
+        `comet ${c.cometId}: ${count} states is below half of the previous ${prev?.count ?? 0}; kept`,
+      );
+      continue;
+    }
+    const path = `ephem/comets/${c.cometId}.bin`;
+    const file = join(dataDir, path);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, c.bytes);
+    next.comets[c.cometId] = {
+      path,
+      source: c.source,
+      fetchedAt: c.fetchedAt.toISOString(),
+      count,
+      bytes: c.bytes.byteLength,
+      sha256: createHash('sha256').update(c.bytes).digest('hex'),
+      horizonsId: c.horizonsId,
+      center: CENTER_CODES.sun,
+      startTdbJd: c.rows[0] ?? 0,
+      endTdbJd: c.rows[c.rows.length - 7] ?? 0,
+      stepMin: c.stepMin,
+      ...(c.coverageEnd ? { coverageEnd: c.coverageEnd.toISOString() } : {}),
+      ...(c.m1 !== undefined ? { m1: c.m1 } : {}),
+      ...(c.k1 !== undefined ? { k1: c.k1 } : {}),
+      ...(c.radiusKm !== undefined ? { radiusKm: c.radiusKm } : {}),
+    };
+    console.log(`wrote ${path}: ${count} states, ${(c.bytes.byteLength / 1024).toFixed(0)} KiB`);
   }
   next.generatedAt = new Date().toISOString();
   ManifestSchema.parse(next);

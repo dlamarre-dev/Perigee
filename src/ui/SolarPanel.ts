@@ -1,11 +1,12 @@
 /**
  * Side panel of the solar-system view: planets (their moons folded underneath, unfolded while the planet or
  * one of its moons is selected), well-known stars in two groups (the bright ones, and those within 20 light-years;
- * each named on the sky when ticked), spacecraft (status, ephemeris availability), log scale.
+ * each named on the sky when ticked), comets (drawn and listed when ticked, brightest first), spacecraft (status,
+ * ephemeris availability), log scale.
  */
 import type { PlanetInfo } from '../astro/planets';
 import { isBrightStar, isNearbyStar, NEARBY_STAR_MAX_LY } from '../astro/stars';
-import { isInactiveMission, type Mission, type Moon, type Star } from '../data/schemas';
+import { isInactiveMission, type Comet, type Mission, type Moon, type Star } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { MissionToggles } from './missionToggles';
@@ -20,6 +21,9 @@ export interface SolarPanelCallbacks {
   readonly onToggleStars: (on: boolean) => void;
   /** Names the stars within 20 light-years on the sky (off by default). */
   readonly onToggleNearbyStars: (on: boolean) => void;
+  /** Draws the comets of catalog/comets.json (off by default). */
+  readonly onToggleComets: (on: boolean) => void;
+  readonly onSelectComet: (c: Comet) => void;
   readonly onToggleLogScale: (on: boolean) => void;
   /** Spacecraft whose markers, trajectories and labels are not drawn. */
   readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
@@ -39,6 +43,11 @@ export class SolarPanel {
   private readonly nearbyToggle = h('input', { type: 'checkbox', id: 'toggle-nearby-stars' });
   private readonly nearbyLabel = h('label', { for: 'toggle-nearby-stars' });
   private readonly nearbyList = h('ul', { class: 'results moon-list star-list', id: 'nearby-star-list' });
+  private readonly cometsToggle = h('input', { type: 'checkbox', id: 'toggle-comets' });
+  private readonly cometsLabel = h('label', { for: 'toggle-comets' });
+  private readonly cometsList = h('ul', { class: 'results moon-list star-list', id: 'comet-list' });
+  /** Estimated magnitude now, by comet id (from their vectors, once loaded). */
+  private cometMagnitudes: ReadonlyMap<string, number> = new Map();
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
   private readonly inactiveTitle = h('h3', { class: 'results-title' });
@@ -62,6 +71,8 @@ export class SolarPanel {
     hiddenMissions: ReadonlySet<string> = new Set(),
     showStars = false,
     showNearbyStars = false,
+    private readonly comets: readonly Comet[] = [],
+    showComets = false,
   ) {
     this.toggles = new MissionToggles(
       i18n,
@@ -85,6 +96,13 @@ export class SolarPanel {
       callbacks.onToggleNearbyStars(this.nearbyToggle.checked);
     });
     this.nearbyList.hidden = !showNearbyStars;
+    this.cometsToggle.checked = showComets;
+    this.cometsToggle.setAttribute('aria-controls', 'comet-list');
+    this.cometsToggle.addEventListener('change', () => {
+      this.cometsList.hidden = !this.cometsToggle.checked;
+      callbacks.onToggleComets(this.cometsToggle.checked);
+    });
+    this.cometsList.hidden = !showComets;
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'solar-panel-title' },
       [
@@ -98,6 +116,8 @@ export class SolarPanel {
         this.starsList,
         h('p', { class: 'search-row' }, [this.nearbyToggle, this.nearbyLabel]),
         this.nearbyList,
+        h('p', { class: 'search-row' }, [this.cometsToggle, this.cometsLabel]),
+        this.cometsList,
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
@@ -113,6 +133,12 @@ export class SolarPanel {
   /** Draws a hidden mission again (it was just selected). */
   showMission(id: string): void {
     this.toggles.show(id);
+  }
+
+  /** Brightest first once magnitudes are known (the list keeps the catalogue order until then). */
+  setCometMagnitudes(magnitudes: ReadonlyMap<string, number>): void {
+    this.cometMagnitudes = magnitudes;
+    this.render();
   }
 
   private selectedKey: string | undefined;
@@ -156,6 +182,7 @@ export class SolarPanel {
           (el.dataset['planet'] !== undefined && `planet:${el.dataset['planet']}` === key) ||
           (el.dataset['sun'] !== undefined && key === 'sun') ||
           (el.dataset['star'] !== undefined && `star:${el.dataset['star']}` === key) ||
+          (el.dataset['comet'] !== undefined && `comet:${el.dataset['comet']}` === key) ||
           (el.dataset['moon'] !== undefined && `moon:${el.dataset['moon']}` === key)),
       scroll,
     );
@@ -220,6 +247,25 @@ export class SolarPanel {
         .map((s) =>
           item(s, this.i18n.format('star.distanceShort', { ly: this.i18n.number(s.distanceLy, 2) })),
         ),
+    );
+    this.cometsLabel.textContent = t('solar.comets');
+    const mag = (c: Comet): number => this.cometMagnitudes.get(c.id) ?? Infinity;
+    this.cometsList.replaceChildren(
+      ...[...this.comets]
+        .sort((a, b) => mag(a) - mag(b))
+        .map((c) => {
+          const m = this.cometMagnitudes.get(c.id);
+          const b = h('button', { type: 'button', class: 'result', 'data-comet': c.id }, [
+            h('span', { class: 'result-name' }, [c.name[lang]]),
+            h('span', { class: 'result-id' }, [
+              m === undefined
+                ? ''
+                : this.i18n.format('comet.magnitudeShort', { mag: this.i18n.number(m, 1) }),
+            ]),
+          ]);
+          b.addEventListener('click', () => this.callbacks.onSelectComet(c));
+          return h('li', {}, [b]);
+        }),
     );
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');

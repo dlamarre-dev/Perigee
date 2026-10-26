@@ -1,0 +1,539 @@
+{
+  "verified": "2026-10-26",
+  "sources": ["https://ssd.jpl.nasa.gov/horizons/", "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html"],
+  "comets": [
+    {
+      "id": "halley",
+      "designation": "1P/Halley",
+      "name": {
+        "en": "Halley’s Comet",
+        "fr": "Comète de Halley"
+      },
+      "horizonsId": "DES=1P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1758-12-25",
+      "nucleusKm": 11,
+      "notes": {
+        "en": "The most famous comet, recorded for more than 2,000 years. Edmond Halley showed that the comets of 1531, 1607 and 1682 were one object and predicted its return; Johann Palitzsch saw it again on 1758-12-25. It comes back about every 76 years: around its last perihelion, on 1986-02-09, the Vega 1 and 2, Suisei, Sakigake and Giotto probes flew past it, Giotto within 596 km of its 15 × 8 km nucleus. It returns in 2061, visible to the naked eye again; its dust causes the Eta Aquariid (May) and Orionid (October) meteor showers.",
+        "fr": "La comète la plus célèbre, observée depuis plus de 2 000 ans. Edmond Halley a montré que les comètes de 1531, 1607 et 1682 étaient un seul et même objet et a prédit son retour; Johann Palitzsch l’a revue le 1758-12-25. Elle revient environ tous les 76 ans : autour de son dernier périhélie, le 1986-02-09, les sondes Vega 1 et 2, Suisei, Sakigake et Giotto l’ont survolée, Giotto à 596 km de son noyau de 15 × 8 km. Elle reviendra en 2061, de nouveau visible à l’œil nu; ses poussières donnent les étoiles filantes des Êta Aquarides (mai) et des Orionides (octobre)."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1P",
+        "https://science.nasa.gov/solar-system/comets/1p-halley/",
+        "https://www.esa.int/Science_Exploration/Space_Science/Giotto_overview",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=1P",
+        "https://en.wikipedia.org/wiki/Halley%27s_Comet"
+      ]
+    },
+    {
+      "id": "encke",
+      "designation": "2P/Encke",
+      "name": {
+        "en": "Comet Encke",
+        "fr": "Comète d’Encke"
+      },
+      "horizonsId": "DES=2P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 360,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1786-01-17",
+      "nucleusKm": 4.8,
+      "notes": {
+        "en": "The comet with the shortest known period: it goes around the Sun every 3.3 years, coming closer to it than Mercury. Discovered by Pierre Méchain on 1786-01-17, it is named after Johann Franz Encke, who computed its orbit in 1819. Its dust causes the Taurid meteor showers of October and November, known for their fireballs. Its next perihelion is on 2027-02-10; it is usually a binocular or telescope target.",
+        "fr": "La comète de plus courte période connue : elle fait le tour du Soleil en 3,3 ans en passant plus près de lui que Mercure. Découverte par Pierre Méchain le 1786-01-17, elle porte le nom de Johann Franz Encke, qui a calculé son orbite en 1819. Ses poussières donnent les étoiles filantes des Taurides, en octobre et novembre, connues pour leurs bolides. Son prochain périhélie a lieu le 2027-02-10; elle est en général une cible pour jumelles ou télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2P",
+        "https://science.nasa.gov/solar-system/comets/2p-encke/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=2P"
+      ]
+    },
+    {
+      "id": "tempel-1",
+      "designation": "9P/Tempel 1",
+      "name": {
+        "en": "Comet Tempel 1",
+        "fr": "Comète Tempel 1"
+      },
+      "horizonsId": "DES=9P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1867-04-03",
+      "nucleusKm": 6,
+      "notes": {
+        "en": "Discovered by Wilhelm Tempel on 1867-04-03, this comet about 6 km across goes around the Sun every 5.6 years. On 2005-07-04 NASA’s Deep Impact released an impactor that struck it, throwing out fine dust and ice from beneath its surface. Stardust, on its extended NExT mission, flew past it on 2011-02-14 and photographed the crater. Its next perihelion is on 2028-02-12; it is a telescope target.",
+        "fr": "Découverte par Wilhelm Tempel le 1867-04-03, cette comète d’environ 6 km fait le tour du Soleil en 5,6 ans. Le 2005-07-04, la sonde Deep Impact de la NASA a largué un impacteur qui l’a percutée, projetant la poussière fine et la glace cachées sous sa surface. Stardust, lors de sa mission prolongée NExT, l’a survolée le 2011-02-14 et a photographié le cratère. Son prochain périhélie a lieu le 2028-02-12; c’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=9P",
+        "https://science.nasa.gov/solar-system/comets/9p-tempel-1/",
+        "https://science.nasa.gov/mission/deep-impact-epoxi/",
+        "https://science.nasa.gov/mission/stardust/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=9P"
+      ]
+    },
+    {
+      "id": "pons-brooks",
+      "designation": "12P/Pons-Brooks",
+      "name": {
+        "en": "Comet Pons-Brooks",
+        "fr": "Comète Pons-Brooks"
+      },
+      "horizonsId": "DES=12P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1812-07-12",
+      "notes": {
+        "en": "Found by Jean-Louis Pons in Marseille on 1812-07-12 and again by William Brooks in 1883, it returns about every 71 years. Before its perihelion on 2024-04-21 it had a series of outbursts, during which its coma took on a horned shape that earned it the nickname “devil comet”. It reached about magnitude 4 in spring 2024, visible to the naked eye under a dark sky. It will return in 2095.",
+        "fr": "Trouvée par Jean-Louis Pons à Marseille le 1812-07-12, puis de nouveau par William Brooks en 1883, elle revient environ tous les 71 ans. Avant son périhélie du 2024-04-21, elle a connu une série de sursauts d’éclat, pendant lesquels sa chevelure a pris une forme à cornes, d’où son surnom de « comète du diable ». Elle a atteint environ la magnitude 4 au printemps 2024, visible à l’œil nu sous un ciel noir. Elle reviendra en 2095."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=12P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=12P",
+        "https://en.wikipedia.org/wiki/12P/Pons%E2%80%93Brooks"
+      ]
+    },
+    {
+      "id": "olbers",
+      "designation": "13P/Olbers",
+      "name": {
+        "en": "Comet Olbers",
+        "fr": "Comète d’Olbers"
+      },
+      "horizonsId": "DES=13P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1815-03-06",
+      "notes": {
+        "en": "Discovered on 1815-03-06 by Heinrich Olbers, the German physician and astronomer also known for Olbers’ paradox on why the night sky is dark. It goes around the Sun about every 70 years. At its last perihelion, on 2024-06-30, it reached about magnitude 6 to 7, a binocular object. It will return in 2094.",
+        "fr": "Découverte le 1815-03-06 par Heinrich Olbers, médecin et astronome allemand connu aussi pour le paradoxe d’Olbers sur l’obscurité du ciel nocturne. Elle fait le tour du Soleil environ tous les 70 ans. Lors de son dernier périhélie, le 2024-06-30, elle a atteint environ la magnitude 6 à 7, un objet pour jumelles. Elle reviendra en 2094."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=13P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=13P",
+        "https://en.wikipedia.org/wiki/13P/Olbers"
+      ]
+    },
+    {
+      "id": "schwassmann-wachmann-1",
+      "designation": "29P/Schwassmann-Wachmann 1",
+      "name": {
+        "en": "Comet Schwassmann-Wachmann 1",
+        "fr": "Comète Schwassmann-Wachmann 1"
+      },
+      "horizonsId": "DES=29P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1927-11-15",
+      "nucleusKm": 60,
+      "notes": {
+        "en": "Discovered at Hamburg Observatory on 1927-11-15 by Arnold Schwassmann and Arno Arthur Wachmann. Its nearly circular orbit keeps it just beyond Jupiter, 5.8 to 6.3 au from the Sun, which it circles every 14.9 years. Even that far out it is always active, and several times a year sudden outbursts brighten it by up to 5 magnitudes within hours from its usual magnitude 16. Its nucleus, about 60 km across, is one of the largest known; it is a telescope target.",
+        "fr": "Découverte à l’observatoire de Hambourg le 1927-11-15 par Arnold Schwassmann et Arno Arthur Wachmann. Son orbite presque circulaire la maintient juste au-delà de Jupiter, entre 5,8 et 6,3 ua du Soleil, dont elle fait le tour en 14,9 ans. Même si loin, elle est toujours active, et plusieurs fois par an des sursauts soudains augmentent son éclat de jusqu’à 5 magnitudes en quelques heures, à partir de sa magnitude habituelle de 16. Son noyau, d’environ 60 km, est l’un des plus grands connus; c’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=29P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=29P",
+        "https://en.wikipedia.org/wiki/29P/Schwassmann%E2%80%93Wachmann"
+      ]
+    },
+    {
+      "id": "churyumov-gerasimenko",
+      "designation": "67P/Churyumov-Gerasimenko",
+      "name": {
+        "en": "Comet Churyumov-Gerasimenko",
+        "fr": "Comète Tchourioumov-Guérassimenko"
+      },
+      "horizonsId": "DES=67P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1969-10-22",
+      "nucleusKm": 4,
+      "notes": {
+        "en": "Spotted on 1969-10-22 by Klim Churyumov on a photographic plate taken by Svetlana Gerasimenko. This duck-shaped comet about 4 km across, which goes around the Sun every 6.5 years, is the first one a spacecraft orbited: ESA’s Rosetta arrived on 2014-08-06, sent the Philae lander to its surface on 2014-11-12 and ended its mission by touching down on it on 2016-09-30. Its next perihelion is in 2028; it is a telescope target.",
+        "fr": "Repérée le 1969-10-22 par Klim Tchourioumov sur une plaque photographique prise par Svetlana Guérassimenko. Cette comète en forme de canard d’environ 4 km, qui fait le tour du Soleil en 6,5 ans, est la première autour de laquelle une sonde s’est placée en orbite : Rosetta, de l’ESA, est arrivée le 2014-08-06, a envoyé l’atterrisseur Philae sur sa surface le 2014-11-12 et a terminé sa mission en s’y posant le 2016-09-30. Son prochain périhélie a lieu en 2028; c’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=67P",
+        "https://www.esa.int/Science_Exploration/Space_Science/Rosetta",
+        "https://www.esa.int/Science_Exploration/Space_Science/Rosetta/Frequently_asked_questions",
+        "https://science.nasa.gov/solar-system/comets/67p-churyumov-gerasimenko/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=67P"
+      ]
+    },
+    {
+      "id": "hartley-2",
+      "designation": "103P/Hartley 2",
+      "name": {
+        "en": "Comet Hartley 2",
+        "fr": "Comète Hartley 2"
+      },
+      "horizonsId": "DES=103P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1986-03-15",
+      "notes": {
+        "en": "Discovered by Malcolm Hartley at Siding Spring Observatory, Australia, on 1986-03-15; it goes around the Sun every 6.5 years. On 2010-11-04 the Deep Impact spacecraft, on its extended EPOXI mission, flew about 700 km from its small peanut-shaped nucleus, 2.25 km long, and saw jets of carbon dioxide carrying chunks of ice. That year it reached about magnitude 5, faintly visible to the naked eye. Its next perihelion is around 2030.",
+        "fr": "Découverte par Malcolm Hartley à l’observatoire de Siding Spring, en Australie, le 1986-03-15; elle fait le tour du Soleil en 6,5 ans. Le 2010-11-04, la sonde Deep Impact, lors de sa mission prolongée EPOXI, est passée à environ 700 km de son petit noyau en forme d’arachide, long de 2,25 km, et a vu des jets de dioxyde de carbone emportant des blocs de glace. Cette année-là, elle a atteint environ la magnitude 5, à peine visible à l’œil nu. Son prochain périhélie a lieu vers 2030."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=103P",
+        "https://science.nasa.gov/solar-system/comets/103p-hartley-hartley-2/",
+        "https://science.nasa.gov/mission/deep-impact-epoxi/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=103P",
+        "https://en.wikipedia.org/wiki/103P/Hartley"
+      ]
+    },
+    {
+      "id": "hale-bopp",
+      "designation": "C/1995 O1 (Hale-Bopp)",
+      "name": {
+        "en": "Comet Hale-Bopp",
+        "fr": "Comète Hale-Bopp"
+      },
+      "horizonsId": "DES=C/1995 O1;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "1995-07-23",
+      "nucleusKm": 60,
+      "notes": {
+        "en": "Discovered on 1995-07-23, independently, by Alan Hale in New Mexico and Thomas Bopp in Arizona, while it was still beyond Jupiter. Its nucleus, about 60 km across, is unusually large, and it stayed visible to the naked eye for about 18 months, a record, shining brightest around its perihelion on 1997-04-01. It goes around the Sun in about 2,500 years and is now far beyond the planets, within reach of large telescopes only.",
+        "fr": "Découverte le 1995-07-23, indépendamment, par Alan Hale au Nouveau-Mexique et Thomas Bopp en Arizona, alors qu’elle était encore au-delà de Jupiter. Son noyau, d’environ 60 km, est exceptionnellement grand, et elle est restée visible à l’œil nu pendant environ 18 mois, un record, avec un éclat maximal autour de son périhélie du 1997-04-01. Elle fait le tour du Soleil en environ 2 500 ans et se trouve aujourd’hui bien au-delà des planètes, à la portée des seuls grands télescopes."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F1995%20O1",
+        "https://science.nasa.gov/solar-system/comets/c-1995-o1-hale-bopp/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/1995+O1",
+        "https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp"
+      ]
+    },
+    {
+      "id": "tsuchinshan-atlas",
+      "designation": "C/2023 A3 (Tsuchinshan-ATLAS)",
+      "name": {
+        "en": "Comet Tsuchinshan-ATLAS",
+        "fr": "Comète Tsuchinshan-ATLAS"
+      },
+      "horizonsId": "DES=C/2023 A3;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "2023-01-09",
+      "notes": {
+        "en": "First seen on 2023-01-09 by China’s Purple Mountain Observatory (Tsuchinshan) and found again on 2023-02-22 by the ATLAS survey in South Africa. It passed 0.39 au from the Sun on 2024-09-27 and 0.47 au from the Earth on 2024-10-12, a bright naked-eye comet with a long tail in the evening sky. It is now leaving the inner solar system, possibly for good, and can be followed only with telescopes.",
+        "fr": "Aperçue pour la première fois le 2023-01-09 par l’observatoire de la Montagne Pourpre, en Chine (Tsuchinshan), puis retrouvée le 2023-02-22 par le relevé ATLAS en Afrique du Sud. Elle est passée à 0,39 ua du Soleil le 2024-09-27 et à 0,47 ua de la Terre le 2024-10-12, brillante à l’œil nu avec une longue queue dans le ciel du soir. Elle quitte aujourd’hui le Système solaire intérieur, peut-être pour toujours, et ne se suit plus qu’au télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F2023%20A3",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/2023+A3",
+        "https://en.wikipedia.org/wiki/C/2023_A3_(Tsuchinshan%E2%80%93ATLAS)"
+      ]
+    },
+    {
+      "id": "tempel-2",
+      "designation": "10P/Tempel 2",
+      "name": {
+        "en": "Comet Tempel 2",
+        "fr": "Comète Tempel 2"
+      },
+      "horizonsId": "DES=10P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1873-07-04",
+      "notes": {
+        "en": "Discovered by Wilhelm Tempel on 1873-07-04, it goes around the Sun every 5.4 years and has a very dark nucleus. In its current apparition it passed perihelion on 2026-08-02, 1.42 au from the Sun, and came within 0.41 au of the Earth the next day, reaching about magnitude 8 to 9. It is now fading: a telescope target.",
+        "fr": "Découverte par Wilhelm Tempel le 1873-07-04, elle fait le tour du Soleil en 5,4 ans et possède un noyau très sombre. Lors de son passage actuel, elle a franchi son périhélie le 2026-08-02, à 1,42 ua du Soleil, et s’est approchée à 0,41 ua de la Terre le lendemain, atteignant environ la magnitude 8 à 9. Elle faiblit maintenant : c’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=10P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=10P",
+        "https://en.wikipedia.org/wiki/10P/Tempel"
+      ]
+    },
+    {
+      "id": "howell",
+      "designation": "88P/Howell",
+      "name": {
+        "en": "Comet Howell",
+        "fr": "Comète Howell"
+      },
+      "horizonsId": "DES=88P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1981-08-29",
+      "notes": {
+        "en": "Discovered by Ellen Howell at Palomar Observatory on 1981-08-29, it goes around the Sun every 5.5 years. In its current apparition it passed perihelion on 2026-03-18 and reached about magnitude 10. It is now moving away from the Sun and fading: a telescope target.",
+        "fr": "Découverte par Ellen Howell à l’observatoire du mont Palomar le 1981-08-29, elle fait le tour du Soleil en 5,5 ans. Lors de son passage actuel, elle a franchi son périhélie le 2026-03-18 et a atteint environ la magnitude 10. Elle s’éloigne maintenant du Soleil et faiblit : c’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=88P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=88P",
+        "https://en.wikipedia.org/wiki/88P/Howell"
+      ]
+    },
+    {
+      "id": "hartley-iras",
+      "designation": "161P/Hartley-IRAS",
+      "name": {
+        "en": "Comet Hartley-IRAS",
+        "fr": "Comète Hartley-IRAS"
+      },
+      "horizonsId": "DES=161P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "1983-11-04",
+      "notes": {
+        "en": "Photographed by Malcolm Hartley at Siding Spring Observatory, Australia, on 1983-11-04 and detected six days later by IRAS, the first infrared space telescope. It goes around the Sun every 21.5 years, in the opposite direction to the planets. In its current apparition it passes perihelion on 2026-11-27, 1.27 au from the Sun, and should reach only about magnitude 11: a telescope target.",
+        "fr": "Photographiée par Malcolm Hartley à l’observatoire de Siding Spring, en Australie, le 1983-11-04, puis détectée six jours plus tard par IRAS, le premier télescope spatial infrarouge. Elle fait le tour du Soleil en 21,5 ans, dans le sens inverse des planètes. Lors de son passage actuel, elle franchit son périhélie le 2026-11-27, à 1,27 ua du Soleil, et ne devrait atteindre qu’environ la magnitude 11 : une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=161P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=161P",
+        "https://en.wikipedia.org/wiki/161P/Hartley%E2%80%93IRAS"
+      ]
+    },
+    {
+      "id": "neat-169p",
+      "designation": "169P/NEAT",
+      "name": {
+        "en": "Comet NEAT (169P)",
+        "fr": "Comète NEAT (169P)"
+      },
+      "horizonsId": "DES=169P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "2002-03-15",
+      "notes": {
+        "en": "Found on 2002-03-15 by the Near-Earth Asteroid Tracking survey (NEAT), it first looked like an asteroid: it is a weakly active comet that goes around the Sun every 4.2 years. Its dust is the source of the Alpha Capricornid meteor shower at the end of July. In its current apparition it passed 0.17 au from the Earth on 2026-08-11 and perihelion on 2026-09-21; it is a faint telescope target.",
+        "fr": "Trouvée le 2002-03-15 par le relevé d’astéroïdes géocroiseurs NEAT, elle ressemblait d’abord à un astéroïde : c’est une comète peu active qui fait le tour du Soleil en 4,2 ans. Ses poussières sont à l’origine des étoiles filantes des Alpha Capricornides, fin juillet. Lors de son passage actuel, elle est passée à 0,17 ua de la Terre le 2026-08-11 et à son périhélie le 2026-09-21; c’est une faible cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=169P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=169P",
+        "https://en.wikipedia.org/wiki/169P/NEAT"
+      ]
+    },
+    {
+      "id": "mcnaught-220p",
+      "designation": "220P/McNaught",
+      "name": {
+        "en": "Comet McNaught (220P)",
+        "fr": "Comète McNaught (220P)"
+      },
+      "horizonsId": "DES=220P;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "2004-05-20",
+      "notes": {
+        "en": "Discovered by Robert McNaught at Siding Spring Observatory, Australia, on 2004-05-20, it goes around the Sun every 5.5 years. In its current apparition it passed perihelion on 2026-06-14; large outbursts in late May and on 2026-08-05 made it hundreds of times brighter for a while. It is a telescope target.",
+        "fr": "Découverte par Robert McNaught à l’observatoire de Siding Spring, en Australie, le 2004-05-20, elle fait le tour du Soleil en 5,5 ans. Lors de son passage actuel, elle a franchi son périhélie le 2026-06-14; de forts sursauts fin mai et le 2026-08-05 l’ont rendue pour un temps des centaines de fois plus brillante. C’est une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=220P",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=220P",
+        "https://en.wikipedia.org/wiki/220P/McNaught"
+      ]
+    },
+    {
+      "id": "bernardinelli-bernstein",
+      "designation": "C/2014 UN271 (Bernardinelli-Bernstein)",
+      "name": {
+        "en": "Comet Bernardinelli-Bernstein",
+        "fr": "Comète Bernardinelli-Bernstein"
+      },
+      "horizonsId": "DES=C/2014 UN271;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "2021-06",
+      "nucleusKm": 130,
+      "notes": {
+        "en": "Found in 2021 by Pedro Bernardinelli and Gary Bernstein in archive images of the Dark Energy Survey, taken from Chile. In 2022 the Hubble Space Telescope showed that its nucleus is about 130 km across, the largest ever seen in a comet, some 50 times larger than most. It comes from the Oort cloud and will pass closest to the Sun around January 2031, at about 10.9 au, just beyond Saturn’s orbit. It will remain a telescope target.",
+        "fr": "Trouvée en 2021 par Pedro Bernardinelli et Gary Bernstein dans des images d’archive du Dark Energy Survey, prises depuis le Chili. En 2022, le télescope spatial Hubble a montré que son noyau mesure environ 130 km, le plus grand jamais vu chez une comète, quelque 50 fois plus que la plupart. Elle vient du nuage de Oort et passera au plus près du Soleil vers janvier 2031, à environ 10,9 ua, juste au-delà de l’orbite de Saturne. Elle restera une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F2014%20UN271",
+        "https://science.nasa.gov/missions/hubble/hubble-confirms-largest-comet-nucleus-ever-seen/",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/2014+UN271",
+        "https://en.wikipedia.org/wiki/C/2014_UN271"
+      ]
+    },
+    {
+      "id": "bok-2026-a2",
+      "designation": "C/2026 A2 (Bok)",
+      "name": {
+        "en": "Comet Bok (C/2026 A2)",
+        "fr": "Comète Bok (C/2026 A2)"
+      },
+      "horizonsId": "DES=C/2026 A2;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "2026-01-15",
+      "notes": {
+        "en": "First reported on 2026-01-15 from the Bok telescope at Kitt Peak, Arizona, whose name it bears. It comes from the outer solar system on a very elongated orbit. In its current apparition it passes perihelion on 2026-12-22, 1.94 au from the Sun, outside the Earth’s orbit: a telescope target.",
+        "fr": "Signalée pour la première fois le 2026-01-15 depuis le télescope Bok de Kitt Peak, en Arizona, dont elle porte le nom. Elle vient des confins du Système solaire sur une orbite très allongée. Lors de son passage actuel, elle franchit son périhélie le 2026-12-22, à 1,94 ua du Soleil, à l’extérieur de l’orbite terrestre : une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F2026%20A2",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/2026+A2"
+      ]
+    },
+    {
+      "id": "atlas-2024-j3",
+      "designation": "C/2024 J3 (ATLAS)",
+      "name": {
+        "en": "Comet ATLAS (C/2024 J3)",
+        "fr": "Comète ATLAS (C/2024 J3)"
+      },
+      "horizonsId": "DES=C/2024 J3;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "2024-05-06",
+      "notes": {
+        "en": "Discovered on 2024-05-06 by the ATLAS survey in Chile, more than two years before its perihelion. It stays far from the Sun: it passes perihelion on 2026-11-25 at 3.87 au, beyond the asteroid belt, on a nearly parabolic orbit. It is a telescope target throughout this apparition.",
+        "fr": "Découverte le 2024-05-06 par le relevé ATLAS au Chili, plus de deux ans avant son périhélie. Elle reste loin du Soleil : elle franchit son périhélie le 2026-11-25 à 3,87 ua, au-delà de la ceinture d’astéroïdes, sur une orbite presque parabolique. C’est une cible pour télescope pendant tout ce passage."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F2024%20J3",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/2024+J3"
+      ]
+    },
+    {
+      "id": "atlas-2024-t5",
+      "designation": "C/2024 T5 (ATLAS)",
+      "name": {
+        "en": "Comet ATLAS (C/2024 T5)",
+        "fr": "Comète ATLAS (C/2024 T5)"
+      },
+      "horizonsId": "DES=C/2024 T5;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "long-period",
+      "discovered": "2024-10-02",
+      "notes": {
+        "en": "Discovered on 2024-10-02 by the ATLAS survey in South Africa. It stays far from the Sun on a nearly parabolic orbit and will pass perihelion on 2027-05-06 at 3.84 au, beyond the asteroid belt. It is a telescope target throughout this apparition.",
+        "fr": "Découverte le 2024-10-02 par le relevé ATLAS en Afrique du Sud. Elle reste loin du Soleil sur une orbite presque parabolique et franchira son périhélie le 2027-05-06 à 3,84 ua, au-delà de la ceinture d’astéroïdes. C’est une cible pour télescope pendant tout ce passage."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=C%2F2024%20T5",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=C/2024+T5"
+      ]
+    },
+    {
+      "id": "leonard-2026-r2",
+      "designation": "P/2026 R2 (Leonard)",
+      "name": {
+        "en": "Comet Leonard (P/2026 R2)",
+        "fr": "Comète Leonard (P/2026 R2)"
+      },
+      "horizonsId": "DES=P/2026 R2;CAP;NOFRAG",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "kind": "periodic",
+      "discovered": "2026-09-14",
+      "notes": {
+        "en": "Discovered on 2026-09-14 by the Catalina Sky Survey in Arizona and named after its observer, Gregory Leonard. This newly found periodic comet goes around the Sun in about 22 years. It passes perihelion on 2026-10-25, 0.79 au from the Sun, inside the Earth’s orbit: a telescope target.",
+        "fr": "Découverte le 2026-09-14 par le Catalina Sky Survey, en Arizona, et nommée d’après son observateur, Gregory Leonard. Cette comète périodique tout juste trouvée fait le tour du Soleil en 22 ans environ. Elle franchit son périhélie le 2026-10-25, à 0,79 ua du Soleil, à l’intérieur de l’orbite terrestre : une cible pour télescope."
+      },
+      "verified": "2026-10-26",
+      "sources": [
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=P%2F2026%20R2",
+        "https://minorplanetcenter.net/db_search/show_object?object_id=P/2026+R2"
+      ]
+    }
+  ]
+}

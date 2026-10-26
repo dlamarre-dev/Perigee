@@ -187,6 +187,22 @@ No single API provides "active probes + landing sites". We maintain:
   for the compared star), so links open it; with `embed=1` it fills the frame alone (a link to the full app
   instead of Close, Escape ignored). `perigee_view` builds such links (`star_map`, `compare`) and
   `perigee_describe_view` puts them into words.
+- `catalog/comets.json`: comets of the solar view, a curated list (famous ones and the current telescope targets):
+  EN/FR name, designation, `horizonsId` `DES=<designation>;CAP;NOFRAG` (the current apparition's orbit solution),
+  sampling, kind, discovery, nucleus size, student notes, sources. The daily `horizons` run fetches their
+  heliocentric vectors (like the probes, with the coverage clamping; `OBJ_DATA=YES` for the magnitude law M1/k1 and
+  radius, `parseCometPhysical`) into `data/ephem/comets/<id>.bin`, manifest top-level `comets` (an extra field;
+  failures only warn). The weekly audit flags comets without recent vectors and suggests candidates from one JPL
+  SBDB query (perihelion within 120 days, q < 1.5 au or M1 < 10 with q < 2.5 au; the pipeline never computes a
+  position, so it cannot rank by current brightness). COBS (cobs.si) was considered and left out: its data are
+  CC BY-NC-SA 4.0. The solar panel has a "Show the comets" box (URL `comets=1`, off by default) and a list sorted
+  by estimated magnitude (m = M1 + 5 log Δ + 2.5 k1 log r, labelled as an estimate); a comet is selectable
+  (`sel=comet:<id>`, followable) and drawn even with the box unticked. The view interpolates its vectors
+  (`EphemerisTrack`), draws its osculating conic (`conicOffsetsAround` in `src/astro/comets.ts`: true-anomaly
+  steps, open orbits cut at 60 au) and two illustrative tails (`src/render/CometTail.ts`: ion tail away from the
+  Sun, dust tail lagging behind the motion; length from r and M1, true scale only, labelled). The panel gives the
+  osculating q, e, ecliptic inclination, period and perihelia (`perihelionPassages`, two-body, years 1000–9999
+  only) and a photo from `catalog/images.json` (`comet:<id>` targets) when one is freely licensed.
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models
@@ -509,7 +525,7 @@ the "up" vector and causes gimbal lock at the poles).
 .github/workflows/
   data-celestrak.yml   # cron every 4 h: GP active (+ filter groups) — 1 request per group
   data-satcat.yml      # daily cron: active SATCAT
-  data-horizons.yml    # daily cron: vectors for each mission in catalog/missions.json
+  data-horizons.yml    # daily cron: vectors for the missions, moons (mean-element) and comets of catalog/
   data-sun.yml         # daily cron: NOAA SWPC solar active regions (sunspots effect) — 1 request
   data-audit.yml       # Friday 21:00 UTC: maintenance audit → audit.json / audit.md on the data branch
   maintenance-watchdog.yml  # Saturday 14:00 UTC: alert issue if the agent did not report or its PR is stuck

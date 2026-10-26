@@ -47,6 +47,17 @@ to do anything unless you explicitly ask for help.
      requests only warn and the client falls back to mean elements. Read the last `data-horizons` run logs: if
      Horizons rejected one moon (e.g. a changed `spkid`), verify the id with `horizons_lookup.api` and fix
      `catalog/moons.json` with the source; otherwise list it under "Needs a human".
+   - `comet-candidate`: a comet near perihelion (within 120 days) that comes close to the Sun or is
+     intrinsically bright, found in JPL SBDB, not in `catalog/comets.json`. Add it when it is a good target for
+     students: forecast or observed brighter than about magnitude 12, or newsworthy (a mission target, an
+     outburst, an interstellar visitor). An entry needs the EN/FR name, `designation`, `horizonsId` exactly as in
+     `details.horizonsId` (`DES=…;CAP;NOFRAG`), `sampling` (1440 min, −60/+365 days; 360 min when q < 0.5 au),
+     `kind`, `discovered`, `notes` (EN/FR, for students: discovery, apparition dates, how bright), `verified`
+     and `sources` (the SBDB lookup page first, then MPC or agency pages). Otherwise note why it was left out.
+     `unreachable`: SBDB did not answer; nothing to do.
+   - `comet-ephemeris-stale`: comets whose Horizons vectors were not refreshed for days (their requests only
+     warn). Read the last `data-horizons` run logs: an orbit solution renamed or a fragment split may need a
+     new `DES=` record (check it with `horizons_lookup.api`); otherwise list it under "Needs a human".
    - `ephemeris-ending` / `ephemeris-ended-active` and `stale-verification`: check the mission's current
      status on the agency's own pages (news, mission page), then update `status`, `phase`, `nextEvent`,
      `notes` and `sources`, and set `verified` to today. An ended mission keeps its entry with `status:

@@ -359,6 +359,26 @@ export class Engine {
           notes: localized(ref.star.notes),
           sources: ref.star.sources,
         };
+      case 'comet': {
+        const entry = (await this.data.manifest()).comets[ref.comet.id];
+        return {
+          ...base,
+          name: ref.comet.name[lang],
+          designation: ref.comet.designation,
+          type: ref.comet.kind,
+          ...(ref.comet.discovered ? { discovered: ref.comet.discovered } : {}),
+          ...(ref.comet.nucleusKm ? { nucleusDiameterKm: ref.comet.nucleusKm } : {}),
+          horizonsId: ref.comet.horizonsId,
+          ...(entry?.m1 !== undefined && entry.k1 !== undefined
+            ? {
+                // m = M1 + 5 log Δ + 2.5 k1 log r (au): an estimate, comets often depart from it.
+                magnitudeLaw: { m1: entry.m1, k1: entry.k1 },
+              }
+            : {}),
+          notes: localized(ref.comet.notes),
+          sources: ref.comet.sources,
+        };
+      }
       case 'sun':
         return {
           ...base,

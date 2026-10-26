@@ -4,9 +4,12 @@
  * the weekly maintenance agent (docs/maintenance-agent.md) works from its report.
  *
  * Network: a few polite requests per week (CelesTrak index page, this year's SATCAT launches, IERS leap-second
- * file, one Horizons lookup per deep-space candidate). Everything else comes from already-published data.
+ * file, one Horizons lookup per deep-space candidate, one JPL SBDB comet query). Everything else comes from
+ * already-published data.
  */
+import { z } from 'zod';
 import type {
+  Comet,
   EarthScienceSatellite,
   LaunchSites,
   Manifest,
@@ -28,6 +31,8 @@ export type AuditKind =
   | 'stale-verification'
   | 'moon-anchor'
   | 'moon-ephemeris-stale'
+  | 'comet-ephemeris-stale'
+  | 'comet-candidate'
   | 'earth-science-member'
   | 'leap-second';
 
@@ -364,6 +369,138 @@ export function checkMoonEphemerides(manifest: Manifest, moons: readonly Moon[],
   ];
 }
 
+/** Comets whose Horizons vectors are missing or older than MOON_EPHEMERIS_STALE_DAYS (same daily run as the moons). */
+export function checkCometEphemerides(manifest: Manifest, comets: readonly Comet[], now: Date): AuditItem[] {
+  const stale = comets.filter((c) => {
+    const info = manifest.comets[c.id];
+    return !info || (now.getTime() - Date.parse(info.fetchedAt)) / DAY_MS > MOON_EPHEMERIS_STALE_DAYS;
+  });
+  if (stale.length === 0) return [];
+  return [
+    {
+      kind: 'comet-ephemeris-stale',
+      key: 'data/ephem/comets',
+      summary: `${stale.length} comets have no Horizons vectors from the last ${MOON_EPHEMERIS_STALE_DAYS} days (${stale.map((c) => c.id).join(', ')}): check the Horizons runs and their DES records`,
+      details: {
+        comets: stale.map((c) => ({
+          id: c.id,
+          horizonsId: c.horizonsId,
+          fetchedAt: manifest.comets[c.id]?.fetchedAt ?? null,
+        })),
+      },
+    },
+  ];
+}
+
+/** JPL SBDB query of every comet's perihelion and absolute magnitude (one request per audit; no positions). */
+export const SBDB_COMETS_URL =
+  'https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,pdes,prefix,q,e,tp,M1&sb-kind=c';
+/**
+ * Candidates: perihelion within this many days of the audit, and close to the Sun (q < 1.5 au), or intrinsically
+ * bright (M1 < 10) and not too far (q < 2.5 au): distant comets stay faint from the Earth whatever their M1.
+ */
+export const COMET_CANDIDATE_DAYS = 120;
+export const COMET_CANDIDATE_MAX_Q_AU = 1.5;
+export const COMET_CANDIDATE_MAX_M1 = 10;
+export const COMET_CANDIDATE_BRIGHT_MAX_Q_AU = 2.5;
+
+/** Rough brightness at perihelion for sorting only (M1 + 10 log q, i.e. K1 = 4, distance to the Earth ignored). */
+const perihelionBrightness = (c: SbdbComet): number => (c.m1 ?? 20) + 10 * Math.log10(c.qAu);
+export const MAX_COMET_CANDIDATES = 10;
+
+export interface SbdbComet {
+  readonly fullName: string;
+  /** Designation as Horizons' DES= takes it: "1P", "C/2023 A3", "P/2026 R2". */
+  readonly designation: string;
+  readonly qAu: number;
+  readonly e: number;
+  readonly tpTdbJd: number;
+  readonly m1?: number;
+}
+
+const SbdbQuerySchema = z.object({
+  fields: z.array(z.string()),
+  data: z.array(z.array(z.string().nullable())),
+});
+
+/** sbdb_query.api JSON (fields full_name, pdes, prefix, q, e, tp, M1) → comets with usable elements. */
+export function parseSbdbComets(json: unknown): SbdbComet[] {
+  const { fields, data } = SbdbQuerySchema.parse(json);
+  const col = (name: string): number => {
+    const i = fields.indexOf(name);
+    if (i < 0) throw new Error(`SBDB answer has no ${name} field`);
+    return i;
+  };
+  const name = col('full_name');
+  const pdes = col('pdes');
+  const prefix = col('prefix');
+  const q = col('q');
+  const e = col('e');
+  const tp = col('tp');
+  const m1 = col('M1');
+  const out: SbdbComet[] = [];
+  for (const row of data) {
+    const d = row[pdes] ?? '';
+    const qAu = Number(row[q]);
+    const ecc = Number(row[e]);
+    const tpJd = Number(row[tp]);
+    if (!d || !Number.isFinite(qAu) || !Number.isFinite(ecc) || !Number.isFinite(tpJd)) continue;
+    const mag = Number(row[m1] ?? NaN);
+    out.push({
+      fullName: (row[name] ?? d).trim(),
+      // Numbered periodic comets are designated "1P"; the others take their prefix: "C/2023 A3".
+      designation: /^\d+[PDI]$/.test(d) ? d : `${row[prefix] ?? 'C'}/${d}`,
+      qAu,
+      e: ecc,
+      tpTdbJd: tpJd,
+      ...(Number.isFinite(mag) ? { m1: mag } : {}),
+    });
+  }
+  return out;
+}
+
+/** Comets near perihelion that the catalogue lacks: the maintenance agent decides whether to add them. */
+export function checkCometCandidates(
+  sbdb: readonly SbdbComet[],
+  comets: readonly Comet[],
+  now: Date,
+): AuditItem[] {
+  const known = new Set(comets.map((c) => /^DES=([^;]+);/.exec(c.horizonsId)?.[1]));
+  const nowJd = now.getTime() / DAY_MS + 2440587.5;
+  const candidates = sbdb
+    .filter(
+      (c) =>
+        !known.has(c.designation) &&
+        !/-[A-Z]+$/.test(c.designation) &&
+        Math.abs(c.tpTdbJd - nowJd) <= COMET_CANDIDATE_DAYS &&
+        (c.qAu < COMET_CANDIDATE_MAX_Q_AU ||
+          (c.m1 !== undefined && c.m1 < COMET_CANDIDATE_MAX_M1 && c.qAu < COMET_CANDIDATE_BRIGHT_MAX_Q_AU)),
+    )
+    .sort((a, b) => perihelionBrightness(a) - perihelionBrightness(b))
+    .slice(0, MAX_COMET_CANDIDATES);
+  return candidates.map((c) => ({
+    kind: 'comet-candidate',
+    key: c.designation,
+    summary: `${c.fullName}: perihelion ${new Date((c.tpTdbJd - 2440587.5) * DAY_MS).toISOString().slice(0, 10)}, q ${c.qAu.toFixed(2)} au, M1 ${c.m1 ?? '?'}: add to catalog/comets.json if it is a good target (bright, or newsworthy)`,
+    details: {
+      designation: c.designation,
+      horizonsId: `DES=${c.designation};CAP;NOFRAG`,
+      qAu: c.qAu,
+      e: c.e,
+      tpTdbJd: c.tpTdbJd,
+      m1: c.m1 ?? null,
+    },
+  }));
+}
+
+export function cometCandidatesUnreachable(error: string): AuditItem {
+  return {
+    kind: 'comet-candidate',
+    key: 'unreachable',
+    summary: `JPL SBDB could not be read (${SBDB_COMETS_URL}): ${error}. No comet candidates this week`,
+  };
+}
+
 /** IERS Leap_Second.dat: last TAI − UTC step and the file's expiry date. */
 export function parseIersLeapSeconds(text: string): {
   lastUnixMs: number;
@@ -446,6 +583,8 @@ const TITLES: Record<AuditKind, string> = {
   'celestrak-supgp': 'New CelesTrak supplemental GP sets',
   'supgp-stale': 'Supplemental GP sets not refreshed',
   'moon-ephemeris-stale': 'Moons without recent Horizons vectors',
+  'comet-ephemeris-stale': 'Comets without recent Horizons vectors',
+  'comet-candidate': 'Comets near perihelion not in catalog/comets.json',
   'deep-space-candidate': 'Deep-space payloads not in catalog/missions.json',
   'ephemeris-ended-active': 'Ephemerides ended while the mission is listed as active',
   'ephemeris-ending': 'Public ephemerides ending within 30 days',

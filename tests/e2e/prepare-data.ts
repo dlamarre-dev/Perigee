@@ -6,7 +6,12 @@ import { readFileSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { float64LittleEndian, moonStepMin } from '../../pipeline/horizons';
-import { publishDatasets, publishEphemerides, publishMoonEphemerides } from '../../pipeline/publish';
+import {
+  publishCometEphemerides,
+  publishDatasets,
+  publishEphemerides,
+  publishMoonEphemerides,
+} from '../../pipeline/publish';
 import { MARS_RADIUS_KM, MOON_RADIUS_KM } from '../../src/astro/bodies';
 import { GM_KM3_S2, propagateKepler } from '../../src/astro/kepler';
 import { utcToTdbJd } from '../../src/astro/time';
@@ -151,6 +156,37 @@ await publishEphemerides(dataDir, [
     bytes: float64LittleEndian(voyagerRows),
   },
 ]);
+
+// A synthetic comet near perihelion (Encke-like, q = 0.34 AU, e = 0.85), 1.2 AU from the Sun at the frozen time:
+// drawn with its orbit and tails once the comets box is ticked. Not real Horizons data.
+const comet: number[] = [];
+const encke = propagateKepler(
+  { posKm: [0.34 * AU, 0, 0], velKmS: [0, Math.sqrt((GM_KM3_S2.sun * 1.85) / (0.34 * AU)), 3] },
+  -60 * 86_400,
+  GM_KM3_S2.sun,
+);
+for (let k = -60; k <= 365; k++) {
+  const s = propagateKepler(encke, (k + 60) * 86_400, GM_KM3_S2.sun);
+  comet.push(centreTdbJd + k, ...s.posKm, ...s.velKmS);
+}
+const cometRows = Float64Array.from(comet);
+await publishCometEphemerides(
+  dataDir,
+  [
+    {
+      cometId: 'encke',
+      horizonsId: 'DES=2P;CAP;NOFRAG',
+      stepMin: 1440,
+      source: 'fixture (synthetic Kepler orbit)',
+      fetchedAt,
+      rows: cometRows,
+      bytes: float64LittleEndian(cometRows),
+      m1: 15.7,
+      k1: 4.5,
+    },
+  ],
+  new Set(['encke']),
+);
 
 // Titan "Horizons" vectors (solar view): its own mean-element state, ±2 days around the frozen time, so the
 // moon is positioned from a loaded ephemeris. Not real Horizons data.

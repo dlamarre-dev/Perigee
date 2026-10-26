@@ -69,14 +69,21 @@ describe('panel images catalogue', () => {
     const models = (await import('../catalog/models.json')).default;
     const launchSites = (await import('../catalog/launch-sites.json')).default;
     const science = (await import('../catalog/earth-science.json')).default;
-    const { ImagesCatalogSchema, ModelsCatalogSchema, LaunchSitesSchema, EarthScienceCatalogSchema } =
-      await import('../src/data/schemas');
+    const comets = (await import('../catalog/comets.json')).default;
+    const {
+      ImagesCatalogSchema,
+      ModelsCatalogSchema,
+      LaunchSitesSchema,
+      EarthScienceCatalogSchema,
+      CometsCatalogSchema,
+    } = await import('../src/data/schemas');
     const parsed = ImagesCatalogSchema.parse(images);
     const known = new Set([
       ...MissionsCatalogSchema.parse(missionsJson).missions.map((m) => `mission:${m.id}`),
       ...ALL_SITES.map((s) => `site:${s.id}`),
       ...LaunchSitesSchema.parse(launchSites).sites.map((s) => `launch:${s.id}`),
       ...EarthScienceCatalogSchema.parse(science).satellites.map((s) => `norad:${s.norad}`),
+      ...CometsCatalogSchema.parse(comets).comets.map((c) => `comet:${c.id}`),
     ]);
     const modelled = new Set(ModelsCatalogSchema.parse(models).models.flatMap((m) => m.targets));
     const targets = new Set<string>();

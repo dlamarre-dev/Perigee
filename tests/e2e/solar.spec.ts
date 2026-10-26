@@ -189,6 +189,30 @@ test('bright stars are named on demand, selectable from the list and by their na
   await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Sirius');
 });
 
+test('comets are drawn on demand, listed with their magnitude, and selectable', async ({ page }) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  const label = page.locator('.label-comet', { hasText: 'Comet Encke' });
+  await expect(page.locator('#comet-list')).toBeHidden();
+  await expect(label).toHaveAttribute('data-shown', 'false');
+  await page.getByLabel('Show the comets').check();
+  await expect(page).toHaveURL(/comets=1/);
+  const row = page.locator('#comet-list [data-comet="encke"]');
+  // Its estimated magnitude, once its vectors have loaded.
+  await expect(row).toContainText(/mag ≈ \d/, { timeout: 15_000 });
+  await row.click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Comet Encke');
+  await expect(info).toContainText('2P/Encke');
+  await expect(info).toContainText('Perihelion distance');
+  await expect(info).toContainText('illustrative');
+  await expect(info.locator('figure.model-preview img')).toBeVisible();
+  await expect(page).toHaveURL(/sel=comet%3Aencke|sel=comet:encke/);
+  // A link to a comet draws it even with the box unticked.
+  await page.goto(`./?lang=en&view=solar&sel=comet:encke&${FROZEN}`);
+  await expect(page.locator('aside.info:visible .panel-title')).toHaveText('Comet Encke');
+  await expect(label).toHaveAttribute('data-shown', 'true', { timeout: 15_000 });
+});
+
 test("a star's illustration opens a 3D map with the Sun and the distance between them", async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&sel=star:sirius&${FROZEN}`);
   await page.locator('aside.info:visible .star-map-button').click();

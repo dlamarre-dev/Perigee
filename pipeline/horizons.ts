@@ -28,11 +28,13 @@ export function vectorsUrl(
   start: Date,
   stop: Date,
   stepMin: number,
+  objData = false,
 ): string {
   const params: Record<string, string> = {
     format: 'json',
     COMMAND: `'${horizonsId}'`,
-    OBJ_DATA: 'NO',
+    // Object data (a comet's magnitude law, radius) only when asked: the same request, a longer header.
+    OBJ_DATA: objData ? 'YES' : 'NO',
     MAKE_EPHEM: 'YES',
     EPHEM_TYPE: 'VECTORS',
     CENTER: `'${center}'`,
@@ -107,6 +109,24 @@ export interface MissionVectors {
   readonly data: Float64Array;
   readonly url: string;
   readonly clamped: CoverageLimit | undefined;
+  /** Horizons' text answer (its header carries the object data when asked). */
+  readonly result: string;
+}
+
+/** A comet's total-magnitude law and nucleus radius from a Horizons header ("M1=  5.5 … k1=  8.", "RAD= 5.5"). */
+export function parseCometPhysical(result: string): { m1?: number; k1?: number; radiusKm?: number } {
+  const num = (re: RegExp): number | undefined => {
+    const v = Number(re.exec(result)?.[1]);
+    return Number.isFinite(v) ? v : undefined;
+  };
+  const m1 = num(/\bM1=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
+  const k1 = num(/\bk1=\s*(-?\d+(?:\.\d*)?|-?\.\d+)/);
+  const radiusKm = num(/\bRAD=\s*(\d+(?:\.\d*)?|\.\d+)/);
+  return {
+    ...(m1 !== undefined ? { m1 } : {}),
+    ...(k1 !== undefined ? { k1 } : {}),
+    ...(radiusKm !== undefined && radiusKm > 0 ? { radiusKm } : {}),
+  };
 }
 
 async function query(url: string): Promise<string> {
@@ -151,7 +171,14 @@ export function clampWindow(
  * Fetches the mission's window around `now`. If Horizons reports that coverage ends (or starts) inside the
  * window, the window is moved once to the covered side — e.g. a mission whose public ephemeris stopped.
  */
-export async function fetchMissionVectors(mission: Mission, now: Date): Promise<MissionVectors> {
+/** What a vectors request needs: a mission, or a comet (heliocentric). */
+export type VectorsTarget = Pick<Mission, 'id' | 'horizonsId' | 'sampling' | 'centralBody'>;
+
+export async function fetchMissionVectors(
+  mission: VectorsTarget,
+  now: Date,
+  objData = false,
+): Promise<MissionVectors> {
   const { horizonsId, sampling } = mission;
   if (!horizonsId || !sampling) throw new Error(`${mission.id}: missing horizonsId or sampling`);
   const center = CENTER_CODES[mission.centralBody];
@@ -159,7 +186,7 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
   let start = new Date(now.getTime() - sampling.pastDays * 86_400_000);
   let stop = new Date(now.getTime() + sampling.futureDays * 86_400_000);
 
-  let url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
+  let url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin, objData);
   let result = await query(url);
   let data = parseVectors(result);
   let clamped: CoverageLimit | undefined;
@@ -169,7 +196,7 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
     const marginMs = sampling.stepMin * 60_000;
     ({ start, stop } = clampWindow(start, stop, clamped, marginMs, spanMs));
     if (stop <= start) throw new ProviderError(`${mission.id}: empty window after clamping`, url, 200);
-    url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
+    url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin, objData);
     result = await query(url);
     data = parseVectors(result);
     // Coverage shorter than the window on both sides (a new mission: launch to a few weeks ahead): the second
@@ -179,13 +206,13 @@ export async function fetchMissionVectors(mission: Mission, now: Date): Promise<
       ({ start, stop } = clampWindow(start, stop, other, marginMs, spanMs));
       if (stop <= start) throw new ProviderError(`${mission.id}: empty window after clamping`, url, 200);
       if (other.kind === 'after') clamped = other;
-      url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin);
+      url = vectorsUrl(horizonsId, center, start, stop, sampling.stepMin, objData);
       result = await query(url);
       data = parseVectors(result);
     }
     if (data.length === 0) throw new ProviderError(`${mission.id}: no vectors after clamping`, url, 200);
   }
-  return { data, url, clamped };
+  return { data, url, clamped, result };
 }
 
 /**

@@ -1521,6 +1521,184 @@
         "https://commons.wikimedia.org/wiki/File:Akatsuki_CG01.png",
         "https://isas-gallery.jp/tag/akatsuki"
       ]
+    },
+    {
+      "id": "comet-halley",
+      "target": "comet:halley",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Lspn_comet_halley.jpg",
+      "credit": "NASA/W. Liller",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Lspn_comet_halley.jpg"]
+    },
+    {
+      "id": "comet-encke",
+      "target": "comet:encke",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/66/Comet_Encke_from_MESSENGER.png",
+      "credit": "NASA/JHU APL/Carnegie Institution of Washington",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Comet_Encke_from_MESSENGER.png"]
+    },
+    {
+      "id": "comet-tempel-1",
+      "target": "comet:tempel-1",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Tempel1_Composite.jpg",
+      "credit": "NASA/JPL-Caltech/UMD",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Tempel1_Composite.jpg",
+        "https://photojournal.jpl.nasa.gov/catalog/PIA02142"
+      ]
+    },
+    {
+      "id": "comet-pons-brooks",
+      "target": "comet:pons-brooks",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pons-Brooks.png",
+      "credit": "Giuseppe Donatiello",
+      "licence": "cc0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Pons-Brooks.png",
+        "https://www.flickr.com/photos/133259498@N05/53572766715/"
+      ]
+    },
+    {
+      "id": "comet-olbers",
+      "target": "comet:olbers",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Comet_Olbers_%28by_Jan_Ber%C3%A1nek%29.jpg",
+      "credit": "Jan Beránek",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Comet_Olbers_(by_Jan_Ber%C3%A1nek).jpg",
+        "https://www.astrobin.com/i378tq/"
+      ]
+    },
+    {
+      "id": "comet-schwassmann-wachmann-1",
+      "target": "comet:schwassmann-wachmann-1",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/38/The_Heart_of_a_Centaur_-_Iotw2149a.jpg",
+      "credit": "International Gemini Observatory/NOIRLab/NSF/AURA/C. Schambeau; image processing: T.A. Rector, M. Zamani & D. de Martin",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:The_Heart_of_a_Centaur_-_Iotw2149a.jpg",
+        "https://noirlab.edu/public/images/iotw2149a/"
+      ]
+    },
+    {
+      "id": "comet-churyumov-gerasimenko",
+      "target": "comet:churyumov-gerasimenko",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/8/81/Comet_67P_on_19_September_2014_NavCam_mosaic.jpg",
+      "credit": "ESA/Rosetta/NAVCAM",
+      "licence": "cc-by-sa-3.0-igo",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Comet_67P_on_19_September_2014_NavCam_mosaic.jpg",
+        "https://www.esa.int/ESA_Multimedia/Images/2014/09/Comet_on_19_September_2014_NavCam"
+      ]
+    },
+    {
+      "id": "comet-hartley-2",
+      "target": "comet:hartley-2",
+      "kind": "observation",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Comet_Hartley_2.jpg",
+      "credit": "NASA/JPL-Caltech/UMD",
+      "licence": "public-domain",
+      "verified": "2026-10-26",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Comet_Hartley_2.jpg"]
+    },
+    {
+      "id": "comet-hale-bopp",
+      "target": "comet:hale-bopp",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Comet_Hale-Bopp_Phot-mar14-hbs-2.jpg",
+      "credit": "ESO/E. Slawik",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Comet_Hale-Bopp_Phot-mar14-hbs-2.jpg",
+        "https://www.eso.org/public/images/phot-mar14-hbs-2/"
+      ]
+    },
+    {
+      "id": "comet-tsuchinshan-atlas",
+      "target": "comet:tsuchinshan-atlas",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/8/87/Comet_C_2023_A3_Tsuchinshan_ATLAS_tail_and_antitail.jpg",
+      "credit": "FoxBill",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Comet_C_2023_A3_Tsuchinshan_ATLAS_tail_and_antitail.jpg"
+      ]
+    },
+    {
+      "id": "comet-tempel-2",
+      "target": "comet:tempel-2",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/67/10P_Tempel_-_55466409444.png",
+      "credit": "PJ Singh (paramsach)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:10P_Tempel_-_55466409444.png",
+        "https://www.flickr.com/photos/paramsach/55466409444/"
+      ]
+    },
+    {
+      "id": "comet-howell",
+      "target": "comet:howell",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/f2/88P-20260614-1101.png",
+      "credit": "Kevin Heider (Kheider)",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-26",
+      "sources": ["https://commons.wikimedia.org/wiki/File:88P-20260614-1101.png"]
+    },
+    {
+      "id": "comet-hartley-iras",
+      "target": "comet:hartley-iras",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/35/Comet_161P_Hartley%E2%80%93IRAS_astrophotography_by_Denis_Melamed_2026.jpg",
+      "credit": "Denis Melamed",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Comet_161P_Hartley%E2%80%93IRAS_astrophotography_by_Denis_Melamed_2026.jpg"
+      ]
+    },
+    {
+      "id": "comet-mcnaught-220p",
+      "target": "comet:mcnaught-220p",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Comet_220P.png",
+      "credit": "Chuck Ayoub",
+      "licence": "cc0",
+      "verified": "2026-10-26",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Comet_220P.png"]
+    },
+    {
+      "id": "comet-bernardinelli-bernstein",
+      "target": "comet:bernardinelli-bernstein",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/6f/C-2014UN271-BB_Hubble_2022Mar28_unannotated.png",
+      "credit": "Nrco0e, from NASA/ESA Hubble Space Telescope data",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-26",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:C-2014UN271-BB_Hubble_2022Mar28_unannotated.png",
+        "https://archive.stsci.edu/proposal_search.php?id=16878&mission=hst"
+      ]
     }
   ]
 }

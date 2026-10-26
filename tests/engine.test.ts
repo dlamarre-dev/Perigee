@@ -111,6 +111,24 @@ const manifest = {
       },
     },
   },
+  // A comet on the same synthetic vectors (the engine treats them like a probe's).
+  comets: {
+    halley: {
+      path: 'ephem/comets/halley.bin',
+      source: 'Horizons',
+      fetchedAt: '2026-09-26T03:00:00Z',
+      count: ephem.length / 56,
+      bytes: ephem.length,
+      sha256: sha(ephem),
+      horizonsId: 'DES=1P;CAP;NOFRAG',
+      center: '500@10',
+      startTdbJd: WINDOW_JD,
+      endTdbJd: START_JD + 10,
+      stepMin: 60,
+      m1: 5.5,
+      k1: 8,
+    },
+  },
 };
 
 const files: Record<string, Buffer> = {
@@ -118,6 +136,7 @@ const files: Record<string, Buffer> = {
   'data/earth/gp.json.gz': gp,
   'data/ephem/voyager-1.bin': ephem,
   'data/ephem/past/voyager-1.bin': ephemPast,
+  'data/ephem/comets/halley.bin': ephem,
   ...history.files,
 };
 const requested: string[] = [];
@@ -267,6 +286,26 @@ describe('engine probes', () => {
     expect(d.name).toMatch(/Voyager/);
     expect(d.sources).toBeInstanceOf(Array);
     expect(d.view).toBe('https://example.test/?view=solar&sel=voyager-1&lang=fr');
+  });
+});
+
+describe('engine comets', () => {
+  it('finds a comet by name or designation and interpolates its Horizons vectors', async () => {
+    expect((await engine.find('Halley')).map((o) => o.id)).toContain('comet:halley');
+    expect((await engine.find('1P/Halley')).map((o) => o.id)).toContain('comet:halley');
+    const s = await engine.state('comet:halley', '2026-09-26T00:30:00Z', 'sun');
+    expect(s.distanceAu).toBeCloseTo(1.2, 6);
+    expect(s.provenance[0]?.state).toBe('interpolated');
+    expect(s.provenance[0]?.method).toMatch(/comet/);
+  });
+
+  it('describes a comet with its designation, magnitude law and view link', async () => {
+    const d = await engine.describe('comet:halley', 'fr');
+    expect(d.designation).toBe('1P/Halley');
+    expect(d.magnitudeLaw).toEqual({ m1: 5.5, k1: 8 });
+    expect(d.view).toBe('https://example.test/?view=solar&sel=comet%3Ahalley&lang=fr');
+    const v = await engine.describeView('https://perigee.info/?view=solar&sel=comet:halley&comets=1');
+    expect(JSON.stringify(v)).toMatch(/comets are drawn/);
   });
 });
 

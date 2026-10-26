@@ -22,6 +22,9 @@ import {
 import missionsJson from '../../catalog/missions.json';
 import moonsJson from '../../catalog/moons.json';
 import starsJson from '../../catalog/stars.json';
+import cometsJson from '../../catalog/comets.json';
+import { cometMagnitude, conicOffsetsAround, perihelionPassages } from '../astro/comets';
+import { CometTail } from '../render/CometTail';
 import type { View, ViewFactory, ViewFrame, ViewHost } from '../app/View';
 import {
   bodyOrientationEqj,
@@ -65,13 +68,16 @@ import { SurfaceSites } from './SurfaceSites';
 import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { Astronomy } from '../astro/astronomy';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
-import { datasetKey, ephemerisKey } from '../app/updates';
+import { cometEphemerisKey, datasetKey, ephemerisKey } from '../app/updates';
 import { assetUrl } from '../render/assetUrl';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
+  CometsCatalogSchema,
   MissionsCatalogSchema,
   MoonsCatalogSchema,
   StarsCatalogSchema,
+  type Comet,
+  type CometEphemerisEntry,
   type EphemerisEntry,
   type Mission,
   SunRegionsSchema,
@@ -187,9 +193,30 @@ function sitesLabel(i18n: I18n, sites: readonly LandingSite[]): string {
 /** The selected body's site names (besides the selected site's) once its disc is this large (CSS px radius). */
 const SITE_LABELS_MIN_DISC_PX = 120;
 
+/** Comet markers, labels and orbits (catalog/comets.json). */
+const COMET_COLOR = '#9fe8d8';
+const COMET_PRIORITY = 45;
+const COMET_ORBIT_OPACITY = 0.18;
+/** A comet's osculating orbit is rebuilt once the comet has moved this long (simulated) along it. */
+const COMET_ORBIT_REBUILD_MS = 2 * MS_PER_DAY;
+
+/** A comet of catalog/comets.json, positioned from its Horizons vectors like the probes. */
+interface CometObject {
+  readonly comet: Comet;
+  readonly index: number;
+  readonly orbit: AnchoredOrbit;
+  readonly tail: CometTail;
+  track: EphemerisTrack;
+  entry: CometEphemerisEntry | undefined;
+  sample: TrackSample;
+  /** Scene position while drawn (comets shown, or this one selected). */
+  scene: Vec3 | undefined;
+}
+
 type Selection =
   | { readonly kind: 'sun' }
   | { readonly kind: 'planet'; readonly planet: PlanetInfo }
+  | { readonly kind: 'comet'; readonly comet: Comet }
   | { readonly kind: 'moon'; readonly moon: Moon }
   | { readonly kind: 'mission'; readonly mission: Mission }
   | { readonly kind: 'star'; readonly star: Star }
@@ -246,12 +273,14 @@ function selectionKey(sel: Selection): string | undefined {
   if (sel.kind === 'planet') return `planet:${sel.planet.id}`;
   if (sel.kind === 'moon') return `moon:${sel.moon.id}`;
   if (sel.kind === 'star') return `star:${sel.star.id}`;
+  if (sel.kind === 'comet') return `comet:${sel.comet.id}`;
   return `mission:${sel.mission.id}`;
 }
 
 function selectionId(sel: NonNullable<Selection>): string {
   if (sel.kind === 'sun') return 'sun';
   if (sel.kind === 'star') return `star:${sel.star.id}`;
+  if (sel.kind === 'comet') return `comet:${sel.comet.id}`;
   return sel.kind === 'planet' ? sel.planet.id : sel.kind === 'moon' ? sel.moon.id : sel.mission.id;
 }
 
@@ -360,6 +389,13 @@ class SolarView implements View {
   private readonly planets: PlanetObject[] = [];
   private readonly probes: ProbeObject[] = [];
   private readonly moons: MoonObject[] = [];
+  private readonly comets: CometObject[] = [];
+  private readonly cometMarkers: MarkerPoints;
+  /** Comets drawn and listed (URL `comets=1`); a selected comet is drawn in any case. */
+  private showComets: boolean;
+  /** Comet vectors are loaded on first use (comets shown or one selected). */
+  private cometsRequested = false;
+  private manifest: Manifest | undefined;
   private readonly stars: readonly StarObject[];
   /** Name the bright stars on the sky (URL `stars=1`); a selected star is named in any case. */
   private showStars: boolean;
@@ -410,6 +446,7 @@ class SolarView implements View {
     this.showStars = host.initialParams.get('stars') === '1';
     this.showSites = host.initialParams.get('sites') === '1';
     this.showNearbyStars = host.initialParams.get('nearby') === '1';
+    this.showComets = host.initialParams.get('comets') === '1';
     this.stars = StarsCatalogSchema.parse(starsJson).stars.map((star) => ({
       star,
       dirEqj: starDirectionEqj(star),
@@ -609,6 +646,31 @@ class SolarView implements View {
         scene: undefined,
       });
     });
+    const comets = CometsCatalogSchema.parse(cometsJson).comets;
+    this.cometMarkers = new MarkerPoints(Math.max(1, comets.length), 7, { depthTest: false });
+    renderer.scene.add(this.cometMarkers.points);
+    comets.forEach((comet, index) => {
+      this.colors.set(`comet:${comet.id}`, COMET_COLOR);
+      this.cometMarkers.setColor(index, COMET_COLOR);
+      const orbit = anchoredOrbit(
+        new Line(
+          new BufferGeometry(),
+          new LineBasicMaterial({ color: COMET_COLOR, transparent: true, opacity: COMET_ORBIT_OPACITY }),
+        ),
+      );
+      orbit.line.visible = false;
+      renderer.scene.add(orbit.line);
+      this.comets.push({
+        comet,
+        index,
+        orbit,
+        tail: new CometTail(renderer.scene),
+        track: this.makeTrack(undefined),
+        entry: undefined,
+        sample: { kind: 'none', state: undefined, beyondS: 0 },
+        scene: undefined,
+      });
+    });
 
     this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
     this.hiddenMissions = parseHiddenMissions(host.initialParams, this.missions);
@@ -635,6 +697,12 @@ class SolarView implements View {
           this.showNearbyStars = on;
           this.host.syncUrl();
         },
+        onToggleComets: (on) => {
+          this.showComets = on;
+          if (on) this.requestComets();
+          this.host.syncUrl();
+        },
+        onSelectComet: (comet) => this.select({ kind: 'comet', comet }, { focus: true, frame: true }),
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -653,6 +721,8 @@ class SolarView implements View {
       this.hiddenMissions,
       this.showStars,
       this.showNearbyStars,
+      comets,
+      this.showComets,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.ring = new SelectionMarker();
@@ -778,6 +848,7 @@ class SolarView implements View {
       if (!state || !needsRebuild(t.orbit, orbitsKey, f.nowMs)) continue;
       this.buildOrbit(t.orbit, state, GM_KM3_S2.sun, t.mission.radiusKm ?? 100, orbitsKey, f.nowMs, map);
     }
+    this.updateComets(orbitsKey, f.nowMs, map);
     this.updateMoons(date, f.nowMs, orbitsKey);
     if (this.pendingFrame && this.selection?.kind === 'moon') {
       const m = this.moons.find(
@@ -902,6 +973,7 @@ class SolarView implements View {
         this.probeMarkers.hide(t.index);
       }
     }
+    this.placeComets(rel);
     const modelShown = this.placeModel(rel);
     const selected = this.scenePositionOf(this.selection);
     // No ring for the Sun: its disc shows where it is, and the ring would sit at its centre.
@@ -909,8 +981,34 @@ class SolarView implements View {
     this.ring.set(ringed ? rel(selected) : undefined);
     this.planetMarkers.commit();
     this.probeMarkers.commit();
+    this.cometMarkers.commit();
     this.moonMarkers.commit();
     this.placeLabels();
+  }
+
+  /** Comet markers, orbits and (true scale only) their illustrative tails. */
+  private placeComets(rel: (p: Vec3) => Vec3): void {
+    const q = this.sceneQ;
+    const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
+    const camera = this.host.renderer.camera.position;
+    for (const c of this.comets) {
+      const s = c.sample.state;
+      if (!c.scene || !s) {
+        this.cometMarkers.hide(c.index);
+        c.tail.hide();
+        continue;
+      }
+      const r = rel(c.scene);
+      if (this.behindBody(c.scene, `comet:${c.comet.id}`)) this.cometMarkers.hide(c.index);
+      else this.cometMarkers.setPosition(c.index, r[0], r[1], r[2]);
+      if (c.orbit.anchorEqj) {
+        const a = rel(quatRotate(q, map(c.orbit.anchorEqj)));
+        c.orbit.line.position.set(a[0], a[1], a[2]);
+        c.orbit.line.quaternion.set(q.x, q.y, q.z, q.w);
+      }
+      if (this.logScale) c.tail.hide();
+      else c.tail.place(r, c.scene, quatRotate(q, s.velKmS), [camera.x, camera.y, camera.z], c.entry?.m1);
+    }
   }
 
   /** The selected spacecraft's 3D model, in place of its marker when close (true scale only). */
@@ -986,6 +1084,7 @@ class SolarView implements View {
     for (const p of this.planets) consider({ kind: 'planet', planet: p.info }, p.scene);
     for (const t of this.probes) consider({ kind: 'mission', mission: t.mission }, t.scene);
     for (const m of this.moons) if (m.shown) consider({ kind: 'moon', moon: m.moon }, m.scene);
+    for (const c of this.comets) consider({ kind: 'comet', comet: c.comet }, c.scene);
     // The Sun: anywhere on its disc (objects in front of it are picked first).
     if (!best) {
       const c = this.project([0, 0, 0]);
@@ -1025,6 +1124,8 @@ class SolarView implements View {
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'moon') p.set('sel', `moon:${sel.moon.id}`);
     if (sel?.kind === 'star') p.set('sel', `star:${sel.star.id}`);
+    if (sel?.kind === 'comet') p.set('sel', `comet:${sel.comet.id}`);
+    if (this.showComets) p.set('comets', '1');
     // A site shown in the second tab: its body is implied (selectId resolves it).
     if (this.site && this.detailTab === 'sub') p.set('sel', `site:${this.site.id}`);
     if (this.logScale) p.set('log', '1');
@@ -1073,6 +1174,14 @@ class SolarView implements View {
     }
     this.planetMarkers.dispose();
     this.probeMarkers.dispose();
+    scene.remove(this.cometMarkers.points);
+    this.cometMarkers.dispose();
+    for (const c of this.comets) {
+      c.tail.dispose();
+      scene.remove(c.orbit.line);
+      c.orbit.line.geometry.dispose();
+      c.orbit.line.material.dispose();
+    }
     scene.remove(this.ring.points);
     for (const t of this.probes) {
       if (t.mesh) {
@@ -1183,7 +1292,9 @@ class SolarView implements View {
     host.showNotice(host.i18n.t('solar.loading'));
     try {
       const manifest = await loadManifest(host.baseUrl);
+      this.manifest = manifest;
       this.moonEphemerides = manifest.moons;
+      if (this.showComets || this.selection?.kind === 'comet') this.requestComets();
       void this.loadSunRegions(manifest);
       let oldest: Date | undefined;
       // Each ephemeris on its own: one missing or corrupt file must not hide the others.
@@ -1434,6 +1545,11 @@ class SolarView implements View {
       else this.styleTrajectory(t);
     }
     for (const m of this.moons) set(m.orbit.material, sel?.kind === 'moon' && sel.moon.id === m.moon.id);
+    // Comets: fainter while not selected (many long, crossing orbits).
+    for (const c of this.comets) {
+      const selected = sel?.kind === 'comet' && sel.comet.id === c.comet.id;
+      (c.orbit.line.material as LineBasicMaterial).opacity = selected ? 0.9 : COMET_ORBIT_OPACITY;
+    }
   }
 
   /**
@@ -1468,6 +1584,94 @@ class SolarView implements View {
       i = j + 1;
     }
     return inside;
+  }
+
+  /** Drawn: every comet while the box is ticked, else only the selected one. */
+  private cometDrawn(c: CometObject): boolean {
+    const sel = this.selection;
+    return this.showComets || (sel?.kind === 'comet' && sel.comet.id === c.comet.id);
+  }
+
+  /** Comet positions (Horizons vectors) and osculating orbits, rebuilt after a couple of simulated days. */
+  private updateComets(orbitsKey: string, nowMs: number, map: (p: Vec3) => Vec3): void {
+    for (const c of this.comets) {
+      if (!this.cometDrawn(c)) {
+        c.scene = undefined;
+        c.orbit.line.visible = false;
+        continue;
+      }
+      c.sample = c.track.sample(this.tdbJd);
+      const s = c.sample.state;
+      c.scene = s ? quatRotate(this.sceneQ, map(s.posKm)) : undefined;
+      c.orbit.line.visible = s !== undefined;
+      if (!s) continue;
+      this.cometMarkers.setColor(c.index, COMET_COLOR, c.sample.kind === 'extrapolated' ? 0.45 : 1);
+      if (
+        c.orbit.key === orbitsKey &&
+        c.orbit.anchorEqj !== undefined &&
+        Math.abs(nowMs - c.orbit.builtMs) < COMET_ORBIT_REBUILD_MS
+      )
+        continue;
+      const offsets = conicOffsetsAround(s, GM_KM3_S2.sun, 1e-7);
+      const anchor = map(s.posKm);
+      const out = new Float32Array(offsets.length);
+      for (let i = 0; i + 2 < offsets.length; i += 3) {
+        const p = map([
+          s.posKm[0] + (offsets[i] ?? 0),
+          s.posKm[1] + (offsets[i + 1] ?? 0),
+          s.posKm[2] + (offsets[i + 2] ?? 0),
+        ]);
+        out[i] = p[0] - anchor[0];
+        out[i + 1] = p[1] - anchor[1];
+        out[i + 2] = p[2] - anchor[2];
+      }
+      setLinePositions(c.orbit.line, out);
+      c.orbit.anchorEqj = s.posKm;
+      c.orbit.builtMs = nowMs;
+      c.orbit.key = orbitsKey;
+    }
+  }
+
+  /** Loads the comets' Horizons vectors once (comets shown or one selected). */
+  private requestComets(): void {
+    if (this.cometsRequested || !this.manifest) return;
+    this.cometsRequested = true;
+    const manifest = this.manifest;
+    void Promise.all(
+      this.comets.map(async (c) => {
+        const entry = manifest.comets[c.comet.id];
+        if (!entry) return;
+        try {
+          const table = await loadEphemeris(this.host.baseUrl, entry);
+          if (this.disposed) return;
+          this.loadedData.set(cometEphemerisKey(c.comet.id), entry.sha256);
+          c.track = this.makeTrack(table);
+          c.entry = entry;
+        } catch (err) {
+          console.warn(`Comet ephemeris unavailable: ${c.comet.id}`, err);
+        }
+      }),
+    ).then(() => {
+      if (this.disposed) return;
+      this.panel.setCometMagnitudes(this.cometMagnitudes());
+      this.renderDetail(false);
+    });
+  }
+
+  /** Estimated magnitude of each comet now (Horizons' M1/k1 law), for the panel list. */
+  private cometMagnitudes(): Map<string, number> {
+    const out = new Map<string, number>();
+    const earth = this.earthEqj();
+    for (const c of this.comets) {
+      const s = c.track.sample(this.tdbJd).state;
+      const { m1, k1 } = c.entry ?? {};
+      if (!s || m1 === undefined || k1 === undefined) continue;
+      out.set(
+        c.comet.id,
+        cometMagnitude(m1, k1, length(s.posKm) / AU_KM, length(sub(s.posKm, earth)) / AU_KM),
+      );
+    }
+    return out;
   }
 
   /** Rebuilds an osculating orbit around `state` (vertices relative to the body; see placeOrigin). */
@@ -1547,6 +1751,11 @@ class SolarView implements View {
         id: `s:${m.moon.id}`,
         text: m.moon.name[lang],
         className: 'label-planet',
+      })),
+      ...this.comets.map((c) => ({
+        id: `c:${c.comet.id}`,
+        text: c.comet.name[lang],
+        className: 'label-comet',
       })),
       ...[...this.surfaceSites.values()].flatMap((sites) =>
         sites.sites.map((site) => ({ id: `ls:${site.id}`, text: site.name[lang], className: 'label-site' })),
@@ -1691,6 +1900,21 @@ class SolarView implements View {
         selected ? LabelPriority.Selected : MOON_PRIORITY,
       );
     }
+    for (const c of this.comets) {
+      const selected = sel?.kind === 'comet' && sel.comet.id === c.comet.id;
+      const scene = c.scene && !this.behindBody(c.scene, `comet:${c.comet.id}`) ? c.scene : undefined;
+      this.labels.place(
+        `c:${c.comet.id}`,
+        scene ? sub(scene, o) : undefined,
+        scene,
+        camera,
+        o,
+        0,
+        w,
+        hgt,
+        selected ? LabelPriority.Selected : COMET_PRIORITY,
+      );
+    }
     this.placeSiteLabels(camera, w, hgt);
     for (const s of this.stars) {
       const selected = sel?.kind === 'star' && sel.star.id === s.star.id;
@@ -1783,6 +2007,11 @@ class SolarView implements View {
       this.select({ kind: 'moon', moon }, { frame: true });
       return true;
     }
+    const comet = this.comets.find((c) => `comet:${c.comet.id}` === sel)?.comet;
+    if (comet) {
+      this.select({ kind: 'comet', comet }, { frame: true });
+      return true;
+    }
     for (const [bodyId, sites] of this.surfaceSites) {
       const site = sites.sites.find((x) => `site:${x.id}` === sel);
       if (!site) continue;
@@ -1812,6 +2041,7 @@ class SolarView implements View {
       this.detailTab = 'main';
     }
     this.selection = sel;
+    if (sel?.kind === 'comet') this.requestComets();
     this.panel.setSelected(selectionKey(sel));
     this.styleOrbits();
     if (sel?.kind === 'star' || cur?.kind === 'star') this.refreshLabels();
@@ -1826,6 +2056,13 @@ class SolarView implements View {
     if (sel?.kind === 'sun') return [0, 0, 0];
     if (sel?.kind === 'planet') return this.planets.find((p) => p.info.id === sel.planet.id)?.scene;
     if (sel?.kind === 'mission') return this.probes.find((t) => t.mission.id === sel.mission.id)?.scene;
+    if (sel?.kind === 'comet') {
+      // Not computed while comets are hidden: solve it now when asked (selection, follow, framing).
+      const c = this.comets.find((x) => x.comet.id === sel.comet.id);
+      const s = c?.track.sample(this.tdbJd).state;
+      const map = (p: Vec3): Vec3 => (this.logScale ? logScalePosition(p) : p);
+      return c?.scene ?? (s ? quatRotate(this.sceneQ, map(s.posKm)) : undefined);
+    }
     if (sel?.kind === 'moon') {
       // A moon too small to show is not computed every frame: solve it now when it is asked for (selection,
       // follow, framing), not only at the next frame.
@@ -1856,9 +2093,11 @@ class SolarView implements View {
           ? sel.planet.radiusKm
           : sel.kind === 'moon'
             ? sel.moon.radiusKm
-            : sel.mission.objectType === 'natural'
-              ? sel.mission.radiusKm
-              : undefined;
+            : sel.kind === 'comet'
+              ? undefined
+              : sel.mission.objectType === 'natural'
+                ? sel.mission.radiusKm
+                : undefined;
     const body = radiusKm !== undefined && !this.logScale ? bodyFollow(radiusKm) : undefined;
     const modelKm =
       sel.kind === 'mission' && !this.logScale
@@ -1922,7 +2161,9 @@ class SolarView implements View {
             ? this.moonDetail(sel.moon)
             : sel.kind === 'star'
               ? this.starDetail(sel.star)
-              : this.missionDetail(sel.mission);
+              : sel.kind === 'comet'
+                ? this.cometDetail(sel.comet)
+                : this.missionDetail(sel.mission);
     this.detail.show(this.withSites(content), focus);
   }
 
@@ -2467,6 +2708,94 @@ class SolarView implements View {
       footnote: i18n.format('info.verified', { date: moon.verified }),
       followable: m?.scene !== undefined,
       ...this.moonPreview(moon),
+    };
+  }
+
+  private cometDetail(comet: Comet): DetailContent {
+    const { i18n } = this.host;
+    const t = (k: MessageKey): string => i18n.t(k);
+    const num = (v: number, d = 0): string => i18n.number(v, d);
+    const c = this.comets.find((x) => x.comet.id === comet.id);
+    const sample = c?.sample.kind === 'none' && c.entry ? c.track.sample(this.tdbJd) : c?.sample;
+    const s = sample?.state;
+    const rows: [string, string][] = [[t('comet.designation'), comet.designation]];
+    rows.push([t('comet.kind'), t(comet.kind === 'periodic' ? 'comet.periodic' : 'comet.longPeriod')]);
+    if (comet.discovered) rows.push([t('comet.discovered'), comet.discovered]);
+    const nucleusKm =
+      comet.nucleusKm ?? (c?.entry?.radiusKm !== undefined ? 2 * c.entry.radiusKm : undefined);
+    if (nucleusKm !== undefined)
+      rows.push([t('comet.nucleus'), `${num(nucleusKm, nucleusKm < 10 ? 1 : 0)} km`]);
+    if (s) {
+      // Osculating elements now, inclination on the ecliptic.
+      const toEcliptic = { x: -ECLIPTIC_Q.x, y: -ECLIPTIC_Q.y, z: -ECLIPTIC_Q.z, w: ECLIPTIC_Q.w };
+      const ecl = { posKm: quatRotate(toEcliptic, s.posKm), velKmS: quatRotate(toEcliptic, s.velKmS) };
+      const el = osculatingElements(ecl, GM_KM3_S2.sun);
+      rows.push([t('comet.perihelionDistance'), `${num(el.periapsisRadiusKm / AU_KM, 3)} AU`]);
+      rows.push([
+        t('comet.eccentricity'),
+        `${num(el.eccentricity, 4)}${el.eccentricity >= 1 ? ` (${t('comet.open')})` : ''}`,
+      ]);
+      rows.push([t('comet.inclination'), `${num(el.inclinationRad / DEG_TO_RAD, 1)}°`]);
+      if (el.periodS) {
+        const years = el.periodS / (365.25 * SECONDS_PER_DAY);
+        rows.push([t('comet.period'), `${num(years, years < 100 ? 1 : 0)} ${t('comet.years')}`]);
+      }
+      const passes = perihelionPassages(s, GM_KM3_S2.sun, this.tdbJd);
+      // Calendar dates within years 1000–9999 only: a two-body perihelion millennia away means nothing.
+      const day = (jd: number | undefined): string | undefined => {
+        if (jd === undefined) return undefined;
+        const d = tdbJdToDate(jd);
+        const y = d.getUTCFullYear();
+        return y >= 1000 && y <= 9999 ? d.toISOString().slice(0, 10) : undefined;
+      };
+      const last = day(passes.lastTdbJd);
+      const next = day(passes.nextTdbJd);
+      if (last) rows.push([t('comet.lastPerihelion'), last]);
+      if (next) rows.push([t('comet.nextPerihelion'), next]);
+      rows.push(...this.distanceRows(s.posKm));
+      rows.push([t('info.speedSun'), `${num(length(s.velKmS), 2)} km/s`]);
+      const { m1, k1 } = c?.entry ?? {};
+      if (m1 !== undefined && k1 !== undefined) {
+        const rAu = length(s.posKm) / AU_KM;
+        const deltaAu = length(sub(s.posKm, this.earthEqj())) / AU_KM;
+        rows.push([t('comet.magnitude'), `≈ ${num(cometMagnitude(m1, k1, rAu, deltaAu), 1)}`]);
+      }
+    }
+    rows.push([t('info.horizons'), comet.horizonsId]);
+    if (c?.entry)
+      rows.push([
+        t('info.window'),
+        `${i18n.dateTime(tdbJdToDate(c.entry.startTdbJd))} → ${i18n.dateTime(tdbJdToDate(c.entry.endTdbJd))}`,
+      ]);
+    let badge: { text: string; state: BadgeState };
+    if (!sample || sample.kind === 'none') badge = { text: t('ephem.none'), state: 'invalid' };
+    else if (sample.kind === 'interpolated') badge = { text: t('ephem.interpolated'), state: 'fresh' };
+    else if (sample.kind === 'extrapolated')
+      badge = {
+        text: i18n.format('ephem.extrapolated', { h: num(sample.beyondS / 3600, 1) }),
+        state: 'stale',
+      };
+    else
+      badge = {
+        text: i18n.format('ephem.hidden', { d: num(sample.beyondS / SECONDS_PER_DAY, 0) }),
+        state: 'invalid',
+      };
+    const notes = [
+      comet.notes[i18n.lang],
+      t('comet.modelNote'),
+      this.logScale ? t('solar.logWarning') : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    return {
+      title: comet.name[i18n.lang],
+      badge,
+      rows,
+      notes,
+      sources: comet.sources,
+      footnote: i18n.format('info.verified', { date: comet.verified }),
+      followable: s !== undefined,
+      ...withImage(`comet:${comet.id}`),
     };
   }
 

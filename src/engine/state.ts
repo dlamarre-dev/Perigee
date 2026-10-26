@@ -422,5 +422,58 @@ export async function helioState(ref: ObjectRef, date: Date, data: PublishedData
         ),
       };
     }
+
+    case 'comet': {
+      const entry = (await data.manifest()).comets[ref.comet.id];
+      if (!entry)
+        return {
+          state: undefined,
+          provenance: provenance('horizons-interpolated', 'Comet vectors not published right now.', 'none', [
+            HORIZONS,
+          ]),
+        };
+      const sample = new EphemerisTrack(await data.table(entry), {
+        muKm3S2: GM_KM3_S2.sun,
+        maxExtrapolationDays: HIGH_ORBIT_MAX_EXTRAPOLATION_DAYS,
+      }).sample(tdbJd);
+      const window = {
+        dataFetchedAt: entry.fetchedAt,
+        validFrom: tdbJdToIso(entry.startTdbJd),
+        validTo: tdbJdToIso(entry.endTdbJd),
+        ...(sample.beyondS > 0 ? { hoursBeyondWindow: sample.beyondS / 3600 } : {}),
+      };
+      if (sample.kind === 'interpolated' && sample.state)
+        return {
+          state: sample.state,
+          provenance: provenance(
+            'horizons-interpolated',
+            `JPL Horizons heliocentric state vectors of the comet's current orbit solution (${entry.horizonsId}; integrated with the planets' perturbations and the non-gravitational forces Horizons models), cubic Hermite interpolation between samples ${entry.stepMin} min apart.`,
+            'interpolated',
+            [HORIZONS],
+            window,
+          ),
+        };
+      if (sample.kind === 'extrapolated' && sample.state)
+        return {
+          state: sample.state,
+          provenance: provenance(
+            'kepler-extrapolated',
+            `Two-body extrapolation from the nearest JPL Horizons state, ${(sample.beyondS / 3600).toFixed(1)} h beyond the published data.`,
+            'extrapolated',
+            [HORIZONS],
+            window,
+          ),
+        };
+      return {
+        state: undefined,
+        provenance: provenance(
+          'kepler-extrapolated',
+          `Too far beyond the published comet vectors (${(sample.beyondS / SECONDS_PER_DAY).toFixed(0)} days): no position.`,
+          'hidden',
+          [HORIZONS],
+          window,
+        ),
+      };
+    }
   }
 }

@@ -16,6 +16,8 @@ export const datasetKey = (key: string): string => `dataset:${key}`;
 export const ephemerisKey = (missionId: string): string => `ephem:${missionId}`;
 /** A mission's 30-day archive (loaded only for earlier dates). */
 export const ephemerisPastKey = (missionId: string): string => `ephem-past:${missionId}`;
+/** A comet's Horizons vectors (solar view). */
+export const cometEphemerisKey = (cometId: string): string => `ephem-comet:${cometId}`;
 
 /** Hash published for a loaded-data key, or undefined when the manifest no longer lists it. */
 function publishedHash(manifest: Manifest, key: string): string | undefined {
@@ -25,6 +27,7 @@ function publishedHash(manifest: Manifest, key: string): string | undefined {
   if (key.startsWith('ephem:')) return manifest.ephemerides[key.slice('ephem:'.length)]?.sha256;
   if (key.startsWith('ephem-past:'))
     return manifest.ephemerides[key.slice('ephem-past:'.length)]?.past?.sha256;
+  if (key.startsWith('ephem-comet:')) return manifest.comets[key.slice('ephem-comet:'.length)]?.sha256;
   return undefined;
 }
 
