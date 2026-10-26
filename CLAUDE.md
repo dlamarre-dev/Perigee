@@ -436,7 +436,7 @@ the "up" vector and causes gimbal lock at the poles).
   for the user follow `lang` (EN/FR: notes, warnings, highlights, labels in `src/engine/notes.ts`, compass points
   with O for west in French texts); codes stay English in every language (`direction: "WNW"`, `light: "umbra"`),
   with a localised label beside them where a person reads them. perigee-mcp
-  1.5.2 has 19 tools. Architecture, observability,
+  1.6.0 has 19 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
