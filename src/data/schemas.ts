@@ -322,6 +322,11 @@ export const MissionSchema = z.object({
 });
 export type Mission = z.infer<typeof MissionSchema>;
 
+/** A spacecraft whose mission is over or that no longer answers: listed in the panels' "inactive" section. */
+export function isInactiveMission(m: Pick<Mission, 'status' | 'objectType'>): boolean {
+  return m.objectType !== 'natural' && (m.status === 'ended' || m.status === 'inactive');
+}
+
 export const MissionsCatalogSchema = z
   .object({ verified: isoDate, missions: z.array(MissionSchema) })
   .refine((c) => c.missions.every((m) => m.ephemeris !== 'horizons' || (m.horizonsId && m.sampling)), {

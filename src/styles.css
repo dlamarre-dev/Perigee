@@ -2337,6 +2337,12 @@ body.music-open .altimeter {
     display: none;
   }
 
+  /* The panel preview does not turn under a drag here (ModelPreview): the finger scrolls the sheet. */
+  .model-preview canvas {
+    cursor: default;
+    touch-action: pan-y;
+  }
+
   /* SciFleet's 3D viewer (Unity WebGL) warns that phones are not supported and runs poorly there. */
   .model3d-link {
     display: none;

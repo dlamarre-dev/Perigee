@@ -7,6 +7,7 @@
  */
 import { PLANETS } from '../astro/planets';
 import { LICENCES } from '../data/licences';
+import { isInactiveMission, type Mission, type MissionStatus } from '../data/schemas';
 import { en, fr } from '../i18n';
 import { GLOSSARY, LABEL_TERMS, type GlossaryTerm } from '../i18n/glossary';
 import { MAX_ABS_RATE, VIEW_IDS } from '../app/urlState';
@@ -290,9 +291,13 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
   );
   const en_ = (v: unknown): string | undefined =>
     typeof v === 'object' && v !== null && 'en' in v ? String((v as Bilingual).en) : undefined;
-  const section = (title: string, kinds: string[]): void => {
+  const section = (
+    title: string,
+    kinds: string[],
+    keep: (o: Record<string, unknown>) => boolean = () => true,
+  ): void => {
     lines.push(`## ${title}`, '');
-    for (const o of b.objects.filter((x) => kinds.includes(String(x['kind'])))) {
+    for (const o of b.objects.filter((x) => kinds.includes(String(x['kind'])) && keep(x))) {
       const facts = [
         o['agency'] && `agency ${String(o['agency'])}`,
         o['country'] && `country ${String(o['country'])}`,
@@ -321,7 +326,13 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
       lines.push(`View: ${String(o['view'])}`, '');
     }
   };
-  section('Missions beyond Earth orbit', ['mission']);
+  const inactive = (o: Record<string, unknown>): boolean =>
+    isInactiveMission({
+      status: o['status'] as MissionStatus,
+      objectType: o['objectType'] as Mission['objectType'],
+    });
+  section('Missions beyond Earth orbit', ['mission'], (o) => !inactive(o));
+  section('Inactive missions beyond Earth orbit (ended or silent)', ['mission'], inactive);
   section('Featured Earth science satellites', ['satellite']);
   section('Landing and impact sites (Moon, Mars, Mercury, Venus, Titan)', ['site']);
   section('Launch sites', ['launch-site']);

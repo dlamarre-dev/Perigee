@@ -137,7 +137,13 @@ No single API provides "active probes + landing sites". We maintain:
   Horizons ID, NORAD if any, central body, status, `ephemeris: horizons|kepler|none`, `goals` (main objectives,
   2–3 sentences for students, shown before the `notes` on the current state), `website` (main official page,
   listed first among the links; `lang` only when neither English nor French, shown as "(zh)"),
-  `verified: YYYY-MM-DD`, `sources: [url]`).
+  `verified: YYYY-MM-DD`, `sources: [url]`). The panels list `ended`/`inactive` spacecraft apart, after the active ones
+  ("Inactive spacecraft" in the solar view, "Inactive missions" in the Moon and Mars views; `isInactiveMission` in
+  `src/data/schemas.ts`, catalogue order, chronological for the retired probes; `llms-full.txt` splits them the same
+  way). Each section has its own show all / hide all buttons; inactive ones are hidden (unchecked) by default, and
+  selecting one draws it again. The URL keeps departures from that default only: `hide=` (active ones hidden),
+  `show=` (inactive ones drawn) (`src/app/hiddenMissions.ts`, also read by `perigee_describe_view`). Retired probes get Horizons vectors only while Horizons publishes a predicted trajectory covering the present
+  (otherwise clamping would re-request the same past daily); famous ones without it are listed with `ephemeris: "none"`.
 - `catalog/earth-science.json`: the featured "space & Earth science" satellites of the Earth view (CelesTrak
   `science` group + the ISS): known name EN/FR, agency, country, status, purpose, `goals`, notes, `website`,
   `verified`, `sources`.
@@ -219,7 +225,7 @@ No single API provides "active probes + landing sites". We maintain:
   decals covered, ISS stray parts dropped) → `public/models/<id>.glb`. The selected object's model replaces its
   marker once it covers ≥ 4 px (`src/render/models.ts` `SceneModel`, PBR lit by the Sun and a dim room environment;
   illustrative attitude from `src/astro/attitude.ts`), and a preview spins at the top of the info panel
-  (`src/ui/ModelPreview.ts`). The same preview shows a selected celestial body as drawn in the view (its
+  (`src/ui/ModelPreview.ts`; dragging turns it, except in the phone layout, where a drag scrolls the sheet). The same preview shows a selected celestial body as drawn in the view (its
   BodyMesh: map, flattening, moving gas, rings, shape grid; planets, moons, dwarf planets, and the Moon of the
   Earth view, selectable with `sel=moon`), and the Sun and the named stars as 2D illustrations. Following such an object lets the camera come to twice its size. Phobos and Deimos
   (`body` entries) replace the BodyMesh sphere, aligned offline on Thomas's PDS grids. Entries with `high` (the
@@ -660,6 +666,12 @@ the audit flags:
   Horizons match once it settles at L2). Planned: NEO Surveyor, MBR Explorer, DESTINY+, Comet
   Interceptor. Several public ephemerides end within weeks (Hera, SOHO, IMAP, Aditya-L1, Hayabusa2, STEREO-A):
   windows are truncated, re-check coverage regularly.
+- Inactive spacecraft (added 2026-10-25, Horizons coverage checked that day): with a predicted Horizons trajectory
+  through 2027-10, Pioneer 10 (−23), Pioneer 11 (−24), Ulysses (−55), Spitzer (−79), Kepler (−227), Planck (−489),
+  Herschel (−486) and Gaia (−139479). Listed without a position (Horizons coverage ended): Mariner 2, Mariner 10,
+  Helios 1 and 2, Galileo, NEAR Shoemaker, Cassini, Deep Space 1 (ends 2003), Stardust (2011), WMAP (2009),
+  Hayabusa, Rosetta, Deep Impact/EPOXI (2020), Dawn, Akatsuki, DART. MarCO is unknown to Horizons. Ulysses shows a photo:
+  NASA's model spans its 72 m wire antenna, leaving the spacecraft a dot in the preview.
 - Mars rover positions come from NASA MMGIS waypoint feeds (`catalog/landing-sites/mars.json` `feed`, daily).
 
 ## 14. Code conventions

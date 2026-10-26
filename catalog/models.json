@@ -385,6 +385,119 @@
       "credit": "NASA",
       "verified": "2026-10-02",
       "sources": ["https://github.com/nasa/NASA-3D-Resources"]
+    },
+    {
+      "id": "pioneer-10",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/pioneer-10/Pioneer%2010.glb",
+      "targets": ["mission:pioneer-10", "mission:pioneer-11"],
+      "sizeM": 8,
+      "credit": "NASA",
+      "earthAxis": "-z",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/pioneer/"]
+    },
+    {
+      "id": "kepler",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/kepler-(a)/Kepler%20(A).glb",
+      "targets": ["mission:kepler"],
+      "sizeM": 4.7,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/kepler-a/"]
+    },
+    {
+      "id": "spitzer",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/s/SPITZER.glb",
+      "targets": ["mission:spitzer"],
+      "sizeM": 4.5,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/resource/spitzer-space-telescope-3d-model/"]
+    },
+    {
+      "id": "galileo",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/galileo/Galileo.glb",
+      "targets": ["mission:galileo"],
+      "sizeM": 11,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/galileo/"]
+    },
+    {
+      "id": "cassini",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/cassini-huygens-(a)/Cassini-Huygens%20(A)%20(without%20Hyugens).glb",
+      "targets": ["mission:cassini"],
+      "sizeM": 18,
+      "credit": "NASA",
+      "earthAxis": "+y",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/cassini-huygens-a/"]
+    },
+    {
+      "id": "rosetta",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/rosetta/Rosetta.glb",
+      "targets": ["mission:rosetta"],
+      "sizeM": 32,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/3d-resources/rosetta/",
+        "https://github.com/nasa/NASA-3D-Resources"
+      ]
+    },
+    {
+      "id": "dawn",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/dawn/Dawn.glb",
+      "targets": ["mission:dawn"],
+      "sizeM": 19.7,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/dawn/"]
+    },
+    {
+      "id": "near-shoemaker",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/near-shoemaker/NEAR%20Shoemaker.glb",
+      "targets": ["mission:near-shoemaker"],
+      "sizeM": 5.3,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/near-shoemaker/"]
+    },
+    {
+      "id": "stardust",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/stardust/Stardust.glb",
+      "targets": ["mission:stardust"],
+      "sizeM": 4.8,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/stardust/"]
+    },
+    {
+      "id": "deep-impact",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/deep-impact/EPOXI%20(without%20impactor).glb",
+      "targets": ["mission:deep-impact"],
+      "sizeM": 3.3,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/deep-impact/"]
+    },
+    {
+      "id": "wmap",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/wilkinson-microwave-anisotropy-probe-(wmap)/Wilkinson%20Microwave%20Anisotropy%20Probe%20(WMAP).glb",
+      "targets": ["mission:wmap"],
+      "sizeM": 5,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/wilkinson-microwave-anisotropy-probe-wmap/"]
+    },
+    {
+      "id": "deep-space-1",
+      "url": "https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/deep-space-1/Deep%20Space%201.glb",
+      "targets": ["mission:deep-space-1"],
+      "sizeM": 11.8,
+      "credit": "NASA",
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/3d-resources/deep-space-1/"]
     }
   ]
 }

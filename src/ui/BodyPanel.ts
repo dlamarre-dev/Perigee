@@ -2,7 +2,7 @@
  * Side panel of the Moon/Mars views: missions (status, ephemeris availability) and landing sites grouped
  * by type. Everything is a native button, so the whole list is keyboard accessible.
  */
-import type { LandingSite, LandingSiteType, Mission } from '../data/schemas';
+import { isInactiveMission, type LandingSite, type LandingSiteType, type Mission } from '../data/schemas';
 import type { I18n, MessageKey } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { MissionToggles } from './missionToggles';
@@ -25,6 +25,8 @@ export class BodyPanel {
   private readonly sitesToggleLabel = h('label', { for: 'toggle-sites' });
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
+  private readonly inactiveTitle = h('h3', { class: 'results-title' });
+  private readonly inactiveList = h('ul', { class: 'results' });
   private readonly sitesTitle = h('h3', { class: 'results-title' });
   private readonly sitesBox = h('div', { class: 'facets' });
   private fetchedAt: Date | undefined;
@@ -50,6 +52,9 @@ export class BodyPanel {
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
+        this.inactiveTitle,
+        this.toggles.inactiveToolbar,
+        this.inactiveList,
         this.sitesTitle,
         h('p', { class: 'search-row' }, [this.sitesToggle, this.sitesToggleLabel]),
         this.sitesBox,
@@ -89,6 +94,11 @@ export class BodyPanel {
     return !this.element.hidden;
   }
 
+  /** Draws a hidden mission again (it was just selected). */
+  showMission(id: string): void {
+    this.toggles.show(id);
+  }
+
   setFetched(date: Date | undefined): void {
     this.fetchedAt = date;
     this.render();
@@ -102,28 +112,34 @@ export class BodyPanel {
       ? this.i18n.format('moon.fetched', { date: this.i18n.dateTime(this.fetchedAt) })
       : '';
     this.missionsTitle.textContent = t('moon.missions');
+    this.inactiveTitle.textContent = t('moon.inactiveMissions');
     this.toggles.renderLabels();
     this.sitesTitle.textContent = t(this.keys.sites);
     this.sitesToggleLabel.textContent = t(this.keys.showSites);
 
-    this.missionsList.replaceChildren(
-      ...this.missions.map((m) => {
-        const status =
-          m.objectType === 'natural'
-            ? t('mission.natural')
-            : (this.i18n.maybe(`mission.status.${m.status}`) ?? m.status);
-        const extra = this.hasEphemeris(m) ? '' : ` · ${t('moon.noEphemeris')}`;
-        const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
-          h('span', { class: 'result-name' }, [
-            h('span', { class: 'dot', style: `background:${this.colors.get(m.id) ?? '#888'}` }),
-            m.name[this.i18n.lang],
-          ]),
-          h('span', { class: 'result-id' }, [`${status}${extra}`]),
-        ]);
-        b.addEventListener('click', () => this.callbacks.onSelectMission(m));
-        return this.toggles.row(m, b);
-      }),
-    );
+    const row = (m: Mission): HTMLLIElement => {
+      const status =
+        m.objectType === 'natural'
+          ? t('mission.natural')
+          : (this.i18n.maybe(`mission.status.${m.status}`) ?? m.status);
+      const extra = this.hasEphemeris(m) ? '' : ` · ${t('moon.noEphemeris')}`;
+      const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
+        h('span', { class: 'result-name' }, [
+          h('span', { class: 'dot', style: `background:${this.colors.get(m.id) ?? '#888'}` }),
+          m.name[this.i18n.lang],
+        ]),
+        h('span', { class: 'result-id' }, [`${status}${extra}`]),
+      ]);
+      b.addEventListener('click', () => this.callbacks.onSelectMission(m));
+      return this.toggles.row(m, b);
+    };
+    this.missionsList.replaceChildren(...this.missions.filter((m) => !isInactiveMission(m)).map(row));
+    const inactive = this.missions.filter(isInactiveMission);
+    this.inactiveList.replaceChildren(...inactive.map(row));
+    this.inactiveTitle.hidden =
+      this.toggles.inactiveToolbar.hidden =
+      this.inactiveList.hidden =
+        inactive.length === 0;
 
     const open = new Set(
       [...this.sitesBox.querySelectorAll('details[open]')].map((d) => (d as HTMLElement).dataset['type']),

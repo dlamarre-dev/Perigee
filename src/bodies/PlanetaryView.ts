@@ -65,7 +65,7 @@ import { SelectionMarker } from '../render/OrbitLine';
 import { placeholderTexture, progressiveTexture, type ProgressiveTexture } from '../render/textures';
 import { attachRelief, reliefStrength } from '../render/relief';
 import { BodyPanel } from '../ui/BodyPanel';
-import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
+import { parseHiddenMissions, writeHiddenMissions } from '../app/hiddenMissions';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent } from '../ui/DetailPanel';
 import { setLinePositions } from '../render/lineBuffers';
@@ -303,7 +303,7 @@ export class PlanetaryView implements View {
     this.siteGroup.add(this.siteMarkers.points, this.siteRing.points);
     this.body.mesh.add(this.siteGroup);
 
-    this.hiddenMissions = parseHiddenMissions(host.initialParams);
+    this.hiddenMissions = parseHiddenMissions(host.initialParams, this.missions);
     this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
     this.distantSun = new DistantSun(renderer.scene, SUN_RADIUS_KM);
     this.panel = new BodyPanel(
@@ -639,7 +639,7 @@ export class PlanetaryView implements View {
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'site') p.set('sel', `site:${sel.site.id}`);
     if (!this.sitesVisible) p.set('sites', '0');
-    writeHiddenMissions(p, this.hiddenMissions);
+    writeHiddenMissions(p, this.hiddenMissions, this.missions);
   }
 
   dispose(): void {
@@ -976,6 +976,9 @@ export class PlanetaryView implements View {
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
+    // A hidden mission picked in the list or a link is drawn again (inactive ones are hidden by default).
+    if (sel?.kind === 'mission' && this.hiddenMissions.has(sel.mission.id))
+      this.panel.showMission(sel.mission.id);
     const cur = this.selection;
     const same =
       (sel?.kind === 'mission' && cur?.kind === 'mission' && sel.mission.id === cur.mission.id) ||

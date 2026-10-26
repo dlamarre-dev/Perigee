@@ -1430,6 +1430,97 @@
         "https://commons.wikimedia.org/wiki/File:Details_of_MESSENGER%27s_Impact_Location.jpg",
         "https://photojournal.jpl.nasa.gov/catalog/PIA19443"
       ]
+    },
+    {
+      "id": "mission-planck",
+      "target": "mission:planck",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/11/Model_of_the_Planck_Satellite.jpg",
+      "credit": "Mike Peel (www.mikepeel.net)",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-25",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Model_of_the_Planck_Satellite.jpg"]
+    },
+    {
+      "id": "mission-herschel",
+      "target": "mission:herschel",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/4/42/Model_of_the_Herschel_space_telescope.jpg",
+      "credit": "Mike Peel (www.mikepeel.net)",
+      "licence": "cc-by-sa-4.0",
+      "verified": "2026-10-25",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Model_of_the_Herschel_space_telescope.jpg"]
+    },
+    {
+      "id": "mission-mariner-2",
+      "target": "mission:mariner-2",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/9/90/Mariner_2.jpg",
+      "credit": "NASA/JPL",
+      "licence": "public-domain",
+      "verified": "2026-10-25",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Mariner_2.jpg",
+        "https://photojournal.jpl.nasa.gov/catalog/PIA04594"
+      ]
+    },
+    {
+      "id": "mission-mariner-10",
+      "target": "mission:mariner-10",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/8/84/Mariner_10_flight_spare.jpg",
+      "credit": "Smithsonian Institution",
+      "licence": "cc0",
+      "verified": "2026-10-25",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Mariner_10_flight_spare.jpg",
+        "https://www.si.edu/object/nasm_A19830006000"
+      ]
+    },
+    {
+      "id": "mission-helios",
+      "target": "mission:helios",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Helios_spacecraft.jpg",
+      "credit": "NASA",
+      "licence": "public-domain",
+      "verified": "2026-10-25",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Helios_spacecraft.jpg"]
+    },
+    {
+      "id": "mission-hayabusa",
+      "target": "mission:hayabusa",
+      "kind": "replica",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/3/34/Hayabusa_restoration_model_-_National_Museum_of_Nature_and_Science%2C_Tokyo_-_DSC07391.JPG",
+      "credit": "Daderot",
+      "licence": "cc0",
+      "verified": "2026-10-25",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Hayabusa_restoration_model_-_National_Museum_of_Nature_and_Science,_Tokyo_-_DSC07391.JPG"
+      ]
+    },
+    {
+      "id": "mission-ulysses",
+      "target": "mission:ulysses",
+      "kind": "photo",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/68/Ulysses_spacecraft.jpg",
+      "credit": "NASA/JPL",
+      "licence": "public-domain",
+      "verified": "2026-10-25",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Ulysses_spacecraft.jpg"]
+    },
+    {
+      "id": "mission-akatsuki",
+      "target": "mission:akatsuki",
+      "kind": "illustration",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Akatsuki_CG01.png",
+      "credit": "JAXA/ISAS",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-25",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Akatsuki_CG01.png",
+        "https://isas-gallery.jp/tag/akatsuki"
+      ]
     }
   ]
 }

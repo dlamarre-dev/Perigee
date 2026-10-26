@@ -1,5 +1,6 @@
 /**
- * Preview at the top of the info panel, turning slowly (drag to turn it):
+ * Preview at the top of the info panel, turning slowly (drag to turn it, except in the phone layout, where a drag
+ * scrolls the panel):
  * - a spacecraft's 3D model, its PBR materials lit by a "Sun" and a dim room environment (specular highlights);
  * - a celestial body: the view's own BodyMesh (same maps, flattening, moving gas, rings), lit from one side,
  *   spinning about its pole;
@@ -93,6 +94,10 @@ function hexRgb(hex: string): [number, number, number] {
 }
 
 const SPIN_RAD_PER_S = 0.35;
+
+/** Phone layout (bottom sheets, portrait or landscape; as in styles.css): the preview does not turn under a drag. */
+const NO_DRAG_QUERY = '(max-width: 640px), (max-height: 500px)';
+const dragTurns = (): boolean => !matchMedia(NO_DRAG_QUERY).matches;
 /** 30 fps is plenty for a slow spin, and leaves the main view its frame budget. */
 let previewFrameMs = 33;
 
@@ -144,6 +149,7 @@ function getShared(): Shared | undefined {
     };
     const el = renderer.domElement;
     el.addEventListener('pointerdown', (e) => {
+      if (!dragTurns()) return;
       el.setPointerCapture(e.pointerId);
       s.owner?.dragStart(e.clientX, e.clientY);
     });
@@ -272,7 +278,7 @@ export class ModelPreview {
     const variant = MAP_VARIANTS[id];
     this.mapSwitch.hidden = !variant;
     if (!variant) {
-      this.caption.textContent = this.i18n.t('preview.body');
+      this.caption.textContent = this.i18n.t(dragTurns() ? 'preview.body' : 'preview.bodyStill');
       return;
     }
     const alt = altShown(id);
@@ -328,7 +334,10 @@ export class ModelPreview {
     if (s.owner !== this || s.renderer.domElement.parentElement !== this.canvasBox) {
       s.owner = this;
       this.canvasBox.append(s.renderer.domElement);
-      s.renderer.domElement.setAttribute('aria-label', this.i18n.t('model.preview'));
+      s.renderer.domElement.setAttribute(
+        'aria-label',
+        this.i18n.t(dragTurns() ? 'model.preview' : 'model.previewStill'),
+      );
     }
     if (s.shownId !== this.current) this.load(s, this.current ?? '');
     this.start();

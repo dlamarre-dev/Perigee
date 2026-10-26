@@ -963,6 +963,827 @@
       ]
     },
     {
+      "id": "mariner-2",
+      "name": {
+        "en": "Mariner 2",
+        "fr": "Mariner 2"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1962-08-27",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Silent in orbit around the Sun since 1963",
+        "fr": "Muette en orbite autour du Soleil depuis 1963"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Mariner 2 was the first spacecraft to fly past another planet successfully: it passed Venus in December 1962. It showed that Venus is extremely hot, with a dense layer of clouds high above the surface and no detectable magnetic field. On the way it also confirmed that a solar wind of particles flows continuously from the Sun.",
+        "fr": "Mariner 2 a été la première sonde à survoler avec succès une autre planète : elle est passée près de Vénus en décembre 1962. Elle a montré que Vénus est extrêmement chaude, avec une épaisse couche de nuages haut au-dessus de la surface et aucun champ magnétique détectable. En route, elle a aussi confirmé qu'un vent solaire de particules s'échappe en permanence du Soleil."
+      },
+      "notes": {
+        "en": "Flew past Venus on 1962-12-14 at 34,854 km. Contact was lost on 1963-01-03, 86.7 million km from the Earth, a distance record at the time. It remains in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Survol de Vénus le 1962-12-14 à 34 854 km. Le contact a été perdu le 1963-01-03, à 86,7 millions de km de la Terre, un record de distance à l'époque. La sonde reste en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/mariner-2/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/mariner-2/"]
+    },
+    {
+      "id": "pioneer-10",
+      "name": {
+        "en": "Pioneer 10",
+        "fr": "Pioneer 10"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1972-03-03",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Silent, drifting toward Aldebaran",
+        "fr": "Muette, en route vers Aldebaran"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-23",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Pioneer 10 was the first spacecraft to cross the asteroid belt and to fly past Jupiter, in December 1973, sending back the first close-up images of the giant planet and measuring its intense radiation belts. It was also the first probe set on a path that leaves the solar system. Now silent, it carries a plaque describing humanity in case it is ever found.",
+        "fr": "Pioneer 10 est la première sonde à avoir traversé la ceinture d'astéroïdes et survolé Jupiter, en décembre 1973, en envoyant les premières images rapprochées de la planète géante et en mesurant ses intenses ceintures de radiations. C'est aussi la première sonde lancée sur une trajectoire qui quitte le système solaire. Aujourd'hui muette, elle emporte une plaque qui décrit l'humanité au cas où quelqu'un la trouverait."
+      },
+      "notes": {
+        "en": "Last signal received 2003-01-23, about 12 billion km from Earth: its nuclear power source had become too weak to run the radio. A final contact attempt on 2006-03-04 failed. It coasts toward the star Aldebaran, which it would pass in about two million years. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Dernier signal reçu le 2003-01-23, à environ 12 milliards de km de la Terre : sa source d'énergie nucléaire était devenue trop faible pour alimenter la radio. Une dernière tentative de contact, le 2006-03-04, a échoué. Elle file vers l'étoile Aldebaran, qu'elle croiserait dans environ deux millions d'années. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/pioneer-10/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/pioneer-10/",
+        "https://en.wikipedia.org/wiki/Pioneer_10",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Pioneer%2010"
+      ]
+    },
+    {
+      "id": "pioneer-11",
+      "name": {
+        "en": "Pioneer 11",
+        "fr": "Pioneer 11"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1973-04-06",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Silent, drifting toward Aquila",
+        "fr": "Muette, en route vers la constellation de l'Aigle"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-24",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Pioneer 11 followed Pioneer 10 to Jupiter, returning the first pictures of its polar regions in 1974, then used the giant planet's gravity to reach Saturn. In September 1979 it became the first spacecraft to fly past Saturn, discovering its F ring and confirming that the planet has a magnetic field. Its visit helped prepare the route for the Voyager probes.",
+        "fr": "Pioneer 11 a suivi Pioneer 10 jusqu'à Jupiter, dont elle a pris les premières images des régions polaires en 1974, puis s'est servie de la gravité de la planète géante pour rejoindre Saturne. En septembre 1979, elle est devenue la première sonde à survoler Saturne, découvrant l'anneau F et confirmant que la planète possède un champ magnétique. Ce passage a aidé à préparer la route des sondes Voyager."
+      },
+      "notes": {
+        "en": "Routine operations ended on 1995-09-30, when its fading power source could no longer run its instruments; the last engineering data arrived on 1995-11-24, after which contact was lost. It heads toward the constellation Aquila and would pass near the star Lambda Aquilae in about four million years. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Les opérations courantes ont pris fin le 1995-09-30, sa source d'énergie déclinante ne pouvant plus faire fonctionner ses instruments; les dernières données techniques sont arrivées le 1995-11-24, puis le contact a été perdu. Elle se dirige vers la constellation de l'Aigle et passerait près de l'étoile Lambda de l'Aigle dans environ quatre millions d'années. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/pioneer-11/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/pioneer-11/",
+        "https://en.wikipedia.org/wiki/Pioneer_11",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Pioneer%2011"
+      ]
+    },
+    {
+      "id": "mariner-10",
+      "name": {
+        "en": "Mariner 10",
+        "fr": "Mariner 10"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1973-11-03",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Silent in orbit around the Sun since 1975",
+        "fr": "Muette en orbite autour du Soleil depuis 1975"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Mariner 10 was the first spacecraft to visit Mercury and the first to explore two planets, flying past Venus and then Mercury three times. It was also the first to use a planet's gravity to change course (a gravity assist), a technique used by most later missions. Its 2,700 images covered nearly half of Mercury, revealing a cratered world with a weak magnetic field.",
+        "fr": "Mariner 10 a été la première sonde à visiter Mercure et la première à explorer deux planètes, en survolant Vénus puis trois fois Mercure. Elle a aussi été la première à utiliser la gravité d'une planète pour changer de route (une assistance gravitationnelle), une technique reprise par la plupart des missions suivantes. Ses 2 700 images ont couvert près de la moitié de Mercure, révélant un monde criblé de cratères doté d'un faible champ magnétique."
+      },
+      "notes": {
+        "en": "Flew past Venus on 1974-02-05, then Mercury on 1974-03-29, 1974-09-21 and 1975-03-16. Out of attitude-control gas, it was switched off after its last contact on 1975-03-24. It remains in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Survol de Vénus le 1974-02-05, puis de Mercure les 1974-03-29, 1974-09-21 et 1975-03-16. À court de gaz de contrôle d'attitude, la sonde a été éteinte après son dernier contact, le 1975-03-24. Elle reste en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/mariner-10/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/mariner-10/"]
+    },
+    {
+      "id": "helios",
+      "name": {
+        "en": "Helios 1 and 2",
+        "fr": "Helios 1 et 2"
+      },
+      "agency": "DLR / NASA",
+      "country": "de",
+      "launchDate": "1974-12-10",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Silent in orbit around the Sun since the 1980s",
+        "fr": "Muettes en orbite autour du Soleil depuis les années 1980"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "The twin Helios probes, built by West Germany and launched by NASA, flew closer to the Sun than any spacecraft before them, inside the orbit of Mercury. They measured the solar wind, the magnetic field and the dust near the Sun across a solar cycle. Helios 2 held the record for the closest approach to the Sun, and Helios 1 and 2 the speed record, until Parker Solar Probe.",
+        "fr": "Les sondes jumelles Helios, construites par l'Allemagne de l'Ouest et lancées par la NASA, se sont approchées du Soleil plus près qu'aucun engin avant elles, à l'intérieur de l'orbite de Mercure. Elles ont mesuré le vent solaire, le champ magnétique et les poussières près du Soleil au cours d'un cycle solaire. Helios 2 a détenu le record d'approche du Soleil, et les deux sondes le record de vitesse, jusqu'à Parker Solar Probe."
+      },
+      "notes": {
+        "en": "Helios 1 launched on 1974-12-10 and sent data until late 1982. Helios 2 launched on 1976-01-15, came to 0.29 AU (43.4 million km) from the Sun on 1976-04-17; its transmitter failed on 1980-03-03 and it was switched off on 1981-01-07. Both remain in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Helios 1, lancée le 1974-12-10, a transmis des données jusqu'à la fin de 1982. Helios 2, lancée le 1976-01-15, est passée à 0,29 UA (43,4 millions de km) du Soleil le 1976-04-17; son émetteur est tombé en panne le 1980-03-03 et elle a été éteinte le 1981-01-07. Les deux sondes restent en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/helios-1/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/helios-1/", "https://science.nasa.gov/mission/helios-2/"]
+    },
+    {
+      "id": "galileo",
+      "name": {
+        "en": "Galileo",
+        "fr": "Galileo"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1989-10-18",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended in Jupiter's atmosphere",
+        "fr": "Terminée dans l'atmosphère de Jupiter"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Galileo was the first spacecraft to orbit Jupiter, which it studied from 1995 to 2003 together with its large moons. Its probe was the first to dive into a giant planet's atmosphere, and the orbiter found strong evidence of a salty ocean under the ice of Europa, as well as a magnetic field around Ganymede. On the way it discovered Dactyl, the first known moon of an asteroid, and watched comet Shoemaker-Levy 9 crash into Jupiter.",
+        "fr": "Galileo a été la première sonde placée en orbite autour de Jupiter, qu'elle a étudiée de 1995 à 2003 avec ses grandes lunes. Sa sonde atmosphérique a été la première à plonger dans l'atmosphère d'une planète géante, et l'orbiteur a trouvé de solides indices d'un océan salé sous la glace d'Europe, ainsi qu'un champ magnétique autour de Ganymède. En route, elle a découvert Dactyl, la première lune connue d'un astéroïde, et observé la comète Shoemaker-Levy 9 s'écraser sur Jupiter."
+      },
+      "notes": {
+        "en": "Launched by Space Shuttle Atlantis (STS-34); in orbit around Jupiter from 1995-12-07. Nearly out of propellant, it was deliberately sent into Jupiter's atmosphere on 2003-09-21, so that it could never crash onto Europa and contaminate its possible ocean. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Lancée par la navette Atlantis (STS-34); en orbite autour de Jupiter à partir du 1995-12-07. Presque à court d'ergols, la sonde a été précipitée volontairement dans l'atmosphère de Jupiter le 2003-09-21, pour qu'elle ne puisse jamais s'écraser sur Europe et contaminer son océan possible. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/galileo/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/galileo/"]
+    },
+    {
+      "id": "ulysses",
+      "name": {
+        "en": "Ulysses",
+        "fr": "Ulysse"
+      },
+      "agency": "ESA / NASA",
+      "country": "eu",
+      "launchDate": "1990-10-06",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Switched off, circling the Sun over its poles",
+        "fr": "Éteinte, en orbite autour du Soleil au-dessus de ses pôles"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-55",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Ulysses, a joint ESA–NASA probe, was the first spacecraft to fly over the poles of the Sun, which cannot be seen well from Earth. A flyby of Jupiter in 1992 tilted its orbit steeply so that it could study the solar wind and the Sun's magnetic field at all latitudes. It showed that the solar wind blows faster above the poles and followed the Sun through almost two 11-year activity cycles.",
+        "fr": "Ulysse, une sonde commune de l'ESA et de la NASA, a été la première à survoler les pôles du Soleil, mal visibles depuis la Terre. Un survol de Jupiter en 1992 a fortement incliné son orbite pour lui permettre d'étudier le vent solaire et le champ magnétique du Soleil à toutes les latitudes. Elle a montré que le vent solaire souffle plus vite au-dessus des pôles et a suivi le Soleil pendant près de deux cycles d'activité de 11 ans."
+      },
+      "notes": {
+        "en": "Controlled switch-off on 2009-06-30, after 18.6 years in space and well beyond its design life, as its nuclear power supply was running out. It keeps circling the Sun on its steeply inclined orbit, like an artificial comet. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Extinction contrôlée le 2009-06-30, après 18,6 ans dans l'espace et bien au-delà de sa durée de vie prévue, sa source d'énergie nucléaire s'épuisant. Elle continue de tourner autour du Soleil sur son orbite très inclinée, comme une comète artificielle. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://www.cosmos.esa.int/web/ulysses"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/ulysses/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Joint_ESA_NASA_Ulysses_mission_to_end",
+        "https://science.nasa.gov/mission/ulysses/",
+        "https://www.cosmos.esa.int/web/ulysses",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Ulysses"
+      ]
+    },
+    {
+      "id": "near-shoemaker",
+      "name": {
+        "en": "NEAR Shoemaker",
+        "fr": "NEAR Shoemaker"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1996-02-17",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended on the surface of asteroid Eros",
+        "fr": "Terminée à la surface de l'astéroïde Eros"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "NEAR Shoemaker was the first spacecraft to orbit an asteroid, Eros, a 33 km long rocky body that passes near the Earth's orbit. During a year in orbit it photographed and mapped its surface and measured its composition, showing that it is a solid, very old object. At the end of its mission it became the first spacecraft to land on an asteroid.",
+        "fr": "NEAR Shoemaker a été la première sonde placée en orbite autour d'un astéroïde, Eros, un corps rocheux de 33 km de long qui passe près de l'orbite terrestre. Pendant un an d'orbite, elle a photographié et cartographié sa surface et mesuré sa composition, montrant qu'il s'agit d'un objet solide et très ancien. À la fin de sa mission, elle est devenue la première sonde à se poser sur un astéroïde."
+      },
+      "notes": {
+        "en": "First mission of NASA's Discovery programme. Flew past asteroid Mathilde on 1997-06-27 and entered orbit around Eros on 2000-02-14. Although it was not designed to land, it touched down gently on Eros on 2001-02-12 and kept sending data until its last contact on 2001-02-28. It is still on the asteroid's surface. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Première mission du programme Discovery de la NASA. Survol de l'astéroïde Mathilde le 1997-06-27, puis mise en orbite autour d'Eros le 2000-02-14. Bien qu'elle n'ait pas été conçue pour atterrir, la sonde s'est posée en douceur sur Eros le 2001-02-12 et a transmis des données jusqu'au dernier contact, le 2001-02-28. Elle se trouve toujours à la surface de l'astéroïde. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/near-shoemaker/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/near-shoemaker/"]
+    },
+    {
+      "id": "cassini",
+      "name": {
+        "en": "Cassini–Huygens",
+        "fr": "Cassini-Huygens"
+      },
+      "agency": "NASA / ESA / ASI",
+      "country": "us",
+      "launchDate": "1997-10-15",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended in Saturn's atmosphere",
+        "fr": "Terminée dans l'atmosphère de Saturne"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Cassini was the first spacecraft to orbit Saturn, studying the planet, its rings and its moons for 13 years from 2004. It carried ESA's Huygens probe, which landed on Titan in 2005, the most distant landing ever made. Cassini discovered jets of water ice spraying from an ocean under the surface of Enceladus and mapped the seas of liquid methane of Titan.",
+        "fr": "Cassini a été la première sonde placée en orbite autour de Saturne, dont elle a étudié la planète, les anneaux et les lunes pendant 13 ans à partir de 2004. Elle emportait la sonde Huygens de l'ESA, qui s'est posée sur Titan en 2005, l'atterrissage le plus lointain jamais réalisé. Cassini a découvert des jets de glace d'eau jaillissant d'un océan caché sous la surface d'Encelade et cartographié les mers de méthane liquide de Titan."
+      },
+      "notes": {
+        "en": "Arrived at Saturn in July 2004; Huygens landed on Titan on 2005-01-14 (its site is shown on Titan in the solar view). Nearly out of propellant after the 22 dives of its Grand Finale between the planet and its rings, Cassini was deliberately plunged into Saturn's atmosphere on 2017-09-15, so that it could never contaminate Enceladus or Titan. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Arrivée à Saturne en juillet 2004; Huygens s'est posée sur Titan le 2005-01-14 (son site est affiché sur Titan dans la vue du système solaire). Presque à court d'ergols après les 22 plongées de son « Grand Finale » entre la planète et ses anneaux, Cassini a été précipitée volontairement dans l'atmosphère de Saturne le 2017-09-15, pour qu'elle ne puisse jamais contaminer Encelade ou Titan. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/cassini/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/cassini/",
+        "https://www.esa.int/Science_Exploration/Space_Science/Cassini-Huygens/Cassini-Huygens_factsheet"
+      ]
+    },
+    {
+      "id": "deep-space-1",
+      "name": {
+        "en": "Deep Space 1",
+        "fr": "Deep Space 1"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1998-10-24",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired, silent in orbit around the Sun",
+        "fr": "Retirée, muette en orbite autour du Soleil"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Deep Space 1 tested 12 new technologies in space, above all an ion engine, which pushes gently but for months, and a navigation system that steered the spacecraft by itself. Both worked, and ion propulsion was later used by Dawn and other missions. As a bonus, it flew past asteroid Braille and comet Borrelly, returning some of the best images of a comet's nucleus at the time.",
+        "fr": "Deep Space 1 a testé dans l'espace 12 nouvelles technologies, surtout un moteur ionique, qui pousse doucement mais pendant des mois, et un système de navigation qui pilotait la sonde tout seul. Tout a fonctionné, et la propulsion ionique a ensuite servi à Dawn et à d'autres missions. En prime, la sonde a survolé l'astéroïde Braille et la comète Borrelly, dont elle a rapporté parmi les meilleures images d'un noyau de comète de l'époque."
+      },
+      "notes": {
+        "en": "Flew past asteroid Braille on 1999-07-29 and comet Borrelly on 2001-09-22. Its ion engine was switched off on 2001-12-18, ending the mission; an attempt to contact it in March 2002 failed. It remains in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Survol de l'astéroïde Braille le 1999-07-29 et de la comète Borrelly le 2001-09-22. Son moteur ionique a été éteint le 2001-12-18, ce qui a mis fin à la mission; une tentative de contact en mars 2002 a échoué. La sonde reste en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/deep-space-1/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/deep-space-1/"]
+    },
+    {
+      "id": "stardust",
+      "name": {
+        "en": "Stardust",
+        "fr": "Stardust"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "1999-02-07",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Out of propellant, silent in orbit around the Sun",
+        "fr": "À court d'ergols, muette en orbite autour du Soleil"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Stardust was the first mission to bring back dust from a comet. In 2004 it flew through the dusty cloud around comet Wild 2 and caught particles in a very light foam called aerogel, then returned them to Earth in a capsule. The samples contained a wide range of organic compounds and grains formed close to the young Sun, along with a few rare particles of interstellar dust.",
+        "fr": "Stardust a été la première mission à rapporter des poussières d'une comète. En 2004, elle a traversé le nuage de poussières entourant la comète Wild 2 et capturé des particules dans une mousse très légère, l'aérogel, avant de les ramener sur Terre dans une capsule. Les échantillons contenaient une grande variété de composés organiques et des grains formés près du jeune Soleil, ainsi que quelques rares particules de poussière interstellaire."
+      },
+      "notes": {
+        "en": "Flew past asteroid Annefrank on 2002-11-02 and comet Wild 2 on 2004-01-02; its capsule landed in Utah on 2006-01-15. Renamed Stardust-NExT, it flew past comet Tempel 1 on 2011-02-15 to see the crater made by Deep Impact. A last engine burn emptied its tanks on 2011-03-24 and it sent its final signal the same day. It remains in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Survol de l'astéroïde Annefrank le 2002-11-02 et de la comète Wild 2 le 2004-01-02; sa capsule a atterri dans l'Utah le 2006-01-15. Rebaptisée Stardust-NExT, la sonde a survolé la comète Tempel 1 le 2011-02-15 pour voir le cratère creusé par Deep Impact. Une dernière poussée a vidé ses réservoirs le 2011-03-24 et elle a envoyé son dernier signal le même jour. Elle reste en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/stardust/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/stardust/"]
+    },
+    {
+      "id": "wmap",
+      "name": {
+        "en": "WMAP",
+        "fr": "WMAP"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2001-06-30",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired in a heliocentric graveyard orbit",
+        "fr": "Retiré sur une orbite cimetière héliocentrique"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "WMAP (Wilkinson Microwave Anisotropy Probe) mapped the faint glow left over from the Big Bang, the cosmic microwave background, across the whole sky. From the tiny temperature differences in this glow, it measured the age of the universe, 13.77 billion years, to within half a percent. It also showed that ordinary atoms make up only about 5% of the universe, the rest being dark matter and dark energy.",
+        "fr": "WMAP (Wilkinson Microwave Anisotropy Probe) a cartographié sur tout le ciel la faible lueur laissée par le Big Bang, le fond diffus cosmologique. À partir des infimes différences de température de cette lueur, il a mesuré l'âge de l'Univers, 13,77 milliards d'années, à un demi pour cent près. Il a aussi montré que les atomes ordinaires ne forment qu'environ 5 % de l'Univers, le reste étant de la matière noire et de l'énergie noire."
+      },
+      "notes": {
+        "en": "Observed from Sun–Earth L2 for nine years; science operations ended on 2010-08-19. It was then moved from L2 to a heliocentric graveyard orbit and switched off in October 2010. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "A observé depuis le point L2 Soleil-Terre pendant neuf ans; les opérations scientifiques ont pris fin le 2010-08-19. Le satellite a ensuite quitté L2 pour une orbite cimetière héliocentrique et a été éteint en octobre 2010. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/wmap/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/wmap/",
+        "https://science.nasa.gov/mission/wmap/wmap-overview/",
+        "https://en.wikipedia.org/wiki/Wilkinson_Microwave_Anisotropy_Probe"
+      ]
+    },
+    {
+      "id": "hayabusa",
+      "name": {
+        "en": "Hayabusa",
+        "fr": "Hayabusa"
+      },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2003-05-09",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended by design: sample returned to Earth",
+        "fr": "Terminée comme prévu : échantillon rapporté sur Terre"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Hayabusa was the first mission to bring back material from an asteroid. It studied the small asteroid Itokawa, mapping its shape, surface and composition, and touched down on it to collect dust. Despite many breakdowns, it returned its capsule to Earth, testing the ion engines, autonomous navigation and re-entry capsule later used by Hayabusa2.",
+        "fr": "Hayabusa a été la première mission à rapporter de la matière d'un astéroïde. Elle a étudié le petit astéroïde Itokawa, en cartographiant sa forme, sa surface et sa composition, et s'y est posée pour recueillir de la poussière. Malgré de nombreuses pannes, elle a ramené sa capsule sur Terre, validant les moteurs ioniques, la navigation autonome et la capsule de rentrée reprises ensuite par Hayabusa2."
+      },
+      "notes": {
+        "en": "Arrived at Itokawa on 2005-09-12 and touched down twice in November 2005. Its capsule landed near Woomera (Australia) on 2010-06-13 and held tiny grains of the asteroid; the spacecraft itself burned up on re-entry the same day. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Arrivée à Itokawa le 2005-09-12, la sonde s'y est posée deux fois en novembre 2005. Sa capsule a atterri près de Woomera (Australie) le 2010-06-13 avec de minuscules grains de l'astéroïde; la sonde elle-même s'est désintégrée dans l'atmosphère le même jour. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://www.isas.jaxa.jp/en/missions/spacecraft/past/hayabusa.html"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/past/hayabusa.html",
+        "https://global.jaxa.jp/press/2010/06/20100614_hayabusa2_e.html"
+      ]
+    },
+    {
+      "id": "spitzer",
+      "name": {
+        "en": "Spitzer Space Telescope",
+        "fr": "Télescope spatial Spitzer"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2003-08-25",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired, drifting in an Earth-trailing orbit",
+        "fr": "Retiré, à la dérive derrière la Terre autour du Soleil"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-79",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Spitzer observed the Universe in infrared light, which reveals cool objects such as the dust clouds where stars are born, distant galaxies and planets around other stars. It was the first telescope to capture light coming directly from exoplanets, found a huge faint ring around Saturn and helped reveal the seven Earth-sized planets of the TRAPPIST-1 system.",
+        "fr": "Spitzer a observé l'Univers en lumière infrarouge, qui révèle des objets froids comme les nuages de poussière où naissent les étoiles, les galaxies lointaines et les planètes d'autres étoiles. Il a été le premier télescope à capter la lumière venant directement d'exoplanètes, a découvert un immense anneau peu lumineux autour de Saturne et a aidé à révéler les sept planètes de la taille de la Terre du système TRAPPIST-1."
+      },
+      "notes": {
+        "en": "Mission ended on 2020-01-30, when engineers put the telescope in safe mode, stopping all science operations after more than 16 years. It drifts in its Earth-trailing orbit around the Sun, slowly falling farther behind Earth. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Mission terminée le 2020-01-30, quand les ingénieurs ont placé le télescope en mode sans échec, arrêtant toute observation après plus de 16 ans. Il dérive sur son orbite autour du Soleil, derrière la Terre, dont il s'éloigne lentement. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/spitzer/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/spitzer/",
+        "https://www.nasa.gov/news-release/nasas-spitzer-space-telescope-ends-mission-of-astronomical-discovery/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Spitzer"
+      ]
+    },
+    {
+      "id": "rosetta",
+      "name": {
+        "en": "Rosetta",
+        "fr": "Rosetta"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2004-03-02",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended by design: landed on comet 67P",
+        "fr": "Terminée comme prévu : posée sur la comète 67P"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Rosetta was the first spacecraft to orbit a comet, 67P/Churyumov–Gerasimenko, and to follow it for two years as it came closer to the Sun and became active. It released the Philae lander, the first craft to land on a comet's nucleus, in November 2014. Its measurements of the comet's dust, ice and gas tell us about the materials the solar system formed from.",
+        "fr": "Rosetta a été la première sonde placée en orbite autour d'une comète, 67P/Tchourioumov-Guérassimenko, qu'elle a accompagnée pendant deux ans tandis qu'elle s'approchait du Soleil et devenait active. Elle a largué l'atterrisseur Philae, le premier engin posé sur le noyau d'une comète, en novembre 2014. Ses mesures des poussières, de la glace et des gaz de la comète renseignent sur les matériaux à partir desquels le système solaire s'est formé."
+      },
+      "notes": {
+        "en": "Arrived at the comet on 2014-08-06; Philae landed on 2014-11-12, bounced and came to rest in a shaded spot, where it worked for about 60 hours. As the comet moved away from the Sun and solar power dwindled, Rosetta ended its mission with a controlled descent onto the comet on 2016-09-30; it rests on 67P's small lobe, beside Philae. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Arrivée à la comète le 2014-08-06; Philae s'est posé le 2014-11-12, a rebondi et s'est immobilisé dans un endroit ombragé, où il a fonctionné environ 60 heures. La comète s'éloignant du Soleil et l'énergie solaire diminuant, Rosetta a terminé sa mission par une descente contrôlée sur la comète le 2016-09-30; elle repose sur le petit lobe de 67P, comme Philae. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Rosetta"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/rosetta/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Rosetta/Rosetta_factsheet",
+        "https://www.esa.int/Science_Exploration/Space_Science/Rosetta/Mission_complete_Rosetta_s_journey_ends_in_daring_descent_to_comet"
+      ]
+    },
+    {
+      "id": "deep-impact",
+      "name": {
+        "en": "Deep Impact / EPOXI",
+        "fr": "Deep Impact / EPOXI"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2005-01-12",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Contact lost in 2013, silent in orbit around the Sun",
+        "fr": "Contact perdu en 2013, muette en orbite autour du Soleil"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Deep Impact fired a copper impactor into comet Tempel 1 on 4 July 2005 and watched the collision, to see what lies beneath a comet's surface. The cloud of material it threw up showed that the nucleus is very porous, a fluffy mix of dust and ice. Renamed EPOXI, the spacecraft then flew past comet Hartley 2 and observed planets around other stars.",
+        "fr": "Deep Impact a projeté un impacteur en cuivre sur la comète Tempel 1 le 4 juillet 2005 et observé la collision, pour découvrir ce qui se cache sous la surface d'une comète. Le nuage de matière soulevé a montré que le noyau est très poreux, un mélange léger de poussière et de glace. Rebaptisée EPOXI, la sonde a ensuite survolé la comète Hartley 2 et observé des planètes autour d'autres étoiles."
+      },
+      "notes": {
+        "en": "Impact on Tempel 1 on 2005-07-04; flyby of comet Hartley 2 on 2010-11-04. Contact was lost in August 2013, and NASA ended its attempts to reach it on 2013-09-20. It remains silent in orbit around the Sun. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Impact sur Tempel 1 le 2005-07-04; survol de la comète Hartley 2 le 2010-11-04. Le contact a été perdu en août 2013, et la NASA a cessé de tenter de la joindre le 2013-09-20. La sonde reste muette en orbite autour du Soleil. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/deep-impact-epoxi/"
+      },
+      "verified": "2026-10-25",
+      "sources": ["https://science.nasa.gov/mission/deep-impact-epoxi/"]
+    },
+    {
+      "id": "dawn",
+      "name": {
+        "en": "Dawn",
+        "fr": "Dawn"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2007-09-27",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Out of propellant, silent in orbit around Ceres",
+        "fr": "À court d'ergols, muette en orbite autour de Cérès"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Dawn explored the two largest bodies of the asteroid belt, the giant asteroid Vesta and the dwarf planet Ceres, using ion engines. It was the first spacecraft to orbit an object of the asteroid belt and the first to orbit two different worlds beyond the Earth. It found bright salt deposits on Ceres, signs that this dwarf planet may once have had an ocean beneath its surface.",
+        "fr": "Dawn a exploré les deux plus gros corps de la ceinture d'astéroïdes, l'astéroïde géant Vesta et la planète naine Cérès, grâce à des moteurs ioniques. C'est la première sonde à s'être placée en orbite autour d'un objet de la ceinture d'astéroïdes, et la première à avoir orbité autour de deux mondes différents au-delà de la Terre. Elle a trouvé sur Cérès des dépôts de sel brillants, signes que cette planète naine a peut-être abrité un océan sous sa surface."
+      },
+      "notes": {
+        "en": "Orbited Vesta in 2011–2012, then Ceres from 2015. It missed its Deep Space Network contacts on 2018-10-31 and 2018-11-01: its hydrazine, needed to point its antenna at the Earth, had run out, and NASA ended the mission on 2018-11-01. It remains silent in orbit around Ceres, an orbit expected to last at least 20 years. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "En orbite autour de Vesta en 2011-2012, puis de Cérès à partir de 2015. La sonde a manqué ses contacts avec le Deep Space Network les 2018-10-31 et 2018-11-01 : son hydrazine, nécessaire pour pointer son antenne vers la Terre, était épuisée, et la NASA a mis fin à la mission le 2018-11-01. Elle reste muette en orbite autour de Cérès, une orbite qui devrait durer au moins 20 ans. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/dawn/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.jpl.nasa.gov/news/nasas-dawn-mission-to-asteroid-belt-comes-to-end",
+        "https://science.nasa.gov/mission/dawn/"
+      ]
+    },
+    {
+      "id": "kepler",
+      "name": {
+        "en": "Kepler",
+        "fr": "Kepler"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2009-03-07",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired, drifting in an Earth-trailing orbit",
+        "fr": "Retiré, à la dérive derrière la Terre autour du Soleil"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-227",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Kepler was a space telescope built to find out how common planets like Earth are around other stars. It stared at more than 150,000 stars, watching for the tiny dips in brightness caused when a planet passes in front of its star. With its second mission, K2, it found more than 2,600 confirmed exoplanets and showed that our galaxy holds more planets than stars.",
+        "fr": "Kepler était un télescope spatial conçu pour savoir à quel point les planètes semblables à la Terre sont courantes autour des autres étoiles. Il a observé en continu plus de 150 000 étoiles en guettant les infimes baisses d'éclat causées par le passage d'une planète devant son étoile. Avec sa deuxième mission, K2, il a découvert plus de 2 600 exoplanètes confirmées et montré que notre galaxie compte plus de planètes que d'étoiles."
+      },
+      "notes": {
+        "en": "Retirement announced on 2018-10-30 after the telescope ran out of fuel; the final \"goodnight\" commands, sent on 2018-11-15, switched off its transmitters. It drifts in a safe orbit around the Sun, trailing behind Earth. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Retraite annoncée le 2018-10-30, une fois le carburant épuisé; les dernières commandes, envoyées le 2018-11-15, ont éteint ses émetteurs. Le télescope dérive sur une orbite sûre autour du Soleil, derrière la Terre. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/kepler/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://science.nasa.gov/mission/kepler/",
+        "https://www.nasa.gov/news-release/nasa-retires-kepler-space-telescope-passes-planet-hunting-torch/",
+        "https://www.jpl.nasa.gov/news/kepler-telescope-bids-goodnight-with-final-commands/",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Kepler"
+      ]
+    },
+    {
+      "id": "planck",
+      "name": {
+        "en": "Planck",
+        "fr": "Planck"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2009-05-14",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Switched off, in a heliocentric parking orbit",
+        "fr": "Éteint, sur une orbite de garage autour du Soleil"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-489",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Planck mapped the cosmic microwave background, the oldest light in the Universe, emitted about 380,000 years after the Big Bang. Cooled to a tenth of a degree above absolute zero, its detectors measured tiny temperature differences across the whole sky. Its maps gave the most precise measurement of the age of the Universe and of how much normal matter, dark matter and dark energy it contains.",
+        "fr": "Planck a cartographié le fond diffus cosmologique, la plus ancienne lumière de l'Univers, émise environ 380 000 ans après le Big Bang. Refroidis à un dixième de degré au-dessus du zéro absolu, ses détecteurs ont mesuré d'infimes écarts de température sur tout le ciel. Ses cartes ont donné la mesure la plus précise de l'âge de l'Univers et de sa part de matière ordinaire, de matière noire et d'énergie sombre."
+      },
+      "notes": {
+        "en": "Moved in August 2013 from the Sun–Earth L2 point to a stable parking orbit around the Sun; the last command, sent on 2013-10-23 after the remaining fuel had been used up, switched off its transmitter. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Déplacé en août 2013 du point L2 Soleil-Terre vers une orbite de garage stable autour du Soleil; la dernière commande, envoyée le 2013-10-23 après l'épuisement du carburant restant, a éteint son émetteur. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Planck"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/planck/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Planck/Last_command_sent_to_ESA_s_Planck_space_telescope",
+        "https://www.esa.int/Science_Exploration/Space_Science/Planck",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Planck"
+      ]
+    },
+    {
+      "id": "herschel",
+      "name": {
+        "en": "Herschel Space Observatory",
+        "fr": "Observatoire spatial Herschel"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2009-05-14",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Switched off, in a heliocentric parking orbit",
+        "fr": "Éteint, sur une orbite de garage autour du Soleil"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-486",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Herschel, with a 3.5 m mirror, was the largest infrared telescope sent to space before JWST, observing the cold and dusty Universe in far-infrared light. It revealed the long filaments of gas and dust where stars are born in our galaxy, traced water from interstellar clouds to planet-forming discs and comets, and found distant galaxies forming stars at a furious pace.",
+        "fr": "Herschel, avec son miroir de 3,5 m, a été le plus grand télescope infrarouge envoyé dans l'espace avant JWST, pour observer l'Univers froid et poussiéreux en infrarouge lointain. Il a révélé les longs filaments de gaz et de poussière où naissent les étoiles de notre galaxie, suivi l'eau des nuages interstellaires jusqu'aux disques où se forment les planètes et aux comètes, et découvert des galaxies lointaines qui forment des étoiles à un rythme effréné."
+      },
+      "notes": {
+        "en": "Science ended on 2013-04-29 when its liquid helium coolant ran out. Thruster burns then moved it from the Sun–Earth L2 point to a heliocentric parking orbit; the last command, sent on 2013-06-17 after a final burn had emptied its tanks, switched it off. JPL Horizons publishes its predicted trajectory, so the position shown is a prediction, not a measurement.",
+        "fr": "Fin des observations le 2013-04-29, à l'épuisement de son hélium liquide de refroidissement. Des poussées l'ont ensuite fait passer du point L2 Soleil-Terre à une orbite de garage autour du Soleil; la dernière commande, envoyée le 2013-06-17 après une ultime poussée qui avait vidé ses réservoirs, l'a éteint. JPL Horizons publie sa trajectoire prédite : la position affichée est donc une prédiction, pas une mesure."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Herschel"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/herschel/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.esa.int/Science_Exploration/Space_Science/Herschel/Herschel_closes_its_eyes_on_the_Universe",
+        "https://www.esa.int/Enabling_Support/Operations/Herschel_ends_operations_as_orbiting_testbed",
+        "https://sci.esa.int/web/herschel/-/52798-herschel-status-report-06-2013",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Herschel"
+      ]
+    },
+    {
+      "id": "akatsuki",
+      "name": {
+        "en": "Akatsuki (Venus Climate Orbiter)",
+        "fr": "Akatsuki (Venus Climate Orbiter)"
+      },
+      "agency": "JAXA",
+      "country": "jp",
+      "launchDate": "2010-05-20",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Contact lost in 2024, mission ended in 2025",
+        "fr": "Contact perdu en 2024, mission terminée en 2025"
+      },
+      "ephemeris": "none",
+      "goals": {
+        "en": "Akatsuki studied the weather of Venus, whose atmosphere spins around the planet about 60 times faster than the planet itself (super-rotation). Its cameras, observing at several wavelengths, helped explain what keeps this super-rotation going and found the largest stationary atmospheric wave seen in the solar system. It was also the first to use weather-forecasting methods from Earth (data assimilation) on Venus.",
+        "fr": "Akatsuki a étudié la météo de Vénus, dont l'atmosphère fait le tour de la planète environ 60 fois plus vite que la planète elle-même (la super-rotation). Ses caméras, qui observaient à plusieurs longueurs d'onde, ont aidé à comprendre ce qui entretient cette super-rotation et découvert la plus grande onde atmosphérique stationnaire observée dans le système solaire. C'est aussi la première sonde à appliquer à Vénus des méthodes de prévision météo terrestres (l'assimilation de données)."
+      },
+      "notes": {
+        "en": "Launched on 2010-05-21 Japan time. It missed Venus orbit insertion in December 2010 and was placed in orbit five years later, in December 2015, with its small attitude thrusters. Contact was lost in late April 2024; JAXA ended its operations on 2025-09-18. It remains silent in orbit around Venus. JPL Horizons publishes no trajectory for the present, so it is listed without a position.",
+        "fr": "Lancée le 2010-05-21 heure du Japon. La sonde a manqué sa mise en orbite autour de Vénus en décembre 2010 et y a été placée cinq ans plus tard, en décembre 2015, avec ses petits propulseurs d'attitude. Le contact a été perdu fin avril 2024; la JAXA a mis fin à ses opérations le 2025-09-18. Elle reste muette en orbite autour de Vénus. JPL Horizons ne publie aucune trajectoire pour aujourd'hui : la sonde est donc listée sans position."
+      },
+      "website": {
+        "url": "https://www.isas.jaxa.jp/en/missions/spacecraft/past/akatsuki.html"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://global.jaxa.jp/press/2025/09/20250918-2_e.html",
+        "https://www.isas.jaxa.jp/en/missions/spacecraft/past/akatsuki.html",
+        "https://cosmos.isas.jaxa.jp/our-last-presence-at-venus-has-gone-silent/"
+      ]
+    },
+    {
+      "id": "gaia",
+      "name": {
+        "en": "Gaia",
+        "fr": "Gaia"
+      },
+      "agency": "ESA",
+      "country": "eu",
+      "launchDate": "2013-12-19",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Retired, passivated in heliocentric orbit",
+        "fr": "Retiré, passivé en orbite héliocentrique"
+      },
+      "nextEvent": {
+        "en": "Gaia Data Release 4 (data only; spacecraft silent)",
+        "fr": "Publication des données Gaia DR4 (données seulement ; satellite muet)",
+        "date": "2026"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "-139479",
+      "sampling": {
+        "stepMin": 1440,
+        "pastDays": 60,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "goals": {
+        "en": "Gaia was built to make the most precise three-dimensional map of our galaxy, the Milky Way. By repeatedly measuring the positions, distances, motions, brightness and colours of nearly two billion stars and other objects, it helps astronomers understand how the Milky Way formed and evolved. Its catalogue is a reference used across almost all of astronomy.",
+        "fr": "Gaia a été conçu pour dresser la carte en trois dimensions la plus précise de notre galaxie, la Voie lactée. En mesurant à de nombreuses reprises la position, la distance, le mouvement, l'éclat et la couleur de près de deux milliards d'étoiles et d'autres objets, il aide à comprendre comment la Voie lactée s'est formée et a évolué. Son catalogue sert de référence à presque toute l'astronomie."
+      },
+      "notes": {
+        "en": "Confirmed: passivated and switched off 2025-03-27 after being moved from L2 to a heliocentric retirement orbit keeping it >10 million km from Earth for at least a century. Final legacy catalogue not before end of 2030. JPL Horizons publishes its predicted heliocentric trajectory, so the position shown is a prediction.",
+        "fr": "Confirmé : passivé et éteint le 2025-03-27 après avoir quitté L2 pour une orbite héliocentrique de retraite qui le maintient à plus de 10 millions de km de la Terre pendant au moins un siècle. Catalogue final pas avant fin 2030. JPL Horizons publie sa trajectoire héliocentrique prédite : la position affichée est donc une prévision."
+      },
+      "website": {
+        "url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
+      },
+      "model3d": {
+        "url": "https://scifleet.esa.int/model/gaia/"
+      },
+      "verified": "2026-10-25",
+      "sources": [
+        "https://www.esa.int/Enabling_Support/Operations/Farewell_Gaia!_Spacecraft_operations_come_to_an_end",
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Gaia"
+      ]
+    },
+    {
+      "id": "dart",
+      "name": {
+        "en": "DART",
+        "fr": "DART"
+      },
+      "agency": "NASA",
+      "country": "us",
+      "launchDate": "2021-11-24",
+      "centralBody": "sun",
+      "status": "ended",
+      "phase": {
+        "en": "Ended by design: impacted Dimorphos",
+        "fr": "Terminée comme prévu : impact sur Dimorphos"
+      },
+      "ephemeris": "none",
+      "lowOrbit": false,
+      "goals": {
+        "en": "DART was the first test of planetary defence: could a spacecraft deliberately crashing into an asteroid change its path? It targeted Dimorphos, a small moon about 160 m wide orbiting the larger asteroid Didymos, which posed no threat to Earth. Measuring how much the impact changed Dimorphos's orbit shows how a dangerous asteroid could one day be deflected.",
+        "fr": "DART a été le premier essai de défense planétaire, pour vérifier si un engin spatial projeté volontairement contre un astéroïde peut modifier sa trajectoire. Sa cible était Dimorphos, une petite lune d'environ 160 m qui tourne autour de l'astéroïde Didymos, sans aucun danger pour la Terre. Mesurer la modification de son orbite montre comment on pourrait un jour dévier un astéroïde menaçant."
+      },
+      "notes": {
+        "en": "Kinetic impact on Dimorphos 2022-09-26 (launch 2021-11-23 PST). Aftermath to be surveyed by ESA's Hera from late 2026. Show only as a historical marker, no trajectory after impact.",
+        "fr": "Impact cinétique sur Dimorphos le 2022-09-26 (lancement le 2021-11-23 heure du Pacifique). Suites étudiées par Hera (ESA) à partir de fin 2026. À afficher seulement comme repère historique, sans trajectoire après l'impact."
+      },
+      "website": {
+        "url": "https://science.nasa.gov/mission/dart/"
+      },
+      "verified": "2026-09-27",
+      "sources": ["https://science.nasa.gov/mission/dart/"]
+    },
+    {
       "id": "phobos",
       "name": {
         "en": "Phobos",
@@ -1813,54 +2634,6 @@
       ]
     },
     {
-      "id": "gaia",
-      "name": {
-        "en": "Gaia",
-        "fr": "Gaia"
-      },
-      "agency": "ESA",
-      "country": "eu",
-      "launchDate": "2013-12-19",
-      "centralBody": "sun",
-      "status": "ended",
-      "phase": {
-        "en": "Retired, passivated in heliocentric orbit",
-        "fr": "Retiré, passivé en orbite héliocentrique"
-      },
-      "nextEvent": {
-        "en": "Gaia Data Release 4 (data only; spacecraft silent)",
-        "fr": "Publication des données Gaia DR4 (données seulement ; satellite muet)",
-        "date": "2026"
-      },
-      "ephemeris": "horizons",
-      "horizonsId": "-139479",
-      "sampling": {
-        "stepMin": 1440,
-        "pastDays": 60,
-        "futureDays": 365
-      },
-      "lowOrbit": false,
-      "goals": {
-        "en": "Gaia was built to make the most precise three-dimensional map of our galaxy, the Milky Way. By repeatedly measuring the positions, distances, motions, brightness and colours of nearly two billion stars and other objects, it helps astronomers understand how the Milky Way formed and evolved. Its catalogue is a reference used across almost all of astronomy.",
-        "fr": "Gaia a été conçu pour dresser la carte en trois dimensions la plus précise de notre galaxie, la Voie lactée. En mesurant à de nombreuses reprises la position, la distance, le mouvement, l'éclat et la couleur de près de deux milliards d'étoiles et d'autres objets, il aide à comprendre comment la Voie lactée s'est formée et a évolué. Son catalogue sert de référence à presque toute l'astronomie."
-      },
-      "notes": {
-        "en": "Confirmed: passivated and switched off 2025-03-27 after being moved from L2 to a heliocentric retirement orbit keeping it >10 million km from Earth for at least a century. Final legacy catalogue not before end of 2030. Not trackable (no ephemeris updates).",
-        "fr": "Confirmé : passivé et éteint le 2025-03-27 après avoir quitté L2 pour une orbite héliocentrique de retraite qui le maintient à plus de 10 millions de km de la Terre pendant au moins un siècle. Catalogue final pas avant fin 2030. Plus suivi (pas de mise à jour d'éphémérides)."
-      },
-      "website": {
-        "url": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
-      },
-      "model3d": {
-        "url": "https://scifleet.esa.int/model/gaia/"
-      },
-      "verified": "2026-09-27",
-      "sources": [
-        "https://www.esa.int/Enabling_Support/Operations/Farewell_Gaia!_Spacecraft_operations_come_to_an_end",
-        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Gaia"
-      ]
-    },
-    {
       "id": "euclid",
       "name": {
         "en": "Euclid",
@@ -1950,37 +2723,6 @@
         "https://science.nasa.gov/blogs/roman/2026/09/30/nasa-checks-roman-guidance-system-takes-first-coronagraph-observation/",
         "https://science.nasa.gov/blogs/roman/2026/09/15/nasa-activates-romans-primary-instrument-checks-out-coronagraph/"
       ]
-    },
-    {
-      "id": "dart",
-      "name": {
-        "en": "DART",
-        "fr": "DART"
-      },
-      "agency": "NASA",
-      "country": "us",
-      "launchDate": "2021-11-24",
-      "centralBody": "sun",
-      "status": "ended",
-      "phase": {
-        "en": "Ended by design: impacted Dimorphos",
-        "fr": "Terminée comme prévu : impact sur Dimorphos"
-      },
-      "ephemeris": "none",
-      "lowOrbit": false,
-      "goals": {
-        "en": "DART was the first test of planetary defence: could a spacecraft deliberately crashing into an asteroid change its path? It targeted Dimorphos, a small moon about 160 m wide orbiting the larger asteroid Didymos, which posed no threat to Earth. Measuring how much the impact changed Dimorphos's orbit shows how a dangerous asteroid could one day be deflected.",
-        "fr": "DART a été le premier essai de défense planétaire, pour vérifier si un engin spatial projeté volontairement contre un astéroïde peut modifier sa trajectoire. Sa cible était Dimorphos, une petite lune d'environ 160 m qui tourne autour de l'astéroïde Didymos, sans aucun danger pour la Terre. Mesurer la modification de son orbite montre comment on pourrait un jour dévier un astéroïde menaçant."
-      },
-      "notes": {
-        "en": "Kinetic impact on Dimorphos 2022-09-26 (launch 2021-11-23 PST). Aftermath to be surveyed by ESA's Hera from late 2026. Show only as a historical marker, no trajectory after impact.",
-        "fr": "Impact cinétique sur Dimorphos le 2022-09-26 (lancement le 2021-11-23 heure du Pacifique). Suites étudiées par Hera (ESA) à partir de fin 2026. À afficher seulement comme repère historique, sans trajectoire après l'impact."
-      },
-      "website": {
-        "url": "https://science.nasa.gov/mission/dart/"
-      },
-      "verified": "2026-09-27",
-      "sources": ["https://science.nasa.gov/mission/dart/"]
     },
     {
       "id": "imap",

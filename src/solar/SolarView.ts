@@ -111,7 +111,7 @@ import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type BadgeState, type DetailContent, type DetailTab } from '../ui/DetailPanel';
 import { SolarPanel } from '../ui/SolarPanel';
-import { parseHiddenMissions, writeHiddenMissions } from '../ui/missionToggles';
+import { parseHiddenMissions, writeHiddenMissions } from '../app/hiddenMissions';
 import { setLinePositions } from '../render/lineBuffers';
 
 const ECLIPTIC_Q: Quat = quatFromAxisAngle([1, 0, 0], OBLIQUITY_J2000_RAD);
@@ -611,7 +611,7 @@ class SolarView implements View {
     });
 
     this.sceneModel = new SceneModel(renderer.scene, renderer.renderer, host.baseUrl);
-    this.hiddenMissions = parseHiddenMissions(host.initialParams);
+    this.hiddenMissions = parseHiddenMissions(host.initialParams, this.missions);
     this.panel = new SolarPanel(
       host.i18n,
       PLANETS,
@@ -1034,7 +1034,7 @@ class SolarView implements View {
       p.set('map', '1');
       if (this.starMap.pick) p.set('pick', `star:${this.starMap.pick}`);
     }
-    writeHiddenMissions(p, this.hiddenMissions);
+    writeHiddenMissions(p, this.hiddenMissions, this.missions);
   }
 
   dispose(): void {
@@ -1801,6 +1801,9 @@ class SolarView implements View {
   }
 
   private select(sel: Selection, options: { follow?: boolean; focus?: boolean; frame?: boolean } = {}): void {
+    // A hidden mission picked in the list or a link is drawn again (inactive ones are hidden by default).
+    if (sel?.kind === 'mission' && this.hiddenMissions.has(sel.mission.id))
+      this.panel.showMission(sel.mission.id);
     const cur = this.selection;
     const same = selectionKey(sel) === selectionKey(cur);
     if (!same) {

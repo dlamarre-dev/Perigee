@@ -5,7 +5,7 @@ import marsSitesJson from '../catalog/landing-sites/mars.json';
 import mercurySitesJson from '../catalog/landing-sites/mercury.json';
 import venusSitesJson from '../catalog/landing-sites/venus.json';
 import titanSitesJson from '../catalog/landing-sites/titan.json';
-import { LandingSitesSchema, MissionsCatalogSchema } from '../src/data/schemas';
+import { isInactiveMission, LandingSitesSchema, MissionsCatalogSchema } from '../src/data/schemas';
 
 /** Every landing-site file: `site:<id>` is one namespace across them. */
 const ALL_SITES = [moonSitesJson, marsSitesJson, mercurySitesJson, venusSitesJson, titanSitesJson].flatMap(
@@ -106,5 +106,24 @@ describe('mission goals and main pages', () => {
       // Quebec typography: a no-break space before ":" only.
       expect(e.goals?.fr, e.id).not.toMatch(/ :|[ \u00a0][;?!]/);
     }
+  });
+});
+
+describe('active and inactive spacecraft', () => {
+  const missions = MissionsCatalogSchema.parse(missionsJson).missions;
+  const inactive = (id: string): boolean => {
+    const m = missions.find((x) => x.id === id);
+    if (!m) throw new Error(`${id} not in the catalogue`);
+    return isInactiveMission(m);
+  };
+
+  it('lists ended or silent spacecraft apart, never natural bodies', () => {
+    expect(inactive('gaia')).toBe(true);
+    expect(inactive('dart')).toBe(true);
+    expect(inactive('pioneer-10')).toBe(true);
+    expect(inactive('voyager-1')).toBe(false);
+    expect(inactive('mmx')).toBe(false);
+    expect(inactive('ceres')).toBe(false);
+    expect(inactive('phobos')).toBe(false);
   });
 });

@@ -5,7 +5,7 @@
  */
 import type { PlanetInfo } from '../astro/planets';
 import { isBrightStar, isNearbyStar, NEARBY_STAR_MAX_LY } from '../astro/stars';
-import type { Mission, Moon, Star } from '../data/schemas';
+import { isInactiveMission, type Mission, type Moon, type Star } from '../data/schemas';
 import type { I18n } from '../i18n';
 import { h, markCurrent, sidePanel } from './dom';
 import { MissionToggles } from './missionToggles';
@@ -41,6 +41,8 @@ export class SolarPanel {
   private readonly nearbyList = h('ul', { class: 'results moon-list star-list', id: 'nearby-star-list' });
   private readonly missionsTitle = h('h3', { class: 'results-title' });
   private readonly missionsList = h('ul', { class: 'results' });
+  private readonly inactiveTitle = h('h3', { class: 'results-title' });
+  private readonly inactiveList = h('ul', { class: 'results' });
   private fetchedAt: Date | undefined;
   /** Sunspots drawn: latest NOAA report used (visual honesty), undefined when none are drawn. */
   private readonly sunspots = h('p', { class: 'muted small' });
@@ -99,10 +101,18 @@ export class SolarPanel {
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
+        this.inactiveTitle,
+        this.toggles.inactiveToolbar,
+        this.inactiveList,
       ],
     );
     i18n.onChange(() => this.render());
     this.render();
+  }
+
+  /** Draws a hidden mission again (it was just selected). */
+  showMission(id: string): void {
+    this.toggles.show(id);
   }
 
   private selectedKey: string | undefined;
@@ -213,6 +223,7 @@ export class SolarPanel {
     );
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');
+    this.inactiveTitle.textContent = t('solar.inactiveProbes');
     this.toggles.renderLabels();
     const sun = h('button', { type: 'button', class: 'result', 'data-sun': '' }, [
       h('span', { class: 'result-name' }, [
@@ -286,23 +297,27 @@ export class SolarPanel {
           return h('li', {}, [b]);
         }),
     );
-    this.missionsList.replaceChildren(
-      ...this.missions
-        .filter((m) => m.objectType !== 'natural')
-        .map((m) => {
-          const status = this.i18n.maybe(`mission.status.${m.status}`) ?? m.status;
-          const extra = this.hasEphemeris(m) ? '' : ` · ${t('moon.noEphemeris')}`;
-          const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
-            h('span', { class: 'result-name' }, [
-              h('span', { class: 'dot', style: `background:${this.colors.get(m.id) ?? '#888'}` }),
-              m.name[lang],
-            ]),
-            h('span', { class: 'result-id' }, [`${status}${extra}`]),
-          ]);
-          b.addEventListener('click', () => this.callbacks.onSelectMission(m));
-          return this.toggles.row(m, b);
-        }),
-    );
+    const spacecraft = this.missions.filter((m) => m.objectType !== 'natural');
+    const row = (m: Mission): HTMLLIElement => {
+      const status = this.i18n.maybe(`mission.status.${m.status}`) ?? m.status;
+      const extra = this.hasEphemeris(m) ? '' : ` · ${t('moon.noEphemeris')}`;
+      const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
+        h('span', { class: 'result-name' }, [
+          h('span', { class: 'dot', style: `background:${this.colors.get(m.id) ?? '#888'}` }),
+          m.name[lang],
+        ]),
+        h('span', { class: 'result-id' }, [`${status}${extra}`]),
+      ]);
+      b.addEventListener('click', () => this.callbacks.onSelectMission(m));
+      return this.toggles.row(m, b);
+    };
+    this.missionsList.replaceChildren(...spacecraft.filter((m) => !isInactiveMission(m)).map(row));
+    const inactive = spacecraft.filter(isInactiveMission);
+    this.inactiveList.replaceChildren(...inactive.map(row));
+    this.inactiveTitle.hidden =
+      this.toggles.inactiveToolbar.hidden =
+      this.inactiveList.hidden =
+        inactive.length === 0;
     this.applyExpanded();
     this.applySelected(false);
   }

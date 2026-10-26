@@ -10,6 +10,7 @@ import { engineIdOf } from '../app/embedApi';
 import { filtersFromParams } from '../earth/filters';
 import type { Engine } from './index';
 import { catalogs } from './objects';
+import { defaultHiddenMissions, parseHiddenMissions } from '../app/hiddenMissions';
 import type { Provenance } from './provenance';
 
 type Lang = 'en' | 'fr';
@@ -369,13 +370,27 @@ export async function describeView(
       facts['starMap'] = { star: `star:${mapStar.id}`, ...(mapPick ? { pick: `star:${mapPick.id}` } : {}) };
     }
   }
-  const hidden = (p.get('hide') ?? '').split(',').filter(Boolean);
-  if (hidden.length) {
-    const names = hidden.map((h) => catalogs.missions.find((m) => m.id === h)?.name[lang] ?? h);
-    extra.push(
-      fr ? `Missions masquées : ${join(names, lang)}.` : `Missions not drawn: ${join(names, lang)}.`,
-    );
-    facts['hidden'] = hidden;
+  if (url.view !== 'earth') {
+    // Inactive spacecraft are hidden by default: `hide` lists active ones hidden, `show` inactive ones drawn.
+    const centre = url.view === 'solar' ? 'sun' : url.view;
+    const viewMissions = catalogs.missions.filter((m) => m.centralBody === centre);
+    const hidden = [...parseHiddenMissions(p, viewMissions)];
+    const name = (id: string): string => catalogs.missions.find((m) => m.id === id)?.name[lang] ?? id;
+    const explicit = hidden.filter((id) => !defaultHiddenMissions(viewMissions).has(id));
+    const shown = (p.get('show') ?? '').split(',').filter((id) => id && !hidden.includes(id));
+    if (explicit.length)
+      extra.push(
+        fr
+          ? `Missions masquées : ${join(explicit.map(name), lang)}.`
+          : `Missions not drawn: ${join(explicit.map(name), lang)}.`,
+      );
+    if (shown.length)
+      extra.push(
+        fr
+          ? `Missions inactives affichées : ${join(shown.map(name), lang)} (les autres sont masquées).`
+          : `Inactive missions drawn: ${join(shown.map(name), lang)} (the others are hidden).`,
+      );
+    if (hidden.length) facts['hidden'] = hidden;
   }
   if (p.get('embed') === '1') {
     const ui = (p.get('ui') ?? '').split(',');
