@@ -21,7 +21,12 @@ async function main(): Promise<void> {
   const outDir = resolve(dirFlag >= 0 ? (process.argv[dirFlag + 1] ?? 'public/data') : 'public/data');
   const manifestBytes = await get(`${RAW}/manifest.json`);
   const manifest = ManifestSchema.parse(JSON.parse(manifestBytes.toString('utf8')));
-  for (const entry of [...Object.values(manifest.datasets), ...Object.values(manifest.ephemerides)]) {
+  for (const entry of [
+    ...Object.values(manifest.datasets),
+    ...Object.values(manifest.ephemerides),
+    ...Object.values(manifest.moons),
+    ...Object.values(manifest.comets),
+  ]) {
     const bytes = await get(`${RAW}/${entry.path}`);
     const hash = createHash('sha256').update(bytes).digest('hex');
     if (hash !== entry.sha256) throw new Error(`Hash mismatch for ${entry.path}`);

@@ -1,5 +1,5 @@
 /**
- * README screenshots (docs/images): the eight views at 1920 × 1080, a star's 3D map and the controls of the settings window for
+ * README screenshots (docs/images): the views at 1920 × 1080 (comet included), a star's 3D map and the controls of the settings window for
  * Windows/Linux, macOS and touch screens. Needs the dev server (`npm run dev`), fresh data (`npm run data:pull`) and
  * a GPU (Chromium with ANGLE/D3D11 here, so the high quality tier and its effects are on).
  *
@@ -59,6 +59,18 @@ const shots: Record<string, () => Promise<void>> = {
   async solar() {
     const p = await open('view=solar');
     await shot(p, 'solar');
+  },
+  async comet() {
+    // Encke two days before its 2027-02-10 perihelion (0.34 AU from the Sun): orbit, tails and its panel.
+    const p = await open('view=solar&comets=1&sel=comet:encke&rate=0', 12000, '2027-02-08T00:00:00Z');
+    await p.keyboard.press('f');
+    await p.waitForTimeout(9000);
+    // Back out until the illustrative tails fit, then look across them.
+    for (let i = 0; i < 6; i++) await p.keyboard.press('-');
+    await p.waitForTimeout(3000);
+    await drag(p, 960, 540, 1060, 470);
+    await p.waitForTimeout(3000);
+    await shot(p, 'comet');
   },
   async saturn() {
     const p = await open('view=solar&sel=saturn');
