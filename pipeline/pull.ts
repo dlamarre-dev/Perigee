@@ -26,6 +26,7 @@ async function main(): Promise<void> {
     ...Object.values(manifest.ephemerides),
     ...Object.values(manifest.moons),
     ...Object.values(manifest.comets),
+    ...Object.values(manifest.asteroids),
   ]) {
     const bytes = await get(`${RAW}/${entry.path}`);
     const hash = createHash('sha256').update(bytes).digest('hex');
