@@ -27,6 +27,10 @@ async function main(): Promise<void> {
     ...Object.values(manifest.moons),
     ...Object.values(manifest.comets),
     ...Object.values(manifest.asteroids),
+    // The 30-day archives before the windows (past dates), with their mission's fetch time.
+    ...Object.values(manifest.ephemerides).flatMap((e) =>
+      e.past ? [{ ...e.past, fetchedAt: e.fetchedAt }] : [],
+    ),
   ]) {
     const bytes = await get(`${RAW}/${entry.path}`);
     const hash = createHash('sha256').update(bytes).digest('hex');
