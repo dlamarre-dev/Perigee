@@ -962,6 +962,100 @@ h2[tabindex='-1']:focus {
   }
 }
 
+/* Favorites: a star icon in the top bar ("Favorites" in the phone menu), like the settings gear. */
+.favorites-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.favorites-icon {
+  width: 20px;
+  height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe7ff' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M12 2.8l2.75 5.82 6.35.78-4.68 4.38 1.2 6.3L12 17.02l-5.62 3.06 1.2-6.3L2.9 9.4l6.35-.78z'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+@media (min-width: 641px) and (min-height: 501px) {
+  .favorites-button {
+    padding: 0 6px;
+  }
+
+  .favorites-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Favorites window (src/ui/FavoritesDialog.ts), in About's frame. */
+.about .favorites-list {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.favorites-list .favorite {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.favorite-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: var(--accent-soft);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.favorite-link:hover,
+.favorite-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.favorite-name {
+  font-weight: 600;
+}
+
+.favorite-delete {
+  flex: 0 0 auto;
+  min-width: 40px;
+}
+
+.favorites-save-row {
+  margin: 6px 0;
+}
+
+.favorites-save {
+  width: 100%;
+}
+
+.favorites-status:empty {
+  display: none;
+}
+
+/* The delete confirmation stays a small centred box, phones included. */
+.about.favorites-confirm {
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+  max-width: min(420px, calc(100% - 2 * var(--gutter)));
+  padding: 18px 22px;
+}
+
 /* Settings window (src/ui/SettingsDialog.ts), in About's frame: quality and effects, then the controls drawn
    like a game menu. Each action has its colour, shared by the lit keys, the mouse parts and the legends. */
 .settings {
@@ -2599,4 +2693,9 @@ body.music-open .altimeter {
 .embed-credit:hover,
 .embed-credit:focus-visible {
   color: var(--accent-strong);
+}
+
+/* Favorites: "Clear all" on the left of the window's bottom row, away from Close. */
+.favorites-clear {
+  margin-right: auto;
 }

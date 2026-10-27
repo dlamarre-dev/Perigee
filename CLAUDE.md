@@ -409,6 +409,15 @@ the "up" vector and causes gimbal lock at the poles).
   (object labels painted from their computed style, no panels or bars) and objects only (every point, line and
   sprite hidden except the starfield and the Sun's halo, `keepInPhoto`). Title (file name and PNG iTXt `Title`):
   brand, followed object (else the view's body), displayed date and time in the display zone. A toast confirms (3 s).
+- Favorites (star button between the languages and the settings, "Favorites" in the phone menu,
+  `src/ui/FavoritesDialog.ts`, About's frame): four fixed examples in real time (ISS followed, Apollo 11's site, MRO
+  followed, Voyager 1 followed), then "Add the current view" (fifth row: the URL plus `follow=1` while following), then
+  the saved views, each deletable after a confirmation, "Clear all" at the bottom (confirmed too). A web page cannot read or write the browser's bookmarks
+  (extensions only; approved 2026-10-27), so saved favorites are Perigee links in `localStorage`
+  (`perigee-favorites`, `src/app/favorites.ts`: same origin and path only, browser/test parameters dropped, at most 50:
+  a new view beyond that is refused with a message; re-read at each opening; the window's body scrolls). Names come from the engine (`describe`). Picking one (`openLink` in `src/app/main.ts`)
+  sets the date (or real time), rate and frame, then selects in place when the view and its filters are the same
+  (the camera glides), else rebuilds the view from the link; `follow=1` resumes following like a page load.
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
 - Machine interface (for AI teaching assistants): `src/engine/` is a headless engine (no DOM or WebGL) over the
   published data and the same `src/astro` models: `find`, `describe`, `state`, `distance`, `series`, `define`,

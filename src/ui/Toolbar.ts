@@ -13,6 +13,8 @@ export interface ToolbarCallbacks {
   readonly onPhoto: () => void;
   /** Settings window: quality, effects and controls (src/ui/SettingsDialog.ts). */
   readonly onSettings: () => void;
+  /** Favorite views (src/ui/FavoritesDialog.ts). */
+  readonly onFavorites: () => void;
   readonly onTogglePanel: () => void;
   /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
   readonly onSoundtrack: () => void;
@@ -38,7 +40,7 @@ const FIXED_FRAME_LABELS: Record<ViewId, MessageKey> = {
 };
 
 /**
- * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, settings (quality,
+ * Top bar: title, view switch, side-panel toggle, recenter, frame toggle, language switch, favorites, settings (quality,
  * effects, controls), photo, about, report.
  * When room runs short it degrades step by step instead of wrapping (`data-fit`, src/ui/fit.ts): short labels
  * ("Solar", "?", "@"), then everything but the title and the view tabs folds into a "☰" menu, the tabs on the
@@ -69,6 +71,12 @@ export class Toolbar {
   private readonly settings = h('button', { type: 'button', class: 'btn settings-button' }, [
     h('span', { class: 'settings-icon', 'aria-hidden': 'true' }),
     this.settingsText,
+  ]);
+  /** Favorites: a star icon on large screens, "Favorites" in the phone menu. */
+  private readonly favoritesText = h('span', { class: 'favorites-text' });
+  private readonly favorites = h('button', { type: 'button', class: 'btn favorites-button' }, [
+    h('span', { class: 'favorites-icon', 'aria-hidden': 'true' }),
+    this.favoritesText,
   ]);
   private readonly about = h('button', { type: 'button', class: 'btn' });
   private readonly report = h('button', { type: 'button', class: 'btn' });
@@ -141,6 +149,7 @@ export class Toolbar {
     this.langGroup.append(...this.langButtons);
 
     this.settings.addEventListener('click', callbacks.onSettings);
+    this.favorites.addEventListener('click', callbacks.onFavorites);
 
     this.soundtrack.addEventListener('click', callbacks.onSoundtrack);
     this.menu.append(
@@ -148,6 +157,7 @@ export class Toolbar {
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
+      this.favorites,
       this.settings,
       this.photo,
       this.soundtrack,
@@ -233,6 +243,9 @@ export class Toolbar {
     this.photoText.textContent = t('toolbar.photo');
     this.photo.title = t('toolbar.photo.hint');
     this.photo.setAttribute('aria-label', t('toolbar.photo.hint'));
+    this.favoritesText.textContent = t('toolbar.favorites');
+    this.favorites.title = t('toolbar.favorites.hint');
+    this.favorites.setAttribute('aria-label', t('toolbar.favorites.hint'));
     this.settingsText.textContent = t('toolbar.settings');
     this.settings.title = t('toolbar.settings.hint');
     this.settings.setAttribute('aria-label', t('toolbar.settings.hint'));

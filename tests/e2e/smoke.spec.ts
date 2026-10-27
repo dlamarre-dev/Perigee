@@ -57,7 +57,9 @@ test('time controls update the URL', async ({ page }) => {
 test('about panel shows the build version and the data refresh date', async ({ page }) => {
   await page.goto('./?lang=en');
   await page.getByRole('button', { name: 'About' }).click();
-  const about = page.locator('dialog.about:not(.report):not(.settings)');
+  const about = page.locator(
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm)',
+  );
   await expect(about).toContainText(/Version \d+\.\d+\.\d+ · commit \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
   await expect(about.getByRole('link', { name: 'GoatCounter' })).toBeVisible();
@@ -135,7 +137,9 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   const about = page.locator('.toolbar button[aria-label="About"]');
   const menu = page.locator('.toolbar .menu-toggle');
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
-  const dialog = page.locator('dialog.about:not(.report):not(.settings)');
+  const dialog = page.locator(
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm)',
+  );
   const isOpen = (): Promise<boolean> => dialog.evaluate((d) => (d as HTMLDialogElement).open);
   await expect(async () => {
     // A click that landed on an earlier try opened it: another one would close it (backdrop click).

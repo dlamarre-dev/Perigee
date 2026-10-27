@@ -39,6 +39,7 @@ import { configureKtx2 } from '../render/textures';
 import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
 import { SettingsDialog } from '../ui/SettingsDialog';
+import { FavoritesDialog } from '../ui/FavoritesDialog';
 import { watchKeyboardLayout } from '../ui/keyboardLayout';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setSimTime } from '../render/simTime';
@@ -462,6 +463,26 @@ function main(): void {
     },
   });
   const report = new ReportDialog(i18n);
+  // The headless engine (src/engine), loaded on first use: favorites' names and the embed API's details.
+  let engine: Promise<Engine> | undefined;
+  const getEngine = (): Promise<Engine> =>
+    (engine ??= import('../engine').then((m) =>
+      m.createEngine({ baseUrl: new URL(import.meta.env.BASE_URL, window.location.origin).href }),
+    ));
+  const favorites = new FavoritesDialog(i18n, {
+    appUrl: () => new URL(import.meta.env.BASE_URL, window.location.origin).href,
+    currentLink: () => {
+      syncUrl();
+      const link = new URL(fullAppUrl());
+      if (follow.active && link.searchParams.has('sel')) link.searchParams.set('follow', '1');
+      return link.href;
+    },
+    onOpen: (query) => void openLink(query),
+    nameOf: async (v, sel, lang) => {
+      const d = await (await getEngine()).describe(engineIdOf(v, sel), lang);
+      return typeof d['name'] === 'string' ? d['name'] : undefined;
+    },
+  });
   const timeControl = new TimeControl(clock, i18n, syncUrl);
 
   // Phones: the time bar and bottom sheets cover the lower part of the canvas. Their height feeds the CSS
@@ -518,6 +539,7 @@ function main(): void {
     onReport: () => report.open(),
     onPhoto: () => void takePhoto(),
     onSettings: () => settings.open(),
+    onFavorites: () => favorites.open(),
     onTogglePanel: () => {
       if (panelToggle) toolbar.setPanelOpen(panelToggle());
     },
@@ -565,6 +587,7 @@ function main(): void {
     offline,
     about.element,
     settings.element,
+    favorites.element,
     toast,
     report.element,
   );
@@ -792,6 +815,43 @@ ${
     }
   }
 
+  /**
+   * Moves the app to a Perigee link (a favorite): its date (or real time), rate and frame, then its view and
+   * selection. In the same view with the same filters, the object is selected in place and the camera glides to
+   * it; otherwise the view is rebuilt from the link's parameters, as when the page opens on it.
+   */
+  async function openLink(query: string): Promise<void> {
+    const p = new URLSearchParams(query);
+    const state = parseUrlState(query);
+    if (state.time) clock.jumpTo(state.time);
+    else clock.goLive();
+    clock.setRate(state.rate);
+    changeFrame(state.frame);
+    const sel = p.get('sel') ?? undefined;
+    const viewParams = new URLSearchParams(p);
+    for (const key of ['view', 'lang', 't', 'rate', 'frame', 'follow']) viewParams.delete(key);
+    let inPlace = false;
+    if (state.view === viewId && view) {
+      const current = new URLSearchParams();
+      view.writeUrl(current);
+      const wanted = new URLSearchParams(viewParams);
+      for (const q of [current, wanted]) {
+        q.delete('sel');
+        q.sort();
+      }
+      if (current.toString() === wanted.toString()) {
+        // One frame first, so the view has its objects at the new date before framing one.
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        inPlace = view.selectId(sel);
+      }
+    }
+    if (!inPlace) await switchView(state.view, viewParams);
+    if (p.get('follow') === '1' && sel) resumeFollowUntilMs = Date.now() + 20_000;
+    else follow.stop();
+    timeControl.update();
+    syncUrl();
+  }
+
   // Embed API: only when framed by another page.
   if (window.parent !== window) {
     const embedState = (): EmbedState => {
@@ -809,7 +869,6 @@ ${
         url: fullAppUrl(),
       };
     };
-    let engine: Promise<Engine> | undefined;
     embedApi = new EmbedApi(
       {
         state: embedState,
@@ -850,10 +909,7 @@ ${
         },
         async details(state) {
           if (!state.sel) return undefined;
-          engine ??= import('../engine').then((m) =>
-            m.createEngine({ baseUrl: new URL(import.meta.env.BASE_URL, window.location.origin).href }),
-          );
-          const e = await engine;
+          const e = await getEngine();
           const id = engineIdOf(state.view, state.sel);
           const [facts, position] = await Promise.all([
             e.describe(id, state.lang),

@@ -132,6 +132,12 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   it last downloaded (a badge tells you when you are offline).
 - **Time zone**: dates and times are shown in your computer's time zone; click the zone name in the time bar
   to pick UTC or any other zone.
+- **Favorites**: the star button in the top bar (_Favorites_ in the phone menu) opens a list of views to jump
+  to: four examples in real time (the ISS, Apollo 11's landing site, Mars Reconnaissance Orbiter and Voyager 1,
+  followed), then the views you saved with _Add the current view_ (view, date, selection, filters, following).
+  Picking one switches to its view and date and glides to the object. Up to 50 saved favorites stay in your
+  browser (a web page cannot write to the browser's own bookmarks); delete one, or clear them all, after a
+  confirmation.
 - **Settings**: the site picks a rendering quality for your device (High, Medium or Saver) and adapts its
   resolution as it runs. The gear button in the top bar (_Settings_ in the phone menu) lets you choose another
   quality, switch each immersive effect on or off at High, and shows every control, drawn for your device.
