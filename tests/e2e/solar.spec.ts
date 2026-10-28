@@ -232,6 +232,30 @@ test('notable asteroids are listed by size and selectable', async ({ page }) => 
   await expect(page).toHaveURL(/sel=asteroid%3A4-vesta|sel=asteroid:4-vesta/);
 });
 
+test('dwarf planet candidates have their own box, largest first, apart from the IAU dwarf planets', async ({
+  page,
+}) => {
+  await page.goto(`./?lang=en&view=solar&${FROZEN}`);
+  const panel = page.locator('#side-panel');
+  // The IAU dwarf planets stay with the celestial bodies; the candidates wait behind their box.
+  await expect(panel.locator('[data-mission="eris"]')).toBeVisible();
+  await expect(page.locator('#candidate-list')).toBeHidden();
+  await page.getByLabel('Show the dwarf planet candidates').check();
+  await expect(page).toHaveURL(/candidates=1/);
+  await expect(page.locator('#candidate-list [data-mission]').first()).toHaveAttribute(
+    'data-mission',
+    'gonggong',
+  );
+  await expect(page.locator('#candidate-list [data-mission="2026-ed138"]')).toContainText('≈');
+  await page.locator('#candidate-list [data-mission="quaoar"]').click();
+  const info = page.locator('aside.info:visible');
+  await expect(info.locator('.panel-title')).toHaveText('Quaoar');
+  await expect(info).toContainText('Dwarf planet candidate');
+  await expect(info).toContainText('stellar occultations');
+  await expect(info).toContainText('Weywot');
+  await expect(info.locator('.freshness')).toHaveAttribute('data-state', 'fresh');
+});
+
 test("a star's illustration opens a 3D map with the Sun and the distance between them", async ({ page }) => {
   await page.goto(`./?lang=en&view=solar&sel=star:sirius&${FROZEN}`);
   await page.locator('aside.info:visible .star-map-button').click();

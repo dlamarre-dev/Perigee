@@ -18,7 +18,7 @@ import { dirname, join, resolve } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
 import { z } from 'zod';
 import { LATEST_LEAP_SECOND } from '../src/astro/leapSeconds';
-import { utcToTdbJd } from '../src/astro/time';
+import { slowBodyDue } from './refresh';
 import {
   LandingSitesSchema,
   LaunchSitesSchema,
@@ -323,17 +323,18 @@ async function runSatcat(dataDir: string, guard: LocalFetchGuard): Promise<void>
  * previous file). Moons are an enhancement with a fallback: their first failure stops the remaining moon requests
  * and only warns; the moons gathered are published, the others keep their previous file (the audit flags them).
  */
-/** Asteroid vectors are fetched again once they are this old (they move smoothly; a weekly refresh is plenty). */
-const ASTEROID_REFRESH_DAYS = 7;
-
 async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void> {
   const catalog = MissionsCatalogSchema.parse(
     JSON.parse(await readFile(resolve('catalog/missions.json'), 'utf8')),
   );
   const now = new Date();
+  const previous = await readManifest(dataDir);
   const out: EphemerisToWrite[] = [];
   for (const mission of catalog.missions) {
     if (mission.ephemeris !== 'horizons' || !mission.horizonsId || !mission.sampling) continue;
+    // Dwarf planets (natural objects around the Sun) are refreshed weekly, like the asteroids; the spacecraft daily.
+    const slow = mission.objectType === 'natural' && mission.centralBody === 'sun';
+    if (slow && !slowBodyDue(previous.ephemerides[mission.id], now)) continue;
     let vectors: Awaited<ReturnType<typeof fetchMissionVectors>>;
     try {
       vectors = await fetchMissionVectors(mission, now);
@@ -409,14 +410,8 @@ async function runHorizons(dataDir: string, bootstrapPast = false): Promise<void
   const asteroids = AsteroidsCatalogSchema.parse(
     JSON.parse(await readFile(resolve('catalog/asteroids.json'), 'utf8')),
   );
-  const previous = await readManifest(dataDir);
-  const nowJd = utcToTdbJd(now);
-  const due = (kind: 'comets' | 'asteroids', id: string): boolean => {
-    const entry = previous[kind][id];
-    if (kind === 'comets' || !entry) return true;
-    const ageDays = (now.getTime() - Date.parse(entry.fetchedAt)) / 86_400_000;
-    return ageDays >= ASTEROID_REFRESH_DAYS || entry.endTdbJd < nowJd + 300;
-  };
+  const due = (kind: 'comets' | 'asteroids', id: string): boolean =>
+    kind === 'comets' || slowBodyDue(previous[kind][id], now);
   const bodies = [
     ...comets.comets.map((b) => ({ kind: 'comets' as const, body: b })),
     ...asteroids.asteroids.map((b) => ({ kind: 'asteroids' as const, body: b })),

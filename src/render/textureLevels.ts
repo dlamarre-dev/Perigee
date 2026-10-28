@@ -69,6 +69,11 @@ export const TEXTURE_LEVELS: Readonly<Record<string, Readonly<Record<string, Tex
   eris: { color: procedural(0.5) },
   haumea: { color: procedural(0.5) },
   makemake: { color: procedural(0.5) },
+  gonggong: { color: procedural(0.5) },
+  quaoar: { color: procedural(0.5) },
+  orcus: { color: procedural(0.5) },
+  sedna: { color: procedural(0.5) },
+  '2026-ed138': { color: procedural(0.5) },
 };
 
 export function textureLevels(body: string, name: string): TextureLevels | undefined {

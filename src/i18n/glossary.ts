@@ -170,6 +170,10 @@ export const GLOSSARY = {
     en: 'Areas of the Sun where strong magnetic fields come through the surface. They often hold sunspots, darker because they are cooler, and they are where solar flares are born. NOAA numbers them each day.',
     fr: 'Des zones du Soleil où de forts champs magnétiques traversent la surface. Elles contiennent souvent des taches solaires, plus sombres car plus froides, et c’est là que naissent les éruptions solaires. La NOAA les numérote chaque jour.',
   },
+  dwarfPlanet: {
+    en: 'A body that orbits the Sun and is massive enough for its own gravity to have made it round, but that has not cleared its orbit of other objects, unlike a planet (International Astronomical Union, 2006). The IAU recognises five: Ceres, Pluto, Haumea, Makemake and Eris. Other large bodies beyond Neptune are “candidates”: astronomers think they are round, but their shape or size has not been measured well enough for the IAU to decide.',
+    fr: 'Un corps qui tourne autour du Soleil et assez massif pour que sa propre gravité l’ait rendu rond, mais qui n’a pas fait le ménage sur son orbite, contrairement à une planète (Union astronomique internationale, 2006). L’UAI en reconnaît cinq : Cérès, Pluton, Hauméa, Makémaké et Éris. D’autres gros corps au-delà de Neptune sont des « candidates » : les astronomes les pensent ronds, mais leur forme ou leur taille n’est pas encore assez bien mesurée pour que l’UAI tranche.',
+  },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type GlossaryTerm = keyof typeof GLOSSARY;
@@ -223,4 +227,5 @@ export const LABEL_TERMS: Partial<Record<MessageKey, GlossaryTerm>> = {
   'sun.rotation': 'solarRotation',
   'sun.carrington': 'carrington',
   'sun.regions': 'activeRegions',
+  'dwarf.status': 'dwarfPlanet',
 };

@@ -3032,6 +3032,10 @@
       "objectType": "natural",
       "radiusKm": 469.7,
       "radiiKm": [482.2, 482.1, 445.9],
+      "dwarfStatus": "iau",
+      "sizeMethod": "spacecraft",
+      "discovered": "1801-01-01",
+      "discoverer": "Giuseppe Piazzi",
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -3047,7 +3051,7 @@
       },
       "lowOrbit": false,
       "color": "#8f8b86",
-      "verified": "2026-10-10",
+      "verified": "2026-10-28",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/ceres/",
         "https://doi.org/10.1038/nature18955",
@@ -3064,6 +3068,20 @@
       "objectType": "natural",
       "radiusKm": 798,
       "radiiKm": [1161, 852, 513],
+      "dwarfStatus": "iau",
+      "sizeMethod": "occultation",
+      "discovered": "2004-12-28",
+      "discoverer": "Mike Brown et al.; José Luis Ortiz et al. (disputed)",
+      "moons": [
+        {
+          "en": "Hiʻiaka",
+          "fr": "Hiʻiaka"
+        },
+        {
+          "en": "Namaka",
+          "fr": "Namaka"
+        }
+      ],
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -3083,7 +3101,7 @@
         "en": "Elongated ellipsoid measured during the 21 January 2017 stellar occultation; spins in 3.9 hours about the pole of its ring. The direction of its long axis at a given moment is illustrative (rotation phase not published).",
         "fr": "Ellipsoïde allongé mesuré lors de l’occultation stellaire du 21 janvier 2017 ; tourne en 3,9 heures autour du pôle de son anneau. L’orientation de son grand axe à un instant donné est indicative (phase de rotation non publiée)."
       },
-      "verified": "2026-10-10",
+      "verified": "2026-10-28",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/haumea/",
         "https://doi.org/10.1038/nature24051",
@@ -3099,6 +3117,16 @@
       },
       "objectType": "natural",
       "radiusKm": 715,
+      "dwarfStatus": "iau",
+      "sizeMethod": "occultation",
+      "discovered": "2005-03-31",
+      "discoverer": "Mike Brown, Chad Trujillo, David Rabinowitz",
+      "moons": [
+        {
+          "en": "MK2 (S/2015 (136472) 1)",
+          "fr": "MK2 (S/2015 (136472) 1)"
+        }
+      ],
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -3114,7 +3142,7 @@
       },
       "lowOrbit": false,
       "color": "#c69a7a",
-      "verified": "2026-09-27",
+      "verified": "2026-10-28",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/makemake/",
         "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Makemake"
@@ -3128,6 +3156,16 @@
       },
       "objectType": "natural",
       "radiusKm": 1163,
+      "dwarfStatus": "iau",
+      "sizeMethod": "occultation",
+      "discovered": "2005-01-05",
+      "discoverer": "Mike Brown, Chad Trujillo, David Rabinowitz",
+      "moons": [
+        {
+          "en": "Dysnomia",
+          "fr": "Dysnomie"
+        }
+      ],
       "centralBody": "sun",
       "status": "active",
       "orbit": {
@@ -3143,10 +3181,220 @@
       },
       "lowOrbit": false,
       "color": "#e8e6e3",
-      "verified": "2026-09-27",
+      "verified": "2026-10-28",
       "sources": [
         "https://science.nasa.gov/dwarf-planets/eris/",
         "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=Eris"
+      ]
+    },
+    {
+      "id": "gonggong",
+      "name": {
+        "en": "Gonggong",
+        "fr": "Gonggong"
+      },
+      "objectType": "natural",
+      "radiusKm": 615,
+      "dwarfStatus": "candidate",
+      "sizeMethod": "thermal",
+      "discovered": "2007-07-17",
+      "discoverer": "Megan Schwamb, Mike Brown, David Rabinowitz",
+      "moons": [
+        {
+          "en": "Xiangliu",
+          "fr": "Xiangliu"
+        }
+      ],
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Scattered disc, ~67 AU, 550-year period (perihelion 33 AU, aphelion 101 AU)",
+        "fr": "Disque des objets épars, ~67 AU, période de 550 ans (périhélie 33 AU, aphélie 101 AU)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "225088;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#b07a68",
+      "notes": {
+        "en": "One of the largest bodies beyond Neptune, about 1,230 km across (measured from its heat glow). Its reddish surface holds water ice and methane, and it turns slowly, in 22 hours. Named in 2020 after a Chinese water god; its moon Xiangliu was found in Hubble images.",
+        "fr": "L’un des plus gros corps au-delà de Neptune, environ 1 230 km de diamètre (mesuré par sa chaleur). Sa surface rougeâtre contient de la glace d’eau et du méthane, et il tourne lentement, en 22 heures. Nommé en 2020 d’après un dieu chinois de l’eau ; sa lune Xiangliu a été repérée sur des images de Hubble."
+      },
+      "verified": "2026-10-28",
+      "sources": [
+        "https://en.wikipedia.org/wiki/225088_Gonggong",
+        "https://en.wikipedia.org/wiki/List_of_possible_dwarf_planets",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=225088"
+      ]
+    },
+    {
+      "id": "quaoar",
+      "name": {
+        "en": "Quaoar",
+        "fr": "Quaoar"
+      },
+      "objectType": "natural",
+      "radiusKm": 549,
+      "dwarfStatus": "candidate",
+      "sizeMethod": "occultation",
+      "discovered": "2002-06-04",
+      "discoverer": "Chad Trujillo, Mike Brown",
+      "moons": [
+        {
+          "en": "Weywot",
+          "fr": "Weywot"
+        }
+      ],
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Kuiper Belt, ~43 AU, nearly circular, 284-year period",
+        "fr": "Ceinture de Kuiper, ~43 AU, presque circulaire, période de 284 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "50000;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#a87a64",
+      "notes": {
+        "en": "About 1,100 km across, sized precisely when it passed in front of stars (occultations). Those occultations also revealed two thin rings far from the body, much farther out than rings were thought to survive. Its moon is Weywot.",
+        "fr": "Environ 1 100 km de diamètre, mesuré précisément quand il est passé devant des étoiles (occultations). Ces occultations ont aussi révélé deux anneaux fins, très loin du corps, bien plus loin qu’on ne le croyait possible pour des anneaux. Sa lune s’appelle Weywot."
+      },
+      "verified": "2026-10-28",
+      "sources": [
+        "https://en.wikipedia.org/wiki/50000_Quaoar",
+        "https://en.wikipedia.org/wiki/List_of_possible_dwarf_planets",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=50000"
+      ]
+    },
+    {
+      "id": "orcus",
+      "name": {
+        "en": "Orcus",
+        "fr": "Orcus"
+      },
+      "objectType": "natural",
+      "radiusKm": 455,
+      "dwarfStatus": "candidate",
+      "sizeMethod": "thermal",
+      "discovered": "2004-02-17",
+      "discoverer": "Mike Brown, Chad Trujillo, David Rabinowitz",
+      "moons": [
+        {
+          "en": "Vanth",
+          "fr": "Vanth"
+        }
+      ],
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Kuiper Belt (plutino: 2 orbits for every 3 of Neptune, like Pluto), ~39 AU, 247-year period",
+        "fr": "Ceinture de Kuiper (plutino : 2 orbites pour 3 de Neptune, comme Pluton), ~39 AU, période de 247 ans"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "90482;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#a9a6a2",
+      "notes": {
+        "en": "About 910 km across (measured from its heat glow). Orcus is a kind of “anti-Pluto”: same orbit size and period, but always on the opposite side of its orbit. Its large moon Vanth is about half its size.",
+        "fr": "Environ 910 km de diamètre (mesuré par sa chaleur). Orcus est une sorte d’« anti-Pluton » : même taille d’orbite et même période, mais toujours du côté opposé de son orbite. Sa grosse lune Vanth fait environ la moitié de sa taille."
+      },
+      "verified": "2026-10-28",
+      "sources": [
+        "https://en.wikipedia.org/wiki/90482_Orcus",
+        "https://en.wikipedia.org/wiki/List_of_possible_dwarf_planets",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=90482"
+      ]
+    },
+    {
+      "id": "sedna",
+      "name": {
+        "en": "Sedna",
+        "fr": "Sedna"
+      },
+      "objectType": "natural",
+      "radiusKm": 453,
+      "dwarfStatus": "candidate",
+      "sizeMethod": "thermal",
+      "diameterRangeKm": [648, 1220],
+      "discovered": "2003-11-14",
+      "discoverer": "Mike Brown, Chad Trujillo, David Rabinowitz",
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Detached object, ~500 AU, about 11,000-year period (perihelion 76 AU, aphelion ~900 AU)",
+        "fr": "Objet détaché, ~500 AU, période d’environ 11 000 ans (périhélie 76 AU, aphélie ~900 AU)"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "90377;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#b35b42",
+      "notes": {
+        "en": "One of the reddest objects in the solar system, roughly 900 km across. Its enormous orbit never comes closer than 76 AU, so Neptune cannot have pushed it there: a passing star or an unseen planet may have. It is nearing its closest point to the Sun (2076).",
+        "fr": "L’un des objets les plus rouges du système solaire, environ 900 km de diamètre. Son orbite immense ne s’approche jamais à moins de 76 AU : Neptune n’a donc pas pu l’y envoyer, peut-être une étoile de passage ou une planète encore inconnue. Il approche de son point le plus proche du Soleil (2076)."
+      },
+      "verified": "2026-10-28",
+      "sources": [
+        "https://en.wikipedia.org/wiki/90377_Sedna",
+        "https://en.wikipedia.org/wiki/List_of_possible_dwarf_planets",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=90377"
+      ]
+    },
+    {
+      "id": "2026-ed138",
+      "name": {
+        "en": "2026 ED138",
+        "fr": "2026 ED138"
+      },
+      "objectType": "natural",
+      "radiusKm": 500,
+      "dwarfStatus": "candidate",
+      "sizeMethod": "brightness",
+      "diameterRangeKm": [600, 1500],
+      "discovered": "2026",
+      "discoverer": "Matthew Holman (Rubin Observatory data), with Kevin Napier and Mario Jurić",
+      "centralBody": "sun",
+      "status": "active",
+      "orbit": {
+        "en": "Kuiper Belt, ~43 AU, 282-year period, tilted 24.5°",
+        "fr": "Ceinture de Kuiper, ~43 AU, période de 282 ans, inclinée de 24,5°"
+      },
+      "ephemeris": "horizons",
+      "horizonsId": "DES=2026 ED138;",
+      "sampling": {
+        "stepMin": 14400,
+        "pastDays": 365,
+        "futureDays": 365
+      },
+      "lowOrbit": false,
+      "color": "#9c9894",
+      "notes": {
+        "en": "The first dwarf planet candidate found by the Vera C. Rubin Observatory, announced on 27 October 2026. Seen 30 times in 2026 and traced back to 2016 in older images, it is about 46 AU from the Sun. Its size, between 600 and 1,500 km, is estimated from its brightness alone: further observations must measure it before it can be called a dwarf planet. Drawn here at 1,000 km.",
+        "fr": "Première candidate planète naine trouvée par l’observatoire Vera C. Rubin, annoncée le 27 octobre 2026. Observée 30 fois en 2026 et retrouvée jusqu’en 2016 sur des images plus anciennes, elle est à environ 46 AU du Soleil. Sa taille, entre 600 et 1 500 km, est estimée d’après son éclat seulement : il faudra la mesurer avant de pouvoir parler de planète naine. Dessinée ici à 1 000 km."
+      },
+      "verified": "2026-10-28",
+      "sources": [
+        "https://www.washington.edu/news/2026/10/27/rubin-observatory-new-dwarf-planet-candidate/",
+        "https://www6.slac.stanford.edu/news/2026-10-27-nsf-doe-vera-c-rubin-observatory-reveals-its-first-dwarf-planet-candidate-our-solar",
+        "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2026%20ED138"
       ]
     }
   ]

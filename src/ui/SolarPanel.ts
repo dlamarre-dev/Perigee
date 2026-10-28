@@ -1,8 +1,8 @@
 /**
  * Side panel of the solar-system view: planets (their moons folded underneath, unfolded while the planet or
- * one of its moons is selected), well-known stars in two groups (the bright ones, and those within 20 light-years;
- * each named on the sky when ticked), comets (drawn and listed when ticked, brightest first), notable asteroids
- * (likewise, largest first), spacecraft (status,
+ * one of its moons is selected), then boxes with their lists: dwarf planet candidates (drawn and listed when ticked,
+ * largest first), comets (brightest first), notable asteroids (largest first), stars within 20 light-years and
+ * bright stars (each named on the sky when ticked), then spacecraft (status,
  * ephemeris availability), log scale.
  */
 import type { PlanetInfo } from '../astro/planets';
@@ -35,6 +35,8 @@ export interface SolarPanelCallbacks {
   /** Draws the asteroids of catalog/asteroids.json (off by default). */
   readonly onToggleAsteroids: (on: boolean) => void;
   readonly onSelectAsteroid: (a: Asteroid) => void;
+  /** Draws the dwarf planet candidates (natural missions with `dwarfStatus: 'candidate'`; off by default). */
+  readonly onToggleCandidates: (on: boolean) => void;
   readonly onToggleLogScale: (on: boolean) => void;
   /** Spacecraft whose markers, trajectories and labels are not drawn. */
   readonly onMissionVisibility: (hidden: ReadonlySet<string>) => void;
@@ -60,6 +62,9 @@ export class SolarPanel {
   private readonly asteroidsToggle = h('input', { type: 'checkbox', id: 'toggle-asteroids' });
   private readonly asteroidsLabel = h('label', { for: 'toggle-asteroids' });
   private readonly asteroidsList = h('ul', { class: 'results moon-list star-list', id: 'asteroid-list' });
+  private readonly candidatesToggle = h('input', { type: 'checkbox', id: 'toggle-candidates' });
+  private readonly candidatesLabel = h('label', { for: 'toggle-candidates' });
+  private readonly candidatesList = h('ul', { class: 'results moon-list star-list', id: 'candidate-list' });
   /** Estimated magnitude now, by comet id (from their vectors, once loaded). */
   private cometMagnitudes: ReadonlyMap<string, number> = new Map();
   private readonly missionsTitle = h('h3', { class: 'results-title' });
@@ -89,6 +94,7 @@ export class SolarPanel {
     showComets = false,
     private readonly asteroids: readonly Asteroid[] = [],
     showAsteroids = false,
+    showCandidates = false,
   ) {
     this.toggles = new MissionToggles(
       i18n,
@@ -126,6 +132,13 @@ export class SolarPanel {
       callbacks.onToggleAsteroids(this.asteroidsToggle.checked);
     });
     this.asteroidsList.hidden = !showAsteroids;
+    this.candidatesToggle.checked = showCandidates;
+    this.candidatesToggle.setAttribute('aria-controls', 'candidate-list');
+    this.candidatesToggle.addEventListener('change', () => {
+      this.candidatesList.hidden = !this.candidatesToggle.checked;
+      callbacks.onToggleCandidates(this.candidatesToggle.checked);
+    });
+    this.candidatesList.hidden = !showCandidates;
     this.element = sidePanel(
       { class: 'panel side-panel filters', id: 'side-panel', 'aria-labelledby': 'solar-panel-title' },
       [
@@ -135,14 +148,16 @@ export class SolarPanel {
         h('p', { class: 'search-row' }, [this.logToggle, this.logLabel]),
         this.planetsTitle,
         this.planetsList,
-        h('p', { class: 'search-row' }, [this.starsToggle, this.starsLabel]),
-        this.starsList,
-        h('p', { class: 'search-row' }, [this.nearbyToggle, this.nearbyLabel]),
-        this.nearbyList,
+        h('p', { class: 'search-row' }, [this.candidatesToggle, this.candidatesLabel]),
+        this.candidatesList,
         h('p', { class: 'search-row' }, [this.cometsToggle, this.cometsLabel]),
         this.cometsList,
         h('p', { class: 'search-row' }, [this.asteroidsToggle, this.asteroidsLabel]),
         this.asteroidsList,
+        h('p', { class: 'search-row' }, [this.nearbyToggle, this.nearbyLabel]),
+        this.nearbyList,
+        h('p', { class: 'search-row' }, [this.starsToggle, this.starsLabel]),
+        this.starsList,
         this.missionsTitle,
         this.toggles.toolbar,
         this.missionsList,
@@ -310,6 +325,27 @@ export class SolarPanel {
           return h('li', {}, [b]);
         }),
     );
+    this.candidatesLabel.textContent = t('solar.candidates');
+    // Largest first; an estimated size (from the brightness only) is marked as approximate.
+    this.candidatesList.replaceChildren(
+      ...this.missions
+        .filter((m) => m.dwarfStatus === 'candidate')
+        .sort((a, b) => (b.radiusKm ?? 0) - (a.radiusKm ?? 0))
+        .map((m) => {
+          const d = this.i18n.format('asteroid.diameterShort', {
+            d: this.i18n.number(2 * (m.radiusKm ?? 0)),
+          });
+          const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
+            h('span', { class: 'result-name' }, [
+              h('span', { class: 'dot', style: `background:${this.colors.get(m.id) ?? '#888'}` }),
+              m.name[lang],
+            ]),
+            h('span', { class: 'result-id' }, [m.sizeMethod === 'brightness' ? `≈ ${d}` : d]),
+          ]);
+          b.addEventListener('click', () => this.callbacks.onSelectMission(m));
+          return h('li', {}, [b]);
+        }),
+    );
     this.planetsTitle.textContent = t('solar.planets');
     this.missionsTitle.textContent = t('solar.probes');
     this.inactiveTitle.textContent = t('solar.inactiveProbes');
@@ -373,7 +409,7 @@ export class SolarPanel {
     );
     this.planetsList.append(
       ...this.missions
-        .filter((m) => m.objectType === 'natural')
+        .filter((m) => m.objectType === 'natural' && m.dwarfStatus !== 'candidate')
         .map((m) => {
           const b = h('button', { type: 'button', class: 'result', 'data-mission': m.id }, [
             h('span', { class: 'result-name' }, [

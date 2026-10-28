@@ -101,6 +101,10 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   with the dwarf planets) and those visited by spacecraft (Eros, Itokawa, Ryugu, Bennu, Didymos, Dinkinesh…), listed
   by size and placed from JPL Horizons. Their panel gives size, rotation, moons, the missions that visited them and
   their orbit; Vesta, Bennu, Eros and Itokawa come with a NASA shape model, most others with a picture.
+- **Dwarf planets**: the five recognised by the IAU (Pluto, Ceres, Haumea, Makemake, Eris) are with the planets;
+  tick _Show the dwarf planet candidates_ for Gonggong, Quaoar, Orcus, Sedna and 2026 ED138, the first candidate
+  found by the Rubin Observatory (October 2026). Their panel says how each size was measured (spacecraft, stellar
+  occultations, heat glow, or brightness only), with discovery, moons and a telescope image.
 - **Retired spacecraft**: below the active probes, an _Inactive spacecraft_ section lists famous ended missions
   (Pioneer 10 and 11, Ulysses, Spitzer, Kepler, Planck, Herschel, Gaia, Galileo, Cassini, Rosetta, Dawn…). Those
   JPL Horizons still follows are drawn on their predicted path; the others are listed with their story. They are

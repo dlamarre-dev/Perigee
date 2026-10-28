@@ -117,6 +117,13 @@ export const PROCEDURAL: Record<string, BandedStyle> = {
   eris: { stops: uniform([230, 228, 223]), noise: 0.05, stretch: 1, seed: 11 },
   haumea: { stops: uniform([232, 230, 226]), noise: 0.05, stretch: 1, seed: 12 },
   makemake: { stops: uniform([216, 184, 154]), noise: 0.07, stretch: 1, seed: 13 },
+  // Dwarf planet candidates (never resolved): their colour and albedo (Gonggong, Quaoar and Sedna red, Orcus
+  // neutral grey); 2026 ED138 is not characterised yet, so neutral.
+  gonggong: { stops: uniform([150, 106, 88]), noise: 0.06, stretch: 1, seed: 14 },
+  quaoar: { stops: uniform([146, 108, 90]), noise: 0.06, stretch: 1, seed: 15 },
+  orcus: { stops: uniform([160, 158, 156]), noise: 0.05, stretch: 1, seed: 16 },
+  sedna: { stops: uniform([168, 92, 66]), noise: 0.06, stretch: 1, seed: 17 },
+  '2026-ed138': { stops: uniform([140, 138, 134]), noise: 0.05, stretch: 1, seed: 18 },
   // Titan in visible light (illustrative): its thick orange haze hides the surface entirely; Cassini true-colour
   // images show a nearly uniform butterscotch disc, a little darker and browner towards the poles (polar hoods),
   // with faint zonal banding of the haze.

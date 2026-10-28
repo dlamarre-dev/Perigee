@@ -157,6 +157,32 @@ await publishEphemerides(dataDir, [
   },
 ]);
 
+// A synthetic dwarf planet candidate "quaoar" (circular orbit at 43 AU, 10-day steps): drawn once its box is ticked.
+const quaoar: number[] = [];
+const quaoarSpeed = Math.sqrt(GM_KM3_S2.sun / (43 * AU));
+for (let k = -36; k <= 36; k++) {
+  const s = propagateKepler(
+    { posKm: [0, 43 * AU, 0], velKmS: [-quaoarSpeed, 0, 0] },
+    k * 10 * 86_400,
+    GM_KM3_S2.sun,
+  );
+  quaoar.push(centreTdbJd + 10 * k, ...s.posKm, ...s.velKmS);
+}
+const quaoarRows = Float64Array.from(quaoar);
+await publishEphemerides(dataDir, [
+  {
+    missionId: 'quaoar',
+    horizonsId: '50000;',
+    center: '500@10',
+    centralBody: 'sun',
+    stepMin: 14400,
+    source: 'fixture (synthetic Kepler orbit)',
+    fetchedAt,
+    rows: quaoarRows,
+    bytes: float64LittleEndian(quaoarRows),
+  },
+]);
+
 // A synthetic comet near perihelion (Encke-like, q = 0.34 AU, e = 0.85), 1.2 AU from the Sun at the frozen time:
 // drawn with its orbit and tails once the comets box is ticked. Not real Horizons data.
 const comet: number[] = [];

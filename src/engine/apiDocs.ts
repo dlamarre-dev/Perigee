@@ -74,7 +74,13 @@ function build(site: string, info: BuildInfo) {
     ...catalogs.moons.map((m) =>
       entry(`moon:${m.id}`, 'moon', omit(m, ['id', 'color', 'elements', 'shape'])),
     ),
-    ...catalogs.missions.map((m) => entry(m.id, 'mission', omit(m, ['id', 'color', 'sampling']))),
+    ...catalogs.missions.map((m) =>
+      entry(
+        m.id,
+        m.dwarfStatus === 'candidate' ? 'dwarf-planet-candidate' : m.dwarfStatus ? 'dwarf-planet' : 'mission',
+        omit(m, ['id', 'color', 'sampling']),
+      ),
+    ),
     ...catalogs.science.map((s) => entry(String(s.norad), 'satellite', omit(s, ['id']))),
     ...sitesByBody().flatMap(([body, sites]) =>
       sites.map((s) => entry(`site:${s.id}`, 'site', { body, ...omit(s, ['id', 'feed']) })),
@@ -185,7 +191,7 @@ function interfaceDoc(site: string, header: object): object {
     },
     ids: {
       description:
-        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet or dwarf planet id ("mars", "ceres"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for landing and impact sites on the Moon, Mars, Mercury, Venus and Titan (Mercury, Venus and Titan in the solar view, where the site opens in the second tab of the info panel), "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars, "comet:<id>" for comets and "asteroid:<id>" for notable asteroids (solar view). The `view` and `embed` links of each catalogue object open it.',
+        'Object ids, shared by the URL `sel` parameter, the embed API and the catalogue: a NORAD catalogue number ("25544"), a mission id ("lro"), a planet, dwarf planet or dwarf planet candidate id ("mars", "ceres", "quaoar", "2026-ed138"), "sun", "moon:<id>" for moons ("moon:titan"; "moon" alone in the Earth view), "site:<id>" for landing and impact sites on the Moon, Mars, Mercury, Venus and Titan (Mercury, Venus and Titan in the solar view, where the site opens in the second tab of the info panel), "launch:<id>" for launch sites (written "site:<id>" in the Earth view URL), "star:<id>" for named stars, "comet:<id>" for comets and "asteroid:<id>" for notable asteroids (solar view). The `view` and `embed` links of each catalogue object open it.',
     },
     url: {
       base: site,
@@ -212,6 +218,11 @@ function interfaceDoc(site: string, header: object): object {
         nearby: {
           values: ['1'],
           description: 'Name the stars within 20 light-years of the Sun (solar view).',
+        },
+        candidates: {
+          values: ['1'],
+          description:
+            'Draw and list the dwarf planet candidates (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138), from JPL Horizons vectors (solar view; a selected candidate is drawn in any case).',
         },
         asteroids: {
           values: ['1'],
@@ -349,6 +360,10 @@ function fullText(site: string, b: ReturnType<typeof build>, llms: string): stri
       status: o['status'] as MissionStatus,
       objectType: o['objectType'] as Mission['objectType'],
     });
+  section('Dwarf planets (IAU) and candidates (solar view; positions from JPL Horizons)', [
+    'dwarf-planet',
+    'dwarf-planet-candidate',
+  ]);
   section('Missions beyond Earth orbit', ['mission'], (o) => !inactive(o));
   section('Inactive missions beyond Earth orbit (ended or silent)', ['mission'], inactive);
   section('Featured Earth science satellites', ['satellite']);

@@ -9,7 +9,7 @@ Site: https://perigee.info/ (English: `?lang=en`, French: `?lang=fr`). It is a s
 - [Earth](https://perigee.info/?lang=en): every active catalogued satellite (about 16,000), propagated with SGP4 from CelesTrak orbital elements (OMM), with launch sites, filters by operator, country, constellation, orbit type and object type, and the Moon.
 - [Moon](https://perigee.info/?lang=en&view=moon): active lunar orbiters from NASA/JPL Horizons ephemerides, and the landing and impact sites (Apollo, Luna, Chang'e, Chandrayaan, commercial landers).
 - [Mars](https://perigee.info/?lang=en&view=mars): Mars orbiters, Phobos and Deimos (Horizons), landing sites and the current rover positions (NASA MMGIS waypoint feeds).
-- [Solar system](https://perigee.info/?lang=en&view=solar): planets and moons (astronomy-engine, JPL mean elements), dwarf planets and interplanetary probes (Horizons), with their trajectories.
+- [Solar system](https://perigee.info/?lang=en&view=solar): planets and moons (astronomy-engine, JPL mean elements), dwarf planets and interplanetary probes (Horizons), with their trajectories; `candidates=1` draws and lists the dwarf planet candidates (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138; ids `quaoar`, `2026-ed138`…).
 
 ## Links into the app
 

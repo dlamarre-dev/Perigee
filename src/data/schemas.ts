@@ -314,6 +314,20 @@ export const MissionSchema = z.object({
    * meridian (the planet, for a synchronous moon), y, z along the pole.
    */
   radiiKm: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]).optional(),
+  /**
+   * A dwarf planet recognised by the IAU (Ceres, Haumea, Makemake, Eris), or a candidate the solar view lists apart,
+   * behind its own box (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138).
+   */
+  dwarfStatus: z.enum(['iau', 'candidate']).optional(),
+  /** How the size was measured: by a visiting spacecraft, a stellar occultation, the thermal emission, or estimated from the brightness. */
+  sizeMethod: z.enum(['spacecraft', 'occultation', 'thermal', 'brightness']).optional(),
+  /** Range of a size still uncertain (km), shown beside the diameter (`radiusKm` is then the central estimate). */
+  diameterRangeKm: z.tuple([z.number().positive(), z.number().positive()]).optional(),
+  /** Discovery of a natural object: date at the source's precision, and who. */
+  discovered: partialDate.optional(),
+  discoverer: z.string().optional(),
+  /** Its moons, by name (listed in the panel; not drawn). */
+  moons: z.array(localized).optional(),
   agency: z.string().optional(),
   country: iso2.optional(),
   launchDate: isoDate.optional(),
@@ -359,7 +373,14 @@ export const MissionsCatalogSchema = z
   .object({ verified: isoDate, missions: z.array(MissionSchema) })
   .refine((c) => c.missions.every((m) => m.ephemeris !== 'horizons' || (m.horizonsId && m.sampling)), {
     message: 'Missions with ephemeris "horizons" need horizonsId and sampling',
-  });
+  })
+  .refine(
+    (c) =>
+      c.missions.every(
+        (m) => !m.dwarfStatus || (m.objectType === 'natural' && m.radiusKm !== undefined && m.sizeMethod),
+      ),
+    { message: 'Dwarf planets are natural objects with radiusKm and sizeMethod' },
+  );
 export type MissionsCatalog = z.infer<typeof MissionsCatalogSchema>;
 
 export const LandingSiteTypeSchema = z.enum(['soft', 'hard', 'impact', 'crewed', 'rover-last-known']);
@@ -612,6 +633,7 @@ export type ImageLicence = z.infer<typeof ImageLicenceSchema>;
 export const ImageKindSchema = z.enum([
   'photo',
   'observation',
+  'telescope',
   'orbital',
   'aerial',
   'illustration',

@@ -208,7 +208,7 @@ No single API provides "active probes + landing sites". We maintain:
   designation, `horizonsId` `<number>;`, group (main belt, Mars-crosser, near-Earth, Jupiter trojan), spectral type,
   diameter and measured dimensions, rotation, discovery, moons, spacecraft visits (`missionId` links
   `missions.json`), student notes, sources. Fetched by the same `horizons` run as the comets (`OBJ_DATA=YES` for H and
-  G), but only when their file is a week old or its window ends within 300 days (`ASTEROID_REFRESH_DAYS`):
+  G), but only when their file is a week old or its window ends within 300 days (`slowBodyDue`, `pipeline/refresh.ts`):
   `data/ephem/asteroids/<id>.bin`, manifest top-level `asteroids`; the audit flags them after 10 days
   (`asteroid-ephemeris-stale`). Shown like the comets (`SmallBodyObject` in `SolarView`: box "Show the notable
   asteroids", URL `asteroids=1`, list sorted by size, `sel=asteroid:<id>`, osculating orbits, no tail); the panel
@@ -216,6 +216,17 @@ No single API provides "active probes + landing sites". We maintain:
   have a NASA shape model (Vesta, Bennu, Eros, Itokawa: `asteroid:` model targets, shown in the panel and in place of
   the marker when close, turning about z at the catalogued period, orientation illustrative); 20 others an image
   (ESO VLT/SPHERE for the large ones, spacecraft views for the visited ones).
+- Dwarf planets in `catalog/missions.json` (natural objects around the Sun, Horizons vectors refreshed **weekly**
+  by `slowBodyDue`, like the asteroids; spacecraft stay daily): `dwarfStatus` `iau` (Ceres, Haumea, Makemake, Eris,
+  listed with the planets) or `candidate`, with `sizeMethod` (spacecraft, occultation, thermal, brightness),
+  `diameterRangeKm` for an uncertain size, `discovered`/`discoverer` and `moons` (named in the panel, not drawn; placing
+  them in 3D is a later study). Candidates (added 2026-10-28; the planetologists' usual set plus Rubin's first): Gonggong
+  (225088), Quaoar (50000), Orcus (90482), Sedna (90377) and 2026 ED138 (`DES=2026 ED138;`, unnumbered, 600–1500 km
+  from its brightness, announced 2026-10-27), behind the solar panel's box "Show the dwarf planet candidates" (URL
+  `candidates=1`, off by default; a selected one is drawn anyway). Procedural uniform maps (`texture.uniform`;
+  ED138's colour is unmeasured, `texture.unknown`); a body with a uniform map shows its telescope image (image kind
+  `telescope`: Hubble, Rubin, ESO VLT) instead of its sphere in the panel. API docs kinds `dwarf-planet` and
+  `dwarf-planet-candidate`; glossary term `dwarfPlanet`.
 - Optional: enrichment via Wikidata SPARQL (CORS-enabled) for descriptions/links, never for positions.
 
 ### 4.5 Body textures and models
@@ -710,6 +721,9 @@ the audit flags:
   Helios 1 and 2, Galileo, NEAR Shoemaker, Cassini, Deep Space 1 (ends 2003), Stardust (2011), WMAP (2009),
   Hayabusa, Rosetta, Deep Impact/EPOXI (2020), Dawn, Akatsuki, DART. MarCO is unknown to Horizons. Ulysses shows a photo:
   NASA's model spans its 72 m wire antenna, leaving the spacecraft a dot in the preview.
+- Dwarf planet candidates (added 2026-10-28): 2026 ED138 is new (Rubin, condition code 3, size from brightness only):
+  re-check its size, any moon, its MPC number and whether the IAU recognises it; likewise any IAU decision on the
+  other candidates.
 - Mars rover positions come from NASA MMGIS waypoint feeds (`catalog/landing-sites/mars.json` `feed`, daily).
 
 ## 14. Code conventions

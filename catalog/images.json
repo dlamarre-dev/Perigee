@@ -1584,11 +1584,11 @@
     {
       "id": "comet-schwassmann-wachmann-1",
       "target": "comet:schwassmann-wachmann-1",
-      "kind": "photo",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/3/38/The_Heart_of_a_Centaur_-_Iotw2149a.jpg",
       "credit": "International Gemini Observatory/NOIRLab/NSF/AURA/C. Schambeau; image processing: T.A. Rector, M. Zamani & D. de Martin",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:The_Heart_of_a_Centaur_-_Iotw2149a.jpg",
         "https://noirlab.edu/public/images/iotw2149a/"
@@ -1690,11 +1690,11 @@
     {
       "id": "comet-bernardinelli-bernstein",
       "target": "comet:bernardinelli-bernstein",
-      "kind": "photo",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/6/6f/C-2014UN271-BB_Hubble_2022Mar28_unannotated.png",
       "credit": "Nrco0e, from NASA/ESA Hubble Space Telescope data",
       "licence": "cc-by-sa-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:C-2014UN271-BB_Hubble_2022Mar28_unannotated.png",
         "https://archive.stsci.edu/proposal_search.php?id=16878&mission=hst"
@@ -1703,11 +1703,11 @@
     {
       "id": "asteroid-2-pallas",
       "target": "asteroid:2-pallas",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/f/f1/2_Pallas_-_ESO_-_Potw2008a.tif",
       "credit": "ESO/M. Marsset, P. Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:2_Pallas_-_ESO_-_Potw2008a.tif",
         "https://www.eso.org/public/images/potw2008a/"
@@ -1716,11 +1716,11 @@
     {
       "id": "asteroid-10-hygiea",
       "target": "asteroid:10-hygiea",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/8/88/SPHERE_image_of_Hygiea.jpg",
       "credit": "ESO/P. Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:SPHERE_image_of_Hygiea.jpg",
         "https://www.eso.org/public/images/eso1918a/"
@@ -1729,11 +1729,11 @@
     {
       "id": "asteroid-704-interamnia",
       "target": "asteroid:704-interamnia",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/b/be/%28704%29_Interamnia_VLTSPHERE.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:(704)_Interamnia_VLTSPHERE.png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1742,11 +1742,11 @@
     {
       "id": "asteroid-52-europa",
       "target": "asteroid:52-europa",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/e/ed/%2852%29_Europa_VLTSPHERE.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:(52)_Europa_VLTSPHERE.png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1755,11 +1755,11 @@
     {
       "id": "asteroid-511-davida",
       "target": "asteroid:511-davida",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/4/4c/%28511%29_Davida_VLTSPHERE.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:(511)_Davida_VLTSPHERE.png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1768,11 +1768,11 @@
     {
       "id": "asteroid-87-sylvia",
       "target": "asteroid:87-sylvia",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/0/07/Sylvia_VLT.png",
       "credit": "ESO/Vernazza et al./MISTRAL algorithm (ONERA/CNRS)",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:Sylvia_VLT.png",
         "https://www.eso.org/public/images/eso2114d/"
@@ -1781,11 +1781,11 @@
     {
       "id": "asteroid-15-eunomia",
       "target": "asteroid:15-eunomia",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/4/42/%2815%29_Eunomia_VLTSPHERE.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:(15)_Eunomia_VLTSPHERE.png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1794,11 +1794,11 @@
     {
       "id": "asteroid-65-cybele",
       "target": "asteroid:65-cybele",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Cybele_ZIMPOL.png",
       "credit": "M. Marsset et al. 2023 (A&A 670, A52), ESO VLT/SPHERE-ZIMPOL",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:Cybele_ZIMPOL.png",
         "https://www.aanda.org/articles/aa/full_html/2023/02/aa43859-22/F1.html"
@@ -1807,11 +1807,11 @@
     {
       "id": "asteroid-3-juno",
       "target": "asteroid:3-juno",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/6/61/3_Juno_VLT_%282021%29.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-sa-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:3_Juno_VLT_(2021).png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1820,11 +1820,11 @@
     {
       "id": "asteroid-21-lutetia",
       "target": "asteroid:21-lutetia",
-      "kind": "observation",
+      "kind": "telescope",
       "file": "https://upload.wikimedia.org/wikipedia/commons/3/31/%2821%29_Lutetia_VLTSPHERE.png",
       "credit": "P. Vernazza et al. 2021 (A&A 654, A56), ESO VLT/SPHERE",
       "licence": "cc-by-4.0",
-      "verified": "2026-10-26",
+      "verified": "2026-10-28",
       "sources": [
         "https://commons.wikimedia.org/wiki/File:(21)_Lutetia_VLTSPHERE.png",
         "https://doi.org/10.1051/0004-6361/202141781"
@@ -1959,6 +1959,63 @@
       "sources": [
         "https://commons.wikimedia.org/wiki/File:Donaldjohanson_closest_approach.png",
         "https://science.nasa.gov/image-article/nasas-lucy-spacecraft-images-asteroid-donaldjohanson/"
+      ]
+    },
+    {
+      "id": "mission-gonggong",
+      "target": "mission:gonggong",
+      "kind": "telescope",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/1/17/225088_Gonggong_and_Xiangliu_by_Hubble_%282010%29.png",
+      "credit": "NASA, STScI, W. Fraser, G. Marton et al. (Hubble)",
+      "licence": "public-domain",
+      "verified": "2026-10-28",
+      "sources": ["https://commons.wikimedia.org/wiki/File:225088_Gonggong_and_Xiangliu_by_Hubble_(2010).png"]
+    },
+    {
+      "id": "mission-quaoar",
+      "target": "mission:quaoar",
+      "kind": "telescope",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/65/Quaoar-Weywot_Hubble_2025-06-30_crop.png",
+      "credit": "E. Fernandez-Valenzuela (Hubble, STScI/NASA), processed by Nrco0e",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-28",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Quaoar-Weywot_Hubble_2025-06-30_crop.png"]
+    },
+    {
+      "id": "mission-orcus",
+      "target": "mission:orcus",
+      "kind": "telescope",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Orcus-Vanth_discovery.jpg",
+      "credit": "NASA/ESA Hubble, M. E. Brown; processed by Nrco0e",
+      "licence": "public-domain",
+      "verified": "2026-10-28",
+      "sources": ["https://commons.wikimedia.org/wiki/File:Orcus-Vanth_discovery.jpg"]
+    },
+    {
+      "id": "mission-sedna",
+      "target": "mission:sedna",
+      "kind": "telescope",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/0/02/Sedna_PRC2004-14d.jpg",
+      "credit": "NASA, ESA, M. Brown (Hubble)",
+      "licence": "public-domain",
+      "verified": "2026-10-28",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Sedna_PRC2004-14d.jpg",
+        "https://hubblesite.org/newscenter/newsdesk/archive/releases/2004/14/image/d"
+      ]
+    },
+    {
+      "id": "mission-2026-ed138",
+      "target": "mission:2026-ed138",
+      "kind": "telescope",
+      "file": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Mosaic_of_2026_ED138_discovery_images_%28noirlab2626f%29.jpg",
+      "credit": "NSF–DOE Vera C. Rubin Observatory/NOIRLab/SLAC/AURA; processing M. Jurić (UW), D. de Martin & M. Zamani (NSF NOIRLab)",
+      "licence": "cc-by-4.0",
+      "verified": "2026-10-28",
+      "sources": [
+        "https://commons.wikimedia.org/wiki/File:Mosaic_of_2026_ED138_discovery_images_(noirlab2626f).jpg",
+        "https://noirlab.edu/public/images/noirlab2626f/",
+        "https://www.washington.edu/news/2026/10/27/rubin-observatory-new-dwarf-planet-candidate/"
       ]
     }
   ]

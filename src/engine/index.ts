@@ -255,6 +255,20 @@ export class Engine {
           launchDate: m.launchDate,
           centralBody: m.centralBody,
           status: m.status,
+          // A dwarf planet (or candidate): its size, how it was measured, discovery and moons.
+          ...(m.objectType === 'natural'
+            ? {
+                objectType: m.objectType,
+                dwarfStatus: m.dwarfStatus,
+                diameterKm: m.radiusKm !== undefined ? 2 * m.radiusKm : undefined,
+                diameterRangeKm: m.diameterRangeKm,
+                radiiKm: m.radiiKm,
+                sizeMethod: m.sizeMethod,
+                discovered: m.discovered,
+                discoverer: m.discoverer,
+                moons: m.moons?.map((x) => x[lang]),
+              }
+            : {}),
           orbit: localized(m.orbit),
           goals: localized(m.goals),
           notes: localized(m.notes),

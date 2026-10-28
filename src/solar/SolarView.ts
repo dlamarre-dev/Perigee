@@ -61,7 +61,7 @@ import {
   modelMinDistance,
   withModel,
 } from '../render/models';
-import { withImage } from '../render/images';
+import { imageFor, withImage } from '../render/images';
 import mercurySitesJson from '../../catalog/landing-sites/mercury.json';
 import venusSitesJson from '../../catalog/landing-sites/venus.json';
 import titanSitesJson from '../../catalog/landing-sites/titan.json';
@@ -133,6 +133,11 @@ const STAR_LEADER_PX = 26;
 /** Beyond every body of the view (km): a star's direction is tested for occlusion with a point this far out. */
 const STAR_TEST_DISTANCE_KM = 1e13;
 /** Surface maps that are not a mosaic of real images: said so in the detail panel (visual honesty). */
+/** A plain, uniform map (never imaged in detail): a telescope image of the body says more. */
+function uniformMap(id: string): boolean {
+  return TEXTURE_NOTES[id] === 'texture.uniform' || TEXTURE_NOTES[id] === 'texture.unknown';
+}
+
 /** What the body's map shows: the note above, or the caption of the map variant on screen (src/render/mapVariants.ts). */
 function textureNote(id: string): MessageKey | undefined {
   const variant = MAP_VARIANTS[id];
@@ -147,6 +152,11 @@ const TEXTURE_NOTES: Readonly<Record<string, MessageKey>> = {
   eris: 'texture.uniform',
   haumea: 'texture.uniform',
   makemake: 'texture.uniform',
+  gonggong: 'texture.uniform',
+  quaoar: 'texture.uniform',
+  orcus: 'texture.uniform',
+  sedna: 'texture.uniform',
+  '2026-ed138': 'texture.unknown',
   amalthea: 'texture.handDrawn',
   hyperion: 'texture.handDrawn',
   miranda: 'texture.uniform',
@@ -417,6 +427,8 @@ class SolarView implements View {
   private readonly stars: readonly StarObject[];
   /** Name the bright stars on the sky (URL `stars=1`); a selected star is named in any case. */
   private showStars: boolean;
+  /** Dwarf planet candidates drawn (URL `candidates=1`; off by default). */
+  private showCandidates: boolean;
   /** Landing and impact sites of the bodies that have some (Venus, Titan), by body id. */
   private readonly surfaceSites = new Map<string, SurfaceSites>();
   /** The site described in the detail panel's second tab, on the selected body (which stays followed). */
@@ -464,6 +476,7 @@ class SolarView implements View {
     this.showStars = host.initialParams.get('stars') === '1';
     this.showSites = host.initialParams.get('sites') === '1';
     this.showNearbyStars = host.initialParams.get('nearby') === '1';
+    this.showCandidates = host.initialParams.get('candidates') === '1';
     this.shown = {
       comet: host.initialParams.get('comets') === '1',
       asteroid: host.initialParams.get('asteroids') === '1',
@@ -734,6 +747,10 @@ class SolarView implements View {
         onToggleAsteroids: (on) => this.toggleSmallBodies('asteroid', on),
         onSelectAsteroid: (asteroid) =>
           this.select({ kind: 'asteroid', asteroid }, { focus: true, frame: true }),
+        onToggleCandidates: (on) => {
+          this.showCandidates = on;
+          this.host.syncUrl();
+        },
         onToggleLogScale: (on) => {
           this.host.follow.stop();
           this.logScale = on;
@@ -756,6 +773,7 @@ class SolarView implements View {
       this.shown.comet,
       asteroids,
       this.shown.asteroid,
+      this.showCandidates,
     );
     this.panel.visible = window.matchMedia('(min-width: 900px)').matches;
     this.ring = new SelectionMarker();
@@ -841,7 +859,9 @@ class SolarView implements View {
       t.sample = t.track.sample(this.tdbJd);
       const s = t.sample.state;
       t.scene =
-        s && !this.hiddenMissions.has(t.mission.id) ? quatRotate(this.sceneQ, map(s.posKm)) : undefined;
+        s && !this.hiddenMissions.has(t.mission.id) && this.missionDrawn(t.mission)
+          ? quatRotate(this.sceneQ, map(s.posKm))
+          : undefined;
       if (t.mesh) {
         t.mesh.mesh.visible = !this.logScale && t.scene !== undefined;
         if (t.scene) t.mesh.setSunDirection(normalize(scale(t.scene, -1)));
@@ -877,8 +897,9 @@ class SolarView implements View {
     for (const t of this.probes) {
       if (!t.orbit) continue;
       const state = t.sample.state;
-      t.orbit.line.visible = state !== undefined;
-      if (!state || !needsRebuild(t.orbit, orbitsKey, f.nowMs)) continue;
+      // A candidate dwarf planet not drawn (box unticked, not selected) has no position and no orbit.
+      t.orbit.line.visible = state !== undefined && t.scene !== undefined;
+      if (!state || !t.orbit.line.visible || !needsRebuild(t.orbit, orbitsKey, f.nowMs)) continue;
       this.buildOrbit(t.orbit, state, GM_KM3_S2.sun, t.mission.radiusKm ?? 100, orbitsKey, f.nowMs, map);
     }
     this.updateSmallBodies(orbitsKey, f.nowMs, map);
@@ -1181,6 +1202,7 @@ class SolarView implements View {
     if (sel?.kind === 'asteroid') p.set('sel', `asteroid:${sel.asteroid.id}`);
     if (this.shown.comet) p.set('comets', '1');
     if (this.shown.asteroid) p.set('asteroids', '1');
+    if (this.showCandidates) p.set('candidates', '1');
     // A site shown in the second tab: its body is implied (selectId resolves it).
     if (this.site && this.detailTab === 'sub') p.set('sel', `site:${this.site.id}`);
     if (this.logScale) p.set('log', '1');
@@ -1658,6 +1680,16 @@ class SolarView implements View {
     if (sel?.kind !== 'comet' && sel?.kind !== 'asteroid') return undefined;
     const key = selectionKey(sel);
     return this.smallBodies.find((b) => smallBodyKey(b) === key);
+  }
+
+  /** Dwarf planet candidates are drawn while their box is ticked, or the selected one; everything else always. */
+  private missionDrawn(m: Mission): boolean {
+    const sel = this.selection;
+    return (
+      m.dwarfStatus !== 'candidate' ||
+      this.showCandidates ||
+      (sel?.kind === 'mission' && sel.mission.id === m.id)
+    );
   }
 
   private toggleSmallBodies(kind: SmallBodyKind, on: boolean): void {
@@ -3013,9 +3045,18 @@ class SolarView implements View {
     if (m.country) rows.push([t('info.country'), countryName(i18n, m.country)]);
     if (m.launchDate) rows.push([t('info.launch'), m.launchDate]);
     if (m.objectType === 'natural') {
-      if (m.radiusKm) rows.push([t('info.radius'), `${num(m.radiusKm)} km`]);
+      if (m.dwarfStatus) rows.push([t('dwarf.status'), t(`dwarf.status.${m.dwarfStatus}`)]);
+      if (m.diameterRangeKm && m.radiusKm) {
+        // An uncertain size: the central estimate and its range, as diameters.
+        const [lo, hi] = m.diameterRangeKm;
+        rows.push([t('asteroid.diameter'), `≈ ${num(2 * m.radiusKm)} km (${num(lo)}–${num(hi)} km)`]);
+      } else if (m.radiusKm) rows.push([t('info.radius'), `${num(m.radiusKm)} km`]);
+      if (m.sizeMethod) rows.push([t('dwarf.sizeMethod'), t(`dwarf.sizeMethod.${m.sizeMethod}`)]);
       const shape = this.shapeRow(m.radiiKm);
       if (shape) rows.push(shape);
+      if (m.discovered)
+        rows.push([t('comet.discovered'), m.discoverer ? `${m.discovered} (${m.discoverer})` : m.discovered]);
+      if (m.moons?.length) rows.push([t('asteroid.moons'), m.moons.map((x) => x[i18n.lang]).join(', ')]);
       if (m.orbit) rows.push([t('info.orbit'), m.orbit[i18n.lang]]);
       const texture = textureNote(m.id);
       if (texture) rows.push([t('info.texture'), t(texture)]);
@@ -3029,8 +3070,8 @@ class SolarView implements View {
         `${m.nextEvent[i18n.lang]}${m.nextEvent.date ? ` (${m.nextEvent.date})` : ''}`,
       ]);
     }
-    // Small bodies use Horizons' "<number>;" syntax; show the number only.
-    if (m.horizonsId) rows.push([t('info.horizons'), m.horizonsId.replace(/;$/, '')]);
+    // Small bodies use Horizons' "<number>;" or "DES=<designation>;" syntax; show the number or designation only.
+    if (m.horizonsId) rows.push([t('info.horizons'), m.horizonsId.replace(/^DES=/, '').replace(/;$/, '')]);
 
     const sample = probe?.sample;
     let badge: { text: string; state: BadgeState };
@@ -3075,7 +3116,8 @@ class SolarView implements View {
       followable: s !== undefined,
       ...withModel(`mission:${m.id}`),
       ...withImage(`mission:${m.id}`),
-      ...(m.objectType === 'natural' && m.radiusKm
+      // A body never imaged in detail (uniform map) shows its telescope image rather than its plain sphere.
+      ...(m.objectType === 'natural' && m.radiusKm && !(uniformMap(m.id) && imageFor(`mission:${m.id}`))
         ? {
             preview: {
               kind: 'body',

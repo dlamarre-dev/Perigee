@@ -327,6 +327,26 @@ describe('engine comets', () => {
   });
 });
 
+describe('engine dwarf planets', () => {
+  it('describes an IAU dwarf planet and a candidate with their size, how it was measured and their moons', async () => {
+    const eris = await engine.describe('eris', 'fr');
+    expect(eris.dwarfStatus).toBe('iau');
+    expect(eris.moons).toEqual(['Dysnomie']);
+    const q = await engine.describe('quaoar', 'en');
+    expect(q).toMatchObject({ dwarfStatus: 'candidate', sizeMethod: 'occultation', diameterKm: 1098 });
+    expect(q.moons).toEqual(['Weywot']);
+    const ed = await engine.describe('2026-ed138', 'en');
+    expect(ed).toMatchObject({
+      sizeMethod: 'brightness',
+      diameterRangeKm: [600, 1500],
+      horizonsId: 'DES=2026 ED138;',
+    });
+    expect((await engine.find('ED138')).map((o) => o.id)).toContain('2026-ed138');
+    const v = await engine.describeView('?view=solar&candidates=1', 'en');
+    expect(JSON.stringify(v)).toMatch(/dwarf planet candidates/);
+  });
+});
+
 describe('engine asteroids', () => {
   it('finds an asteroid, interpolates its vectors and describes it', async () => {
     expect((await engine.find('Vesta')).map((o) => o.id)).toContain('asteroid:4-vesta');

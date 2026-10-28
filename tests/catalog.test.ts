@@ -21,7 +21,8 @@ describe('curated catalogues', () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const m of missions.missions.filter((x) => x.ephemeris === 'horizons')) {
       // Spacecraft and planetary IDs are integers; small bodies use Horizons' "<number>;" designation.
-      expect(m.horizonsId, m.id).toMatch(/^-?\d+;?$/);
+      // An unnumbered small body (a new dwarf planet candidate) goes by its designation, like the comets.
+      expect(m.horizonsId, m.id).toMatch(m.objectType === 'natural' ? /^(-?\d+;?|DES=[^;]+;)$/ : /^-?\d+;?$/);
       expect(m.sampling, m.id).toBeDefined();
     }
   });

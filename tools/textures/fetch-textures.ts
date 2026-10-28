@@ -19,7 +19,7 @@
  * - Venus cloud tops and radar surface, Saturn, Neptune: Solar System Scope (INOVE), CC BY 4.0 — artist's impressions
  * - Titan: near-infrared Cassini ISS mosaic (USGS Astrogeology); visible light: procedural haze (see procedural.ts)
  * - Uranus: procedural, illustrative (see procedural.ts); Uranus and Neptune rings from the NASA fact sheets
- * - Eris, Haumea, Makemake: procedural (see procedural.ts)
+ * - Eris, Haumea, Makemake and the dwarf planet candidates: procedural (see procedural.ts)
  * - Relief normal maps (see normals.ts): Moon LOLA (CGI Moon Kit `ldem_16`), Mars MOLA MEGDR 16 px/deg (PDS
  *   Geosciences Node), Mercury MESSENGER global DEM 665 m (USGS Astrogeology), Ceres Dawn HAMO DTM 60 px/deg (DLR,
  *   USGS Astrogeology)
@@ -392,6 +392,11 @@ const BODIES: Record<string, readonly Source[]> = {
   ],
   haumea: [{ name: 'color', procedural: 'haumea' }],
   makemake: [{ name: 'color', procedural: 'makemake' }],
+  gonggong: [{ name: 'color', procedural: 'gonggong' }],
+  quaoar: [{ name: 'color', procedural: 'quaoar' }],
+  orcus: [{ name: 'color', procedural: 'orcus' }],
+  sedna: [{ name: 'color', procedural: 'sedna' }],
+  '2026-ed138': [{ name: 'color', procedural: '2026-ed138' }],
 };
 
 const here = dirname(fileURLToPath(import.meta.url));

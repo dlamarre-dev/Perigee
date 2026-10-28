@@ -355,6 +355,12 @@ export async function describeView(
       extra.push(
         fr ? 'Les étoiles brillantes sont nommées sur le ciel.' : 'The bright stars are named on the sky.',
       );
+    if (p.get('candidates') === '1')
+      extra.push(
+        fr
+          ? 'Les planètes naines candidates (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138) sont dessinées avec leur orbite.'
+          : 'The dwarf planet candidates (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138) are drawn with their orbits.',
+      );
     if (p.get('asteroids') === '1')
       extra.push(
         fr
