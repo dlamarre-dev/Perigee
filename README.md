@@ -1,5 +1,13 @@
 # Perigee
 
+<p>
+  <a href="https://github.com/dlamarre-dev/Perigee/stargazers"><img src="https://img.shields.io/github/stars/dlamarre-dev/Perigee?style=flat&logo=github&label=stars" alt="GitHub stars" height="20"></a>
+  <a href="https://github.com/dlamarre-dev/Perigee/forks"><img src="https://img.shields.io/github/forks/dlamarre-dev/Perigee?style=flat&logo=github&label=forks" alt="GitHub forks" height="20"></a>
+  <a href="https://github.com/dlamarre-dev/Perigee"><img src="https://img.shields.io/github/repo-size/dlamarre-dev/Perigee?style=flat&label=repo%20size&color=blue" alt="Repository size" height="20"></a>
+  <a href="https://www.npmjs.com/package/perigee-mcp"><img src="https://img.shields.io/npm/v/perigee-mcp?style=flat&label=npm%20perigee-mcp" alt="npm version" height="20"></a>
+  <a href="https://socket.dev/npm/package/perigee-mcp"><img src="https://badge.socket.dev/npm/package/perigee-mcp" alt="Socket Badge" height="20"></a>
+</p>
+
 **Perigee** shows, in real time, the artificial objects orbiting the Earth, the Moon and Mars, and the
 spacecraft travelling through the solar system. Every position is computed in your browser from public data
 (CelesTrak, NASA/JPL Horizons, astronomy-engine). The site works in English and French (_Périgée_) and keeps
@@ -224,3 +232,7 @@ Created by David Fugère-Lamarre. Code under the [MIT license](LICENSE).
 Corrections to missions, statuses and sites are especially welcome: use the _Report_ button on the site, or open
 an issue. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 the development setup (`npm install`, `npm run data:pull`, `npm run dev`) and the project rules.
+
+## External links
+
+<a href="https://alternativeto.net/software/perigee/about/?utm_source=badge&utm_medium=referral"><img src="https://alternativeto.net/static/badges/badge-compact-dark.svg" alt="Perigee | AlternativeTo" width="171" height="58"></a>

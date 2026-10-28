@@ -2699,3 +2699,18 @@ body.music-open .altimeter {
 .favorites-clear {
   margin-right: auto;
 }
+
+/* AlternativeTo badge (About), on the left of the window's bottom row. */
+.about-badge {
+  margin-right: auto;
+  line-height: 0;
+}
+
+.about-badge img {
+  width: 171px;
+  height: 58px;
+}
+
+.about-badge ~ .btn {
+  align-self: center;
+}

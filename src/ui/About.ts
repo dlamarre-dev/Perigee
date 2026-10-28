@@ -119,6 +119,8 @@ const DATA_CREDITS: readonly Credit[] = [
 const AUTHOR = 'David Fugère-Lamarre';
 const REPOSITORY = 'https://github.com/dlamarre-dev/Perigee';
 const GOATCOUNTER = 'https://www.goatcounter.com';
+const ALTERNATIVETO =
+  'https://alternativeto.net/software/perigee/about/?utm_source=badge&utm_medium=referral';
 /** Static pages in public/, one per language. */
 const PRIVACY_PAGES: Readonly<Record<Lang, string>> = {
   en: 'privacy.html',
@@ -196,7 +198,19 @@ export class About {
       this.analytics,
       this.reports,
       h('p', { class: 'small' }, [this.privacyLink]),
-      h('div', { class: 'dialog-actions' }, [this.close]),
+      h('div', { class: 'dialog-actions' }, [
+        // AlternativeTo's badge, served from this site (public/badges): no request leaves for their server until
+        // the visitor follows the link.
+        h('a', { class: 'about-badge', href: ALTERNATIVETO, target: '_blank', rel: 'noopener' }, [
+          h('img', {
+            src: `${baseUrl}badges/alternativeto.svg`,
+            alt: 'Perigee | AlternativeTo',
+            width: 171,
+            height: 58,
+          }),
+        ]),
+        this.close,
+      ]),
     ]);
     scrollingDialog(this.element);
     // Close when clicking the backdrop.
