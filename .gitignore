@@ -2,6 +2,7 @@ node_modules/
 dist/
 .venv/
 .idea/workspace.xml
+.idea/Perigee.iml
 *.log
 
 # Texture sources are downloaded by tools/textures and never committed.
