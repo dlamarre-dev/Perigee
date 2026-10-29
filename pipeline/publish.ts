@@ -549,6 +549,10 @@ export async function publishSmallBodyEphemerides(
 ): Promise<Manifest> {
   const manifest = await readManifest(dataDir);
   const entries = Object.fromEntries(Object.entries(manifest[kind]).filter(([id]) => catalogIds.has(id)));
+  // Files of bodies dropped from the catalogue go with their entries.
+  for (const [id, old] of Object.entries(manifest[kind])) {
+    if (!catalogIds.has(id)) await rm(join(dataDir, old.path), { force: true });
+  }
   const next: Manifest = { ...manifest, [kind]: entries };
   for (const c of list) {
     const count = c.rows.length / 7;

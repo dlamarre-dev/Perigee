@@ -15,6 +15,10 @@ describe('slow body refresh (asteroids, dwarf planets)', () => {
     expect(slowBodyDue({ fetchedAt: daysAgo(7), endTdbJd: farEnd }, now)).toBe(true);
   });
 
+  it('fetches a body whose fetch time is unreadable', () => {
+    expect(slowBodyDue({ fetchedAt: 'not a date', endTdbJd: farEnd }, now)).toBe(true);
+  });
+
   it('fetches again early when the window ends within 300 days', () => {
     expect(slowBodyDue({ fetchedAt: daysAgo(1), endTdbJd: utcToTdbJd(now) + 299 }, now)).toBe(true);
   });

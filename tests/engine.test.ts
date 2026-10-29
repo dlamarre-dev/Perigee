@@ -345,6 +345,11 @@ describe('engine dwarf planets', () => {
     const v = await engine.describeView('?view=solar&candidates=1', 'en');
     expect(JSON.stringify(v)).toMatch(/dwarf planet candidates/);
   });
+
+  it('describes only inactive missions as shown by show=', async () => {
+    const v = JSON.stringify(await engine.describeView('?view=solar&show=voyager-1,pioneer-10', 'en'));
+    expect(v).toMatch(/Inactive missions drawn: Pioneer 10 \(/);
+  });
 });
 
 describe('engine asteroids', () => {

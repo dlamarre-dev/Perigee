@@ -846,8 +846,14 @@ ${
       }
     }
     if (!inPlace) await switchView(state.view, viewParams);
-    if (p.get('follow') === '1' && sel) resumeFollowUntilMs = Date.now() + 20_000;
-    else follow.stop();
+    if (p.get('follow') === '1' && sel) {
+      // Follow the link's object: a follow still running (the previous object, in place) would end the resume.
+      if (controls.following) {
+        controls.setFollow(undefined);
+        endFollow();
+      }
+      resumeFollowUntilMs = Date.now() + 20_000;
+    } else follow.stop();
     timeControl.update();
     syncUrl();
   }

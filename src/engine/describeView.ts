@@ -394,8 +394,10 @@ export async function describeView(
     const viewMissions = catalogs.missions.filter((m) => m.centralBody === centre);
     const hidden = [...parseHiddenMissions(p, viewMissions)];
     const name = (id: string): string => catalogs.missions.find((m) => m.id === id)?.name[lang] ?? id;
-    const explicit = hidden.filter((id) => !defaultHiddenMissions(viewMissions).has(id));
-    const shown = (p.get('show') ?? '').split(',').filter((id) => id && !hidden.includes(id));
+    const byDefault = defaultHiddenMissions(viewMissions);
+    const explicit = hidden.filter((id) => !byDefault.has(id));
+    // `show` names only inactive missions; an active one there changes nothing.
+    const shown = [...byDefault].filter((id) => !hidden.includes(id));
     if (explicit.length)
       extra.push(
         fr

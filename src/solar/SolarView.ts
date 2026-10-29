@@ -423,6 +423,9 @@ class SolarView implements View {
   private readonly shown: Record<SmallBodyKind, boolean>;
   /** Their vectors are loaded on first use (kind shown or one selected). */
   private readonly requested: Record<SmallBodyKind, boolean> = { comet: false, asteroid: false };
+  /** Comet magnitudes listed in the panel, and the date (TDB) they were computed for. */
+  private cometMagnitudes: ReadonlyMap<string, number> = new Map();
+  private cometMagnitudesJd: number | undefined;
   private manifest: Manifest | undefined;
   private readonly stars: readonly StarObject[];
   /** Name the bright stars on the sky (URL `stars=1`); a selected star is named in any case. */
@@ -1135,6 +1138,19 @@ class SolarView implements View {
 
   uiTick(): void {
     this.renderDetail(false);
+    this.refreshCometMagnitudes();
+  }
+
+  /** The comet list follows the shown date: magnitudes again once it has moved by a day. */
+  private refreshCometMagnitudes(): void {
+    if (this.cometMagnitudesJd === undefined || Math.abs(this.tdbJd - this.cometMagnitudesJd) < 1) return;
+    this.cometMagnitudesJd = this.tdbJd;
+    const next = this.smallBodyMagnitudes('comet');
+    const shown = (m: ReadonlyMap<string, number>): string =>
+      [...m].map(([id, mag]) => `${id}:${mag.toFixed(1)}`).join(',');
+    if (shown(next) === shown(this.cometMagnitudes)) return;
+    this.cometMagnitudes = next;
+    this.panel.setCometMagnitudes(next);
   }
 
   click(xCss: number, yCss: number, double: boolean): void {
@@ -1669,7 +1685,8 @@ class SolarView implements View {
   private smallBodySelection(b: SmallBodyObject): NonNullable<Selection> {
     if (b.kind === 'comet') {
       const comet = this.cometCatalog.find((c) => c.id === b.id);
-      if (comet) return { kind: 'comet', comet };
+      if (!comet) throw new Error(`unknown small body ${smallBodyKey(b)}`);
+      return { kind: 'comet', comet };
     }
     const asteroid = this.asteroidCatalog.find((a) => a.id === b.id);
     if (!asteroid) throw new Error(`unknown small body ${smallBodyKey(b)}`);
@@ -1771,7 +1788,11 @@ class SolarView implements View {
     ).then(() => {
       if (this.disposed) return;
       // Comets are listed by brightness; asteroids by size (catalogue values).
-      if (kind === 'comet') this.panel.setCometMagnitudes(this.smallBodyMagnitudes('comet'));
+      if (kind === 'comet') {
+        this.cometMagnitudesJd = this.tdbJd;
+        this.cometMagnitudes = this.smallBodyMagnitudes('comet');
+        this.panel.setCometMagnitudes(this.cometMagnitudes);
+      }
       this.renderDetail(false);
     });
   }

@@ -216,10 +216,10 @@ export class FavoritesDialog {
     const result = addFavorite(favoritesStorage(), this.callbacks.currentLink(), this.callbacks.appUrl());
     const key: MessageKey = result.full
       ? 'favorites.full'
-      : !result.added
-        ? 'favorites.storageError'
-        : result.existed
-          ? 'favorites.already'
+      : result.existed
+        ? 'favorites.already'
+        : !result.added
+          ? 'favorites.storageError'
           : 'favorites.saved';
     this.render();
     setText(this.status, this.i18n.format(key, { max: String(MAX_FAVORITES) }));

@@ -13,5 +13,6 @@ export function slowBodyDue(
 ): boolean {
   if (!entry) return true;
   const ageDays = (now.getTime() - Date.parse(entry.fetchedAt)) / 86_400_000;
-  return ageDays >= SLOW_BODY_REFRESH_DAYS || entry.endTdbJd < utcToTdbJd(now) + 300;
+  // An unreadable fetchedAt (NaN age) counts as due.
+  return !(ageDays < SLOW_BODY_REFRESH_DAYS) || entry.endTdbJd < utcToTdbJd(now) + 300;
 }

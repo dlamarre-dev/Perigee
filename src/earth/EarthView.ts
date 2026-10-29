@@ -60,6 +60,8 @@ const MOON_PICK_PX = 14;
 const LIGHT_SPEED_KM_S = 299_792.458;
 /** A past date must call for the same element set this long (wall ms) before the satellites are rebuilt. */
 const SET_SETTLE_MS = 500;
+/** Wait before loading an element set again after a failure. */
+const SET_RETRY_MS = 60_000;
 /** Daily element sets kept decoded in memory. */
 const ARCHIVED_SETS = 2;
 /** Sidereal and synodic months (days), NASA Moon fact sheet. */
@@ -124,6 +126,8 @@ class EarthView implements View {
     | undefined;
   /** Element set drawn: "current" or the date of a daily copy (src/data/history.ts). */
   private activeSet = 'current';
+  /** Element sets that failed to load, with when (performance.now()). */
+  private readonly failedSets = new Map<string, number>();
   /** The set the shown date calls for, since when (wall ms): a switch waits for it to settle (scrubbing). */
   private wantedSet: { readonly key: string; readonly sinceMs: number } | undefined;
   private switchingSet = false;
@@ -656,10 +660,12 @@ class EarthView implements View {
    */
   private followElementSet(simMs: number): void {
     const b = this.bulk;
-    if (!b || this.switchingSet || this.disposed) return;
+    // Not before the first layer and its panel exist (loadSatellites would otherwise race a rebuild).
+    if (!b || !this.filterPanel || this.switchingSet || this.disposed) return;
     const snap = snapshotFor(b.manifest.earthHistory, b.gp.entry.fetchedAt, simMs);
     const key = snap?.date ?? 'current';
-    if (key === this.activeSet) {
+    const failedAt = this.failedSets.get(key);
+    if (key === this.activeSet || (failedAt !== undefined && performance.now() - failedAt < SET_RETRY_MS)) {
       this.wantedSet = undefined;
       return;
     }
@@ -723,9 +729,10 @@ class EarthView implements View {
       if (following && obj) this.startFollowing();
       else if (following) this.host.follow.stop();
     } catch (err) {
-      // Keep the set drawn: the shown date stays computed from it (labelled by element age).
+      // Keep the set drawn: the shown date stays computed from it (labelled by element age). Tried again after
+      // SET_RETRY_MS while the date still calls for it.
       console.warn(`Element set ${key} unavailable`, err);
-      this.activeSet = key;
+      this.failedSets.set(key, performance.now());
     } finally {
       this.switchingSet = false;
     }

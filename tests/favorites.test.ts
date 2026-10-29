@@ -72,6 +72,16 @@ describe('favorites', () => {
     expect(addFavorite(s, 'https://example.com/', APP).added).toBe(false);
   });
 
+  it('does not save one of the examples again', () => {
+    const s = new MemoryStorage();
+    expect(addFavorite(s, `${APP}?sel=site%3Aapollo-11&view=moon`, APP)).toEqual({
+      added: false,
+      existed: true,
+      full: false,
+    });
+    expect(loadFavorites(s, APP)).toEqual([]);
+  });
+
   it('ignores foreign or malformed stored entries', () => {
     const s = new MemoryStorage();
     s.setItem(

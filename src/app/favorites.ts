@@ -85,7 +85,8 @@ function store(storage: Storage | undefined, list: readonly Favorite[], appUrl: 
 
 /**
  * Saves a view first in the list (moved there when already saved). `added` is false when the link is not a Perigee
- * link, the list is full (`full`: MAX_FAVORITES, a new view only) or storage refused it.
+ * link, is one of the examples (`existed`: already in the window), the list is full (`full`: MAX_FAVORITES, a new
+ * view only) or storage refused it.
  */
 export function addFavorite(
   storage: Storage | undefined,
@@ -94,6 +95,8 @@ export function addFavorite(
 ): { readonly added: boolean; readonly existed: boolean; readonly full: boolean } {
   const query = favoriteQuery(link, appUrl);
   if (query === undefined) return { added: false, existed: false, full: false };
+  if (EXAMPLE_FAVORITES.some((f) => favoriteQuery(f.query, appUrl) === query))
+    return { added: false, existed: true, full: false };
   const list = loadFavorites(storage, appUrl);
   const existed = list.some((f) => f.query === query);
   if (!existed && list.length >= MAX_FAVORITES) return { added: false, existed, full: true };
