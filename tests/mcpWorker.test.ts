@@ -38,6 +38,16 @@ describe('hosted MCP endpoint', () => {
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
   });
 
+  it('serves the Glama connector claim', async () => {
+    const res = await handle(new Request('https://mcp.example/.well-known/glama.json'), options());
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toMatch(/^application\/json/);
+    expect(await res.json()).toEqual({
+      $schema: 'https://glama.ai/mcp/schemas/connector.json',
+      claim: 'glama_claim_kJaVwyRuCn-RNBQ73u_PlmJaUz5qjDhW',
+    });
+  });
+
   it('refuses GET and DELETE with 405 (no event stream), so clients do not reconnect in a loop', async () => {
     const entries: unknown[] = [];
     for (const method of ['GET', 'DELETE']) {

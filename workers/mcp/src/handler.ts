@@ -128,6 +128,13 @@ export async function handle(request: Request, options: HandlerOptions): Promise
       privacy: 'https://perigee.info/privacy.html',
     });
   }
+  // Ownership claim of the Glama connector listing (glama.ai), which reads it from this exact path.
+  if (url.pathname === '/.well-known/glama.json' && request.method === 'GET') {
+    return jsonResponse({
+      $schema: 'https://glama.ai/mcp/schemas/connector.json',
+      claim: 'glama_claim_kJaVwyRuCn-RNBQ73u_PlmJaUz5qjDhW',
+    });
+  }
   if (url.pathname !== '/mcp') return jsonResponse({ error: 'Not found: the MCP endpoint is /mcp' }, 404);
   // Stateless: no stream of server notifications. A GET (or a session DELETE) gets 405, as the Streamable HTTP
   // transport specifies; answering GET with an event stream that closes at once made clients reconnect in a loop

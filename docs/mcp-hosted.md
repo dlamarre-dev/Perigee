@@ -11,7 +11,8 @@ duration, client name, country; never the IP address or place coordinates; see
 limiter (60 units a minute per address, in memory at Cloudflare; see [Abuse and availability](#abuse-and-availability)).
 
 Deployed at <https://perigee-mcp.perigeeinfo.workers.dev> (account subdomain `perigeeinfo`): `GET /` describes the
-server; `/mcp` is the MCP endpoint (POST; CORS open).
+server; `/mcp` is the MCP endpoint (POST; CORS open). `GET /.well-known/glama.json` holds the ownership claim of the
+[Glama](https://glama.ai/) connector listing (`handler.ts`).
 
 ## CPU budget (free plan)
 
