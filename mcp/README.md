@@ -3,6 +3,7 @@
 <p>
   <a href="https://www.npmjs.com/package/perigee-mcp"><img src="https://img.shields.io/npm/v/perigee-mcp?style=flat&amp;label=npm" alt="npm version" height="20"></a>
   <a href="https://registry.modelcontextprotocol.io/v0/servers/io.github.dlamarre-dev%2Fperigee/versions/latest"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fregistry.modelcontextprotocol.io%2Fv0%2Fservers%2Fio.github.dlamarre-dev%252Fperigee%2Fversions%2Flatest&amp;query=%24.server.version&amp;label=MCP%20Registry&amp;prefix=v&amp;color=blue&amp;style=flat" alt="MCP Registry" height="20"></a>
+  <a href="https://glama.ai/mcp/connectors/dev.workers.perigeeinfo.perigee-mcp/perigee-mcp"><img src="https://glama.ai/mcp/connectors/dev.workers.perigeeinfo.perigee-mcp/perigee-mcp/badges/score.svg" alt="Perigee-mcp MCP connector – tool definition quality and endpoint health on Glama" height="20"></a>
 </p>
 
 An [MCP](https://modelcontextprotocol.io/) server for [Perigee](https://perigee.info/), the open-source 3D viewer of the
