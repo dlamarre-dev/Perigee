@@ -31,6 +31,12 @@ jobs:
         run: |
           version=$(node -p "require('./mcp/package.json').version")
           test "mcp-v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME does not match $version"; exit 1; }
+      - name: server.json matches mcp/package.json
+        run: |
+          version=$(node -p "require('./mcp/package.json').version")
+          test "$(node -p "require('./mcp/server.json').version")" = "$version" || { echo "mcp/server.json version differs"; exit 1; }
+          test "$(node -p "require('./mcp/server.json').packages[0].version")" = "$version" || { echo "mcp/server.json package version differs"; exit 1; }
+          test "$(node -p "require('./mcp/server.json').name")" = "$(node -p "require('./mcp/package.json').mcpName")" || { echo "mcpName differs from server.json name"; exit 1; }
       - run: npm run typecheck
       - run: npx vitest run tests/engine.test.ts tests/mcp.test.ts
       - run: npm run mcp:build
@@ -54,3 +60,21 @@ jobs:
             exit 0
           fi
           exit "$status"
+      # Lists the version in the official MCP Registry (registry.modelcontextprotocol.io), which checks that the npm
+      # package carries the same mcpName. GitHub OIDC proves the io.github.dlamarre-dev namespace: no token stored.
+      # A version already in the registry is refused, so a duplicate run only warns.
+      - name: Publish to the MCP Registry
+        working-directory: mcp
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/v1.8.6/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          for attempt in 1 2 3 4 5; do
+            ./mcp-publisher publish 2>&1 | tee "$RUNNER_TEMP/registry.log" && exit 0
+            if grep -qiE 'already exists|duplicate|cannot publish duplicate' "$RUNNER_TEMP/registry.log"; then
+              echo "::notice::This version is already in the MCP Registry."
+              exit 0
+            fi
+            # npm may not list the new version yet: wait and try again.
+            sleep 60
+          done
+          exit 1

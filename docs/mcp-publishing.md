@@ -73,12 +73,27 @@ file must keep its name: npm checks both.
 
 ## 5. Each following version
 
-1. Change `mcp/` (or the engine or catalogues it bundles) and bump `version` in `mcp/package.json` (semver: patch for
+1. Change `mcp/` (or the engine or catalogues it bundles) and bump `version` in `mcp/package.json` and both `version`
+   fields of `mcp/server.json` (semver: patch for
    fixes and catalogue updates, minor for new tools or parameters, major for removed or renamed tools).
 2. Commit and push to `master`; wait for CI.
 3. Tag and push: `git tag mcp-v0.1.1 && git push origin mcp-v0.1.1`.
 4. The workflow checks that the tag matches the version, runs the engine and MCP tests, builds and publishes. The npm
    page then shows the provenance (link to the workflow run and the commit).
+5. It then lists the version in the [MCP Registry](https://registry.modelcontextprotocol.io/) with `mcp-publisher`
+   (step 6).
+
+## 6. MCP Registry
+
+`mcp/server.json` describes the server for the official registry: name `io.github.dlamarre-dev/perigee`, the npm
+package (stdio) and the hosted endpoint (`remotes`). The registry accepts the npm package only if its published
+`package.json` has the same `mcpName` (added in 1.9.2). The release workflow logs in with GitHub OIDC
+(`mcp-publisher login github-oidc`, allowed by `id-token: write`) and publishes; it checks beforehand that the
+versions and the name of `server.json` match `mcp/package.json`.
+
+By hand (`brew install mcp-publisher`): `cd mcp && mcp-publisher validate`, then `mcp-publisher login github` (device
+code in the browser) and `mcp-publisher publish`. Check with
+`curl "https://registry.modelcontextprotocol.io/v0/servers?search=io.github.dlamarre-dev/perigee"`.
 
 The bundle includes the catalogues as they were at build time (names, goals, ids); positions always come from the
 data published on perigee.info, so a new MCP version is only needed for code or catalogue changes, not for fresh data.

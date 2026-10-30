@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.dlamarre-dev/perigee",
+  "title": "Perigee",
+  "description": "Positions, distances, mission facts and 3D views of objects orbiting the Earth, Moon, Mars and Sun.",
+  "websiteUrl": "https://perigee.info/",
+  "repository": {
+    "url": "https://github.com/dlamarre-dev/Perigee",
+    "source": "github",
+    "id": "1389838851",
+    "subfolder": "mcp"
+  },
+  "version": "1.9.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "perigee-mcp",
+      "version": "1.9.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PERIGEE_SITE",
+          "description": "Base URL of the Perigee site to query (default: https://perigee.info/)",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "PERIGEE_MCP_CACHE",
+          "description": "Directory for the on-disk cache (default: OS user cache directory)",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://perigee-mcp.perigeeinfo.workers.dev/mcp"
+    }
+  ]
+}
