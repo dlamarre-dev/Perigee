@@ -1,5 +1,5 @@
 {
-  "verified": "2026-10-24",
+  "verified": "2026-10-31",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
@@ -377,6 +377,50 @@
     {
       "file": "starlink-g15-16",
       "reason": "Temporary per-launch pre-launch set for a Starlink mission not yet flown (planned 2026-10-26); superseded by a post-deployment set once it launches"
+    },
+    {
+      "file": "starlink-g15-18",
+      "reason": "Temporary per-launch post-deployment set, entire stack (Starlink launch 2026-10-31); satellites move into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b1",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b2",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b3",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b4",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b5",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b6",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b7",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b8",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b9",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g15-18b10",
+      "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
     }
   ],
   "nameRules": [

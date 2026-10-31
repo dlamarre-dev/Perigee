@@ -33,7 +33,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/lro/"
       },
-      "verified": "2026-09-26",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/mission/lro/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=LRO&group=sct"
@@ -240,7 +240,7 @@
       "website": {
         "url": "https://www.nasa.gov/smallspacecraft/capstone/"
       },
-      "verified": "2026-10-24",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
@@ -280,7 +280,7 @@
         "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
         "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
-      "verified": "2026-10-24",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
         "https://space.skyrocket.de/doc_sdat/swc-1.htm",
@@ -682,8 +682,8 @@
         "fr": "Le Trace Gas Orbiter, premier volet du programme ExoMars de l'ESA, mesure d'infimes quantités de gaz comme le méthane dans l'atmosphère martienne : ils pourraient provenir d'une activité géologique, voire d'organismes vivants. Il photographie aussi les reliefs susceptibles d'être liés à ces gaz et cartographie l'hydrogène, signe de glace d'eau, dans le premier mètre du sol. Il sert également de relais aux rovers."
       },
       "notes": {
-        "en": "Mars orbit insertion 2016-10-19; science since April 2018; relay for NASA rovers and the future Rosalind Franklin rover. Recent 2025–2026 science activity reported; formal extension beyond 2026 not found (TGO is not in the June 2026 SPC list, as it belongs to ESA's exploration programme).",
-        "fr": "Insertion en orbite le 2016-10-19 ; science depuis avril 2018 ; relais pour les rovers de la NASA et le futur rover Rosalind Franklin. Activité scientifique signalée en 2025–2026 ; prolongation officielle au-delà de 2026 non trouvée (TGO relève du programme d'exploration, absent de la liste SPC de juin 2026)."
+        "en": "Mars orbit insertion 2016-10-19; science since April 2018; relay for NASA rovers and the future Rosalind Franklin rover. Marked its tenth anniversary at Mars on 2026-10-19: no methane detection confirmed despite earlier reports from other missions (the discrepancy remains under study), a first detection of hydrogen chloride in the atmosphere, over 10% of the surface imaged in colour to support Rosalind Franklin landing-site studies, and 2024 flight software that limits gyroscope use to preserve them for the rover's arrival.",
+        "fr": "Insertion en orbite le 2016-10-19 ; science depuis avril 2018 ; relais pour les rovers de la NASA et le futur rover Rosalind Franklin. A marqué son dixième anniversaire autour de Mars le 2026-10-19 : aucune détection de méthane confirmée malgré des signalements antérieurs d'autres missions (l'écart reste à l'étude), une première détection de chlorure d'hydrogène dans l'atmosphère, plus de 10 % de la surface imagée en couleur pour les études du site d'atterrissage de Rosalind Franklin, et un logiciel de vol de 2024 qui limite l'usage des gyroscopes afin de les préserver pour l'arrivée du rover."
       },
       "website": {
         "url": "https://explorationscience.esa.int/project/exomars-trace-gas-orbiter-tgo/"
@@ -691,10 +691,10 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/trace_gas_orbiter/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.esa.int/Enabling_Support/Operations/ExoMars_TGO_operations",
-        "https://en.wikipedia.org/wiki/Trace_Gas_Orbiter",
+        "https://www.esa.int/Enabling_Support/Operations/A_Mars-velous_decade_Celebrating_ten_years_of_TGO",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=TGO"
       ]
     },
@@ -879,7 +879,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/escapade/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/mission/escapade/",
         "https://science.nasa.gov/blogs/escapade/",
@@ -915,7 +915,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/escapade/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": ["https://science.nasa.gov/mission/escapade/", "https://en.wikipedia.org/wiki/ESCAPADE"]
     },
     {
@@ -1835,7 +1835,7 @@
       },
       "lowOrbit": false,
       "color": "#b8ab9c",
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Deimos"
@@ -2003,7 +2003,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/juno/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/photojournal/nasas-juno-misson-captures-jupiter-moon-thebe/",
         "https://science.nasa.gov/mission/juno/",
@@ -2191,7 +2191,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/juice/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Juice/Juice_to_fly_past_Earth_for_third_gravity_assist",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=JUICE"
@@ -2236,7 +2236,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/europa-clipper/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/mission/europa-clipper/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Europa%20Clipper"
@@ -2417,7 +2417,7 @@
       "website": {
         "url": "https://www.esa.int/Space_Safety/Hera"
       },
-      "verified": "2026-10-24",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.esa.int/Space_Safety/Hera/ESA_s_Hera_targets_early_arrival_at_Didymos_asteroids",
         "https://www.esa.int/Enabling_Support/Operations/Hera_operations",
@@ -2501,7 +2501,7 @@
       "website": {
         "url": "https://www.hayabusa2.jaxa.jp/en/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://global.jaxa.jp/press/2026/07/20260730-1_e.html",
         "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hayabusa2.html",
@@ -2585,7 +2585,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/soho/"
       },
-      "verified": "2026-10-24",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
         "https://www.esa.int/Science_Exploration/Space_Science/SOHO/SOHO_overview",
@@ -2675,7 +2675,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/euclid/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://www.cosmos.esa.int/web/euclid/dr1-timeline",
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
@@ -2758,7 +2758,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/imap/"
       },
-      "verified": "2026-10-24",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
         "https://science.nasa.gov/blogs/imap/2026/08",
@@ -2799,7 +2799,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/carruthers-geocorona-observatory/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
         "https://science.nasa.gov/blogs/carruthers-geocorona-observatory/2026/03/02/nasas-carruthers-geocorona-observatory-begins-primary-science-mission/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Carruthers"
@@ -2982,7 +2982,7 @@
       "website": {
         "url": "https://destiny.isas.jaxa.jp/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": ["https://destiny.isas.jaxa.jp/2024-10-15-15-26"]
     },
     {
@@ -3020,7 +3020,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/comet_interceptor/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": ["https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor"]
     },
     {
