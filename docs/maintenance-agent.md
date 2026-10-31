@@ -67,6 +67,17 @@ to do anything unless you explicitly ask for help.
 "ended"`: never delete entries. Every active mission comes back about once a month (the audit lists at most
      15 per week, oldest first; `missions:deferred` lists the rest, handled in the next weeks): even when
      nothing changed, set `verified` to today and add or keep the page you checked in `sources`.
+     When the agency's own pages cannot be read (some refuse automated requests, e.g. space.gov.ae), a mission
+     with Horizons vectors may still be re-verified from two pieces of evidence together: the audit item's
+     `horizonsFetchedAt` within the last 3 days and no `horizonsCoverageEnd` before today (the spacecraft is
+     still tracked and predicted), plus a reputable dated source from the last 6 months (agency press release,
+     national news agency, established press) that confirms the status and gives no sign of a change. Cite that
+     source and `https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=<horizonsId>` (do not fetch it: the audit
+     already brings the evidence), and say in the report that the entry was verified this way. Without both,
+     defer the entry as usual.
+     When an entry's official sources stay unreadable from this environment week after week, give it
+     `recheckDays` (21–180, e.g. 60) and say so in the report, so the audit asks for it less often; never
+     lengthen it for a mission in a critical phase (launch, arrival, end of life).
    - Hosted payloads (every week, even without an audit item): check the sources of `operators.json`
      `hostedPayloads` (e.g. the GHGSat series page on Gunter's Space Page) for newly launched instruments, and add
      each one with the host's NORAD number (look it up in `public/data/earth/satcat.json.gz` by COSPAR designation),

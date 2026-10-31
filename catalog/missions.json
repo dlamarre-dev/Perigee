@@ -281,6 +281,7 @@
         "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
       "verified": "2026-10-31",
+      "recheckDays": 60,
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
         "https://space.skyrocket.de/doc_sdat/swc-1.htm",
@@ -735,6 +736,7 @@
         "url": "https://space.gov.ae/en/projects-and-initiatives/space-exploration/emirates-mars-mission"
       },
       "verified": "2026-09-27",
+      "recheckDays": 60,
       "sources": [
         "https://www.thenationalnews.com/news/uae/2026/02/17/uae-extends-hope-probes-mars-mission-to-2028/",
         "https://www.thenationalnews.com/uae/uae-in-space/2023/02/09/uaes-hope-probe-moves-to-new-orbit-to-study-mars-tiny-moon-deimos/",
@@ -2946,6 +2948,7 @@
         "url": "https://space.gov.ae/en/projects-and-initiatives/space-exploration/emirates-mission-to-the-asteroid-belt"
       },
       "verified": "2026-10-31",
+      "recheckDays": 60,
       "sources": [
         "https://www.thenationalnews.com/news/uae/2026/10/04/uaes-mbr-explorer-probe-enters-final-tests-for-2028-mission/",
         "https://www.tii.ae/news/technology-innovation-institute-completes-asteroid-landing-probe-landmark-emirates-mission",

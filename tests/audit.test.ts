@@ -209,6 +209,21 @@ describe('maintenance audit', () => {
     expect(checkStaleVerification([], [mission({ id: 'x', verified: '2026-09-10' })], NOW)).toEqual([]);
   });
 
+  it('waits recheckDays for a mission that sets it, and gives the Horizons evidence', () => {
+    const items = checkStaleVerification(
+      [],
+      [
+        mission({ id: 'slow', verified: '2026-08-15', recheckDays: 60 }),
+        mission({ id: 'due', verified: '2026-08-15' }),
+      ],
+      NOW,
+      [],
+      { due: { fetchedAt: '2026-09-30T12:00:00Z' } },
+    );
+    expect(items.map((i) => i.key)).toEqual(['mission:due']);
+    expect(items[0]?.details).toEqual({ verified: '2026-08-15', horizonsFetchedAt: '2026-09-30T12:00:00Z' });
+  });
+
   it('re-verifies Earth science satellites with the missions, under the same cap', () => {
     const sat = (id: string, verified: string) =>
       ({

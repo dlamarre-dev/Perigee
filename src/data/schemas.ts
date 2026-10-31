@@ -360,6 +360,11 @@ export const MissionSchema = z.object({
   website: WebsiteSchema.optional(),
   model3d: ModelLinkSchema.optional(),
   verified: isoDate,
+  /**
+   * Days between re-verifications when longer than the monthly default (pipeline/audit.ts): for missions whose
+   * official pages refuse automated requests, so they are not flagged every three weeks.
+   */
+  recheckDays: z.number().int().min(21).max(180).optional(),
   sources: z.array(z.url()).min(1),
 });
 export type Mission = z.infer<typeof MissionSchema>;

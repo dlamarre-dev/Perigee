@@ -248,12 +248,18 @@ export function checkEphemerisCoverage(
   return items;
 }
 
-/** Missions due for re-verification (oldest first, capped) and catalog files older than FILE_STALE_AFTER_DAYS. */
+/**
+ * Missions due for re-verification (oldest first, capped) and catalog files older than FILE_STALE_AFTER_DAYS. A
+ * mission's `recheckDays` lengthens its interval. Items of missions with published Horizons vectors carry when they
+ * were last fetched and where the public ephemeris ends: evidence that the spacecraft is still tracked, usable when
+ * the agency's own pages cannot be read (docs/maintenance-agent.md).
+ */
 export function checkStaleVerification(
   files: readonly { path: string; verified: string }[],
   missions: readonly Mission[],
   now: Date,
   earthScience: readonly EarthScienceSatellite[] = [],
+  ephemerides: Readonly<Record<string, { fetchedAt: string; coverageEnd?: string | undefined }>> = {},
 ): AuditItem[] {
   const age = (iso: string): number => Math.floor((now.getTime() - Date.parse(`${iso}T00:00:00Z`)) / DAY_MS);
   const items: AuditItem[] = [];
@@ -264,6 +270,8 @@ export function checkStaleVerification(
       id: m.id,
       status: m.status,
       verified: m.verified,
+      afterDays: m.recheckDays ?? STALE_AFTER_DAYS,
+      ephemeris: ephemerides[m.id],
       label: `${m.name.en} (${m.centralBody}, ${m.status})`,
     })),
     ...earthScience.map((s) => ({
@@ -271,11 +279,13 @@ export function checkStaleVerification(
       id: s.id,
       status: s.status,
       verified: s.verified,
+      afterDays: STALE_AFTER_DAYS,
+      ephemeris: undefined,
       label: `${s.name.en} (NORAD ${s.norad}, ${s.status})`,
     })),
   ];
   const due = entries
-    .filter((m) => m.status !== 'ended' && age(m.verified) > STALE_AFTER_DAYS)
+    .filter((m) => m.status !== 'ended' && age(m.verified) > m.afterDays)
     .sort((a, b) => a.verified.localeCompare(b.verified) || a.key.localeCompare(b.key));
   for (const m of due.slice(0, MAX_STALE_PER_AUDIT)) {
     const days = age(m.verified);
@@ -283,7 +293,13 @@ export function checkStaleVerification(
       kind: 'stale-verification',
       key: m.key,
       summary: `${m.label}: last verified ${m.verified} (${days} days ago)`,
-      details: { verified: m.verified },
+      details: {
+        verified: m.verified,
+        ...(m.ephemeris && {
+          horizonsFetchedAt: m.ephemeris.fetchedAt,
+          ...(m.ephemeris.coverageEnd && { horizonsCoverageEnd: m.ephemeris.coverageEnd }),
+        }),
+      },
     });
   }
   if (due.length > MAX_STALE_PER_AUDIT) {

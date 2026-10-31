@@ -593,7 +593,8 @@ Weekly maintenance (hands-off):
   page, this year's SATCAT launches, IERS leap seconds (else the IANA tzdb `leap-seconds.list`; neither answering is an audit item, not a failure), Horizons lookups for new deep-space payloads) with the
   catalog: unknown launch-site/owner codes, new CelesTrak groups, deep-space payloads missing from
   `missions.json`, public ephemerides ending (`coverageEnd` in the manifest), stale `verified` dates (missions
-  monthly, at most 15 per week; files after 180 days), leap seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`
+  monthly, or every `recheckDays` for those whose official pages refuse automated requests, with the Horizons fetch
+  time as evidence; at most 15 per week; files after 180 days), leap seconds. Deliberate exclusions live in `launch-sites.json` `unplacedSatcatCodes` and `operators.json`
   `ignoredGroups`.
 - A scheduled Claude Code routine (maintainer's account, Saturday 02:00 America/Toronto) follows
   `docs/maintenance-agent.md`: researches each item on official sources, edits `catalog/`, opens a

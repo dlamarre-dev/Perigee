@@ -646,6 +646,7 @@ async function runAudit(dataDir: string, guard: LocalFetchGuard): Promise<void> 
       missions,
       now,
       earthScience.satellites,
+      manifest.ephemerides,
     ),
     ...checkEarthScienceMembers(publishedGroups, earthScience.satellites, satcatNames),
     ...checkMoonAnchors(moons.moons, now),
