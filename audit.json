@@ -1,0 +1,368 @@
+{
+  "generatedAt": "2026-10-31T00:19:02.401Z",
+  "items": [
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b1",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b1\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b1&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b10",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b10\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b10&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b2",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b2\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b2&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b3",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b3\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b3&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b4",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b4\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b4&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b5",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b5\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b5&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b6",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b6\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b6&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b7",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b7\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b7&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b8",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b8\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b8&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "celestrak-supgp",
+      "key": "starlink-g15-18b9",
+      "summary": "New CelesTrak supplemental GP set \"starlink-g15-18b9\": add it to operators.json supplemental or ignoredSupplemental",
+      "details": {
+        "url": "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink-g15-18b9&FORMAT=JSON"
+      }
+    },
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "capstone",
+      "summary": "CAPSTONE: public Horizons ephemeris ended 2026-08-14 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-1176",
+        "coverageEnd": "2026-08-14T11:58:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "swc-1",
+      "summary": "SWC-1 (Shams): public Horizons ephemeris ended 2026-04-07 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-168540",
+        "coverageEnd": "2026-04-07T14:31:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "hera",
+      "summary": "Hera: public Horizons ephemeris ends 2026-11-04 (within 30 days)",
+      "details": {
+        "horizonsId": "-91",
+        "coverageEnd": "2026-11-04T01:01:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "soho",
+      "summary": "SOHO: public Horizons ephemeris ends 2026-11-02 (within 30 days)",
+      "details": {
+        "horizonsId": "-21",
+        "coverageEnd": "2026-11-02T23:51:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "imap",
+      "summary": "IMAP: public Horizons ephemeris ends 2026-11-23 (within 30 days)",
+      "details": {
+        "horizonsId": "-43",
+        "coverageEnd": "2026-11-23T00:01:00.000Z"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:lro",
+      "summary": "Lunar Reconnaissance Orbiter (LRO) (moon, active): last verified 2026-09-26 (35 days ago)",
+      "details": {
+        "verified": "2026-09-26"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:carruthers",
+      "summary": "Carruthers Geocorona Observatory (sun, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:comet-interceptor",
+      "summary": "Comet Interceptor (sun, planned): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:deimos",
+      "summary": "Deimos (mars, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:destiny-plus",
+      "summary": "DESTINY+ (sun, planned): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:ema-mbr-explorer",
+      "summary": "Emirates Mission to the Asteroid Belt (MBR Explorer) (sun, planned): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:emm-hope",
+      "summary": "Emirates Mars Mission (Hope) (mars, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:escapade-blue",
+      "summary": "ESCAPADE Blue (mars, cruise): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:escapade-gold",
+      "summary": "ESCAPADE Gold (mars, cruise): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:euclid",
+      "summary": "Euclid (sun, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:europa-clipper",
+      "summary": "Europa Clipper (sun, cruise): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:exomars-tgo",
+      "summary": "ExoMars Trace Gas Orbiter (mars, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:hayabusa2",
+      "summary": "Hayabusa2 (Hayabusa2#) (sun, cruise): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:juice",
+      "summary": "JUICE (sun, cruise): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "mission:juno",
+      "summary": "Juno (sun, active): last verified 2026-09-27 (34 days ago)",
+      "details": {
+        "verified": "2026-09-27"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "missions:deferred",
+      "summary": "62 more entries are due and deferred to next week (at most 15 per audit)",
+      "details": {
+        "deferred": [
+          "mission:jwst",
+          "mission:lucy",
+          "mission:mars-express",
+          "mission:mars-odyssey",
+          "mission:mro",
+          "mission:neo-surveyor",
+          "mission:new-horizons",
+          "mission:osiris-apex",
+          "mission:parker-solar-probe",
+          "mission:phobos",
+          "mission:psyche",
+          "mission:solar-1",
+          "mission:solar-orbiter",
+          "mission:stereo-a",
+          "mission:tianwen-1",
+          "mission:tianwen-2",
+          "mission:voyager-1",
+          "mission:voyager-2",
+          "earth-science:astrosat",
+          "earth-science:brite-austria",
+          "earth-science:brite-heweliusz",
+          "earth-science:brite-toronto",
+          "earth-science:cassiope",
+          "earth-science:chandra",
+          "earth-science:coriolis",
+          "earth-science:cryosat-2",
+          "earth-science:cses-1",
+          "earth-science:dampe",
+          "earth-science:fermi",
+          "earth-science:flying-laptop",
+          "earth-science:gcom-w",
+          "earth-science:hinode",
+          "earth-science:hubble",
+          "earth-science:insight-hxmt",
+          "earth-science:iris",
+          "earth-science:iss",
+          "earth-science:ixpe",
+          "earth-science:mms-1",
+          "earth-science:mms-2",
+          "earth-science:mms-3",
+          "earth-science:mms-4",
+          "earth-science:neossat",
+          "earth-science:nustar",
+          "earth-science:oco-2",
+          "earth-science:pisat",
+          "earth-science:salsat",
+          "earth-science:scisat",
+          "earth-science:sdo",
+          "earth-science:shijian-6-02a",
+          "earth-science:shijian-6-02b",
+          "earth-science:smile",
+          "earth-science:stsat-3",
+          "earth-science:swarm-a",
+          "earth-science:swarm-b",
+          "earth-science:swarm-c",
+          "earth-science:swas",
+          "earth-science:swift",
+          "earth-science:terra",
+          "earth-science:timed",
+          "earth-science:x-sat",
+          "earth-science:xmm-newton",
+          "mission:roman"
+        ]
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "C/2026 P3",
+      "summary": "C/2026 P3 (SWAN): perihelion 2026-09-03, q 0.33 au, M1 14.4: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "C/2026 P3",
+        "horizonsId": "DES=C/2026 P3;CAP;NOFRAG",
+        "qAu": 0.325,
+        "e": 0.9974,
+        "tpTdbJd": 2461287.2,
+        "m1": 14.4
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "C/2026 AZ17",
+      "summary": "C/2026 AZ17 (Bok): perihelion 2026-11-23, q 2.47 au, M1 9.5: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "C/2026 AZ17",
+        "horizonsId": "DES=C/2026 AZ17;CAP;NOFRAG",
+        "qAu": 2.473,
+        "e": 0.9619,
+        "tpTdbJd": 2461367.72,
+        "m1": 9.5
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "P/2021 N1",
+      "summary": "P/2021 N1 (ZTF): perihelion 2026-07-28, q 0.97 au, M1 19.2: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "P/2021 N1",
+        "horizonsId": "DES=P/2021 N1;CAP;NOFRAG",
+        "qAu": 0.966,
+        "e": 0.6759,
+        "tpTdbJd": 2461250,
+        "m1": 19.2
+      }
+    }
+  ]
+}
