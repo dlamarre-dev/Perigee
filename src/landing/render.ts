@@ -24,6 +24,24 @@ export interface RenderContext {
   /** Path the site is served from (Vite `base`: "/" in production, "/Perigee/" locally). */
   readonly base: string;
   readonly version: string;
+  /**
+   * Content hashes of the files under public/ (`vite.config.ts` `assetVersions`, keyed by path): which topic captures
+   * exist (public/landing/og/<lang>/<id>.jpg, tools/screenshots/og.ts) and their `?v=`. Without it, the shared image.
+   */
+  readonly assets?: Readonly<Record<string, string>>;
+  /** Last change of the landing pages' texts and templates (YYYY-MM-DD, the last commit touching src/landing/). */
+  readonly landingDate?: string;
+}
+
+/** Size of the topic captures (Open Graph images and the 3D view's poster). */
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
+
+/** A topic's capture of its 3D view, when tools/screenshots/og.ts made one: site-relative path with its version. */
+export function topicCapture(topic: Topic, lang: Lang, ctx: RenderContext): string | undefined {
+  const path = `landing/og/${lang}/${topic.id}.jpg`;
+  const version = ctx.assets?.[path];
+  return version ? `${path}?v=${version}` : undefined;
 }
 
 const LANGS: readonly Lang[] = ['en', 'fr'];
@@ -62,6 +80,24 @@ export function viewQuery(view: TopicView, lang: Lang, embed: boolean): string {
   if (view.follow) p.set('follow', '1');
   if (embed) p.set('embed', '1');
   return `?${p.toString()}`;
+}
+
+/**
+ * Latest `verified` date of the catalogue entries a topic describes (YYYY-MM-DD): its spacecraft or curated
+ * satellite, or the active spacecraft around its body. Undefined when it shows no dated entry (planets, sky, sites).
+ */
+export function topicCatalogueDate(topic: Topic): string | undefined {
+  const dates: string[] = [];
+  for (const id of [topic.target, ...(topic.targets ?? [])]) {
+    const ref = refOf(id);
+    if (ref?.kind === 'mission') dates.push(ref.mission.verified);
+    else if (ref?.kind === 'satellite' && ref.curated) dates.push(ref.curated.verified);
+  }
+  if (topic.around)
+    for (const m of catalogs.missions)
+      if (m.centralBody === topic.around && m.objectType !== 'natural' && !isInactiveMission(m))
+        dates.push(m.verified);
+  return dates.sort().at(-1);
 }
 
 function refOf(id: string | undefined): ObjectRef | undefined {
@@ -211,7 +247,7 @@ function listTable(topic: Topic, i18n: I18n): string {
             esc(ref.mission.agency ?? ''),
             esc(i18n.maybe(`mission.status.${ref.mission.status}`) ?? ref.mission.status),
             ref.mission.ephemeris === 'horizons'
-              ? '<span data-live="altitude">…</span>'
+              ? '<span data-live="altitude">–</span>'
               : `<span class="lp-muted">${t('landing.table.notDrawn')}</span>`,
           ]
         : ['', '', ''];
@@ -220,8 +256,8 @@ function listTable(topic: Topic, i18n: I18n): string {
     if (topic.bodySet === 'comets') head.push(t('landing.table.magnitude'));
     if (topic.bodySet === 'asteroids') head.push(t('landing.table.size'));
     row = (_id, ref) => {
-      const cells = ['<span data-live="sun">…</span>', '<span data-live="earth">…</span>'];
-      if (topic.bodySet === 'comets') cells.push('<span data-live="mag">…</span>');
+      const cells = ['<span data-live="sun">–</span>', '<span data-live="earth">–</span>'];
+      if (topic.bodySet === 'comets') cells.push('<span data-live="mag">–</span>');
       if (ref?.kind === 'asteroid')
         cells.push(esc(i18n.format('landing.unit.km', { n: ref.asteroid.diameterKm })));
       return cells;
@@ -302,8 +338,18 @@ function headTags(
   paths: Record<Lang, string>,
   ctx: RenderContext,
   ld: readonly unknown[],
+  image?: { readonly path: string; readonly alt: string },
 ): string {
   const url = (l: Lang): string => `${ctx.site}${paths[l]}`;
+  const imageUrl = `${ctx.site}${image?.path ?? 'og-image.jpg'}`;
+  const imageAlt = image
+    ? `
+    <meta property="og:image:alt" content="${esc(image.alt)}">`
+    : '';
+  const twitterAlt = image
+    ? `
+    <meta name="twitter:image:alt" content="${esc(image.alt)}">`
+    : '';
   return `<title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}">
     <meta name="robots" content="index, follow, max-image-preview:large">
@@ -319,15 +365,15 @@ function headTags(
     <meta property="og:url" content="${url(lang)}">
     <meta property="og:title" content="${esc(title)}">
     <meta property="og:description" content="${esc(description)}">
-    <meta property="og:image" content="${ctx.site}og-image.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image" content="${esc(imageUrl)}">
+    <meta property="og:image:width" content="${OG_WIDTH}">
+    <meta property="og:image:height" content="${OG_HEIGHT}">${imageAlt}
     <meta property="og:locale" content="${lang === 'fr' ? 'fr_CA' : 'en_CA'}">
     <meta property="og:locale:alternate" content="${lang === 'fr' ? 'en_CA' : 'fr_CA'}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${esc(title)}">
     <meta name="twitter:description" content="${esc(description)}">
-    <meta name="twitter:image" content="${ctx.site}og-image.jpg">
+    <meta name="twitter:image" content="${esc(imageUrl)}">${twitterAlt}
     <link rel="icon" href="${ctx.base}icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="${ctx.base}icons/apple-touch-icon.png">
     ${ld.map((d) => `<script type="application/ld+json">${jsonLd(d)}</script>`).join('\n    ')}
@@ -360,6 +406,14 @@ export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: Ren
   const theme = THEMES.find((t) => t.id === topic.theme);
   const title = `${topic.question[lang]} | ${BRAND[lang]}`;
   const pageUrl = `${ctx.site}${paths[lang]}`;
+  const capture = topicCapture(topic, lang, ctx);
+  const viewTitle = i18n.format('landing.viewTitle', { name });
+  const catalogueImage = ref && imageOf(ref);
+  const primaryImage = catalogueImage
+    ? { '@type': 'ImageObject', url: `${ctx.site}images/${catalogueImage.id}.webp` }
+    : capture
+      ? { '@type': 'ImageObject', url: `${ctx.site}${capture}`, width: OG_WIDTH, height: OG_HEIGHT }
+      : undefined;
   const ld = [
     {
       '@context': 'https://schema.org',
@@ -369,7 +423,7 @@ export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: Ren
       url: pageUrl,
       inLanguage: lang,
       isPartOf: { '@type': 'WebSite', name: BRAND[lang], url: ctx.site },
-      ...(ref && imageOf(ref) ? { primaryImageOfPage: `${ctx.site}images/${imageOf(ref)?.id}.webp` } : {}),
+      ...(primaryImage ? { primaryImageOfPage: primaryImage } : {}),
     },
     {
       '@context': 'https://schema.org',
@@ -403,11 +457,13 @@ export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: Ren
 <main class="lp" id="lp-main">
   <nav class="lp-crumbs" aria-label="breadcrumb"><a href="${ctx.base}?lang=${lang}">${BRAND[lang]}</a> › <a href="${ctx.base}${lang}/">${esc(i18n.t('landing.guides'))}</a> › <span>${esc(theme?.name[lang] ?? '')}</span></nav>
   <h1>${esc(topic.question[lang])}</h1>
-  <p class="lp-answer" id="lp-answer" aria-live="polite"><span class="lp-live-dot" aria-hidden="true"></span><span id="lp-answer-text">${esc(i18n.t('landing.computing'))}</span></p>
+  <p class="lp-answer" id="lp-answer" aria-live="polite"><span class="lp-live-dot" aria-hidden="true"></span><span id="lp-answer-text">${esc(topic.lead[lang])}</span></p>
   <noscript><p class="lp-noscript">${esc(i18n.t('landing.noscript'))}</p></noscript>
   <div class="lp-board">
     <section class="lp-view panel">
-      <iframe src="${esc(viewSrc)}" title="${esc(i18n.format('landing.viewTitle', { name }))}" allow="fullscreen" loading="eager"></iframe>
+      ${capture ? `<img class="lp-poster" src="${ctx.base}${esc(capture)}" width="${OG_WIDTH}" height="${OG_HEIGHT}" alt="${esc(viewTitle)}" fetchpriority="high" decoding="async">` : ''}
+      <iframe data-src="${esc(viewSrc)}" title="${esc(viewTitle)}" allow="fullscreen"></iframe>
+      <noscript><a class="lp-view-noscript" href="${esc(`${ctx.base}${viewQuery(topic.view, lang, false)}`)}">${esc(i18n.t('embed.open'))}</a></noscript>
     </section>
     <section class="lp-cards" id="lp-cards" aria-live="off"></section>
     ${hasMap ? `<section class="lp-map panel" id="lp-map"><h2>${esc(i18n.t('landing.map.title'))}</h2><div id="lp-map-svg" role="img" aria-label="${esc(i18n.format('landing.map.label', { name }))}"></div><p class="lp-note">${esc(i18n.format('landing.map.note', { name }))}</p></section>` : ''}
@@ -435,7 +491,15 @@ ${footer(i18n, ctx)}`;
     template,
     lang,
     { 'data-topic': topic.id, 'data-base': ctx.base, 'data-other': `${ctx.base}${paths[o]}` },
-    headTags(title, topic.description[lang], lang, paths, ctx, ld),
+    headTags(
+      title,
+      topic.description[lang],
+      lang,
+      paths,
+      ctx,
+      ld,
+      capture ? { path: capture, alt: viewTitle } : undefined,
+    ),
     body,
   );
 }
@@ -561,8 +625,13 @@ export function renderPath(template: string, path: string, ctx: RenderContext): 
 const NL = '\n';
 
 /** sitemap.xml: the app's views (both languages) and every landing page, each with its alternate. */
-export function renderSitemap(ctx: RenderContext, lastmod: string): string {
-  const entry = (paths: Record<Lang, string>, fallback: string, priority: string): string =>
+export function renderSitemap(ctx: RenderContext, buildDate: string): string {
+  const entry = (
+    paths: Record<Lang, string>,
+    fallback: string,
+    priority: string,
+    lastmod: string = buildDate,
+  ): string =>
     LANGS.map(
       (lang) => `  <url>
     <loc>${esc(`${ctx.site}${paths[lang]}`)}</loc>
@@ -575,12 +644,16 @@ ${LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${esc(
   const views = ['', '&view=moon', '&view=mars', '&view=solar'].map((v) =>
     entry({ en: `?lang=en${v}`, fr: `?lang=fr${v}` }, v ? `?${v.slice(1)}` : '', v ? '0.8' : '1.0'),
   );
-  const hubs = entry({ en: 'en/', fr: 'fr/' }, 'en/', '0.9');
+  // A page changes when its texts do or when its catalogue entries are re-verified, not at every commit.
+  const landingDate = ctx.landingDate ?? buildDate;
+  const topicDate = (t: Topic): string =>
+    [landingDate, topicCatalogueDate(t) ?? ''].sort().at(-1) ?? landingDate;
+  const hubs = entry({ en: 'en/', fr: 'fr/' }, 'en/', '0.9', landingDate);
   const topics = TOPICS.map((t) =>
-    entry({ en: topicPath(t, 'en'), fr: topicPath(t, 'fr') }, topicPath(t, 'en'), '0.8'),
+    entry({ en: topicPath(t, 'en'), fr: topicPath(t, 'fr') }, topicPath(t, 'en'), '0.8', topicDate(t)),
   );
   const privacy = entry({ en: PRIVACY_PAGES.en, fr: PRIVACY_PAGES.fr }, PRIVACY_PAGES.en, '0.3');
-  const credits = entry(CREDITS_PATHS, CREDITS_PATHS.en, '0.3');
+  const credits = entry(CREDITS_PATHS, CREDITS_PATHS.en, '0.3', landingDate);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Written at build time (src/landing/render.ts): one URL per app view and language (the other URL parameters
      are not indexed), the guides and their pages, the privacy and credits pages. -->

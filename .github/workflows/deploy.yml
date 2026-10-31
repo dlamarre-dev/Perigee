@@ -21,7 +21,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # The commit history without file contents (a few MB): the sitemap dates the guide pages by their last change
+      # (vite.config.ts `lastChange`), which a shallow clone cannot see.
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          filter: blob:none
       - uses: actions/setup-node@v5
         with:
           node-version: 24

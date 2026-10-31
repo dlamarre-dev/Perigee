@@ -20,6 +20,8 @@ const baseUrl = new URL(base, location.origin).href;
 const i18n = new I18n(lang);
 const store = localStore();
 const BANNER_KEY = 'perigee-landing-banner';
+/** Loads the 3D view now (set by `viewFrame`): the dashboard does not wait for it to scroll into sight. */
+let loadView = (): void => undefined;
 
 /** A browser that prefers the other language gets a banner (no redirect: search engines read the page as is). */
 function languageBanner(): void {
@@ -64,6 +66,7 @@ function dashboard(): void {
     root.classList.toggle('lp-dashboard', on);
     button.textContent = i18n.t(on ? 'landing.dashboardExit' : 'landing.dashboard');
     button.setAttribute('aria-pressed', String(on));
+    if (on) loadView();
     void keepAwake(on);
     const url = new URL(location.href);
     if (on) url.searchParams.set('dashboard', '1');
@@ -84,9 +87,37 @@ function dashboard(): void {
   if (new URLSearchParams(location.search).get('dashboard') === '1') set(true);
 }
 
-/** The 3D view: sends it the visitor's place (postMessage only, never in its address). */
+/**
+ * The 3D view: a still capture first (the page's largest image, light on phones), the app loaded in the iframe once
+ * the page has loaded and the frame comes into sight (at once in the dashboard), the capture faded out when the view
+ * says `ready`. Sends it the visitor's place (postMessage only, never in its address).
+ */
 function viewFrame(): { setPlace(place: Place | undefined): void } {
   const frame = document.querySelector<HTMLIFrameElement>('.lp-view iframe');
+  const section = frame?.closest('.lp-view');
+  const reveal = (): void => section?.classList.add('lp-view-live');
+  loadView = () => {
+    const src = frame?.dataset['src'];
+    if (!frame || !src || frame.getAttribute('src')) return;
+    frame.src = src;
+    // A view that never says `ready` (an older cached app) still replaces the capture.
+    frame.addEventListener('load', () => window.setTimeout(reveal, 4000), { once: true });
+  };
+  const whenVisible = (): void => {
+    if (!frame || !('IntersectionObserver' in window)) return loadView();
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        loadView();
+      },
+      { rootMargin: '200px' },
+    );
+    io.observe(frame);
+  };
+  if (root.classList.contains('lp-dashboard')) loadView();
+  else if (document.readyState === 'complete') whenVisible();
+  else window.addEventListener('load', whenVisible, { once: true });
   let ready = false;
   let wanted: Place | undefined;
   const send = (): void => {
@@ -105,6 +136,7 @@ function viewFrame(): { setPlace(place: Place | undefined): void } {
     const msg = e.data as { type?: string; event?: string } | null;
     if (e.source !== frame?.contentWindow || msg?.type !== EMBED_PROTOCOL || msg.event !== 'ready') return;
     ready = true;
+    reveal();
     send();
   });
   return {

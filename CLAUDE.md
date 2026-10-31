@@ -490,13 +490,19 @@ the "up" vector and causes gimbal lock at the poles).
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Landing pages ("guides", added 2026-10-30): one common search per page (`src/landing/topics.ts`, ~40 topics:
   `id`, theme, `kind` picking the live widgets, engine ids, the embedded view, EN/FR slug, question, description,
-  intro and FAQ for students; object facts, images and positions always come from the catalogues and the data).
+  intro and FAQ for students, `lead`: the answer line before the live one, a fact with no drifting number since no
+  position is computed at build; object facts, images and positions always come from the catalogues and the data).
   The `landingPages` Vite plugin bundles `landing.html` (entry `src/landing/main.ts`) and clones it into
   `<lang>/<slug>/index.html` with the static content of `src/landing/render.ts` (title, description, canonical,
   hreflang pair + x-default EN, Open Graph, JSON-LD WebPage/BreadcrumbList/FAQPage, intro, facts, FAQ, related
   links, footer with privacy link, GoatCounter and a link to the credits page `<lang>/sources-and-credits|sources-et-credits/`
   listing every credit of `src/data/credits.ts`), the hubs `en/` and `fr/`,
-  and `sitemap.xml` (written at build, no longer in `public/`); the dev server renders the same pages. One fixed
+  and `sitemap.xml` (written at build, no longer in `public/`; a page's `lastmod` is the latest of the last commit
+  touching `src/landing/` and its catalogue entries' `verified`, so the deploy checks out the history without blobs);
+  the dev server renders the same pages. Each topic's 3D view is captured at 1200 × 630 per language by
+  `tools/screenshots/og.ts` (local GPU, committed in `public/landing/og/<lang>/<id>.jpg`): its Open Graph image (with
+  `og:image:alt`) and the poster shown until the iframe, which loads only after the page and once in sight (at once
+  in the dashboard), says `ready`. One fixed
   address per language, no redirect: a banner suggests the other language when the browser prefers it
   (dismissal remembered, `perigee-landing-banner`). The page script runs the headless engine in the browser
   (`src/landing/live.ts`: answer sentence, cards and tables every second, searches every 10 min, provenance block
@@ -694,6 +700,7 @@ npm run data:pull      # downloads the latest published `data` branch (normal de
 npm run textures       # offline texture pre-processing (downloads NASA sources, writes public/textures/)
 npm run mcp:build      # bundles the MCP server into mcp/dist/perigee-mcp.js
 npx tsx tools/screenshots/readme.ts docs/images   # README screenshots (dev server, data:pull, a GPU)
+npx tsx tools/screenshots/og.ts [topic,…]        # guide pages' view captures (dev server, data:pull, a GPU)
 ```
 
 ## 12. Required reference tests

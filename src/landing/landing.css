@@ -195,6 +195,33 @@ h3 {
   overflow: hidden;
 }
 
+/* The capture of the view stands in for the 3D app until it is ready (src/landing/main.ts `viewFrame`). */
+.lp-view {
+  position: relative;
+}
+
+.lp-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.6s ease;
+}
+
+.lp-view-live .lp-poster {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lp-view-noscript {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
+
 .lp-view iframe {
   display: block;
   width: 100%;

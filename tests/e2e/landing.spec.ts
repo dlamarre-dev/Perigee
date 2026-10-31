@@ -39,7 +39,9 @@ test('a satellite page shows the live position, the ground track and the passes 
   await expect(page.locator('.lp-card')).not.toHaveCount(0);
   await expect(page.locator('#lp-map-svg .gt-future')).toHaveAttribute('d', /^M/, { timeout: 30_000 });
   await expect(page.locator('#lp-provenance')).toContainText('CelesTrak');
-  await expect(page.locator('.lp-view iframe')).toHaveAttribute('src', /embed=1/);
+  // The capture first, then the 3D view once the page has loaded and the frame is in sight.
+  await expect(page.locator('.lp-view iframe')).toHaveAttribute('src', /embed=1/, { timeout: 30_000 });
+  await expect(page.locator('.lp-view')).toHaveClass(/lp-view-live/, { timeout: 30_000 });
 
   await page.locator('#lp-locate').click();
   await expect(page.locator('#lp-place-status')).toContainText('45.500° N, 73.570° W');
@@ -77,6 +79,8 @@ test('a probe page gives its live distance; the dashboard hides the article', as
   await expect(page.locator('#lp-locate')).toHaveCount(0);
   await page.locator('#lp-dashboard').click();
   await expect(page.locator('html')).toHaveClass(/lp-dashboard/);
+  // The dashboard does not wait for the 3D view to scroll into sight.
+  await expect(page.locator('.lp-view iframe')).toHaveAttribute('src', /embed=1/);
   await expect(page.locator('.lp-faq')).toBeHidden();
   expect(page.url()).toContain('dashboard=1');
 });

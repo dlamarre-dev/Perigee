@@ -73,6 +73,11 @@ export interface Topic {
   readonly slug: Localized;
   /** The search, as a question: the page title and heading. */
   readonly question: Localized;
+  /**
+   * The answer line before the page script computes the live one: a fact with no number that drifts (no position is
+   * computed at build, CLAUDE.md §2.1), so crawlers and visitors without JavaScript still read an answer.
+   */
+  readonly lead: Localized;
   /** Meta description (≤ 160 characters). */
   readonly description: Localized;
   /** What the page explains, for students (80–150 words). */
@@ -107,6 +112,10 @@ export const TOPICS: readonly Topic[] = [
     question: L(
       'Where is the International Space Station now?',
       'Où est la Station spatiale internationale ?',
+    ),
+    lead: L(
+      'The International Space Station circles the Earth about every 90 minutes, some 400 km up; its live position is computed below.',
+      'La Station spatiale internationale fait le tour de la Terre en 90 minutes environ, à quelque 400 km d’altitude ; sa position en direct est calculée ci-dessous.',
     ),
     description: L(
       'Live position of the ISS above the Earth, its ground track, altitude and speed, and when you can see it pass over you.',
@@ -150,6 +159,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'passes',
     slug: L('iss-passes-tonight', 'passages-iss-ce-soir'),
     question: L('When can I see the ISS pass tonight?', 'Quand voir passer l’ISS ce soir ?'),
+    lead: L(
+      'The ISS can be seen with the naked eye when it is sunlit while your sky is dark, shortly after sunset or before sunrise; share your location to list its passes over you.',
+      'L’ISS se voit à l’œil nu quand elle est éclairée par le Soleil alors que votre ciel est sombre, peu après le coucher ou avant le lever du Soleil ; indiquez votre position pour connaître ses passages au-dessus de vous.',
+    ),
     description: L(
       'Next passes of the International Space Station over your location, with times, directions and which ones you can see with the naked eye.',
       'Prochains passages de la Station spatiale internationale au-dessus de chez vous : heures, directions et passages visibles à l’œil nu.',
@@ -184,6 +197,10 @@ export const TOPICS: readonly Topic[] = [
     target: '48274',
     slug: L('where-is-tiangong', 'ou-est-tiangong'),
     question: L('Where is the Tiangong space station now?', 'Où est la station spatiale Tiangong ?'),
+    lead: L(
+      'China’s Tiangong space station orbits the Earth about every 90 minutes, near 400 km up; its live position is computed below.',
+      'La station spatiale chinoise Tiangong fait le tour de la Terre en 90 minutes environ, vers 400 km d’altitude ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live position of China’s Tiangong space station, its ground track, altitude and speed, and its passes over your location.',
       'Position en direct de la station spatiale chinoise Tiangong, sa trace au sol, son altitude, sa vitesse et ses passages au-dessus de chez vous.',
@@ -221,6 +238,10 @@ export const TOPICS: readonly Topic[] = [
     target: '20580',
     slug: L('where-is-hubble', 'ou-est-hubble'),
     question: L('Where is the Hubble Space Telescope now?', 'Où est le télescope spatial Hubble ?'),
+    lead: L(
+      'The Hubble Space Telescope orbits the Earth about every 95 minutes, some 500 km up; its live position is computed below.',
+      'Le télescope spatial Hubble fait le tour de la Terre en 95 minutes environ, à quelque 500 km d’altitude ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live position of the Hubble Space Telescope above the Earth, its ground track, altitude and speed, and its passes over you.',
       'Position en direct du télescope spatial Hubble au-dessus de la Terre, sa trace au sol, son altitude, sa vitesse et ses passages au-dessus de vous.',
@@ -261,6 +282,10 @@ export const TOPICS: readonly Topic[] = [
       'How many satellites are orbiting the Earth?',
       'Combien de satellites tournent autour de la Terre ?',
     ),
+    lead: L(
+      'More than ten thousand active satellites orbit the Earth, most of them in low orbit; the live count below comes from the latest CelesTrak catalogue.',
+      'Plus de dix mille satellites actifs tournent autour de la Terre, la plupart en orbite basse ; le décompte ci-dessous vient du dernier catalogue de CelesTrak.',
+    ),
     description: L(
       'Live count of active satellites around the Earth, by country, operator and orbit, from CelesTrak’s public catalogue.',
       'Nombre en direct de satellites actifs autour de la Terre, par pays, opérateur et orbite, d’après le catalogue public de CelesTrak.',
@@ -298,6 +323,10 @@ export const TOPICS: readonly Topic[] = [
       'How many Starlink satellites are in orbit?',
       'Combien de satellites Starlink sont en orbite ?',
     ),
+    lead: L(
+      'SpaceX’s Starlink satellites are the largest constellation ever launched, in low orbit around 550 km up; the live count is below.',
+      'Les satellites Starlink de SpaceX forment la plus grande constellation jamais lancée, en orbite basse vers 550 km d’altitude ; le décompte en direct est ci-dessous.',
+    ),
     description: L(
       'Live count of SpaceX Starlink satellites in orbit, their altitudes, and a 3D view of the whole constellation around the Earth.',
       'Nombre en direct de satellites Starlink de SpaceX en orbite, leurs altitudes, et une vue 3D de toute la constellation autour de la Terre.',
@@ -332,6 +361,10 @@ export const TOPICS: readonly Topic[] = [
     stats: { group: 'oneweb' },
     slug: L('oneweb-satellites', 'satellites-oneweb'),
     question: L('How many OneWeb satellites are in orbit?', 'Combien de satellites OneWeb sont en orbite ?'),
+    lead: L(
+      'Eutelsat OneWeb’s internet satellites fly in polar orbits about 1,200 km up; the live count is below.',
+      'Les satellites Internet de Eutelsat OneWeb circulent sur des orbites polaires à environ 1 200 km d’altitude ; le décompte en direct est ci-dessous.',
+    ),
     description: L(
       'Live count of Eutelsat OneWeb satellites, their polar orbits around 1,200 km, and a 3D view of the constellation.',
       'Nombre en direct de satellites Eutelsat OneWeb, leurs orbites polaires vers 1 200 km, et une vue 3D de la constellation.',
@@ -366,6 +399,10 @@ export const TOPICS: readonly Topic[] = [
     stats: { group: 'gps-ops' },
     slug: L('gps-satellites', 'satellites-gps'),
     question: L('Where are the GPS satellites?', 'Où sont les satellites GPS ?'),
+    lead: L(
+      'The GPS satellites orbit about 20,200 km up, on six planes, so that at least four are above the horizon almost anywhere; their live count and positions are below.',
+      'Les satellites GPS tournent à environ 20 200 km d’altitude, sur six plans, pour qu’au moins quatre soient au-dessus de l’horizon presque partout ; leur nombre et leurs positions en direct sont ci-dessous.',
+    ),
     description: L(
       'Live count and 3D view of the GPS navigation satellites, about 20,200 km above the Earth, and how they give your position.',
       'Nombre en direct et vue 3D des satellites de navigation GPS, à environ 20 200 km de la Terre, et comment ils donnent votre position.',
@@ -402,6 +439,10 @@ export const TOPICS: readonly Topic[] = [
     question: L(
       'Where are the Galileo navigation satellites?',
       'Où sont les satellites de navigation Galileo ?',
+    ),
+    lead: L(
+      'Europe’s Galileo navigation satellites orbit about 23,200 km up on three planes; their live count and positions are below.',
+      'Les satellites de navigation européens Galileo tournent à environ 23 200 km d’altitude sur trois plans ; leur nombre et leurs positions en direct sont ci-dessous.',
     ),
     description: L(
       'Live count and 3D view of Europe’s Galileo navigation satellites, about 23,200 km above the Earth.',
@@ -440,6 +481,10 @@ export const TOPICS: readonly Topic[] = [
       'Where are the BeiDou navigation satellites?',
       'Où sont les satellites de navigation BeiDou ?',
     ),
+    lead: L(
+      'China’s BeiDou navigation system combines medium-orbit, geostationary and inclined geosynchronous satellites; their live count and positions are below.',
+      'Le système de navigation chinois BeiDou combine des satellites en orbite moyenne, géostationnaires et géosynchrones inclinés ; leur nombre et leurs positions en direct sont ci-dessous.',
+    ),
     description: L(
       'Live count and 3D view of China’s BeiDou navigation satellites in medium, geostationary and inclined orbits.',
       'Nombre en direct et vue 3D des satellites de navigation chinois BeiDou en orbites moyenne, géostationnaire et inclinée.',
@@ -477,6 +522,10 @@ export const TOPICS: readonly Topic[] = [
     stats: { regime: 'GEO' },
     slug: L('geostationary-satellites', 'satellites-geostationnaires'),
     question: L('What are geostationary satellites?', 'Que sont les satellites géostationnaires ?'),
+    lead: L(
+      'A geostationary satellite orbits 35,786 km above the equator in exactly one day, so it seems to stay still in the sky; the live count is below.',
+      'Un satellite géostationnaire tourne à 35 786 km au-dessus de l’équateur en exactement un jour : il semble immobile dans le ciel ; le décompte en direct est ci-dessous.',
+    ),
     description: L(
       'Live count and 3D view of the satellites 35,786 km above the equator that turn with the Earth and seem fixed in the sky.',
       'Nombre en direct et vue 3D des satellites à 35 786 km au-dessus de l’équateur, qui tournent avec la Terre et semblent fixes dans le ciel.',
@@ -512,6 +561,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'jwst',
     slug: L('where-is-james-webb', 'ou-est-james-webb'),
     question: L('Where is the James Webb Space Telescope?', 'Où est le télescope spatial James Webb ?'),
+    lead: L(
+      'The James Webb Space Telescope orbits the Sun near the L2 point, about 1.5 million km from the Earth, on the side away from the Sun; its live distance is computed below.',
+      'Le télescope spatial James Webb tourne autour du Soleil près du point L2, à environ 1,5 million de km de la Terre, du côté opposé au Soleil ; sa distance en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of the James Webb Space Telescope from the Earth and the Sun, its orbit around the L2 point, and what it studies.',
       'Distance en direct du télescope spatial James Webb à la Terre et au Soleil, son orbite autour du point L2, et ce qu’il étudie.',
@@ -546,6 +599,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'euclid',
     slug: L('where-is-euclid', 'ou-est-euclid'),
     question: L('Where is the Euclid space telescope?', 'Où est le télescope spatial Euclid ?'),
+    lead: L(
+      'ESA’s Euclid telescope orbits the Sun near the L2 point, about 1.5 million km from the Earth; its live distance is computed below.',
+      'Le télescope Euclid de l’ESA tourne autour du Soleil près du point L2, à environ 1,5 million de km de la Terre ; sa distance en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of ESA’s Euclid telescope from the Earth and the Sun, near the L2 point, and its map of the dark universe.',
       'Distance en direct du télescope Euclid de l’ESA à la Terre et au Soleil, près du point L2, et sa carte de l’univers sombre.',
@@ -581,6 +638,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'distance',
     slug: L('how-far-is-voyager-1', 'distance-voyager-1'),
     question: L('How far away is Voyager 1?', 'À quelle distance se trouve Voyager 1 ?'),
+    lead: L(
+      'Voyager 1 is in interstellar space, farther from the Earth than any other spacecraft; its live distance is computed below.',
+      'Voyager 1 est dans l’espace interstellaire, plus loin de la Terre que tout autre engin spatial ; sa distance en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of Voyager 1, the farthest spacecraft from the Earth, in kilometres, astronomical units and light travel time.',
       'Distance en direct de Voyager 1, l’engin le plus éloigné de la Terre, en kilomètres, en unités astronomiques et en temps de lumière.',
@@ -616,6 +677,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'distance',
     slug: L('how-far-is-voyager-2', 'distance-voyager-2'),
     question: L('How far away is Voyager 2?', 'À quelle distance se trouve Voyager 2 ?'),
+    lead: L(
+      'Voyager 2, the only spacecraft to have visited Uranus and Neptune, is in interstellar space; its live distance is computed below.',
+      'Voyager 2, le seul engin à avoir visité Uranus et Neptune, est dans l’espace interstellaire ; sa distance en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of Voyager 2 from the Earth and the Sun, the only spacecraft to have visited Uranus and Neptune.',
       'Distance en direct de Voyager 2 à la Terre et au Soleil, le seul engin à avoir visité Uranus et Neptune.',
@@ -653,6 +718,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'new-horizons',
     slug: L('where-is-new-horizons', 'ou-est-new-horizons'),
     question: L('Where is New Horizons now?', 'Où est New Horizons ?'),
+    lead: L(
+      'New Horizons flew past Pluto in 2015 and is crossing the Kuiper belt, far beyond Neptune; its live position is computed below.',
+      'New Horizons a survolé Pluton en 2015 et traverse la ceinture de Kuiper, bien au-delà de Neptune ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of NASA’s New Horizons probe, which flew past Pluto in 2015 and Arrokoth in 2019, from the Earth and the Sun.',
       'Distance en direct de la sonde New Horizons de la NASA, qui a survolé Pluton en 2015 et Arrokoth en 2019, à la Terre et au Soleil.',
@@ -687,6 +756,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'parker-solar-probe',
     slug: L('where-is-parker-solar-probe', 'ou-est-parker-solar-probe'),
     question: L('Where is the Parker Solar Probe?', 'Où est la sonde solaire Parker ?'),
+    lead: L(
+      'The Parker Solar Probe flies closer to the Sun than any spacecraft before it, through the Sun’s outer atmosphere; its live position is computed below.',
+      'La sonde Parker Solar Probe passe plus près du Soleil qu’aucun engin avant elle, à travers la haute atmosphère du Soleil ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance and speed of NASA’s Parker Solar Probe, the spacecraft that flies closest to the Sun and fastest of all.',
       'Distance et vitesse en direct de la sonde Parker de la NASA, l’engin qui passe le plus près du Soleil et qui va le plus vite.',
@@ -721,6 +794,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'solar-orbiter',
     slug: L('where-is-solar-orbiter', 'ou-est-solar-orbiter'),
     question: L('Where is Solar Orbiter?', 'Où est Solar Orbiter ?'),
+    lead: L(
+      'Solar Orbiter, an ESA and NASA mission, orbits the Sun to watch it up close and from above its equator; its live position is computed below.',
+      'Solar Orbiter, une mission de l’ESA et de la NASA, tourne autour du Soleil pour l’observer de près et au-dessus de son équateur ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of the ESA–NASA Solar Orbiter from the Sun and the Earth, the first spacecraft to photograph the Sun’s poles.',
       'Distance en direct de Solar Orbiter (ESA–NASA) au Soleil et à la Terre, le premier engin à photographier les pôles du Soleil.',
@@ -758,6 +835,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'juno',
     slug: L('where-is-juno', 'ou-est-juno'),
     question: L('Where is the Juno spacecraft?', 'Où est la sonde Juno ?'),
+    lead: L(
+      'NASA’s Juno orbits Jupiter, passing over its poles to study its atmosphere, interior and magnetic field; its live position is computed below.',
+      'La sonde Juno de la NASA tourne autour de Jupiter en passant au-dessus de ses pôles pour étudier son atmosphère, son intérieur et son champ magnétique ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of NASA’s Juno probe, in orbit around Jupiter since 2016, from the Earth and the Sun.',
       'Distance en direct de la sonde Juno de la NASA, en orbite autour de Jupiter depuis 2016, à la Terre et au Soleil.',
@@ -795,6 +876,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'europa-clipper',
     slug: L('where-is-europa-clipper', 'ou-est-europa-clipper'),
     question: L('Where is Europa Clipper now?', 'Où est Europa Clipper ?'),
+    lead: L(
+      'NASA’s Europa Clipper is on its way to Jupiter to study its icy moon Europa and the ocean beneath its crust; its live position is computed below.',
+      'La sonde Europa Clipper de la NASA est en route vers Jupiter pour étudier sa lune glacée Europe et l’océan sous sa croûte ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of NASA’s Europa Clipper on its way to Jupiter’s icy moon Europa, from the Earth and the Sun.',
       'Distance en direct d’Europa Clipper (NASA) en route vers Europe, la lune glacée de Jupiter, à la Terre et au Soleil.',
@@ -832,6 +917,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'juice',
     slug: L('where-is-juice', 'ou-est-juice'),
     question: L('Where is ESA’s JUICE mission?', 'Où est la mission JUICE de l’ESA ?'),
+    lead: L(
+      'ESA’s JUICE is on its way to Jupiter to study Ganymede, Callisto and Europa; its live position is computed below.',
+      'La sonde JUICE de l’ESA est en route vers Jupiter pour étudier Ganymède, Callisto et Europe ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of ESA’s JUICE probe on its way to Jupiter and its moon Ganymede, from the Earth and the Sun.',
       'Distance en direct de la sonde JUICE de l’ESA en route vers Jupiter et sa lune Ganymède, à la Terre et au Soleil.',
@@ -869,6 +958,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'bepicolombo',
     slug: L('where-is-bepicolombo', 'ou-est-bepicolombo'),
     question: L('Where is BepiColombo now?', 'Où est BepiColombo ?'),
+    lead: L(
+      'BepiColombo, a European and Japanese mission, carries two orbiters to Mercury, the planet closest to the Sun; its live position is computed below.',
+      'BepiColombo, une mission européenne et japonaise, emporte deux orbiteurs vers Mercure, la planète la plus proche du Soleil ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of the ESA–JAXA BepiColombo mission to Mercury from the Earth and the Sun.',
       'Distance en direct de la mission BepiColombo (ESA–JAXA) vers Mercure, à la Terre et au Soleil.',
@@ -903,6 +996,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'psyche',
     slug: L('where-is-psyche', 'ou-est-psyche'),
     question: L('Where is the Psyche spacecraft?', 'Où est la sonde Psyché ?'),
+    lead: L(
+      'NASA’s Psyche is travelling to the metal-rich asteroid of the same name, in the main belt between Mars and Jupiter; its live position is computed below.',
+      'La sonde Psyche de la NASA voyage vers l’astéroïde métallique du même nom, dans la ceinture principale entre Mars et Jupiter ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of NASA’s Psyche probe on its way to the metal-rich asteroid Psyche, from the Earth and the Sun.',
       'Distance en direct de la sonde Psyché de la NASA en route vers l’astéroïde métallique Psyché, à la Terre et au Soleil.',
@@ -937,6 +1034,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'lucy',
     slug: L('where-is-lucy', 'ou-est-lucy'),
     question: L('Where is the Lucy spacecraft?', 'Où est la sonde Lucy ?'),
+    lead: L(
+      'NASA’s Lucy is touring asteroids, including the Trojans that share Jupiter’s orbit; its live position is computed below.',
+      'La sonde Lucy de la NASA visite des astéroïdes, dont les Troyens qui partagent l’orbite de Jupiter ; sa position en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of NASA’s Lucy probe on its tour of Jupiter’s Trojan asteroids, from the Earth and the Sun.',
       'Distance en direct de la sonde Lucy de la NASA dans sa tournée des astéroïdes troyens de Jupiter, à la Terre et au Soleil.',
@@ -971,6 +1072,10 @@ export const TOPICS: readonly Topic[] = [
     kind: 'moon',
     slug: L('moon-phase-today', 'phase-de-la-lune-aujourdhui'),
     question: L('What is the Moon’s phase today?', 'Quelle est la phase de la Lune aujourd’hui ?'),
+    lead: L(
+      'The Moon goes through its phases in about 29.5 days, from new moon to full moon and back; today’s phase and lit fraction are computed below.',
+      'La Lune passe par toutes ses phases en 29,5 jours environ, de la nouvelle lune à la pleine lune et retour ; la phase du jour et la part éclairée sont calculées ci-dessous.',
+    ),
     description: L(
       'Today’s Moon phase and illumination, live, with the dates of the next new moon, quarters and full moon.',
       'Phase et illumination de la Lune aujourd’hui, en direct, avec les dates des prochaines nouvelle lune, quartiers et pleine lune.',
@@ -1005,6 +1110,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'distance',
     slug: L('how-far-is-the-moon', 'distance-terre-lune'),
     question: L('How far away is the Moon right now?', 'À quelle distance est la Lune en ce moment ?'),
+    lead: L(
+      'The Moon’s distance from the Earth varies between about 356,000 and 407,000 km along its elliptical orbit; today’s distance is computed below.',
+      'La distance de la Lune à la Terre varie entre 356 000 et 407 000 km environ le long de son orbite elliptique ; la distance du jour est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance between the Earth and the Moon, in kilometres and light time, with its closest and farthest points this month.',
       'Distance en direct entre la Terre et la Lune, en kilomètres et en temps de lumière, avec ses points le plus proche et le plus éloigné ce mois-ci.',
@@ -1044,6 +1153,10 @@ export const TOPICS: readonly Topic[] = [
     question: L(
       'Which spacecraft are orbiting the Moon?',
       'Quelles sondes sont en orbite autour de la Lune ?',
+    ),
+    lead: L(
+      'Several spacecraft from the United States, India and South Korea are orbiting the Moon; the list and their live positions are below.',
+      'Plusieurs engins des États-Unis, de l’Inde et de la Corée du Sud tournent autour de la Lune ; la liste et leurs positions en direct sont ci-dessous.',
     ),
     description: L(
       'The active spacecraft around the Moon right now, LRO, Chandrayaan-2, Danuri and others, with their positions in a live 3D view.',
@@ -1095,6 +1208,10 @@ export const TOPICS: readonly Topic[] = [
       'Where did the Apollo missions land on the Moon?',
       'Où les missions Apollo se sont-elles posées sur la Lune ?',
     ),
+    lead: L(
+      'Six Apollo missions landed astronauts on the Moon between 1969 and 1972; their landing sites are shown below on the Moon as it turns now.',
+      'Six missions Apollo ont posé des astronautes sur la Lune entre 1969 et 1972 ; leurs sites d’alunissage sont montrés ci-dessous sur la Lune telle qu’elle tourne en ce moment.',
+    ),
     description: L(
       'The six Apollo landing sites on the Moon, with their coordinates, dates and photos, in a 3D view of the Moon.',
       'Les six sites d’alunissage d’Apollo sur la Lune, avec leurs coordonnées, leurs dates et leurs photos, dans une vue 3D de la Lune.',
@@ -1129,6 +1246,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'site:apollo-11',
     slug: L('where-did-apollo-11-land', 'ou-apollo-11-sest-pose'),
     question: L('Where did Apollo 11 land on the Moon?', 'Où Apollo 11 s’est-elle posée sur la Lune ?'),
+    lead: L(
+      'Apollo 11 landed on 20 July 1969 in the Sea of Tranquillity, on the side of the Moon that always faces the Earth; the site is shown below.',
+      'Apollo 11 s’est posé le 20 juillet 1969 dans la mer de la Tranquillité, sur la face de la Lune toujours tournée vers la Terre ; le site est montré ci-dessous.',
+    ),
     description: L(
       'The Apollo 11 landing site in the Sea of Tranquillity: coordinates, photo and a 3D view of the place on the Moon.',
       'Le site d’alunissage d’Apollo 11 dans la mer de la Tranquillité : coordonnées, photo et vue 3D de l’endroit sur la Lune.',
@@ -1164,6 +1285,10 @@ export const TOPICS: readonly Topic[] = [
     around: 'mars',
     slug: L('spacecraft-orbiting-mars', 'sondes-en-orbite-autour-de-mars'),
     question: L('Which spacecraft are orbiting Mars?', 'Quelles sondes sont en orbite autour de Mars ?'),
+    lead: L(
+      'Spacecraft from the United States, Europe, the United Arab Emirates and China are orbiting Mars; the list and their live positions are below.',
+      'Des engins des États-Unis, de l’Europe, des Émirats arabes unis et de la Chine tournent autour de Mars ; la liste et leurs positions en direct sont ci-dessous.',
+    ),
     description: L(
       'The active spacecraft around Mars right now, Mars Odyssey, Mars Express, MRO, TGO, Hope and others, in a live 3D view.',
       'Les sondes actives autour de Mars en ce moment, Mars Odyssey, Mars Express, MRO, TGO, Hope et d’autres, dans une vue 3D en direct.',
@@ -1201,6 +1326,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'site:perseverance-current',
     slug: L('where-is-perseverance', 'ou-est-perseverance'),
     question: L('Where is the Perseverance rover on Mars?', 'Où est le rover Perseverance sur Mars ?'),
+    lead: L(
+      'NASA’s Perseverance rover has been exploring Jezero crater on Mars since 2021; its last reported position is shown below.',
+      'Le rover Perseverance de la NASA explore le cratère Jezero sur Mars depuis 2021 ; sa dernière position publiée est montrée ci-dessous.',
+    ),
     description: L(
       'The latest position of NASA’s Perseverance rover in Jezero crater, from NASA’s traverse map, with a 3D view of Mars.',
       'La dernière position du rover Perseverance de la NASA dans le cratère Jezero, d’après la carte de trajet de la NASA, avec une vue 3D de Mars.',
@@ -1235,6 +1364,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'site:curiosity-current',
     slug: L('where-is-curiosity', 'ou-est-curiosity'),
     question: L('Where is the Curiosity rover on Mars?', 'Où est le rover Curiosity sur Mars ?'),
+    lead: L(
+      'NASA’s Curiosity rover has been climbing Mount Sharp in Gale crater on Mars since 2012; its last reported position is shown below.',
+      'Le rover Curiosity de la NASA gravit le mont Sharp dans le cratère Gale sur Mars depuis 2012 ; sa dernière position publiée est montrée ci-dessous.',
+    ),
     description: L(
       'The latest position of NASA’s Curiosity rover on Mount Sharp in Gale crater, from NASA’s traverse map, with a 3D view of Mars.',
       'La dernière position du rover Curiosity de la NASA sur le mont Sharp dans le cratère Gale, d’après la carte de trajet de la NASA, avec une vue 3D de Mars.',
@@ -1273,6 +1406,10 @@ export const TOPICS: readonly Topic[] = [
       'How far is Mars from the Earth right now?',
       'À quelle distance est Mars de la Terre en ce moment ?',
     ),
+    lead: L(
+      'The distance between the Earth and Mars changes from about 55 to 400 million km as both planets go around the Sun; today’s distance is computed below.',
+      'La distance entre la Terre et Mars varie d’environ 55 à 400 millions de km au fil de la course des deux planètes autour du Soleil ; la distance du jour est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance between the Earth and Mars in kilometres and light time, and why it changes from 55 to 400 million km.',
       'Distance en direct entre la Terre et Mars, en kilomètres et en temps de lumière, et pourquoi elle varie de 55 à 400 millions de km.',
@@ -1308,6 +1445,10 @@ export const TOPICS: readonly Topic[] = [
     bodySet: 'planets',
     slug: L('where-are-the-planets-now', 'ou-sont-les-planetes'),
     question: L('Where are the planets right now?', 'Où sont les planètes en ce moment ?'),
+    lead: L(
+      'The eight planets go around the Sun at very different speeds, from 88 days for Mercury to 165 years for Neptune; where they are today is computed below.',
+      'Les huit planètes tournent autour du Soleil à des rythmes très différents, de 88 jours pour Mercure à 165 ans pour Neptune ; leur position du jour est calculée ci-dessous.',
+    ),
     description: L(
       'Live positions of the eight planets around the Sun, with their distances from the Sun and from the Earth, in a 3D solar system.',
       'Positions en direct des huit planètes autour du Soleil, avec leurs distances au Soleil et à la Terre, dans un système solaire en 3D.',
@@ -1342,6 +1483,10 @@ export const TOPICS: readonly Topic[] = [
     bodySet: 'dwarfs',
     slug: L('where-are-the-dwarf-planets', 'ou-sont-les-planetes-naines'),
     question: L('Where are the dwarf planets?', 'Où sont les planètes naines ?'),
+    lead: L(
+      'Ceres orbits in the asteroid belt; Pluto, Haumea, Makemake and Eris lie far beyond Neptune; where they are today is computed below.',
+      'Cérès tourne dans la ceinture d’astéroïdes ; Pluton, Hauméa, Makémaké et Éris se trouvent bien au-delà de Neptune ; leur position du jour est calculée ci-dessous.',
+    ),
     description: L(
       'Live positions of Pluto, Ceres, Eris, Haumea, Makemake and the dwarf planet candidates, with their distances from the Sun.',
       'Positions en direct de Pluton, Cérès, Éris, Hauméa, Makémaké et des candidates planètes naines, avec leurs distances au Soleil.',
@@ -1376,6 +1521,10 @@ export const TOPICS: readonly Topic[] = [
     bodySet: 'comets',
     slug: L('comets-visible-now', 'cometes-visibles-en-ce-moment'),
     question: L('Which comets can I see right now?', 'Quelles comètes peut-on voir en ce moment ?'),
+    lead: L(
+      'Most comets are too faint for the naked eye; the table below estimates the brightness of well-known comets and current telescope targets from their live distances.',
+      'La plupart des comètes sont trop faibles pour l’œil nu ; le tableau ci-dessous estime l’éclat de comètes connues et de cibles actuelles des télescopes d’après leurs distances en direct.',
+    ),
     description: L(
       'Live list of well-known and currently observed comets with their estimated brightness and distances from the Sun and the Earth.',
       'Liste en direct de comètes célèbres et actuellement observées, avec leur éclat estimé et leurs distances au Soleil et à la Terre.',
@@ -1413,6 +1562,10 @@ export const TOPICS: readonly Topic[] = [
       'Where are the largest and most famous asteroids?',
       'Où sont les astéroïdes les plus grands et les plus célèbres ?',
     ),
+    lead: L(
+      'The largest asteroids and those visited by spacecraft orbit mostly in the main belt between Mars and Jupiter; where they are today is computed below.',
+      'Les plus grands astéroïdes et ceux visités par des sondes tournent surtout dans la ceinture principale, entre Mars et Jupiter ; leur position du jour est calculée ci-dessous.',
+    ),
     description: L(
       'Live positions of notable asteroids, Vesta, Pallas, Bennu, Eros and others, with their size and distances from the Sun and the Earth.',
       'Positions en direct d’astéroïdes remarquables, Vesta, Pallas, Bennu, Éros et d’autres, avec leur taille et leurs distances au Soleil et à la Terre.',
@@ -1447,6 +1600,10 @@ export const TOPICS: readonly Topic[] = [
     target: 'pluto',
     slug: L('where-is-pluto', 'ou-est-pluton'),
     question: L('Where is Pluto now?', 'Où est Pluton ?'),
+    lead: L(
+      'Pluto, a dwarf planet beyond Neptune, takes about 248 years to go around the Sun; its live distance is computed below.',
+      'Pluton, une planète naine au-delà de Neptune, met environ 248 ans à faire le tour du Soleil ; sa distance en direct est calculée ci-dessous.',
+    ),
     description: L(
       'Live distance of the dwarf planet Pluto from the Sun and the Earth, and how long its light takes to reach us.',
       'Distance en direct de la planète naine Pluton au Soleil et à la Terre, et le temps que met sa lumière pour nous parvenir.',
@@ -1484,6 +1641,10 @@ export const TOPICS: readonly Topic[] = [
       'How many sunspots are on the Sun today?',
       'Combien de taches solaires y a-t-il aujourd’hui ?',
     ),
+    lead: L(
+      'Sunspots are cooler, darker areas where the Sun’s magnetic field is strong; today’s active regions, reported by NOAA, are listed below.',
+      'Les taches solaires sont des zones plus froides et plus sombres où le champ magnétique du Soleil est intense ; les régions actives du jour, publiées par la NOAA, sont listées ci-dessous.',
+    ),
     description: L(
       'Today’s sunspot groups on the Sun from NOAA’s daily report, with a 3D view of where they are on the solar disc.',
       'Les groupes de taches solaires d’aujourd’hui d’après le rapport quotidien de la NOAA, avec une vue 3D de leur place sur le disque solaire.',
@@ -1518,6 +1679,10 @@ export const TOPICS: readonly Topic[] = [
     kind: 'sky',
     slug: L('what-is-in-the-sky-tonight', 'que-voir-dans-le-ciel-ce-soir'),
     question: L('What can I see in the sky tonight?', 'Que voir dans le ciel ce soir ?'),
+    lead: L(
+      'Tonight’s sky depends on where you are: share your location to see which planets, bright stars and satellite passes you can see.',
+      'Le ciel de ce soir dépend de l’endroit où vous êtes : indiquez votre position pour savoir quelles planètes, étoiles brillantes et passages de satellites vous pourrez voir.',
+    ),
     description: L(
       'Tonight’s sky from your location: the Moon, the visible planets, passes of the ISS and other satellites, and upcoming events.',
       'Le ciel de ce soir depuis chez vous : la Lune, les planètes visibles, les passages de l’ISS et d’autres satellites, et les événements à venir.',
@@ -1552,6 +1717,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'planets',
     slug: L('planets-visible-tonight', 'planetes-visibles-ce-soir'),
     question: L('Which planets are visible tonight?', 'Quelles planètes sont visibles ce soir ?'),
+    lead: L(
+      'Which planets you can see tonight depends on your location and the time; share your location to see when each one rises and sets.',
+      'Les planètes visibles ce soir dépendent de votre position et de l’heure ; indiquez votre position pour savoir quand chacune se lève et se couche.',
+    ),
     description: L(
       'Which planets you can see tonight from your location, where to look, how bright they are and when they rise and set.',
       'Les planètes visibles ce soir depuis chez vous, où regarder, leur éclat et l’heure de leur lever et de leur coucher.',
@@ -1586,6 +1755,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'eclipses',
     slug: L('next-eclipse', 'prochaine-eclipse'),
     question: L('When is the next eclipse?', 'Quand aura lieu la prochaine éclipse ?'),
+    lead: L(
+      'Eclipses happen only when a new or full moon falls close to the plane of the Earth’s orbit; the next solar and lunar eclipses are computed below.',
+      'Les éclipses ne se produisent que lorsqu’une nouvelle ou une pleine lune tombe près du plan de l’orbite terrestre ; les prochaines éclipses de Soleil et de Lune sont calculées ci-dessous.',
+    ),
     description: L(
       'The next solar and lunar eclipses, with their dates and type, and whether they can be seen from your location.',
       'Les prochaines éclipses de Soleil et de Lune, avec leurs dates et leur type, et si elles sont visibles depuis chez vous.',
@@ -1623,6 +1796,10 @@ export const TOPICS: readonly Topic[] = [
     focus: 'fullMoon',
     slug: L('next-full-moon', 'prochaine-pleine-lune'),
     question: L('When is the next full moon?', 'Quand aura lieu la prochaine pleine lune ?'),
+    lead: L(
+      'A full moon comes about every 29.5 days, when the Moon is opposite the Sun in the sky; the next full moons are computed below.',
+      'La pleine lune revient tous les 29,5 jours environ, quand la Lune est à l’opposé du Soleil dans le ciel ; les prochaines pleines lunes sont calculées ci-dessous.',
+    ),
     description: L(
       'Dates and times of the next full moons, new moons and quarters, in your time zone, with the Moon’s distance at each.',
       'Dates et heures des prochaines pleines lunes, nouvelles lunes et quartiers, dans votre fuseau horaire, avec la distance de la Lune.',

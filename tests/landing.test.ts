@@ -4,7 +4,14 @@ import { parseSetParams } from '../src/app/embedApi';
 import { resolve } from '../src/engine/objects';
 import { nightPath, subsolarPoint, trackPath } from '../src/landing/GroundTrackMap';
 import { forgetPlace, loadPlace, OBSERVER_KEY, roundPlace, savePlace } from '../src/landing/observer';
-import { CREDITS_PATHS, listedObjects, renderAll, renderSitemap, viewQuery } from '../src/landing/render';
+import {
+  CREDITS_PATHS,
+  listedObjects,
+  renderAll,
+  renderSitemap,
+  topicCatalogueDate,
+  viewQuery,
+} from '../src/landing/render';
 import { THEMES, TOPICS, topicPath } from '../src/landing/topics';
 
 class MemoryStorage {
@@ -35,6 +42,9 @@ describe('landing topics', () => {
         expect(t.description[lang].length, `${t.id} description`).toBeLessThanOrEqual(170);
         expect(t.intro[lang].split(/\s+/).length, `${t.id} intro`).toBeGreaterThanOrEqual(70);
         expect(t.faq.length).toBeGreaterThanOrEqual(2);
+        // The static answer line: one sentence, no em dash, before the live one replaces it.
+        expect(t.lead[lang].length, `${t.id} lead`).toBeGreaterThan(40);
+        expect(t.lead[lang]).not.toContain('—');
       }
     }
     for (const t of TOPICS) expect(THEMES.map((x) => x.id)).toContain(t.theme);
@@ -105,12 +115,28 @@ describe('landing pages', () => {
     );
     expect(html).toContain('hreflang="en" href="https://perigee.info/en/where-is-the-iss/"');
     expect(html).toContain('hreflang="x-default" href="https://perigee.info/en/where-is-the-iss/"');
-    expect(html).toContain('src="/?sel=25544&amp;lang=fr&amp;follow=1&amp;embed=1"');
+    // The 3D view loads only once the page has (src/landing/main.ts): its address waits in data-src.
+    expect(html).toContain('data-src="/?sel=25544&amp;lang=fr&amp;follow=1&amp;embed=1"');
+    expect(html).not.toMatch(/<iframe src=/);
+    // The answer line starts with the topic's static sentence, never a "Computing…" placeholder.
+    expect(html).toContain(`<span id="lp-answer-text">${TOPICS[0]?.lead.fr.replace(/'/g, '&#39;')}</span>`);
+    expect(html).not.toContain('…</span>');
     expect(html).toContain('id="lp-locate"');
     expect(html).toContain('href="/confidentialite.html"');
     const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) =>
       JSON.parse(m[1] ?? ''),
     );
+    // Without a capture of the view, the shared image, and no page image (the ISS has a 3D model, no photo); Psyche's photo.
+    expect(html).toContain('<meta property="og:image" content="https://perigee.info/og-image.jpg">');
+    expect(blocks[0].primaryImageOfPage).toBeUndefined();
+    const psyche = pages.get('en/where-is-psyche/index.html') ?? '';
+    const psychePage = JSON.parse(
+      /<script type="application\/ld\+json">(.*?)<\/script>/.exec(psyche)?.[1] ?? '{}',
+    ) as { primaryImageOfPage?: unknown };
+    expect(psychePage.primaryImageOfPage).toEqual({
+      '@type': 'ImageObject',
+      url: expect.stringMatching(/^https:\/\/perigee\.info\/images\/.+\.webp$/),
+    });
     expect(blocks.map((b: { '@type': string }) => b['@type'])).toEqual([
       'WebPage',
       'BreadcrumbList',
@@ -119,13 +145,26 @@ describe('landing pages', () => {
     expect(html).not.toMatch(/<!--lp:/);
   });
 
+  it('use the topic capture for sharing and as the view poster when there is one', () => {
+    const html =
+      renderAll(TEMPLATE, { ...CTX, assets: { 'landing/og/en/voyager-1.jpg': 'abc123' } }).get(
+        'en/how-far-is-voyager-1/index.html',
+      ) ?? '';
+    expect(html).toContain(
+      '<meta property="og:image" content="https://perigee.info/landing/og/en/voyager-1.jpg?v=abc123">',
+    );
+    expect(html).toMatch(/<meta property="og:image:alt" content="[^"]+">/);
+    expect(html).toMatch(/<meta name="twitter:image:alt" content="[^"]+">/);
+    expect(html).toContain('<img class="lp-poster" src="/landing/og/en/voyager-1.jpg?v=abc123"');
+  });
+
   it('only ask for the place where it is used', () => {
     expect(pages.get('en/how-far-is-voyager-1/index.html')).not.toContain('id="lp-locate"');
     expect(pages.get('en/what-is-in-the-sky-tonight/index.html')).toContain('id="lp-locate"');
   });
 
   it('are all in the sitemap with their alternates', () => {
-    const xml = renderSitemap(CTX, '2026-10-30');
+    const xml = renderSitemap({ ...CTX, landingDate: '2026-01-01' }, '2026-10-30');
     for (const t of TOPICS) {
       expect(xml).toContain(`<loc>https://perigee.info/${topicPath(t, 'en')}</loc>`);
       expect(xml).toContain(`<loc>https://perigee.info/${topicPath(t, 'fr')}</loc>`);
@@ -133,6 +172,18 @@ describe('landing pages', () => {
     expect(xml).toContain('<loc>https://perigee.info/?lang=fr&amp;view=moon</loc>');
     expect(xml).toContain('<loc>https://perigee.info/fr/</loc>');
     expect(xml).toContain(`<loc>https://perigee.info/${CREDITS_PATHS.en}</loc>`);
+    // Each page carries its own date: its texts' or its catalogue entries' latest verification, not the build's.
+    const lastmodOf = (path: string): string | undefined =>
+      new RegExp(String.raw`<loc>https://perigee\.info/${path}</loc>[\s\S]*?<lastmod>([^<]+)</lastmod>`).exec(
+        xml,
+      )?.[1];
+    const voyager = TOPICS.find((t) => t.id === 'voyager-1');
+    const planets = TOPICS.find((t) => t.id === 'planets');
+    expect(voyager && planets).toBeTruthy();
+    if (!voyager || !planets) return;
+    expect(lastmodOf(topicPath(voyager, 'en'))).toBe(topicCatalogueDate(voyager));
+    expect(lastmodOf(topicPath(planets, 'en'))).toBe('2026-01-01');
+    expect(lastmodOf('en/')).toBe('2026-01-01');
   });
 });
 

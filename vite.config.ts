@@ -52,6 +52,20 @@ function buildInfo(): { version: string; commit: string; date: string } {
 }
 
 const buildStamp = buildInfo();
+const assets = assetVersions();
+
+/** Date (YYYY-MM-DD) of the last commit touching these paths; the build commit's date without git history. */
+function lastChange(...paths: string[]): string {
+  try {
+    const date = execFileSync('git', ['log', '-1', '--format=%cI', '--', ...paths], {
+      encoding: 'utf8',
+    }).trim();
+    if (date) return date.slice(0, 10);
+  } catch {
+    // No git: fall through.
+  }
+  return buildStamp.date.slice(0, 10);
+}
 
 /**
  * Content hash of the static files that keep a fixed name (public/textures, models, shapes, images), appended as `?v=`
@@ -60,7 +74,7 @@ const buildStamp = buildInfo();
 function assetVersions(): Record<string, string> {
   if (process.env['VITEST']) return {};
   const versions: Record<string, string> = {};
-  for (const dir of ['textures', 'models', 'shapes', 'images']) {
+  for (const dir of ['textures', 'models', 'shapes', 'images', 'landing']) {
     for (const entry of readdirSync(join('public', dir), { recursive: true, withFileTypes: true })) {
       if (!entry.isFile()) continue;
       const file = join(entry.parentPath, entry.name);
@@ -139,6 +153,8 @@ function landingPages(): Plugin {
     site: process.env['PERIGEE_SITE'] ?? 'https://perigee.info/',
     base,
     version: buildStamp.version,
+    assets,
+    landingDate: lastChange('src/landing'),
   };
   const renderer = async (): Promise<typeof import('./src/landing/render')> =>
     (
@@ -191,7 +207,7 @@ export default defineConfig({
   base,
   define: {
     __PERIGEE_BUILD__: JSON.stringify(buildStamp),
-    __PERIGEE_ASSETS__: JSON.stringify(assetVersions()),
+    __PERIGEE_ASSETS__: JSON.stringify(assets),
   },
   plugins: [basisTranscoder(), versionFile(), apiDocuments(), landingPages()],
   build: {
