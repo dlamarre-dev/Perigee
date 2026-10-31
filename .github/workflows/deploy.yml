@@ -41,6 +41,11 @@ jobs:
           else
             echo "No data branch yet (expected before M1)."
           fi
+      # README badges (Shields.io endpoint JSON): data freshness, satellites and missions tracked. Only a nicety: a
+      # failure never blocks the deployment.
+      - name: Badges
+        continue-on-error: true
+        run: npx tsx tools/badges/write-badges.ts dist
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

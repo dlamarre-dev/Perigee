@@ -1,6 +1,13 @@
 # Perigee
 
 <p>
+  <a href="https://perigee.info/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fperigee.info%2F&amp;style=flat&amp;label=perigee.info&amp;up_message=online&amp;down_message=offline" alt="Website status" height="20"></a>
+  <a href="https://github.com/dlamarre-dev/Perigee/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/dlamarre-dev/Perigee/ci.yml?branch=master&amp;style=flat&amp;label=CI" alt="CI status" height="20"></a>
+  <a href="https://github.com/dlamarre-dev/Perigee/releases/latest"><img src="https://img.shields.io/github/v/release/dlamarre-dev/Perigee?style=flat&amp;label=release" alt="Latest release" height="20"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/dlamarre-dev/Perigee?style=flat&amp;color=blue" alt="MIT licence" height="20"></a>
+  <a href="https://perigee.info/data/manifest.json"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fperigee.info%2Fbadges%2Fdata.json&amp;style=flat" alt="Data last updated" height="20"></a>
+  <a href="https://perigee.info/?view=earth"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fperigee.info%2Fbadges%2Fsatellites.json&amp;style=flat" alt="Satellites tracked" height="20"></a>
+  <a href="https://perigee.info/?view=solar"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fperigee.info%2Fbadges%2Fmissions.json&amp;style=flat" alt="Space missions tracked" height="20"></a>
   <a href="https://github.com/dlamarre-dev/Perigee/stargazers"><img src="https://img.shields.io/github/stars/dlamarre-dev/Perigee?style=flat&logo=github&label=stars" alt="GitHub stars" height="20"></a>
   <a href="https://github.com/dlamarre-dev/Perigee/forks"><img src="https://img.shields.io/github/forks/dlamarre-dev/Perigee?style=flat&logo=github&label=forks" alt="GitHub forks" height="20"></a>
   <a href="https://github.com/dlamarre-dev/Perigee"><img src="https://img.shields.io/github/repo-size/dlamarre-dev/Perigee?style=flat&label=repo%20size&color=blue" alt="Repository size" height="20"></a>
