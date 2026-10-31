@@ -376,6 +376,15 @@ function main(): void {
   document.addEventListener('visibilitychange', () => {
     if (reloadWhenVisible && document.visibilityState === 'visible') reloadKeepingView();
   });
+  // Embed mode shows no notice (a classroom screen: nobody clicks): the frame reloads by itself once nobody has
+  // touched it for a while, so someone turning the view is not interrupted. The embedding page gets `ready` again.
+  const embedIdleMs = startParams.has('e2e') ? 1500 : 3 * 60_000;
+  let idleReload = 0;
+  const reloadWhenIdle = (): void => {
+    const waitMs = lastInputMs + embedIdleMs - performance.now();
+    if (waitMs <= 0) reloadKeepingView();
+    else idleReload = window.setTimeout(reloadWhenIdle, waitMs);
+  };
   const updates = new UpdateWatcher({
     baseUrl: import.meta.env.BASE_URL,
     commit: __PERIGEE_BUILD__.commit,
@@ -384,6 +393,10 @@ function main(): void {
     onUpdate: (kind) => {
       if (document.visibilityState === 'hidden') {
         reloadWhenVisible = true;
+        return;
+      }
+      if (embed) {
+        if (!idleReload) reloadWhenIdle();
         return;
       }
       updateKind = kind;

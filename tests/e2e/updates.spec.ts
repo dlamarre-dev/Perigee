@@ -83,6 +83,36 @@ test('newer data for the current view are announced', async ({ page }) => {
   await expect(page.locator('.update-notice')).toContainText('Newer data are available.');
 });
 
+test('an embedded view reloads by itself with newer data once left alone', async ({ page }) => {
+  let loads = 0;
+  page.on('load', () => loads++);
+  await page.goto(`./?lang=en&view=moon&embed=1&${FROZEN}&e2e`);
+  await expect(page.locator('.embed-recenter')).toBeVisible({ timeout: 20_000 });
+  await page.route('**/data/manifest.json', async (route) => {
+    const res = await route.fetch();
+    const manifest = (await res.json()) as { ephemerides: Record<string, { sha256: string }> };
+    for (const e of Object.values(manifest.ephemerides)) e.sha256 = 'f'.repeat(64);
+    await route.fulfill({ response: res, json: manifest });
+  });
+  // Someone is turning the view: no reload while the input goes on (1.5 s of quiet in e2e, 3 min otherwise).
+  let stopAt = Infinity;
+  const moving = (async () => {
+    for (let i = 0; Date.now() < stopAt; i++) {
+      await page.mouse.move(300 + (i % 20) * 10, 300);
+      await page.waitForTimeout(250);
+    }
+  })();
+  // The ephemerides' hashes are known once loaded.
+  await expect.poll(() => checkUpdates(page), { timeout: 20_000 }).toBe('data');
+  stopAt = Date.now() + 3000;
+  await moving;
+  expect(loads).toBe(1);
+  await expect(page.locator('.update-notice')).toBeHidden();
+  await expect.poll(() => loads, { timeout: 20_000 }).toBe(2);
+  await expect(page).toHaveURL(/view=moon/);
+  await expect(page).toHaveURL(/embed=1/);
+});
+
 test('a view chunk missing after a deployment reloads the page once', async ({ page }) => {
   let loads = 0;
   page.on('load', () => loads++);

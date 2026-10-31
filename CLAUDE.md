@@ -640,7 +640,8 @@ Rules:
 - Open tabs stay current (`src/app/updates.ts`): every 15 min while visible (and on return to the tab), the page
   compares its commit with `version.json` (written by the build, never cached) and the data hashes its view
   loaded (`View.dataVersions()`) with `manifest.json`. A tab in the background reloads on return; a visible one
-  shows a "Refresh" notice. The URL keeps view, selection, filters and time; the camera crosses the reload in
+  shows a "Refresh" notice, except in embed mode (no notice: classroom screens), which reloads by itself after 3 min
+  without input (the embedding page gets `ready` again and re-sends its place). The URL keeps view, selection, filters and time; the camera crosses the reload in
   `sessionStorage`. A view chunk missing after a deployment triggers one reload (at most one per minute).
 
 ## 9. License and attribution
