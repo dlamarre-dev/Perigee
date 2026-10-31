@@ -22,6 +22,8 @@ test.beforeEach(async ({ page }) => {
 test('a satellite page shows the live position, the ground track and the passes over the visitor', async ({
   page,
 }) => {
+  // Engine, map, passes, then a reload: over the default 30 s on CI runners.
+  test.slow();
   await page.goto('./en/where-is-the-iss/');
   await expect(page).toHaveTitle('Where is the International Space Station now? | Perigee');
   await expect(page.locator('link[hreflang="fr"]')).toHaveAttribute(
