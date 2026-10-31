@@ -70,7 +70,12 @@ export class MarkerPoints {
     this.points.frustumCulled = false;
     // Without depth test, a marker drawn before an opaque surface would be painted over by it (the body's local
     // patch around a selected site is closer to the camera, so it sorted after the markers): draw them last.
-    if (options.depthTest === false) this.points.renderOrder = 10;
+    // The transparent pass, too: three.js draws it after the opaque one whatever the renderOrder, so opaque
+    // markers were covered by the Earth's cloud layer (transparent, renderOrder 1).
+    if (options.depthTest === false) {
+      this.points.renderOrder = 10;
+      this.points.material.transparent = true;
+    }
     // Hidden markers are moved outside the clip volume in the shader. (Moving them "far away" is not enough:
     // with the near plane at metres and the far plane at the Sun, the Float32 projection has an effectively
     // infinite far plane and they all showed up at one point of the sky.)
