@@ -109,6 +109,11 @@ to do anything unless you explicitly ask for help.
 - If the network blocks a source, try another official one; if nothing can be read, do not guess: list the item
   under "Needs a human".
 - Never push to `master` directly, never disable checks, never merge a PR whose CI failed.
+- Subagents (Agent tool) only research and report: they never edit files, run git commands that write, or use
+  `gh`. The main agent alone edits the catalog, commits, pushes, opens the PR and comments, after reading every
+  subagent's report (two subagents editing at once once bumped `verified` dates that nothing had confirmed). A
+  `PreToolUse` hook in `.claude/settings.json` (`.claude/hooks/subagent-guard.mjs`) refuses those git and `gh`
+  commands inside subagents.
 - Language: code, catalog `en` fields, commit and PR text in English; `fr` fields in French (Quebec
   typography: a non-breaking space before `:`). Every text a visitor reads (names, `note`, `notes`, `goals`,
   `orbit`, `purpose`…) has both an `en` and an `fr` value, including source notes on landing sites; translate when
