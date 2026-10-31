@@ -38,11 +38,16 @@ jobs:
           PERIGEE_BASE: /
       # From M1: copy the orphan `data` branch into dist/data (same origin → no CORS).
       - name: Copy published data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           if git ls-remote --exit-code --heads origin data >/dev/null; then
-            git fetch --depth 1 origin data
+            # Its own shallow clone with the file contents: the repository above is blobless, and checking the data
+            # out there would fetch every file one request at a time (12 min instead of seconds).
+            git clone --quiet --depth 1 --branch data --single-branch --no-tags \
+              "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$RUNNER_TEMP/data"
             mkdir -p dist/data
-            git --work-tree=dist/data checkout origin/data -- .
+            git -C "$RUNNER_TEMP/data" archive HEAD | tar -x -C dist/data
           else
             echo "No data branch yet (expected before M1)."
           fi
