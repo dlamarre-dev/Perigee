@@ -486,7 +486,7 @@ the "up" vector and causes gimbal lock at the poles).
   for the user follow `lang` (EN/FR: notes, warnings, highlights, labels in `src/engine/notes.ts`, compass points
   with O for west in French texts); codes stay English in every language (`direction: "WNW"`, `light: "umbra"`),
   with a localised label beside them where a person reads them. perigee-mcp
-  1.9.4 has 19 tools. Architecture, observability,
+  1.9.5 has 19 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
 - Landing pages ("guides", added 2026-10-30): one common search per page (`src/landing/topics.ts`, ~40 topics:
   `id`, theme, `kind` picking the live widgets, engine ids, the embedded view, EN/FR slug, question, description,

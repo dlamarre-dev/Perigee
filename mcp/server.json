@@ -4,18 +4,35 @@
   "title": "Perigee",
   "description": "Positions, distances, mission facts and 3D views of objects orbiting the Earth, Moon, Mars and Sun.",
   "websiteUrl": "https://perigee.info/",
+  "icons": [
+    {
+      "src": "https://perigee.info/icons/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    },
+    {
+      "src": "https://perigee.info/icons/icon-192.png",
+      "mimeType": "image/png",
+      "sizes": ["192x192"]
+    },
+    {
+      "src": "https://perigee.info/icons/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
   "repository": {
     "url": "https://github.com/dlamarre-dev/Perigee",
     "source": "github",
     "id": "1389838851",
     "subfolder": "mcp"
   },
-  "version": "1.9.4",
+  "version": "1.9.5",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "perigee-mcp",
-      "version": "1.9.4",
+      "version": "1.9.5",
       "transport": {
         "type": "stdio"
       },
