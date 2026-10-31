@@ -89,7 +89,10 @@ file must keep its name: npm checks both.
 package (stdio) and the hosted endpoint (`remotes`). The registry accepts the npm package only if its published
 `package.json` has the same `mcpName` (added in 1.9.2). The release workflow logs in with GitHub OIDC
 (`mcp-publisher login github-oidc`, allowed by `id-token: write`) and publishes; it checks beforehand that the
-versions and the name of `server.json` match `mcp/package.json`.
+versions and the name of `server.json` match `mcp/package.json`. The registry refuses a version npm does not list
+yet, and npm can take 10 minutes or more to list a new one ("being processed"): the step first waits for npm (up to
+45 min), then retries while the registry still cannot see it. If it gives up, the run ends with a warning, not a
+failure: re-run the job later.
 
 By hand (`brew install mcp-publisher`): `cd mcp && mcp-publisher validate`, then `mcp-publisher login github` (device
 code in the browser) and `mcp-publisher publish`. Check with

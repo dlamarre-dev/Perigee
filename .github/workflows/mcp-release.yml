@@ -63,9 +63,22 @@ jobs:
       # Lists the version in the official MCP Registry (registry.modelcontextprotocol.io), which checks that the npm
       # package carries the same mcpName. GitHub OIDC proves the io.github.dlamarre-dev namespace: no token stored.
       # A version already in the registry is refused, so a duplicate run only warns.
+      # npm can take well over 5 minutes to list a new version ("being processed"), and the registry refuses a
+      # version npm does not list yet: wait for npm first (up to 45 min), then publish. Still not listed, or still
+      # refused for that reason only, is a warning (re-run this job later), not a failed release.
       - name: Publish to the MCP Registry
         working-directory: mcp
+        timeout-minutes: 60
         run: |
+          version=$(node -p "require('./package.json').version")
+          for wait in $(seq 1 90); do
+            npm view "perigee-mcp@$version" version --prefer-online >/dev/null 2>&1 && break
+            if [ "$wait" -eq 90 ]; then
+              echo "::warning::npm still does not list perigee-mcp $version after 45 min: re-run this job to list it in the MCP Registry."
+              exit 0
+            fi
+            sleep 30
+          done
           curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/v1.8.6/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           ./mcp-publisher login github-oidc
           for attempt in 1 2 3 4 5; do
@@ -75,7 +88,9 @@ jobs:
               echo "::notice::This version is already in the MCP Registry."
               exit 0
             fi
-            # npm may not list the new version yet: wait and try again.
-            sleep 60
+            # Any other refusal is a real error.
+            grep -qiE "version '[^']*' was not found" "$RUNNER_TEMP/registry.log" || exit 1
+            # The registry may read npm through a cache that lags behind: wait and try again.
+            sleep 120
           done
-          exit 1
+          echo "::warning::The MCP Registry does not see perigee-mcp $version on npm yet: re-run this job later."
