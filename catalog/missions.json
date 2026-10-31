@@ -2928,9 +2928,9 @@
         "fr": "Assemblage, intégration et essais"
       },
       "nextEvent": {
-        "en": "Launch on H3 (first quarter)",
-        "fr": "Lancement sur H3 (premier trimestre)",
-        "date": "2028"
+        "en": "Launch from Japan (three-week window in March 2028)",
+        "fr": "Lancement depuis le Japon (fenêtre de trois semaines en mars 2028)",
+        "date": "2028-03"
       },
       "ephemeris": "none",
       "lowOrbit": false,
@@ -2939,14 +2939,17 @@
         "fr": "La mission émiratie vers la ceinture d'astéroïdes prévoit d'envoyer la sonde MBR Explorer survoler sept astéroïdes de la ceinture principale, entre Mars et Jupiter, puis se poser sur le dernier, Justitia. Elle étudiera leur composition, leur géologie, leur densité et leur température pour comprendre l'origine et l'évolution des astéroïdes riches en eau, et savoir s'ils pourraient un jour fournir des ressources aux missions futures."
       },
       "notes": {
-        "en": "Six main-belt asteroid flybys and a lander at a seventh ~2034; gravity assists at Venus, Earth, Mars. Other sources give March 2028.",
-        "fr": "Six survols d'astéroïdes de la ceinture principale et un atterrisseur sur un septième vers 2034 ; assistances de Vénus, de la Terre et de Mars. D'autres sources indiquent mars 2028."
+        "en": "Six main-belt asteroid flybys, then a landing on the seventh, Justitia, in early 2036 (earlier reports said 2034); gravity assists at Venus, Earth and Mars. In October 2026 the lander built by the Technology Innovation Institute finished its environmental tests and was to be shipped to LASP (Colorado) for integration with the spacecraft.",
+        "fr": "Six survols d’astéroïdes de la ceinture principale, puis un atterrissage sur le septième, Justitia, début 2036 (des annonces antérieures indiquaient 2034) ; assistances gravitationnelles de Vénus, de la Terre et de Mars. En octobre 2026, l’atterrisseur construit par le Technology Innovation Institute a terminé ses essais d’environnement et devait partir au LASP (Colorado) pour son intégration à la sonde."
       },
       "website": {
         "url": "https://space.gov.ae/en/projects-and-initiatives/space-exploration/emirates-mission-to-the-asteroid-belt"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-10-31",
       "sources": [
+        "https://www.thenationalnews.com/news/uae/2026/10/04/uaes-mbr-explorer-probe-enters-final-tests-for-2028-mission/",
+        "https://www.tii.ae/news/technology-innovation-institute-completes-asteroid-landing-probe-landmark-emirates-mission",
+        "https://www.khaleejtimes.com/asteroid-mission-probe-flight-readiness-less-than-2-years-sheikh-hamdan-says",
         "https://www.thenationalnews.com/news/uae/2026/04/27/uaes-mbr-explorer-mission-to-asteroid-belt-on-track-for-2028-launch-as-tests-begin/"
       ]
     },
