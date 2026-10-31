@@ -378,7 +378,8 @@ function main(): void {
   });
   // Embed mode shows no notice (a classroom screen: nobody clicks): the frame reloads by itself once nobody has
   // touched it for a while, so someone turning the view is not interrupted. The embedding page gets `ready` again.
-  const embedIdleMs = startParams.has('e2e') ? 1500 : 3 * 60_000;
+  // In e2e, 5 s: software WebGL on CI runners can stall the page for over a second between two input events.
+  const embedIdleMs = startParams.has('e2e') ? 5000 : 3 * 60_000;
   let idleReload = 0;
   const reloadWhenIdle = (): void => {
     const waitMs = lastInputMs + embedIdleMs - performance.now();

@@ -94,7 +94,7 @@ test('an embedded view reloads by itself with newer data once left alone', async
     for (const e of Object.values(manifest.ephemerides)) e.sha256 = 'f'.repeat(64);
     await route.fulfill({ response: res, json: manifest });
   });
-  // Someone is turning the view: no reload while the input goes on (1.5 s of quiet in e2e, 3 min otherwise).
+  // Someone is turning the view: no reload while the input goes on (5 s of quiet in e2e, 3 min otherwise).
   let stopAt = Infinity;
   const moving = (async () => {
     for (let i = 0; Date.now() < stopAt; i++) {
