@@ -10,12 +10,12 @@
     "id": "1389838851",
     "subfolder": "mcp"
   },
-  "version": "1.9.3",
+  "version": "1.9.4",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "perigee-mcp",
-      "version": "1.9.3",
+      "version": "1.9.4",
       "transport": {
         "type": "stdio"
       },
