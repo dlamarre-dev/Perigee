@@ -722,12 +722,15 @@ the audit flags:
   ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
   2027. Artemis II flew 1–10 April 2026 (ended).
 - Mars (verified 2026-09-27, details in `catalog/missions.json`): Mars Odyssey (−53, very low on propellant —
-  re-check), Mars Express (−41, extended June 2026), MRO (−74), ExoMars TGO (−143), Hope/EMM (−62, extended to
-  2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06, mission declared over
-  2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE Blue/Gold: launched
-  2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept 2027. MMX (JAXA):
-  launched 2026-10-19 19:41 UTC (H3 F10) into its planned trajectory; heliocentric cruise, Mars arrival 2027
-  (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the probes.
+  re-check), Mars Express (−41, extended June 2026), MRO (−74), ExoMars TGO (−143, marked its 10th anniversary
+  at Mars on 2026-10-19: no confirmed methane despite earlier reports from other missions, a first detection of
+  hydrogen chloride, over 10% of the surface imaged in colour for Rosalind Franklin landing-site studies),
+  Hope/EMM (−62, extended to 2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06,
+  mission declared over 2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE
+  Blue/Gold: launched 2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept
+  2027. MMX (JAXA): launched 2026-10-19 19:41 UTC (H3 F10) into its planned trajectory; heliocentric cruise,
+  Mars arrival 2027 (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the
+  probes.
 - Interplanetary (verified 2026-10-10, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
   (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
   step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
