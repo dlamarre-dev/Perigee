@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|PowerShell",
+        "matcher": "Bash|PowerShell|mcp__github__.*|mcp__claude-code-remote__.*",
         "hooks": [
           {
             "type": "command",
