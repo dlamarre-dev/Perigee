@@ -45,7 +45,23 @@ const date = z
   .string()
   .optional()
   .describe('ISO 8601 UTC instant, e.g. 2026-12-01T00:00:00Z (default: now).');
-const id = z.string().min(1).max(100);
+const ID_HINT =
+  'NORAD number, mission id, planet, "moon:<id>", "site:<id>", "launch:<id>", "star:<id>", "comet:<id>", "asteroid:<id>" or a dwarf planet name';
+const id = z
+  .string()
+  .min(1)
+  .max(100)
+  .describe(`Object id from perigee_find (${ID_HINT}), e.g. "25544" for the ISS.`);
+const from = z
+  .string()
+  .min(1)
+  .max(100)
+  .describe(`First object id from perigee_find (${ID_HINT}), e.g. "earth".`);
+const to = z
+  .string()
+  .min(1)
+  .max(100)
+  .describe(`Second object id from perigee_find (${ID_HINT}), e.g. "mars".`);
 
 function json(value: unknown): CallToolResult {
   return {
@@ -116,7 +132,14 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       title: 'Find an object',
       description:
         'Looks up objects by name or identifier (English or French, accents optional): planets, moons, missions beyond Earth orbit, featured science satellites, any active Earth satellite (by name, NORAD or COSPAR id), landing and launch sites, named stars. Returns ids for the other tools.',
-      inputSchema: { query: z.string().min(1).max(100), limit: z.number().int().min(1).max(50).optional() },
+      inputSchema: {
+        query: z
+          .string()
+          .min(1)
+          .max(100)
+          .describe('Name or identifier to look up, e.g. "ISS", "Voyager 1", "25544", "Mars", "Apollo 11".'),
+        limit: z.number().int().min(1).max(50).optional().describe('Maximum number of results (default 10).'),
+      },
       annotations: readOnly,
     },
     guard(async ({ query, limit }) => json({ results: await engine.find(query, limit ?? 10) })),
@@ -128,7 +151,14 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       title: 'Object facts',
       description:
         'Facts about an object: name, agency, country, launch date, status, mission goals and notes, identifiers (NORAD, COSPAR, Horizons), official website, sources and verification date, a catalogue image with credit and licence, and links to its view in Perigee. include_image also returns the image itself.',
-      inputSchema: { id, lang, include_image: z.boolean().optional() },
+      inputSchema: {
+        id,
+        lang,
+        include_image: z
+          .boolean()
+          .optional()
+          .describe('Also return the catalogue image itself, not only its link and credit (default false).'),
+      },
       annotations: readOnly,
     },
     guard(async ({ id: objectId, lang: l, include_image }) => {
@@ -509,9 +539,21 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       description:
         'Counts of the active satellites: total, by owner (country or organisation, e.g. US, PRC, CIS, ESA), by operator (SpaceX, OneWeb, Amazon Kuiper…), by CelesTrak group (constellations, navigation, weather…), by orbit regime (LEO, MEO, GEO, HEO), object type, launch year, recent launches and low-orbit altitude bands. owner, operator or group narrow a list to matching entries (code or name).',
       inputSchema: {
-        owner: z.string().max(60).optional(),
-        operator: z.string().max(60).optional(),
-        group: z.string().max(60).optional(),
+        owner: z
+          .string()
+          .max(60)
+          .optional()
+          .describe('Narrow the owner list to this SATCAT owner code or name, e.g. "US", "PRC", "ESA".'),
+        operator: z
+          .string()
+          .max(60)
+          .optional()
+          .describe('Narrow the operator list to this operator, e.g. "SpaceX", "OneWeb".'),
+        group: z
+          .string()
+          .max(60)
+          .optional()
+          .describe('Narrow the group list to this CelesTrak group, e.g. "starlink", "gps-ops", "weather".'),
         limit: z
           .number()
           .int()
@@ -542,7 +584,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       title: 'Distance between two objects',
       description:
         'Centre-to-centre distance between two objects at a date (km and astronomical units) and the light travel time, with the provenance of both positions. Example: from "earth" to "mars".',
-      inputSchema: { from: id, to: id, date },
+      inputSchema: { from, to, date },
       annotations: readOnly,
     },
     guard(async ({ from, to, date: d }) => json(await engine.distance(from, to, d))),
@@ -555,8 +597,8 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       description:
         'Distances between two objects sampled evenly over a period (for a table or a chart), with the closest and farthest samples. The step limits their precision: use more steps for a precise closest approach.',
       inputSchema: {
-        from: id,
-        to: id,
+        from,
+        to,
         start: z.string().describe('ISO 8601 UTC start.'),
         end: z.string().describe('ISO 8601 UTC end.'),
         steps: z
@@ -659,7 +701,14 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
       title: 'Define a term',
       description:
         'Student-level definitions (secondary school) of the terms shown in Perigee: NORAD number, COSPAR id, apogee and perigee, inclination, orbital period, element epoch, ephemeris window, phase… Without a term, lists them all.',
-      inputSchema: { term: z.string().max(60).optional(), lang },
+      inputSchema: {
+        term: z
+          .string()
+          .max(60)
+          .optional()
+          .describe('Term to define, e.g. "inclination", "apogee", "NORAD" (omit to list every term).'),
+        lang,
+      },
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
     guard(({ term, lang: l }) => json({ definitions: engine.define(term, l ?? 'en') })),

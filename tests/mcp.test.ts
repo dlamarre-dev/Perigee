@@ -119,6 +119,16 @@ describe('MCP server', () => {
     expect(client.getInstructions()).toMatch(/provenance/);
   });
 
+  it('describes every tool and every argument, and marks them read-only', async () => {
+    // Registries and directories (mcptry.com, Glama) score tool quality on these.
+    for (const tool of (await client.listTools()).tools) {
+      expect(tool.description?.length, tool.name).toBeGreaterThan(40);
+      expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+      for (const [arg, schema] of Object.entries(tool.inputSchema.properties ?? {}))
+        expect((schema as { description?: string }).description, `${tool.name}.${arg}`).toBeTruthy();
+    }
+  });
+
   it('computes a distance with provenance', async () => {
     const r = await call('perigee_distance', { from: 'earth', to: 'mars', date: '2026-12-01T00:00:00Z' });
     expect(r.isError).toBe(false);
