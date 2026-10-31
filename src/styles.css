@@ -1,42 +1,6 @@
 /*
- * Visual language inspired by modern sci-fi HUDs (Halo Infinite): dark translucent panels with chamfered
- * corners and corner brackets, thin cyan lines, condensed uppercase labels, faint scanlines.
- * Fonts: Rajdhani (display: titles, buttons, labels) and Saira Semi Condensed (text), both OFL-1.1, bundled
- * locally through @fontsource (no third-party font CDN).
+ * The app's own styles (tokens and shared HUD pieces in src/styles/, imported first by src/app/main.ts).
  */
-:root {
-  color-scheme: dark;
-  --bg: #02050a;
-  --panel-top: rgb(12 22 34 / 90%);
-  --panel-bottom: rgb(5 11 19 / 90%);
-  --line: rgb(120 200 255 / 22%);
-  --line-strong: rgb(120 200 255 / 45%);
-  --text: #dbe8f3;
-  --text-muted: #93a8bb;
-  --accent: #5ad7ff;
-  /* Star names on the sky: pale starlight, quieter than the objects' labels. */
-  --star-label: #e8dcb8;
-  --accent-strong: #9fe6ff;
-  --accent-soft: rgb(90 215 255 / 12%);
-  --accent-glow: 0 0 10px rgb(90 215 255 / 45%);
-  --on-accent: #03121b;
-  --live: #4be3a0;
-  --paused: #ffb020;
-  --danger: #ff7a6b;
-  --cut: 12px;
-  --cut-btn: 6px;
-  --gap: 8px;
-  --gutter: 16px;
-  --font: 'Saira Semi Condensed', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
-  --font-display: 'Rajdhani', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
-  font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-* {
-  box-sizing: border-box;
-}
 
 html,
 body,
@@ -47,16 +11,6 @@ body,
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-}
-
-::selection {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
 }
 
 .viewport {
@@ -102,52 +56,6 @@ body,
 .panel {
   position: absolute;
   z-index: 2;
-  padding: var(--gap) 12px;
-  border: 1px solid var(--line);
-  background:
-    repeating-linear-gradient(0deg, rgb(255 255 255 / 1.6%) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
-  backdrop-filter: blur(8px);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--cut)) 0,
-    100% var(--cut),
-    100% 100%,
-    var(--cut) 100%,
-    0 calc(100% - var(--cut))
-  );
-}
-
-/* Low quality tier: re-blurring the live canvas behind every panel each frame is costly on weak GPUs; the
-   panels are 90 % opaque anyway, so they become fully opaque instead. */
-:root[data-quality='low'] .panel {
-  --panel-top: rgb(12 22 34);
-  --panel-bottom: rgb(5 11 19);
-  backdrop-filter: none;
-}
-
-/* Corner brackets on the two square corners. */
-.panel::before,
-.panel::after {
-  content: '';
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-}
-
-.panel::before {
-  top: -1px;
-  left: -1px;
-  border-top: 2px solid var(--accent);
-  border-left: 2px solid var(--accent);
-}
-
-.panel::after {
-  right: -1px;
-  bottom: -1px;
-  border-right: 2px solid var(--accent);
-  border-bottom: 2px solid var(--accent);
 }
 
 .toolbar {
@@ -160,17 +68,6 @@ body,
   gap: var(--gap);
   width: fit-content;
   max-width: calc(100% - 2 * var(--gutter));
-}
-
-.brand {
-  margin: 0 10px 0 4px;
-  font-size: 17px;
-  font-weight: 700;
-  font-stretch: 87.5%;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--accent);
-  text-shadow: var(--accent-glow);
 }
 
 .toolbar-group {
@@ -188,44 +85,7 @@ body,
 
 /* ---------------------------------------------------------------- controls */
 
-.btn {
-  min-height: 32px;
-  padding: 4px 12px;
-  border: 1px solid var(--line-strong);
-  background: rgb(90 215 255 / 5%);
-  color: var(--text);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  font-stretch: 87.5%;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-  /* The cut polygon reaches 1 px past the box: a button laid at a fractional pixel position (most are) had the
-     anti-aliased clip edge slice its right border, which then looked fainter than the others. */
-  clip-path: polygon(
-    -1px -1px,
-    calc(100% + 1px) -1px,
-    calc(100% + 1px) calc(100% - var(--cut-btn)),
-    calc(100% - var(--cut-btn)) calc(100% + 1px),
-    -1px calc(100% + 1px)
-  );
-  transition:
-    background 120ms,
-    border-color 120ms,
-    color 120ms;
-}
-
-/* Hover only where there is a real pointer: on touch screens the browser keeps :hover on the last button
-   touched, which then looks stuck. */
 @media (hover: hover) {
-  .btn:hover:not(:disabled, [aria-pressed='true']) {
-    border-color: var(--accent);
-    background: var(--accent-soft);
-    color: var(--accent-strong);
-  }
-
   .facets summary:hover {
     color: var(--accent-strong);
   }
@@ -260,45 +120,6 @@ summary,
 .time-control input {
   -webkit-user-select: text;
   user-select: text;
-}
-
-.btn:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.btn:focus-visible,
-.input:focus-visible,
-.result:focus-visible,
-summary:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-  box-shadow: var(--accent-glow);
-}
-
-.btn[aria-pressed='true'] {
-  border-color: var(--accent);
-  background: linear-gradient(180deg, #7fe3ff, var(--accent));
-  color: var(--on-accent);
-  text-shadow: none;
-}
-
-.segmented {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.input {
-  min-height: 32px;
-  padding: 4px 8px;
-  border: 1px solid var(--line-strong);
-  background: rgb(0 0 0 / 40%);
-  color: var(--text);
-  font: inherit;
-}
-
-input[type='checkbox'] {
-  accent-color: var(--accent);
 }
 
 /* ---------------------------------------------------------------- time bar */
@@ -2054,6 +1875,13 @@ h2[tabindex='-1']:focus {
   font-size: 10px;
 }
 
+/* The visitor's place (embedding pages only). */
+.label-observer {
+  border-left-color: #7dff9a;
+  color: #b8ffc8;
+  font-weight: 600;
+}
+
 /* Display font for HUD-style elements. */
 .brand,
 .btn,
@@ -2673,12 +2501,20 @@ body.music-open .altimeter {
   display: none !important;
 }
 
-.embed-credit {
+/* Embed mode's corner: back to the link's starting view, then the full app. */
+.embed-actions {
   position: absolute;
   z-index: 5;
   right: 8px;
   bottom: calc(var(--timebar-space, 0px) + 8px);
+  display: flex;
+  gap: 6px;
+}
+
+.embed-credit,
+.embed-recenter {
   padding: 4px 10px;
+  cursor: pointer;
   border: 1px solid var(--line-strong);
   background: var(--panel-bottom);
   color: var(--accent);
@@ -2691,7 +2527,9 @@ body.music-open .altimeter {
 }
 
 .embed-credit:hover,
-.embed-credit:focus-visible {
+.embed-credit:focus-visible,
+.embed-recenter:hover,
+.embed-recenter:focus-visible {
   color: var(--accent-strong);
 }
 

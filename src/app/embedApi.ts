@@ -7,7 +7,8 @@
  *   → { type: 'perigee:v1', id: 1, ok: true, result: { view: 'solar', sel: 'mars', … } }
  *
  * Methods: `get` (state; `{ details: true }` adds the selected object's facts and position with provenance),
- * `set` (any of view, sel, time, rate, frame, lang, follow), `snapshot` (PNG data URL of the 3D view, `kind:
+ * `set` (any of view, sel, time, rate, frame, lang, follow, observer: the visitor's place marked on the Earth, never
+ * put in the URL), `snapshot` (PNG data URL of the 3D view, `kind:
  * 'shown' | 'objects'`), `ping`. Events, posted to the parent: `ready`, `view`, `selection`, `time`.
  */
 import type { Lang } from '../i18n';
@@ -30,6 +31,12 @@ export interface EmbedState {
   readonly url: string;
 }
 
+/** A place on the Earth (degrees, east-positive longitude). */
+export interface ObserverPlace {
+  readonly latDeg: number;
+  readonly lonDeg: number;
+}
+
 export interface SetParams {
   readonly view?: ViewId;
   /** `sel` value; null clears the selection. */
@@ -40,6 +47,8 @@ export interface SetParams {
   readonly frame?: FrameMode;
   readonly lang?: Lang;
   readonly follow?: boolean;
+  /** The visitor's place, marked on the Earth (never in the URL); null removes it. */
+  readonly observer?: ObserverPlace | null;
 }
 
 export interface EmbedHost {
@@ -86,6 +95,22 @@ export function parseSetParams(raw: unknown): SetParams {
       case 'follow':
         if (typeof v !== 'boolean') throw new EmbedError('follow must be a boolean');
         break;
+      case 'observer': {
+        if (v === null) break;
+        const lat = isObject(v) ? v['latDeg'] : undefined;
+        const lon = isObject(v) ? v['lonDeg'] : undefined;
+        if (
+          !isObject(v) ||
+          Object.keys(v).some((k) => k !== 'latDeg' && k !== 'lonDeg') ||
+          typeof lat !== 'number' ||
+          typeof lon !== 'number' ||
+          !(Math.abs(lat) <= 90) ||
+          !(Math.abs(lon) <= 180)
+        )
+          throw new EmbedError('observer must be { latDeg (±90), lonDeg (±180) } or null');
+        out[key] = { latDeg: lat, lonDeg: lon };
+        continue;
+      }
       default:
         throw new EmbedError(`unknown parameter "${key}"`);
     }

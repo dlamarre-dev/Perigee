@@ -181,7 +181,7 @@ export class FavoritesDialog {
       del.addEventListener('click', () => {
         this.askToDelete(
           t('favorites.confirm.title'),
-          `${name.textContent ?? ''} — ${detail.textContent ?? ''}`,
+          `${name.textContent ?? ''}, ${detail.textContent ?? ''}`,
           t('favorites.confirm.delete'),
           () => removeFavorite(favoritesStorage(), favorite.query, this.callbacks.appUrl()),
         );

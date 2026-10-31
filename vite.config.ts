@@ -129,18 +129,79 @@ function apiDocuments(): Plugin {
   };
 }
 
+/**
+ * Landing pages (src/landing/, CLAUDE.md §7): landing.html is bundled like the app's page, then cloned for every
+ * topic and language into <lang>/<slug>/index.html with its static content (src/landing/render.ts), with the two
+ * guides' indexes and sitemap.xml; the dev server renders the same pages on request.
+ */
+function landingPages(): Plugin {
+  const ctx = {
+    site: process.env['PERIGEE_SITE'] ?? 'https://perigee.info/',
+    base,
+    version: buildStamp.version,
+  };
+  const renderer = async (): Promise<typeof import('./src/landing/render')> =>
+    (
+      await runnerImport<typeof import('./src/landing/render')>('/src/landing/render.ts', {
+        configFile: false,
+        logLevel: 'error',
+      })
+    ).module;
+  return {
+    name: 'perigee-landing-pages',
+    enforce: 'post',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const url = req.url?.split('?')[0] ?? '';
+        const path = url.startsWith(base) ? url.slice(base.length) : '';
+        if (!/^(en|fr)(\/|$)/.test(path)) return next();
+        if (!path.endsWith('/') && !path.endsWith('.html')) {
+          res.statusCode = 301;
+          res.setHeader('Location', `${url}/`);
+          res.end();
+          return;
+        }
+        renderer()
+          .then(async (m) => {
+            // Vite transforms the template only, as the build does: run over the page, it would prefix the
+            // base again to the URLs the renderer already wrote with it (images, icons).
+            const template = await server.transformIndexHtml(url, readFileSync('landing.html', 'utf8'));
+            const html = m.renderPath(template, path, ctx);
+            if (!html) return next();
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.end(html);
+          })
+          .catch((err: unknown) => next(err));
+      });
+    },
+    async generateBundle(_options, bundle) {
+      const template = bundle['landing.html'];
+      if (template?.type !== 'asset') return;
+      delete bundle['landing.html'];
+      const m = await renderer();
+      for (const [fileName, source] of m.renderAll(String(template.source), ctx))
+        this.emitFile({ type: 'asset', fileName, source });
+      const lastmod = buildStamp.date.slice(0, 10) || new Date().toISOString().slice(0, 10);
+      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: m.renderSitemap(ctx, lastmod) });
+    },
+  };
+}
+
 export default defineConfig({
   base,
   define: {
     __PERIGEE_BUILD__: JSON.stringify(buildStamp),
     __PERIGEE_ASSETS__: JSON.stringify(assetVersions()),
   },
-  plugins: [basisTranscoder(), versionFile(), apiDocuments()],
+  plugins: [basisTranscoder(), versionFile(), apiDocuments(), landingPages()],
   build: {
     target: 'es2022',
     sourcemap: true,
     // three.js alone is ~500 kB minified; the whole app is one chunk until views are code-split (M2+).
     chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      input: { main: 'index.html', landing: 'landing.html' },
+    },
   },
   // Module workers: satellite.js 7 re-exports its WASM build, which uses top-level await.
   worker: {

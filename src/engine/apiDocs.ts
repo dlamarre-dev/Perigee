@@ -144,6 +144,15 @@ const SET_PARAMS_SCHEMA = {
     frame: { enum: ['fixed', 'inertial'] },
     lang: { enum: ['en', 'fr'] },
     follow: { type: 'boolean' },
+    observer: {
+      type: ['object', 'null'],
+      properties: {
+        latDeg: { type: 'number', minimum: -90, maximum: 90 },
+        lonDeg: { type: 'number', minimum: -180, maximum: 180 },
+      },
+      description:
+        'The visitor’s place, marked on the Earth in the Earth view (never written to the URL); null removes it.',
+    },
   },
 };
 

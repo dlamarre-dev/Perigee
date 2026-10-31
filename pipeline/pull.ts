@@ -5,7 +5,9 @@
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { ManifestSchema } from '../src/data/schemas';
+import { gunzipSync } from 'node:zlib';
+import { ManifestSchema, ShardIndexSchema } from '../src/data/schemas';
+import { shardPath } from '../src/data/shards';
 import { USER_AGENT } from './http';
 
 const RAW = 'https://raw.githubusercontent.com/dlamarre-dev/Perigee/data';
@@ -39,6 +41,42 @@ async function main(): Promise<void> {
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, bytes);
     console.log(`pulled ${entry.path} (${entry.count} records, fetched ${entry.fetchedAt})`);
+  }
+  // What the headless engine reads besides (landing pages and the embed API in dev): the shards of the Earth
+  // datasets, checked against their index, the name index and the counts.
+  for (const entry of Object.values(manifest.datasets)) {
+    const extra: { path: string; sha256?: string }[] = [];
+    if (entry.names)
+      extra.push({ path: entry.names, ...(entry.namesSha256 ? { sha256: entry.namesSha256 } : {}) });
+    const shards = entry.shards;
+    if (shards?.index && shards.indexSha256) {
+      const indexBytes = await get(`${RAW}/${shards.index}`);
+      if (createHash('sha256').update(indexBytes).digest('hex') !== shards.indexSha256)
+        throw new Error(`Hash mismatch for ${shards.index}`);
+      await mkdir(dirname(join(outDir, shards.index)), { recursive: true });
+      await writeFile(join(outDir, shards.index), indexBytes);
+      const index = ShardIndexSchema.parse(JSON.parse(gunzipSync(indexBytes).toString('utf8')));
+      index.sha256.forEach((sha256, k) => extra.push({ path: shardPath(shards.path, k), sha256 }));
+    }
+    for (let i = 0; i < extra.length; i += 8) {
+      await Promise.all(
+        extra.slice(i, i + 8).map(async (f) => {
+          const bytes = await get(`${RAW}/${f.path}`);
+          if (f.sha256 && createHash('sha256').update(bytes).digest('hex') !== f.sha256)
+            throw new Error(`Hash mismatch for ${f.path}`);
+          await mkdir(dirname(join(outDir, f.path)), { recursive: true });
+          await writeFile(join(outDir, f.path), bytes);
+        }),
+      );
+    }
+    if (extra.length) console.log(`pulled ${extra.length} engine files of ${entry.path}`);
+  }
+  if (manifest.stats) {
+    const bytes = await get(`${RAW}/${manifest.stats.path}`);
+    if (createHash('sha256').update(bytes).digest('hex') !== manifest.stats.sha256)
+      throw new Error(`Hash mismatch for ${manifest.stats.path}`);
+    await writeFile(join(outDir, manifest.stats.path), bytes);
+    console.log(`pulled ${manifest.stats.path}`);
   }
   await writeFile(join(outDir, 'manifest.json'), manifestBytes);
   // Latest maintenance audit (weekly; absent until the first run).

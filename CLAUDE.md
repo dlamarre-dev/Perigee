@@ -48,7 +48,8 @@ Cross-cutting features:
    Both are named in the About dialog and described, with what stays in browser storage and SoundCloud's
    music player (loaded only when its panel opens), in the static privacy pages `public/privacy.html` (EN) and
    `public/confidentialite.html` (FR), with the MCP server and its hosted endpoint: update them whenever the site
-   starts sending or storing something new.
+   starts sending or storing something new. The guide pages' "My location" never leaves the browser (§7, landing
+   pages).
 4. **No mission list hardcoded in the code.** Missions, their IDs and statuses live in `catalog/*.json`,
    versioned and changed through PRs — by the maintainer or by the weekly maintenance agent, whose PRs
    auto-merge only when CI (including `catalog-guard`) passes (§8).
@@ -435,7 +436,7 @@ the "up" vector and causes gimbal lock at the poles).
   `viewUrl`, `about`; every answer carries its provenance (`src/engine/provenance.ts`: model, sources, fetch time,
   element age, validity window, data state, typical accuracy) and the educational-use disclaimer. Embed mode
   (`?embed=1`, `ui=panel,time` to keep the info panel or the time bar, `follow=1`) shows the 3D view alone with a
-  link to the full app; a framed page answers the `perigee:v1` postMessage API (`src/app/embedApi.ts`: `get`
+  link to the full app and a Recenter button back to the link it opened with (`openLink`); a framed page answers the `perigee:v1` postMessage API (`src/app/embedApi.ts`: `get`
   with optional `details` from the engine, `set`, `snapshot` from photo mode, `ping`; events `ready`, `view`,
   `selection`, `time`). Views select in place through `View.selectId`. Documented in `public/llms.txt`; the build
   also writes `api/catalog.json`, `images.json`, `glossary.json`, `interface.json` and `llms-full.txt` from the
@@ -487,6 +488,28 @@ the "up" vector and causes gimbal lock at the poles).
   with a localised label beside them where a person reads them. perigee-mcp
   1.9.2 has 19 tools. Architecture, observability,
   load tests (`npm run mcp:load`, `tools/loadtest/mcp-load.ts`) and troubleshooting: `docs/machine-interface.md`.
+- Landing pages ("guides", added 2026-10-30): one common search per page (`src/landing/topics.ts`, ~40 topics:
+  `id`, theme, `kind` picking the live widgets, engine ids, the embedded view, EN/FR slug, question, description,
+  intro and FAQ for students; object facts, images and positions always come from the catalogues and the data).
+  The `landingPages` Vite plugin bundles `landing.html` (entry `src/landing/main.ts`) and clones it into
+  `<lang>/<slug>/index.html` with the static content of `src/landing/render.ts` (title, description, canonical,
+  hreflang pair + x-default EN, Open Graph, JSON-LD WebPage/BreadcrumbList/FAQPage, intro, facts, FAQ, related
+  links, footer with privacy link, GoatCounter and a link to the credits page `<lang>/sources-and-credits|sources-et-credits/`
+  listing every credit of `src/data/credits.ts`), the hubs `en/` and `fr/`,
+  and `sitemap.xml` (written at build, no longer in `public/`); the dev server renders the same pages. One fixed
+  address per language, no redirect: a banner suggests the other language when the browser prefers it
+  (dismissal remembered, `perigee-landing-banner`). The page script runs the headless engine in the browser
+  (`src/landing/live.ts`: answer sentence, cards and tables every second, searches every 10 min, provenance block
+  with sources, data age, validity and typical accuracy), embeds the app view (`?embed=1`), draws Earth
+  satellites' ground track on an SVG map (`src/landing/GroundTrackMap.ts`: Natural Earth outline
+  `public/landing/world.json` from `tools/geo/world-outline.ts`, night side from the subsolar point), reloads
+  itself when a new build is deployed (`UpdateWatcher`, hourly) and has a dashboard mode (`?dashboard=1`: full
+  screen, large type, Wake Lock). "My location" (satellite and sky pages; `src/landing/observer.ts`):
+  geolocation on click only, rounded to 0.01°, kept in `localStorage` `perigee-observer` until "Forget", never in
+  a URL; the iframe gets it through the embed API `set { observer }` (`ObserverPlace`, `View.setObserver`, a
+  "You" marker in the Earth view, `src/earth/ObserverLayer.ts`), and the page lists the passes (engine `passes`,
+  3 days, local zone) or tonight's sky. `npm run data:pull` also fetches the shards, name index and counts the
+  engine reads, so the pages work in dev.
 - Definitions: detail-panel labels with a glossary entry (`src/i18n/glossary.ts`, EN/FR, secondary-school level) are
   underlined like links and open a centred dialog (`src/ui/Glossary.ts`, About's frame). Found from the label text;
   a row can name its term when the text is ambiguous (only the Moon's "Phase" is defined, not a probe's).

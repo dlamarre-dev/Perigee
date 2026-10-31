@@ -48,6 +48,8 @@ import { EarthSatellites } from './EarthSatellites';
 import { parseEarthUrl, writeEarthUrl } from './earthUrl';
 import { EMPTY_FILTERS, type FilterState } from './filters';
 import { LaunchSiteLayer } from './LaunchSiteLayer';
+import { ObserverLayer } from './ObserverLayer';
+import type { ObserverPlace } from '../app/embedApi';
 import { withImage } from '../render/images';
 import { makeSatrec, propagateTeme } from './sgp4';
 
@@ -93,6 +95,7 @@ class EarthView implements View {
   private readonly launchSites: readonly LaunchSite[];
   private readonly launchVerified: string;
   private readonly launch: LaunchSiteLayer;
+  private readonly observer: ObserverLayer;
   private selectedSite: LaunchSite | undefined;
   private catalog: SatCatalog | undefined;
   private sats: EarthSatellites | undefined;
@@ -159,11 +162,15 @@ class EarthView implements View {
     host.i18n.onChange((lang) => {
       if (this.disposed) return;
       this.launch.setLanguage(lang);
+      this.observer.setLabel(host.i18n.t('earth.observer'));
       this.moon.setLabel(host.i18n.t('earth.moon'));
       if (this.selectedSite) this.showSite(this.selectedSite, false);
       if (this.moonSelected) this.moonDetail.show(this.moonContent(), false);
     });
     host.mount(this.launch.labels.element);
+    this.observer = new ObserverLayer(host.i18n.t('earth.observer'));
+    this.earth.mesh.add(this.observer.group);
+    host.mount(this.observer.labels.element);
     this.launch.visible = host.initialParams.get('ls') !== '0';
     this.siteDetail = new DetailPanel(host.i18n, {
       onClose: () => this.selectSite(undefined),
@@ -217,6 +224,7 @@ class EarthView implements View {
       this.pendingFrame = false;
     }
     this.launch.update(quatMultiply(f.sceneFromInertial, f.bodyQ));
+    this.observer.update(quatMultiply(f.sceneFromInertial, f.bodyQ));
   }
 
   placeOrigin(originKm: Vec3): void {
@@ -235,6 +243,7 @@ class EarthView implements View {
     );
     const canvas = this.host.renderer.canvas;
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
+    this.observer.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
     this.placeModel(originKm);
   }
 
@@ -302,6 +311,10 @@ class EarthView implements View {
     return this.loadedData;
   }
 
+  setObserver(place: ObserverPlace | undefined): void {
+    this.observer.set(place);
+  }
+
   writeUrl(p: URLSearchParams): void {
     writeEarthUrl({ filters: this.filters, selected: this.selectedNorad }, p);
     if (this.selectedSite) p.set('sel', `site:${this.selectedSite.id}`);
@@ -317,6 +330,7 @@ class EarthView implements View {
     this.distantSun.dispose();
     this.moon.dispose();
     this.launch.dispose();
+    this.observer.dispose();
     if (this.sats) {
       this.host.renderer.scene.remove(this.sats.group);
       this.sats.dispose();

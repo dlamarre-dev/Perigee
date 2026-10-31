@@ -43,7 +43,7 @@ test('works offline after a first visit (service worker)', async ({ page, contex
   await page.reload();
   await expect(page.locator('#viewport canvas')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Recenter' })).toBeVisible();
-  await expect(page.getByText('Offline — showing cached data')).toBeVisible();
+  await expect(page.getByText('Offline: showing cached data')).toBeVisible();
   // Satellites come from the cached data files.
   await expect(page.locator('.notice')).toBeHidden();
   await context.setOffline(false);

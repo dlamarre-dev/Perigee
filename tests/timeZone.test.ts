@@ -63,14 +63,14 @@ describe('time zone display', () => {
   it('lists zones by city with a translated name and the offset', () => {
     const fr = zoneOptions('fr-CA', summer);
     const toronto = fr.find((o) => o.id === 'America/Toronto');
-    expect(toronto?.label).toBe('Toronto — heure de l’Est (UTC−04:00)');
+    expect(toronto?.label).toBe('Toronto, heure de l’Est (UTC−04:00)');
     expect(toronto?.region).toBe('America');
     expect(zoneOptions('en-CA', summer).find((o) => o.id === 'America/Toronto')?.label).toBe(
-      'Toronto — Eastern Time (UTC−04:00)',
+      'Toronto, Eastern Time (UTC−04:00)',
     );
     expect(fr.length).toBeGreaterThan(100);
     // Montréal has its own entry (same rules as Toronto).
-    expect(fr.find((o) => o.id === 'America/Montreal')?.label).toBe('Montréal — heure de l’Est (UTC−04:00)');
+    expect(fr.find((o) => o.id === 'America/Montreal')?.label).toBe('Montréal, heure de l’Est (UTC−04:00)');
     expect(zoneAbbreviation(summer, 'America/Montreal', 'fr-CA')).toBe('HAE');
   });
 });

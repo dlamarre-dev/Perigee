@@ -11,6 +11,13 @@ Site: https://perigee.info/ (English: `?lang=en`, French: `?lang=fr`). It is a s
 - [Mars](https://perigee.info/?lang=en&view=mars): Mars orbiters, Phobos and Deimos (Horizons), landing sites and the current rover positions (NASA MMGIS waypoint feeds).
 - [Solar system](https://perigee.info/?lang=en&view=solar): planets and moons (astronomy-engine, JPL mean elements), dwarf planets and interplanetary probes (Horizons), with their trajectories; `candidates=1` draws and lists the dwarf planet candidates (Gonggong, Quaoar, Orcus, Sedna, 2026 ED138; ids `quaoar`, `2026-ed138`…).
 
+## Guides (one question per page)
+
+Static pages, each answering one common question live in the browser (where is the ISS, how far is Voyager 1, the Moon's phase, the spacecraft around Mars, where the dwarf planets are, what to see tonight…), with the embedded 3D view, the data sources and their freshness; English and French at their own address.
+
+- [Guides in English](https://perigee.info/en/)
+- [Guides en français](https://perigee.info/fr/)
+
 ## Links into the app
 
 URL parameters: `view` (`moon`, `mars`, `solar`; Earth by default), `lang` (`en`, `fr`), `sel` (selected object: a NORAD catalogue number such as `25544` for the ISS, a mission id, `site:<id>` for a landing site, or a planet id such as `jupiter`), `t` (ISO 8601 UTC instant, e.g. `2026-10-08T15:00:00Z`), `rate` (time multiplier, `0` pauses), `frame` (`inertial`).
@@ -27,7 +34,7 @@ The embedding page can drive it with `postMessage` (protocol `perigee:v1`, any o
 
 - Request: `{ type: 'perigee:v1', id, method, params }`; reply: `{ type: 'perigee:v1', id, ok, result | error }`.
 - `get`: view, `sel`, simulation `time` (ISO UTC), `live`, `rate`, `frame`, `lang`, `following`, `url` (the same view in the full app). `{ details: true }` adds the selected object's facts (goals, status, sources, image with credit and licence) and its position with provenance: model, data source, fetch time, element age, validity window, data state (`fresh`, `interpolated`, `stale`, `extrapolated`, `hidden`, `modelled`, `none`) and typical accuracy.
-- `set`: any of `view`, `sel` (null clears), `time` (ISO or `now`), `rate`, `frame`, `lang`, `follow`.
+- `set`: any of `view`, `sel` (null clears), `time` (ISO or `now`), `rate`, `frame`, `lang`, `follow`, `observer` (`{ latDeg, lonDeg }`: the visitor's place marked on the Earth, never written to the URL; null removes it).
 - `snapshot`: `{ kind: 'shown' | 'objects' }` returns a PNG data URL of the 3D view (as shown with labels, or the objects only) and its title.
 - Events posted to the parent: `ready`, `view`, `selection`, `time`, each with the state.
 

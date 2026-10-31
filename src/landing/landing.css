@@ -1,0 +1,693 @@
+/*
+ * Landing pages (src/landing/): Perigee's HUD look (src/styles/) on a scrolling page. The dashboard mode
+ * (`.lp-dashboard` on <html>) hides the text and lays the live parts out in a large grid for a classroom screen.
+ */
+
+html,
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 70% -10%, rgb(90 215 255 / 10%), transparent 55%),
+    radial-gradient(ellipse at 10% 110%, rgb(90 215 255 / 6%), transparent 50%), var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+body.lp-body {
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(26px, 4.2vw, 42px);
+  color: #fff;
+  text-shadow: var(--accent-glow);
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h3 {
+  margin: 14px 0 6px;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.panel {
+  position: relative;
+  padding: 14px 16px;
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+.lp-top {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 10px 16px;
+}
+
+.lp-top .brand {
+  text-decoration: none;
+}
+
+.lp-nav {
+  display: flex;
+  gap: 16px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.lp-nav a {
+  text-decoration: none;
+}
+
+.lp-top-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.lp-top-actions a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.lp-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  max-width: 1280px;
+  margin: 8px auto 0;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  background: var(--accent-soft);
+}
+
+.lp-banner[hidden] {
+  display: none;
+}
+
+.lp-banner .btn {
+  margin-left: auto;
+}
+
+/* ---------------------------------------------------------------- page */
+
+.lp {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 16px 32px;
+}
+
+.lp-crumbs {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-crumbs a {
+  color: var(--text-muted);
+}
+
+.lp-answer {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: clamp(17px, 2vw, 22px);
+  color: var(--text);
+}
+
+.lp-live-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 8px var(--live);
+  animation: lp-pulse 2s ease-in-out infinite;
+}
+
+@keyframes lp-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-live-dot {
+    animation: none;
+  }
+}
+
+.lp-noscript {
+  color: var(--paused);
+}
+
+.lp-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.lp-view {
+  grid-row: span 3;
+  align-self: start;
+  padding: 0;
+  overflow: hidden;
+}
+
+.lp-view iframe {
+  display: block;
+  width: 100%;
+  max-height: 72vh;
+  aspect-ratio: 16 / 10;
+  border: 0;
+  background: #000;
+}
+
+.lp-cards:empty {
+  display: none;
+}
+
+/* No live cards (the sky tonight): the 3D view takes the whole width. */
+.lp-board:has(.lp-cards:empty) .lp-view {
+  grid-column: 1 / -1;
+}
+
+.lp-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.lp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+}
+
+.lp-card-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.lp-card-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.lp-card-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-card-sub:empty {
+  display: none;
+}
+
+.lp-map {
+  grid-column: 1 / -1;
+}
+
+.gt-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+}
+
+.gt-sea {
+  fill: #06182a;
+}
+
+.gt-land {
+  fill: #1d3b4f;
+  stroke: #3f6b85;
+  stroke-width: 0.15;
+}
+
+.gt-grid line {
+  stroke: rgb(120 200 255 / 12%);
+  stroke-width: 0.2;
+}
+
+.gt-night {
+  fill: rgb(0 0 0 / 42%);
+}
+
+.gt-past,
+.gt-future {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+
+.gt-past {
+  opacity: 0.35;
+  stroke-dasharray: 1.5 1;
+}
+
+.gt-object circle {
+  fill: var(--accent);
+}
+
+.gt-object .gt-halo {
+  fill: rgb(90 215 255 / 25%);
+}
+
+.gt-object text,
+.gt-you text {
+  font-family: var(--font-display);
+  font-size: 5px;
+  font-weight: 700;
+  fill: #fff;
+  paint-order: stroke;
+  stroke: #02050a;
+  stroke-width: 1px;
+}
+
+.gt-you path {
+  fill: #7dff9a;
+}
+
+.lp-place {
+  grid-column: 1 / -1;
+}
+
+.lp-place-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.lp-pass-status {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.lp-passes {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-pass {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--line-strong);
+}
+
+.lp-pass.visible {
+  border-left-color: var(--live);
+  background: rgb(75 227 160 / 7%);
+}
+
+.lp-pass-point b {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.lp-pass-why {
+  flex-basis: 100%;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-pass.visible .lp-pass-why {
+  color: var(--live);
+}
+
+.lp-list {
+  grid-column: 1 / -1;
+}
+
+.lp-scroll {
+  overflow-x: auto;
+}
+
+.lp-list table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-list th,
+.lp-list td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.lp-list thead th {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.lp-list tbody th {
+  font-weight: 500;
+  color: #fff;
+}
+
+.lp-list .num {
+  text-align: right;
+}
+
+.lp-muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.lp-note {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-text {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 18px;
+  margin: 26px 0 8px;
+  align-items: start;
+}
+
+/* Credits page: headings and lists in one column, flush left. */
+.lp-credits-list {
+  margin: 26px 0 8px;
+}
+
+.lp-credits-list h2 {
+  margin: 22px 0 8px;
+}
+
+.lp-intro {
+  margin: 0;
+  font-size: 17px;
+}
+
+.lp-figure {
+  margin: 0;
+}
+
+.lp-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+}
+
+.lp-figure figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.lp-facts {
+  margin: 18px 0;
+}
+
+.lp-facts dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.lp-facts dt {
+  color: var(--text-muted);
+}
+
+.lp-facts dd {
+  margin: 0;
+}
+
+.lp-faq {
+  margin: 26px 0;
+}
+
+.lp-faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 0;
+}
+
+.lp-faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #fff;
+}
+
+.lp-faq details p {
+  margin: 8px 0 4px;
+}
+
+.lp-sources {
+  margin: 18px 0;
+}
+
+.lp-prov {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.lp-prov li {
+  margin: 4px 0;
+}
+
+.lp-prov-state {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  vertical-align: middle;
+}
+
+.lp-prov-state.state-stale,
+.lp-prov-state.state-extrapolated,
+.lp-prov-state.state-modelled {
+  background: var(--paused);
+}
+
+.lp-prov-state.state-hidden,
+.lp-prov-state.state-none {
+  background: var(--danger);
+}
+
+.lp-prov-note {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.lp-related ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-related a {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- hub */
+
+.lp-hub-theme {
+  margin: 26px 0;
+}
+
+.lp-hub-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-hub-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+  text-decoration: none;
+}
+
+.lp-hub-list strong {
+  color: #fff;
+}
+
+.lp-hub-list span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.lp-footer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lp-credits {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.lp-disclaimer {
+  color: var(--paused);
+}
+
+/* ---------------------------------------------------------------- dashboard */
+
+.lp-dashboard body.lp-body {
+  font-size: 18px;
+}
+
+.lp-dashboard .lp-text,
+.lp-dashboard .lp-facts,
+.lp-dashboard .lp-faq,
+.lp-dashboard .lp-related,
+.lp-dashboard .lp-footer,
+.lp-dashboard .lp-crumbs,
+.lp-dashboard .lp-nav,
+.lp-dashboard .lp-banner,
+.lp-dashboard .lp-place .lp-note {
+  display: none;
+}
+
+.lp-dashboard .lp {
+  max-width: none;
+}
+
+.lp-dashboard .lp-top {
+  max-width: none;
+}
+
+.lp-dashboard h1 {
+  font-size: clamp(28px, 3vw, 48px);
+}
+
+.lp-dashboard .lp-answer {
+  font-size: clamp(20px, 2.2vw, 32px);
+}
+
+.lp-dashboard .lp-board {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+}
+
+.lp-dashboard .lp-card-value {
+  font-size: clamp(24px, 2.4vw, 40px);
+}
+
+.lp-dashboard .lp-map,
+.lp-dashboard .lp-place {
+  grid-column: auto;
+}
+
+/* ---------------------------------------------------------------- phones */
+
+@media (max-width: 760px) {
+  .lp-board,
+  .lp-text,
+  .lp-dashboard .lp-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lp-view {
+    grid-row: auto;
+  }
+
+  .lp-view iframe {
+    aspect-ratio: 4 / 3;
+  }
+
+  .lp-top {
+    position: static;
+  }
+
+  .lp-top-actions {
+    margin-left: 0;
+  }
+
+  .lp-cards {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}

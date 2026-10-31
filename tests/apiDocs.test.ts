@@ -71,6 +71,7 @@ describe('machine documents', () => {
       'frame',
       'lang',
       'follow',
+      'observer',
     ]);
     expect(Object.keys(doc.provenance.models)).toContain('sgp4-gp');
     expect(Object.keys(doc.provenance.states)).toContain('extrapolated');

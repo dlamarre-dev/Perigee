@@ -126,6 +126,13 @@ based on **stale** elements, are drawn dimmed or dashed and flagged in the panel
   the Earth view the Moon can be selected too, with its phase.
 - **Honest pictures**: artists' impressions, hand-drawn maps and illustrative effects are labelled as such in
   the panels.
+- **Guides**: [perigee.info/en/](https://perigee.info/en/) ([français](https://perigee.info/fr/)) answers some 40
+  common questions, one per page, live: where the ISS is, when it passes over you, how far Voyager 1 is, the
+  Moon's phase, the spacecraft around Mars, how many satellites are in orbit, what to see tonight… Each page has
+  the 3D view, the numbers computed in your browser every second, the ground track of Earth satellites, the data
+  sources and their age, and a _Dashboard_ button for a classroom screen (full screen, large type, kept awake).
+  _Use my location_ marks you on the map and in the 3D view and lists the passes over you; the location stays in
+  your browser.
 
 ## Using it
 

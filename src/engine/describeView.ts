@@ -336,6 +336,12 @@ export async function describeView(
   }
   if ((url.view === 'moon' || url.view === 'mars') && p.get('sites') === '0')
     extra.push(fr ? 'Les sites au sol sont masqués.' : 'Surface sites are hidden.');
+  if (url.view === 'moon' && p.get('sites') === 'crewed')
+    extra.push(
+      fr
+        ? 'Seuls les sites d’alunissage habités (Apollo) sont affichés.'
+        : 'Only the crewed landing sites (Apollo) are shown.',
+    );
   if (url.view === 'solar') {
     if (p.get('log') === '1') {
       extra.push(

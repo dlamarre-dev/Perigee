@@ -2,13 +2,7 @@
  * Application shell: renderer, clock, camera controller, toolbar, time bar, URL state, follow mode and
  * view switching. Views (Earth, Moon, …) are loaded on demand and implement `View` (./View.ts).
  */
-// Bundled OFL fonts (latin subset only: covers English and French).
-import '@fontsource/rajdhani/latin-500.css';
-import '@fontsource/rajdhani/latin-600.css';
-import '@fontsource/rajdhani/latin-700.css';
-import '@fontsource/saira-semi-condensed/latin-400.css';
-import '@fontsource/saira-semi-condensed/latin-500.css';
-import '@fontsource/saira-semi-condensed/latin-600.css';
+import '../styles/shared';
 import '../styles.css';
 import {
   QUAT_IDENTITY,
@@ -70,7 +64,7 @@ import {
 } from './updates';
 import type { FollowApi, View, ViewFactory, ViewHost } from './View';
 import type { Engine } from '../engine';
-import { EmbedApi, engineIdOf, type EmbedState, type SetParams } from './embedApi';
+import { EmbedApi, engineIdOf, type EmbedState, type ObserverPlace, type SetParams } from './embedApi';
 
 const UI_REFRESH_S = 0.25;
 /** A pointer that moved less than this between down and up is a click, not a drag. */
@@ -251,6 +245,8 @@ function main(): void {
   isIdle = () => clock.paused && !controls.moving && performance.now() - lastInputMs > 1500;
 
   let view: View | undefined;
+  // The visitor's place, sent by an embedding page (embed API); kept across view switches, never in the URL.
+  let observer: ObserverPlace | undefined;
   let viewDom: HTMLElement[] = [];
   let panelToggle: (() => boolean) | undefined;
 
@@ -299,11 +295,20 @@ function main(): void {
     return new URL(`${import.meta.env.BASE_URL}${query ? `?${query}` : ''}`, window.location.origin).href;
   };
   const embedLink = h('a', { class: 'embed-credit', target: '_blank', rel: 'noopener' });
+  const embedRecenter = h('button', { type: 'button', class: 'embed-recenter' });
   function updateEmbedLink(): void {
     if (!embed) return;
     embedLink.href = fullAppUrl();
     embedLink.textContent = i18n.t('embed.open');
+    embedRecenter.textContent = i18n.t('toolbar.recenter');
+    embedRecenter.title = i18n.t('embed.recenter.hint');
   }
+  // The link the frame was opened with, without the embedding parameters: "Recenter" returns to it.
+  const embedStartQuery = (): string => {
+    const p = new URLSearchParams(startParams);
+    for (const key of ['embed', 'ui', 'e2e', 'quality', 'debug']) p.delete(key);
+    return p.toString();
+  };
   let embedApi: EmbedApi | undefined;
 
   const notice = h('p', { class: 'notice', role: 'status', hidden: true });
@@ -592,7 +597,13 @@ function main(): void {
     report.element,
   );
   if (embed) {
-    app.append(embedLink);
+    embedRecenter.addEventListener('click', () => {
+      follow.stop();
+      controls.reset();
+      void openLink(embedStartQuery());
+    });
+    app.append(h('div', { class: 'embed-actions' }, [embedRecenter, embedLink]));
+    updateEmbedLink();
     i18n.onChange(updateEmbedLink);
   }
   app.querySelector('.loading')?.remove();
@@ -714,6 +725,7 @@ function main(): void {
         throw err;
       });
       view = factory({ ...host, initialParams: params });
+      view.setObserver?.(observer);
       controls.setLimits(cameraLimits(view.limits));
       timeControl.setMaxRate(view.maxRate ?? MAX_ABS_RATE, view.maxRateHint ? i18n.t(view.maxRateHint) : '');
       const home = homeState(clock.nowUtc());
@@ -896,6 +908,10 @@ ${
               if (sel) p.set('sel', sel);
               await switchView(targetView, p);
             }
+          }
+          if (params.observer !== undefined) {
+            observer = params.observer ?? undefined;
+            view?.setObserver?.(observer);
           }
           if (params.follow === false) follow.stop();
           if (params.follow) resumeFollowUntilMs = Date.now() + 20_000;

@@ -297,7 +297,7 @@ export function knownZones(): string[] {
 export interface ZoneOption {
   readonly id: string;
   readonly region: ZoneRegion;
-  /** "Toronto — heure de l’Est (UTC−04:00)". */
+  /** "Toronto, heure de l’Est (UTC−04:00)". */
   readonly label: string;
 }
 
@@ -314,7 +314,7 @@ export function zoneOptions(locale: string, date: Date): ZoneOption[] {
       // Older engines: no generic name.
     }
     const offset = formatOffset(zoneOffsetMs(date, id));
-    const named = generic && !/^(GMT|UTC)/.test(generic) ? ` — ${generic}` : '';
+    const named = generic && !/^(GMT|UTC)/.test(generic) ? `, ${generic}` : '';
     return { id, region: zoneRegion(id) as ZoneRegion, label: `${zoneCity(id)}${named} (${offset})` };
   });
   const collator = new Intl.Collator(locale);

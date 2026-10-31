@@ -73,7 +73,7 @@ class ImageViewerDialog {
     if (!this.current) return;
     const { entry, title } = this.current;
     this.title.textContent = title;
-    this.image.alt = `${title} — ${this.i18n.t(`image.kind.${entry.kind}`)}`;
+    this.image.alt = `${title} (${this.i18n.t(`image.kind.${entry.kind}`)})`;
     this.caption.replaceChildren(...imageCaption(this.i18n, entry));
   }
 }

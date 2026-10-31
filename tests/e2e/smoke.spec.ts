@@ -201,8 +201,8 @@ test('the photo button downloads the view and the objects only, then confirms', 
   await expect(toast).toHaveText('Deux images téléchargées : la vue et les objets seulement');
   await expect.poll(() => names.length).toBe(2);
   expect(names).toEqual([
-    'Périgée — Lune — 2026-09-26 12-00-00 UTC.png',
-    'Périgée — Lune — 2026-09-26 12-00-00 UTC (objets seulement).png',
+    'Périgée - Lune - 2026-09-26 12-00-00 UTC.png',
+    'Périgée - Lune - 2026-09-26 12-00-00 UTC (objets seulement).png',
   ]);
   await expect(toast).toBeHidden({ timeout: 5_000 });
 });

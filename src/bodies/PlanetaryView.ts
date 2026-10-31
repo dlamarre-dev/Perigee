@@ -35,11 +35,13 @@ import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camer
 import { datasetKey, ephemerisKey, ephemerisPastKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
 import {
+  LandingSiteTypeSchema,
   RoverPositionsSchema,
   type CentralBody,
   type EphemerisEntry,
   type LandingSite,
   type LandingSites,
+  type LandingSiteType,
   type Mission,
   type RoverPositions,
   type ModelEntry,
@@ -186,6 +188,8 @@ export class PlanetaryView implements View {
   private originKm: Vec3 = [0, 0, 0];
   private selection: Selection;
   private sitesVisible = true;
+  /** Only the sites of this kind exist in the view (URL `sites=<type>`, e.g. `crewed` for the Apollo sites). */
+  private readonly siteKind: LandingSiteType | undefined;
   private lastTrajectoryWallMs = -Infinity;
   private lastEpoch = -1;
   /** Missions unticked in the panel: no marker, trajectory, label or picking (URL `hide`). */
@@ -211,7 +215,9 @@ export class PlanetaryView implements View {
     // Up to the Sun, drawn at its true distance (~1.53e8 km from the Moon, ~2.5e8 km from Mars).
     this.farKm = Math.max(config.farKm, config.sunMaxDistanceKm);
     this.missions = config.missions;
-    this.sites = config.sites.sites;
+    const kind = LandingSiteTypeSchema.safeParse(host.initialParams.get('sites'));
+    this.siteKind = kind.success ? kind.data : undefined;
+    this.sites = config.sites.sites.filter((s) => !this.siteKind || s.type === this.siteKind);
 
     const renderer = host.renderer;
     const anisotropy = renderer.renderer.capabilities.getMaxAnisotropy();
@@ -639,6 +645,7 @@ export class PlanetaryView implements View {
     if (sel?.kind === 'mission') p.set('sel', sel.mission.id);
     if (sel?.kind === 'site') p.set('sel', `site:${sel.site.id}`);
     if (!this.sitesVisible) p.set('sites', '0');
+    else if (this.siteKind) p.set('sites', this.siteKind);
     writeHiddenMissions(p, this.hiddenMissions, this.missions);
   }
 

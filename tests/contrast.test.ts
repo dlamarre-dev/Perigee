@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-/** WCAG 2.x contrast of the colour tokens in src/styles.css (AA: 4.5 for text, 3 for large text / UI). */
-const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8');
+/** WCAG 2.x contrast of the colour tokens in src/styles/tokens.css (AA: 4.5 for text, 3 for large text / UI). */
+const css = readFileSync(new URL('../src/styles/tokens.css', import.meta.url), 'utf8');
 
 type Rgb = [number, number, number];
 

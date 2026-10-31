@@ -11,12 +11,12 @@ function tinyPng(): Uint8Array {
 
 describe('photo files', () => {
   it('puts the title in an iTXt chunk right after IHDR, with a valid CRC', () => {
-    const out = withPngTitle(tinyPng(), 'Périgée — Mars');
+    const out = withPngTitle(tinyPng(), 'Périgée - Mars');
     const text = new TextDecoder().decode(out.subarray(33));
     expect(text.startsWith('\u0000\u0000\u0000')).toBe(true);
     expect(new TextDecoder().decode(out.subarray(37, 41))).toBe('iTXt');
     expect(text).toContain('Title');
-    expect(text).toContain('Périgée — Mars');
+    expect(text).toContain('Périgée - Mars');
     const length = new DataView(out.buffer).getUint32(33);
     // CRC-32 of "iTXt" + data, checked against an independent implementation.
     const crcInput = out.subarray(37, 41 + length);
@@ -31,8 +31,8 @@ describe('photo files', () => {
   });
 
   it('turns a title into a file name every system accepts', () => {
-    expect(photoFileName('Périgée — ISS — 2026-10-07 10:30:00 HAE')).toBe(
-      'Périgée — ISS — 2026-10-07 10-30-00 HAE.png',
+    expect(photoFileName('Périgée - ISS - 2026-10-07 10:30:00 HAE')).toBe(
+      'Périgée - ISS - 2026-10-07 10-30-00 HAE.png',
     );
     expect(photoFileName('A/B: "c"?')).toBe('A-B- -c--.png');
   });

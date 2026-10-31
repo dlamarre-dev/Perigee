@@ -10,3 +10,4 @@ CLAUDE.md
 public/shapes/
 .wrangler/
 src/engine/regions.json
+public/landing/world.json

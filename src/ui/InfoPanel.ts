@@ -154,7 +154,7 @@ export class InfoPanel {
       rows.push(['info.country', countryName(this.i18n, curated.country)]);
       rows.push(['info.status', this.i18n.maybe(`mission.status.${curated.status}`) ?? curated.status]);
     }
-    rows.push(['info.norad', String(obj.noradId)], ['info.cospar', obj.cosparId || '—']);
+    rows.push(['info.norad', String(obj.noradId)], ['info.cospar', obj.cosparId || '–']);
     // The CelesTrak name, when the title shows a curated one.
     if (curated) rows.push(['info.catalogName', obj.name]);
     if (obj.operatorId)

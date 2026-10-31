@@ -154,7 +154,7 @@ export class Altimeter {
     const t = this.i18n.t.bind(this.i18n);
     const kind = t(r.kind === 'altitude' ? 'altimeter.altitude' : 'altimeter.distance');
     // Kilometres are the tape's unit, written in its header: the box only names the other units.
-    const text = r.toScale ? this.format(r.valueKm, false) : '—';
+    const text = r.toScale ? this.format(r.valueKm, false) : '–';
     if (kind !== this.shownKind) {
       this.shownKind = kind;
       this.kindLabel.textContent = kind;

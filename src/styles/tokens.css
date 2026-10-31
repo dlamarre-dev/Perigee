@@ -1,0 +1,50 @@
+/*
+ * Shared tokens of Perigee's look (the app and the landing pages): colours, fonts, spacing.
+ * Visual language inspired by modern sci-fi HUDs (Halo Infinite): dark translucent panels with chamfered
+ * corners and corner brackets, thin cyan lines, condensed uppercase labels, faint scanlines.
+ * Fonts: Rajdhani (display: titles, buttons, labels) and Saira Semi Condensed (text), both OFL-1.1, bundled
+ * locally through @fontsource (no third-party font CDN).
+ */
+:root {
+  color-scheme: dark;
+  --bg: #02050a;
+  --panel-top: rgb(12 22 34 / 90%);
+  --panel-bottom: rgb(5 11 19 / 90%);
+  --line: rgb(120 200 255 / 22%);
+  --line-strong: rgb(120 200 255 / 45%);
+  --text: #dbe8f3;
+  --text-muted: #93a8bb;
+  --accent: #5ad7ff;
+  /* Star names on the sky: pale starlight, quieter than the objects' labels. */
+  --star-label: #e8dcb8;
+  --accent-strong: #9fe6ff;
+  --accent-soft: rgb(90 215 255 / 12%);
+  --accent-glow: 0 0 10px rgb(90 215 255 / 45%);
+  --on-accent: #03121b;
+  --live: #4be3a0;
+  --paused: #ffb020;
+  --danger: #ff7a6b;
+  --cut: 12px;
+  --cut-btn: 6px;
+  --gap: 8px;
+  --gutter: 16px;
+  --font: 'Saira Semi Condensed', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-display: 'Rajdhani', 'Bahnschrift', 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}

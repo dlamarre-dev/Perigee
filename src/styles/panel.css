@@ -1,0 +1,139 @@
+/* Shared HUD pieces (the app and the landing pages): the chamfered panel, the brand, buttons and inputs. */
+
+.panel {
+  padding: var(--gap) 12px;
+  border: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 1.6%) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+  backdrop-filter: blur(8px);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+}
+
+/* Low quality tier: re-blurring the live canvas behind every panel each frame is costly on weak GPUs; the
+   panels are 90 % opaque anyway, so they become fully opaque instead. */
+:root[data-quality='low'] .panel {
+  --panel-top: rgb(12 22 34);
+  --panel-bottom: rgb(5 11 19);
+  backdrop-filter: none;
+}
+
+/* Corner brackets on the two square corners. */
+.panel::before,
+.panel::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.panel::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+}
+
+.panel::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+.brand {
+  margin: 0 10px 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  font-stretch: 87.5%;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: var(--accent-glow);
+}
+
+.btn {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--line-strong);
+  background: rgb(90 215 255 / 5%);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  font-stretch: 87.5%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  /* The cut polygon reaches 1 px past the box: a button laid at a fractional pixel position (most are) had the
+     anti-aliased clip edge slice its right border, which then looked fainter than the others. */
+  clip-path: polygon(
+    -1px -1px,
+    calc(100% + 1px) -1px,
+    calc(100% + 1px) calc(100% - var(--cut-btn)),
+    calc(100% - var(--cut-btn)) calc(100% + 1px),
+    -1px calc(100% + 1px)
+  );
+  transition:
+    background 120ms,
+    border-color 120ms,
+    color 120ms;
+}
+
+/* Hover only where there is a real pointer: on touch screens the browser keeps :hover on the last button
+   touched, which then looks stuck. */
+@media (hover: hover) {
+  .btn:hover:not(:disabled, [aria-pressed='true']) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn:focus-visible,
+.input:focus-visible,
+.result:focus-visible,
+summary:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: var(--accent-glow);
+}
+
+.btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, #7fe3ff, var(--accent));
+  color: var(--on-accent);
+  text-shadow: none;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.input {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line-strong);
+  background: rgb(0 0 0 / 40%);
+  color: var(--text);
+  font: inherit;
+}
+
+input[type='checkbox'] {
+  accent-color: var(--accent);
+}

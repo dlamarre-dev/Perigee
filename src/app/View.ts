@@ -13,6 +13,7 @@ import type { QuaternionOrbitControls } from '../camera/QuaternionOrbitControls'
 import type { CameraObstacle, OrbitLimits } from '../camera/orbitMath';
 import type { I18n, MessageKey } from '../i18n';
 import type { Renderer } from '../render/Renderer';
+import type { ObserverPlace } from './embedApi';
 import type { FrameMode, ViewId } from './urlState';
 
 export interface ViewFrame {
@@ -126,6 +127,11 @@ export interface View {
    * view does not know it. Used by the embed API (./embedApi.ts).
    */
   selectId(sel: string | undefined): boolean;
+  /**
+   * The visitor's place, sent by an embedding page (embed API `set { observer }`, landing pages): a marker on the
+   * surface, never written to the URL. Views without the Earth ignore it.
+   */
+  setObserver?(observer: ObserverPlace | undefined): void;
   writeUrl(params: URLSearchParams): void;
   /** Hashes of the published data this view loaded (src/app/updates.ts keys), to detect newer data. */
   dataVersions?(): ReadonlyMap<string, string>;

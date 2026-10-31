@@ -350,6 +350,11 @@ describe('engine dwarf planets', () => {
     const v = JSON.stringify(await engine.describeView('?view=solar&show=voyager-1,pioneer-10', 'en'));
     expect(v).toMatch(/Inactive missions drawn: Pioneer 10 \(/);
   });
+
+  it('describes a Moon view showing only the crewed sites', async () => {
+    const v = JSON.stringify(await engine.describeView('?view=moon&sites=crewed', 'en'));
+    expect(v).toMatch(/Only the crewed landing sites \(Apollo\) are shown/);
+  });
 });
 
 describe('engine asteroids', () => {

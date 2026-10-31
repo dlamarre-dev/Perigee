@@ -55,4 +55,9 @@ test('embed mode answers the postMessage API', async ({ page, baseURL }) => {
   const d = details.result['details'] as { id: string; position: { provenance: { model: string }[] } };
   expect(d.id).toBe('25544');
   expect(d.position.provenance[0]?.model).toMatch(/^sgp4/);
+
+  // "Recenter" goes back to the link the frame opened with (no selection, same date).
+  await frame.locator('.embed-recenter').click();
+  await expect.poll(async () => (await call('get')).result['sel'], { timeout: 20_000 }).toBeNull();
+  expect((await call('get')).result['time']).toMatch(/^2026-09-26T12:00/);
 });
