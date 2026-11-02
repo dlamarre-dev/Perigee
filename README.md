@@ -16,6 +16,7 @@
   <a href="https://glama.ai/mcp/connectors/dev.workers.perigeeinfo.perigee-mcp/perigee-mcp"><img src="https://glama.ai/mcp/connectors/dev.workers.perigeeinfo.perigee-mcp/perigee-mcp/badges/score.svg" alt="Perigee-mcp MCP connector – tool definition quality and endpoint health on Glama" height="20"></a>
   <a href="https://socket.dev/npm/package/perigee-mcp"><img src="https://badge.socket.dev/npm/package/perigee-mcp" alt="Socket Badge" height="20"></a>
   <a href="https://mcptry.com/servers/io.github.dlamarre-dev/perigee"><img src="https://mcptry.com/badge/io.github.dlamarre-dev/perigee" alt="mcptry" height="20"></a>
+  <a href="https://mcprush.com/to/perigee-mcp?ref=badge"><img height="20" src="https://mcprush.com/badge/perigee-mcp/score.svg" alt="Perigee MCP on mcprush" /></a>
 </p>
 
 **Perigee** shows, in real time, the artificial objects orbiting the Earth, the Moon and Mars, and the
