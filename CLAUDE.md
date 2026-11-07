@@ -729,8 +729,9 @@ the audit flags:
   Tiandu-2, Queqiao-1 (L2), DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025).
   ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
   2027. Artemis II flew 1–10 April 2026 (ended).
-- Mars (verified 2026-09-27, details in `catalog/missions.json`): Mars Odyssey (−53, very low on propellant —
-  re-check), Mars Express (−41, extended June 2026), MRO (−74), ExoMars TGO (−143, marked its 10th anniversary
+- Mars (verified 2026-11-07, details in `catalog/missions.json`): Mars Odyssey (−53, still active per NASA, very
+  low on propellant — re-check), Mars Express (−41, extended June 2026, a July 2026 conference abstract proposes
+  2027–2029), MRO (−74), ExoMars TGO (−143, marked its 10th anniversary
   at Mars on 2026-10-19: no confirmed methane despite earlier reports from other missions, a first detection of
   hydrogen chloride, over 10% of the surface imaged in colour for Rosalind Franklin landing-site studies),
   Hope/EMM (−62, extended to 2028), Tianwen-1 orbiter (no public ephemeris). MAVEN (−202): lost 2025-12-06,
@@ -739,15 +740,17 @@ the audit flags:
   2027. MMX (JAXA): launched 2026-10-19 19:41 UTC (H3 F10) into its planned trajectory; heliocentric cruise,
   Mars arrival 2027 (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the
   probes.
-- Interplanetary (verified 2026-10-10, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
+- Interplanetary (verified 2026-11-07, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
   (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
   step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
-  2026-09-28), Europa Clipper (−159), Psyche (−255), Lucy (−49), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
+  2026-09-28), Europa Clipper (−159), Psyche (−255, solar-electric thrusting resumed October 2026), Lucy (−49,
+  entered the Jupiter Trojan asteroid swarm region 2026-10-28), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
   Hayabusa2 (−37), Aditya-L1 (−156), SOHO (−21), JWST (−170), Gaia (−139479, retired 2025), Euclid (−680), IMAP
   (−43), Carruthers (−171), STEREO-A (−234). No public ephemeris: Tianwen-2 (at Kamoʻoalewa since June 2026),
-  SOLAR-1, Nancy Grace Roman Space Telescope (NORAD 100532, launched 2026-08-30, cruising to Sun–Earth L2,
-  arrival ~Nov 2026; coronagraph first light 2026-09-22, guidance system checked 2026-09-30 — re-check for a
-  Horizons match once it settles at L2). Planned: NEO Surveyor, MBR Explorer, DESTINY+, Comet
+  SOLAR-1 (operational since 2026-06-10 per NOAA), Nancy Grace Roman Space Telescope (NORAD 100532, launched
+  2026-08-30, cruising to Sun–Earth L2, arrival ~Nov 2026; coronagraph first light 2026-09-22, guidance system
+  checked 2026-09-30 — re-check for a Horizons match once it settles at L2). Planned: NEO Surveyor, MBR Explorer,
+  DESTINY+, Comet
   Interceptor. Several public ephemerides end within weeks (Hera, SOHO, IMAP, Aditya-L1, Hayabusa2, STEREO-A):
   windows are truncated, re-check coverage regularly.
 - Inactive spacecraft (added 2026-10-25, Horizons coverage checked that day): with a predicted Horizons trajectory

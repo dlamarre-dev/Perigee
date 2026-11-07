@@ -1,11 +1,12 @@
 {
-  "verified": "2026-10-31",
+  "verified": "2026-11-07",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
     "https://celestrak.org/NORAD/elements/supplemental/",
     "https://celestrak.org/satcat/satcat-format.php",
-    "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm"
+    "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm",
+    "https://spaceq.ca/spacex-transporter-18-launches-three-canadian-satellites/"
   ],
   "owners": {
     "AB": {
@@ -495,6 +496,24 @@
       "sources": [
         "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm",
         "https://celestrak.org/satcat/records.php?CATNR=69932&FORMAT=JSON"
+      ]
+    },
+    {
+      "norad": 100946,
+      "operator": "ghgsat",
+      "name": "GHGSat-C18 (Eleanor)",
+      "sources": [
+        "https://spaceq.ca/spacex-transporter-18-launches-three-canadian-satellites/",
+        "https://celestrak.org/satcat/records.php?CATNR=100946&FORMAT=JSON"
+      ]
+    },
+    {
+      "norad": 100949,
+      "operator": "ghgsat",
+      "name": "GHGSat-C19 (Aidan)",
+      "sources": [
+        "https://spaceq.ca/spacex-transporter-18-launches-three-canadian-satellites/",
+        "https://celestrak.org/satcat/records.php?CATNR=100949&FORMAT=JSON"
       ]
     }
   ]
