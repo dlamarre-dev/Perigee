@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-28",
+  "verified": "2026-11-07",
   "missions": [
     {
       "id": "lro",
@@ -550,15 +550,16 @@
         "fr": "2001 Mars Odyssey devait cartographier les éléments chimiques et les minéraux de la surface martienne et y chercher des traces d'eau, selon la stratégie de la NASA « suivre l'eau ». Elle a découvert de grandes quantités de glace cachées juste sous la surface aux hautes latitudes. Elle étudie aussi les nuages, le brouillard et le givre, aide à choisir des sites d'atterrissage sûrs et relaie vers la Terre les données des rovers."
       },
       "notes": {
-        "en": "Longest continually active spacecraft at another planet (Mars orbit since 2001-10-24). NASA lists the mission as ongoing; propellant is low (earlier estimates: enough to end of 2025), so an end-of-mission announcement is plausible soon. Re-verify before each release.",
-        "fr": "Plus longue mission active en continu autour d'une autre planète (en orbite martienne depuis le 2001-10-24). La NASA la considère toujours en cours ; ergols presque épuisés (estimations antérieures : jusqu'à fin 2025), une fin de mission pourrait être annoncée prochainement. À revérifier avant chaque version."
+        "en": "Longest continually active spacecraft at another planet (Mars orbit since 2001-10-24). NASA still lists the mission as active (over 100,000 orbits); propellant remains low, so an end-of-mission announcement is plausible soon. Re-verify before each release.",
+        "fr": "Plus longue mission active en continu autour d'une autre planète (en orbite martienne depuis le 2001-10-24). La NASA la considère toujours active (plus de 100 000 orbites) ; ergols toujours presque épuisés, une fin de mission pourrait être annoncée prochainement. À revérifier avant chaque version."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/odyssey/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/mission/odyssey/",
+        "https://arstechnica.com/space/2025/12/nasa-just-lost-contact-with-a-mars-orbiter-and-will-soon-lose-another-one/",
         "https://en.wikipedia.org/wiki/2001_Mars_Odyssey",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Mars%20Odyssey"
       ]
@@ -593,8 +594,8 @@
         "fr": "Mars Express, première mission de l'ESA vers une autre planète, étudie Mars de son sous-sol jusqu'à sa haute atmosphère, ainsi que ses deux lunes, Phobos et Deimos. Sa caméra livre des vues en relief des paysages, son radar sonde le sous-sol et ses spectromètres analysent l'air et les minéraux. Elle cherche notamment à retracer l'histoire de l'eau et à savoir si la jeune planète a pu abriter la vie."
       },
       "notes": {
-        "en": "In Mars orbit since 2003-12-25. ESA's Science Programme Committee endorsed a further extension in June 2026 (previously confirmed to 2026-12-31). ESA image releases continue in September 2026.",
-        "fr": "En orbite martienne depuis le 2003-12-25. Le comité du programme scientifique de l'ESA a approuvé une nouvelle prolongation en juin 2026 (auparavant confirmée jusqu'au 2026-12-31). Publications d'images par l'ESA en septembre 2026."
+        "en": "In Mars orbit since 2003-12-25. ESA's Science Programme Committee endorsed a further extension in June 2026 (previously confirmed to 2026-12-31); a July 2026 conference abstract describes a proposed 2027–2029 extension with instruments in good technical condition. ESA image releases continue through October 2026.",
+        "fr": "En orbite martienne depuis le 2003-12-25. Le comité du programme scientifique de l'ESA a approuvé une nouvelle prolongation en juin 2026 (auparavant confirmée jusqu'au 2026-12-31) ; un résumé de conférence de juillet 2026 décrit une prolongation proposée pour 2027–2029, avec des instruments en bon état technique. Publications d'images par l'ESA jusqu'en octobre 2026."
       },
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express"
@@ -602,10 +603,11 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/mars_express/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express",
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
+        "https://meetingorganizer.copernicus.org/EPSC2026/EPSC2026-1142.html",
         "https://en.wikipedia.org/wiki/Mars_Express",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Mars%20Express"
       ]
@@ -640,15 +642,16 @@
         "fr": "Mars Reconnaissance Orbiter a été conçue pour comprendre où l'eau s'est trouvée sur Mars et comment sa répartition a évolué. Sa caméra HiRISE, la plus puissante jamais envoyée vers une autre planète, distingue des objets de la taille d'une table de cuisine, tandis que d'autres instruments cartographient les minéraux formés dans l'eau, sondent la glace du sous-sol et suivent la météo au jour le jour. C'est aussi un relais essentiel pour les rovers."
       },
       "notes": {
-        "en": "In Mars orbit since 2006-03-10; key relay for Curiosity and Perseverance. CRISM retired 2023; HiRISE has partial CCD degradation. Fuel reported sufficient to ~2035 (Jan 2024 estimate).",
-        "fr": "En orbite martienne depuis le 2006-03-10 ; relais essentiel pour Curiosity et Perseverance. CRISM retiré en 2023 ; HiRISE partiellement dégradé. Ergols suffisants jusqu'à ~2035 (estimation de janvier 2024)."
+        "en": "In Mars orbit since 2006-03-10; key relay for Curiosity and Perseverance. CRISM retired 2023; HiRISE has partial CCD degradation. Fuel reported sufficient to ~2035 (Jan 2024 estimate; a Dec 2025 report put it more loosely as \"into the 2030s\").",
+        "fr": "En orbite martienne depuis le 2006-03-10 ; relais essentiel pour Curiosity et Perseverance. CRISM retiré en 2023 ; HiRISE partiellement dégradé. Ergols suffisants jusqu'à ~2035 (estimation de janvier 2024 ; un rapport de décembre 2025 l'évoque plus largement comme « jusque dans les années 2030 »)."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/",
+        "https://arstechnica.com/space/2025/12/nasa-just-lost-contact-with-a-mars-orbiter-and-will-soon-lose-another-one/",
         "https://en.wikipedia.org/wiki/Mars_Reconnaissance_Orbiter",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=MRO"
       ]
@@ -768,12 +771,13 @@
         "fr": "Tianwen-1 est la première mission martienne menée par la Chine seule, réunissant en un seul vol un orbiteur, un atterrisseur et le rover Zhurong. L'orbiteur cartographie les reliefs et la géologie de la planète, étudie le sol, la répartition de la glace d'eau et la composition de la surface, et mesure l'ionosphère, le climat ainsi que les champs magnétique et gravitationnel de Mars. Il a aussi servi de relais entre le rover et la Terre."
       },
       "notes": {
-        "en": "Mars orbit since 2021-02-10. Latest official confirmation opened: Xinhua (2025-11-06), operating stably for over 4 years in good condition (observed interstellar comet 3I/ATLAS). No public ephemerides; orbit parameters from Wikipedia and may be outdated.",
-        "fr": "En orbite martienne depuis le 2021-02-10. Dernière confirmation officielle consultée : Xinhua (2025-11-06), fonctionnement stable depuis plus de 4 ans, bon état (observation de la comète interstellaire 3I/ATLAS). Pas d'éphémérides publiques ; paramètres orbitaux issus de Wikipédia, possiblement périmés."
+        "en": "Mars orbit since 2021-02-10. Latest official confirmation opened: Xinhua (2025-11-06), operating stably for over 4 years in good condition (observed interstellar comet 3I/ATLAS). No public ephemerides; orbit parameters from Wikipedia and may be outdated. CNSA's own pages are not reachable from this environment and no newer Chinese state-media report has surfaced since; re-checked again in November 2026 with no change.",
+        "fr": "En orbite martienne depuis le 2021-02-10. Dernière confirmation officielle consultée : Xinhua (2025-11-06), fonctionnement stable depuis plus de 4 ans, bon état (observation de la comète interstellaire 3I/ATLAS). Pas d'éphémérides publiques ; paramètres orbitaux issus de Wikipédia, possiblement périmés. Les pages officielles de la CNSA sont inaccessibles depuis cet environnement et aucun rapport plus récent des médias d'État chinois n'est apparu depuis ; revérifié en novembre 2026 sans changement."
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
+      "recheckDays": 60,
       "sources": [
-        "http://www.news.cn/politics/20251106/227d8d9752fc4079b2bb4990bd5e252f/c.html",
+        "https://www.chinadaily.com.cn/a/202511/06/WS690bf058a310bfcd27fc512a.html",
         "https://en.wikipedia.org/wiki/Tianwen-1"
       ]
     },
@@ -1808,7 +1812,7 @@
       },
       "lowOrbit": false,
       "color": "#c9b8a6",
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://ssd.jpl.nasa.gov/sats/phys_par/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Phobos"
@@ -1965,7 +1969,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/new-horizons/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/mission/new-horizons/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=New%20Horizons"
@@ -2047,7 +2051,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/parker-solar-probe/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/blogs/parker-solar-probe/2026/09/10/after-latest-swing-past-sun-nasas-parker-solar-probe-checks-in/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Parker%20Solar%20Probe"
@@ -2095,7 +2099,7 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/solar_orbiter/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/Solar_Orbiter/Solar_Orbiter_perihelia_and_flybys",
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
@@ -2259,11 +2263,6 @@
         "en": "Cruise to asteroid Psyche, arrival summer 2029",
         "fr": "Croisière vers l'astéroïde Psyché, arrivée à l'été 2029"
       },
-      "nextEvent": {
-        "en": "Resume sustained solar-electric thrusting",
-        "fr": "Reprise de la poussée électrique solaire continue",
-        "date": "2026"
-      },
       "ephemeris": "horizons",
       "horizonsId": "-255",
       "sampling": {
@@ -2277,14 +2276,15 @@
         "fr": "Psyché est la première mission vers un astéroïde dont la surface contient beaucoup de métal. En orbite pendant environ deux ans, la sonde photographiera et cartographiera l'astéroïde et déterminera sa composition. Les scientifiques pensent que Psyché pourrait être une partie du noyau de fer d'une ancienne « brique » de planète, ce qui offrirait un regard indirect sur des noyaux comme celui de la Terre, impossibles à atteindre."
       },
       "notes": {
-        "en": "Mars gravity assist 2026-05-15 at 4,609 km; all three instruments tested successfully. Thrusting resumes 'later this fall' (2026).",
-        "fr": "Assistance gravitationnelle de Mars le 2026-05-15 à 4 609 km ; les trois instruments testés avec succès. Reprise de la poussée « plus tard cet automne » (2026)."
+        "en": "Mars gravity assist 2026-05-15 at 4,609 km; all three instruments tested successfully. Solar-electric thrusting resumed in October 2026, per NASA.",
+        "fr": "Assistance gravitationnelle de Mars le 2026-05-15 à 4 609 km ; les trois instruments testés avec succès. Poussée électrique solaire reprise en octobre 2026, selon la NASA."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/psyche/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
+        "https://science.nasa.gov/blogs/psyche/2026/10/22/pedal-to-the-metal-nasas-psyche-heads-toward-asteroid-belt/",
         "https://science.nasa.gov/blogs/psyche/2026/07/17/nasas-psyche-mission-delivers-mars-flyby-data-time-lapse-video/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Psyche"
       ]
@@ -2322,14 +2322,15 @@
         "fr": "Lucy est la première mission vers les astéroïdes troyens, deux essaims qui partagent l'orbite de Jupiter autour du Soleil, l'un en avant de la planète, l'autre en arrière. Ces corps seraient des restes de la matière qui a formé les planètes externes, de véritables capsules temporelles de la naissance du Système solaire, il y a plus de quatre milliards d'années. En survolant onze astéroïdes de types variés, Lucy met à l'épreuve les modèles de formation des planètes."
       },
       "notes": {
-        "en": "Camera tests on future targets in spring 2026. Then Polymele 2027-09-15, Leucus 2028-04-18, Orus 2028-11-11, Patroclus-Menoetius 2033-03-03. Past: Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20.",
-        "fr": "Essais de caméra sur les futures cibles au printemps 2026. Ensuite Polymèle 2027-09-15, Leucos 2028-04-18, Orus 2028-11-11, Patrocle-Ménoetios 2033-03-03. Déjà survolés : Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20."
+        "en": "Entered the Jupiter Trojan asteroid swarm region on 2026-10-28, five years after launch, the first spacecraft to do so; instruments operating as expected after camera tests in spring 2026. Next: Eurybates-Queta 2027-08-12, Polymele 2027-09-15, Leucus 2028-04-18, Orus 2028-11-11, Patroclus-Menoetius 2033-03-03. Past: Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20.",
+        "fr": "Entrée dans la zone de l'essaim des astéroïdes troyens de Jupiter le 2026-10-28, cinq ans après le lancement, une première pour une sonde ; instruments fonctionnant comme prévu après les essais de caméra du printemps 2026. À venir : Eurybates-Queta 2027-08-12, Polymèle 2027-09-15, Leucos 2028-04-18, Orus 2028-11-11, Patrocle-Ménoetios 2033-03-03. Déjà survolés : Dinkinesh 2023-11-01, Donaldjohanson 2025-04-20."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/lucy/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
+        "https://science.nasa.gov/blogs/lucy/2026/10/28/nasas-lucy-reaches-trojan-asteroid-region-5-years-after-launch/",
         "https://science.nasa.gov/blogs/lucy/2026/08/06/nasas-lucy-begins-camera-tests-ahead-of-2027-trojan-flybys/",
         "https://lucy.swri.edu/mission/Tour.html",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Lucy"
@@ -2374,8 +2375,9 @@
       "website": {
         "url": "https://science.nasa.gov/mission/osiris-apex/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
+        "https://science.nasa.gov/mission/osiris-apex/",
         "https://www.planetary.org/space-missions/osiris-apex",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=OSIRIS-REx"
       ]
@@ -2628,7 +2630,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/webb/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/mission/webb/",
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
@@ -2829,15 +2831,17 @@
         "fr": "SOLAR-1 est le premier satellite de la NOAA entièrement consacré à la surveillance opérationnelle de la météo spatiale. Depuis le point L1 Soleil-Terre, il guette avec un coronographe les éruptions dirigées vers la Terre et mesure le vent solaire et son champ magnétique, en transmettant ses données aux prévisionnistes en quelques minutes. Ces alertes précoces aident à protéger les réseaux électriques, les télécommunications, la navigation, les satellites et les astronautes."
       },
       "notes": {
-        "en": "Final L1 burn 2026-01-23, renamed SOLAR-1. NOAA said operational service would begin in spring 2026; a secondary search result reports full operations from 2026-06-10 (not confirmed on an opened NOAA page).",
-        "fr": "Dernière manœuvre en L1 le 2026-01-23, renommé SOLAR-1. La NOAA annonçait un service opérationnel au printemps 2026 ; un résultat secondaire indique un fonctionnement complet depuis le 2026-06-10 (non confirmé sur une page NOAA consultée)."
+        "en": "Final L1 burn 2026-01-23, renamed SOLAR-1. NOAA's own transition notice confirms it entered operational service on 2026-06-10; its live status page shows all four instruments nominal as of early November 2026, with only routine planned station-keeping/calibration outages.",
+        "fr": "Dernière manœuvre en L1 le 2026-01-23, renommé SOLAR-1. L'avis de transition de la NOAA confirme son entrée en service opérationnel le 2026-06-10 ; sa page d'état en direct montre les quatre instruments nominaux début novembre 2026, avec seulement des interruptions planifiées de routine (maintien d'orbite, étalonnage)."
       },
       "website": {
         "url": "https://www.nesdis.noaa.gov/OPPA/swfo-L1.php"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
-        "https://www.nesdis.noaa.gov/news/swfo-l1-renamed-solar-1-reaches-final-destination-one-million-miles-earth"
+        "https://www.nesdis.noaa.gov/news/swfo-l1-renamed-solar-1-reaches-final-destination-one-million-miles-earth",
+        "https://ospo.noaa.gov/data/messages/2026/06/MSG_20260610_2105.html",
+        "https://ospo.noaa.gov/operations/swfo/status.html"
       ]
     },
     {
@@ -2874,9 +2878,10 @@
       "website": {
         "url": "https://science.nasa.gov/mission/stereo/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-07",
       "sources": [
         "https://science.nasa.gov/mission/stereo/",
+        "https://stereo-ssc.nascom.nasa.gov/minutes/weekly_20261027.txt",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=STEREO-A"
       ]
     },
@@ -2906,14 +2911,17 @@
         "fr": "NEO Surveyor sera le premier télescope spatial de la NASA conçu pour la défense planétaire. Ses détecteurs infrarouges repéreront des astéroïdes et des comètes sombres, difficiles à voir en lumière visible mais qui rayonnent quand le Soleil les chauffe, y compris ceux qui arrivent depuis la direction du Soleil, inobservable depuis le sol. Ses données aideront aussi à comprendre l'évolution du système solaire."
       },
       "notes": {
-        "en": "Launch NET September 2027. Not displayed in 3D until launched.",
-        "fr": "Lancement au plus tôt en septembre 2027. Pas d'affichage 3D avant le lancement."
+        "en": "Launch NET September 2027; sunshade hardware on track (delivered to BAE Systems ahead of schedule). Not displayed in 3D until launched.",
+        "fr": "Lancement au plus tôt en septembre 2027 ; le pare-soleil est en bonne voie (livré à BAE Systems en avance sur l'échéancier). Pas d'affichage 3D avant le lancement."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/neo-surveyor/"
       },
-      "verified": "2026-09-27",
-      "sources": ["https://science.nasa.gov/mission/neo-surveyor/"]
+      "verified": "2026-11-07",
+      "sources": [
+        "https://science.nasa.gov/mission/neo-surveyor/",
+        "https://science.nasa.gov/blogs/neo-surveyor/2026/10/26/sunshade-for-nasas-neo-surveyor-mission-ready-for-its-day-in-sun/"
+      ]
     },
     {
       "id": "ema-mbr-explorer",
