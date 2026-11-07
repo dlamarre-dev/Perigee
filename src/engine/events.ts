@@ -5,6 +5,7 @@
  * next key events of the missions in the catalogue. astronomy-engine searches (no published data needed).
  */
 import * as Astronomy from 'astronomy-engine';
+import { eclipseMagnitude, MOON_RADIUS_KM, SUN_RADIUS_KM } from '../astro/eclipseMap';
 import { PLANETS } from '../astro/planets';
 import { catalogs } from './objects';
 import { round } from './ground';
@@ -57,15 +58,16 @@ const MICROMOON_KM = 405_000;
 
 /**
  * A solar eclipse as seen from a place, around the global peak: the Sun and the Moon seen from the observer
- * (topocentric) every 10 minutes over ±3 h, then a golden-section search for the greatest coverage. Bounded cost,
- * unlike a search for the next eclipse visible from there (which may lie years ahead).
+ * (topocentric) every 10 minutes over ±3 h, then a golden-section search for the greatest coverage and bisections
+ * for the contacts (first and last, and the start and end of totality or annularity). Bounded cost, unlike a search
+ * for the next eclipse visible from there (which may lie years ahead).
  */
-function localSolarEclipse(
+export function localSolarEclipse(
   peak: Astronomy.AstroTime,
   observer: Astronomy.Observer,
 ): Record<string, unknown> | undefined {
-  const SUN_KM = 695_700;
-  const MOON_KM = 1737.4;
+  const SUN_KM = SUN_RADIUS_KM;
+  const MOON_KM = MOON_RADIUS_KM;
   const look = (t: Astronomy.AstroTime) => {
     const sun = Astronomy.Equator(Astronomy.Body.Sun, t, observer, true, true);
     const moon = Astronomy.Equator(Astronomy.Body.Moon, t, observer, true, true);
@@ -105,37 +107,115 @@ function localSolarEclipse(
     else a = m1;
   }
   const top = f((a + b) / 2);
-  // First and last contacts to about a second, between a sample without overlap and one with.
-  const overlaps = (ut: number): boolean => {
-    const x = f(ut);
-    return x.sep < x.rs + x.rm;
-  };
-  const contact = (outside: number, inside: number): Astronomy.AstroTime => {
+  // A contact to about a second, between a time outside a phase and one inside it.
+  const contact = (outside: number, inside: number, within: (ut: number) => boolean): Astronomy.AstroTime => {
     while (Math.abs(inside - outside) > 1 / 86_400) {
       const mid = (inside + outside) / 2;
-      if (overlaps(mid)) inside = mid;
+      if (within(mid)) inside = mid;
       else outside = mid;
     }
     return Astronomy.MakeTime((inside + outside) / 2);
   };
-  const first = contact(begins.AddDays(-10 / 1440).ut, begins.ut);
-  const last = contact(ends.AddDays(10 / 1440).ut, ends.ut);
-  const hor = Astronomy.Horizon(top.t, observer, top.sun.ra, top.sun.dec, 'normal');
-  if (hor.altitude <= 0)
-    return { visible: false, note: 'the Sun is below the horizon at the greatest eclipse' };
-  const kind = top.sep <= top.rm - top.rs ? 'total' : top.sep <= top.rs - top.rm ? 'annular' : 'partial';
-  // Fraction of the Sun's diameter covered (the usual "magnitude").
-  const magnitude = Math.max(0, (top.rs + top.rm - top.sep) / (2 * top.rs));
+  const overlaps = (ut: number): boolean => {
+    const x = f(ut);
+    return x.sep < x.rs + x.rm;
+  };
+  const first = contact(begins.AddDays(-10 / 1440).ut, begins.ut, overlaps);
+  const last = contact(ends.AddDays(10 / 1440).ut, ends.ut, overlaps);
+  const altitude = (x: ReturnType<typeof look>): number =>
+    Astronomy.Horizon(x.t, observer, x.sun.ra, x.sun.dec, 'normal').altitude;
+  const altTop = altitude(top);
+  const altBegin = altitude(f(first.ut));
+  const altEnd = altitude(f(last.ut));
+  if (Math.max(altTop, altBegin, altEnd) <= 0)
+    return { visible: false, note: 'the Sun is below the horizon during the whole eclipse' };
+  const geometric = top.sep <= top.rm - top.rs ? 'total' : top.sep <= top.rs - top.rm ? 'annular' : 'partial';
+  let kind: 'total' | 'annular' | 'partial' = geometric;
+  // Totality or annularity: while one disc lies inside the other, and only if the Sun is up for some of it.
+  let central: Record<string, unknown> = {};
+  let centralDown = false;
+  if (geometric !== 'partial') {
+    const inside = (ut: number): boolean => {
+      const x = f(ut);
+      return x.sep < Math.abs(x.rm - x.rs);
+    };
+    const cb = contact(first.ut, top.t.ut, inside);
+    const ce = contact(last.ut, top.t.ut, inside);
+    const altCb = altitude(f(cb.ut));
+    const altCe = altitude(f(ce.ut));
+    if (Math.max(altCb, altCe) <= 0) {
+      kind = 'partial';
+      centralDown = true;
+      central = { centralBelowHorizon: geometric };
+    } else
+      central = {
+        centralBegins: cb.date.toISOString(),
+        centralEnds: ce.date.toISOString(),
+        centralSeconds: round((ce.ut - cb.ut) * 86_400, 0),
+        sunAltitudeAtCentralBeginsDeg: round(altCb, 1),
+        sunAltitudeAtCentralEndsDeg: round(altCe, 1),
+      };
+  }
+  const risesOrSets = Math.min(altTop, altBegin, altEnd) <= 0;
   return {
     visible: true,
     kind,
     greatest: top.t.date.toISOString(),
-    magnitude: round(magnitude, 3),
-    sunAltitudeDeg: round(hor.altitude, 1),
+    // Fraction of the Sun's diameter covered (the usual "magnitude"; the diameter ratio in a central eclipse).
+    magnitude: round(eclipseMagnitude(top.sep, top.rs, top.rm), 3),
+    sunAltitudeDeg: round(altTop, 1),
     begins: first.date.toISOString(),
     ends: last.date.toISOString(),
-    note: 'Contacts and greatest eclipse from the topocentric Sun and Moon (spheres, no lunar limb profile): to within seconds; the Sun may rise or set during the eclipse.',
+    sunAltitudeAtBeginDeg: round(altBegin, 1),
+    sunAltitudeAtEndDeg: round(altEnd, 1),
+    ...central,
+    note:
+      'Contacts and greatest eclipse from the topocentric Sun and Moon (spheres, no lunar limb profile): to within seconds.' +
+      (risesOrSets
+        ? ' The Sun rises or sets during the eclipse: part of it happens below the horizon.'
+        : '') +
+      (centralDown
+        ? ` The ${geometric === 'total' ? 'totality' : 'annularity'} happens here while the Sun is below the horizon.`
+        : ''),
   };
+}
+
+/** Contacts of a lunar eclipse (ISO times, in order): those of the phases it has. */
+export function lunarEclipseContacts(e: Astronomy.LunarEclipseInfo): Record<string, string> {
+  const at = (min: number): string => e.peak.AddDays(min / 1440).date.toISOString();
+  return {
+    penumbralBegins: at(-e.sd_penum),
+    ...(e.sd_partial > 0 ? { partialBegins: at(-e.sd_partial) } : {}),
+    ...(e.sd_total > 0 ? { totalBegins: at(-e.sd_total) } : {}),
+    peak: e.peak.date.toISOString(),
+    ...(e.sd_total > 0 ? { totalEnds: at(e.sd_total) } : {}),
+    ...(e.sd_partial > 0 ? { partialEnds: at(e.sd_partial) } : {}),
+    penumbralEnds: at(e.sd_penum),
+  };
+}
+
+/**
+ * A lunar eclipse as seen from a place: the Moon's altitude at each contact, and whether the eclipse proper (the
+ * umbral phases, or the penumbral one of a penumbral eclipse) happens with the Moon up, checked every 5 minutes.
+ */
+export function localLunarEclipse(
+  contacts: Readonly<Record<string, string>>,
+  observer: Astronomy.Observer,
+): { visibility: 'whole' | 'part' | 'none'; moonAltitudeDeg: Record<string, number> } {
+  const altitude = (ms: number): number => {
+    const t = Astronomy.MakeTime(new Date(ms));
+    const eq = Astronomy.Equator(Astronomy.Body.Moon, t, observer, true, true);
+    return Astronomy.Horizon(t, observer, eq.ra, eq.dec, 'normal').altitude;
+  };
+  const moonAltitudeDeg: Record<string, number> = {};
+  for (const [k, iso] of Object.entries(contacts)) moonAltitudeDeg[k] = round(altitude(Date.parse(iso)), 1);
+  const from = Date.parse(contacts['partialBegins'] ?? contacts['penumbralBegins'] ?? '');
+  const to = Date.parse(contacts['partialEnds'] ?? contacts['penumbralEnds'] ?? '');
+  const times: number[] = [];
+  for (let t = from; t < to; t += 5 * 60_000) times.push(t);
+  times.push(to);
+  const up = times.filter((t) => altitude(t) > 0).length;
+  return { visibility: up === times.length ? 'whole' : up > 0 ? 'part' : 'none', moonAltitudeDeg };
 }
 
 /** "de Mars", "d’Uranus". */
@@ -217,11 +297,16 @@ export function eventsBetween(o: EventOptions): SkyEvent[] {
     }
     for (const e of lunar) {
       const kind = ECLIPSE_KINDS[e.kind] ?? { en: e.kind, fr: e.kind };
+      const contacts = lunarEclipseContacts(e);
       const fromHere = observer
         ? (() => {
             const eq = Astronomy.Equator(Astronomy.Body.Moon, e.peak, observer, true, true);
             const alt = Astronomy.Horizon(e.peak, observer, eq.ra, eq.dec, 'normal').altitude;
-            return { moonAltitudeAtPeakDeg: round(alt, 1), visibleAtPeak: alt > 0 };
+            return {
+              moonAltitudeAtPeakDeg: round(alt, 1),
+              visibleAtPeak: alt > 0,
+              fromHere: localLunarEclipse(contacts, observer),
+            };
           })()
         : {};
       add(
@@ -234,6 +319,7 @@ export function eventsBetween(o: EventOptions): SkyEvent[] {
           partialMinutes: round(e.sd_partial * 2, 0),
           penumbralMinutes: round(e.sd_penum * 2, 0),
           obscuration: round(e.obscuration, 3),
+          contacts,
           ...fromHere,
         },
       );

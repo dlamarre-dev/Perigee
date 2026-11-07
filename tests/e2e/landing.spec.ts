@@ -85,6 +85,32 @@ test('a probe page gives its live distance; the dashboard hides the article', as
   expect(page.url()).toContain('dashboard=1');
 });
 
+test('the eclipse page maps the selected eclipse and gives its times at a place', async ({ page }) => {
+  test.slow();
+  await page.goto('./en/next-eclipse/');
+  await expect(page.locator('#lp-answer-text')).toContainText(/Solar eclipse \(annular\)/, {
+    timeout: 30_000,
+  });
+  // The next eclipse is on the map: its partial zone and its path of annularity.
+  await expect(page.locator('#lp-eclipse-map .ec-limit')).toHaveAttribute('d', /^M/, { timeout: 30_000 });
+  await expect(page.locator('#lp-eclipse-map .ec-central path')).toHaveAttribute('d', /^M/);
+  await expect(page.locator('#lp-eclipse-legend')).toContainText('Path of annularity');
+  // The total eclipse of August 2027, from a point clicked on its path (greatest eclipse, Egypt).
+  await page.locator('.lp-pick', { hasText: 'Solar eclipse (total)' }).click();
+  await expect(page.locator('#lp-eclipse-legend')).toContainText('Path of totality', { timeout: 30_000 });
+  await page.locator('#lp-eclipse-map .ec-greatest path').click({ force: true });
+  await expect(page.locator('#lp-eclipse-here')).toContainText(/Total eclipse here: 6 min \d+ s of totality/);
+  await expect(page.locator('#lp-eclipse-here')).toContainText('Totality begins');
+  // A lunar eclipse, from the visitor's place.
+  await page.locator('#lp-eclipse-here button').click();
+  await page.locator('#lp-locate').click();
+  await page.locator('.lp-pick', { hasText: 'Lunar eclipse' }).first().click();
+  await expect(page.locator('#lp-eclipse-map .ec-moon-down').first()).toHaveAttribute('d', /^M/);
+  await expect(page.locator('#lp-eclipse-here')).toContainText('From your location');
+  await expect(page.locator('#lp-eclipse-here')).toContainText('Penumbral eclipse begins');
+  await expect(page.locator('.lp-eclipse-list thead')).toContainText('From your location');
+});
+
 test.describe('in a French browser', () => {
   test.use({ locale: 'fr-CA' });
 

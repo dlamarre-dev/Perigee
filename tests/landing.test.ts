@@ -163,6 +163,15 @@ describe('landing pages', () => {
     expect(pages.get('en/what-is-in-the-sky-tonight/index.html')).toContain('id="lp-locate"');
   });
 
+  it('show the eclipse page’s map in place of the 3D view, with the place', () => {
+    const html = pages.get('fr/prochaine-eclipse/index.html') ?? '';
+    expect(html).toContain('id="lp-eclipse-map"');
+    expect(html).toContain('id="lp-eclipse-here"');
+    expect(html).not.toContain('<iframe');
+    expect(html).toContain('id="lp-locate"');
+    expect(html).toContain('Donnez votre position pour vous situer sur la carte');
+  });
+
   it('are all in the sitemap with their alternates', () => {
     const xml = renderSitemap({ ...CTX, landingDate: '2026-01-01' }, '2026-10-30');
     for (const t of TOPICS) {

@@ -348,6 +348,202 @@ h3 {
   fill: #7dff9a;
 }
 
+/* Eclipse map (src/landing/EclipseMap.ts) in place of the 3D view. */
+.lp-eclipse {
+  grid-column: 1 / -1;
+}
+
+.lp-eclipse h2 .lp-note {
+  margin-left: 8px;
+  font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ec-map {
+  max-height: 72vh;
+  cursor: crosshair;
+}
+
+.ec-coverage {
+  image-rendering: auto;
+}
+
+.ec-limit,
+.ec-half,
+.ec-centre-line {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.ec-limit {
+  stroke: #ffc45c;
+  stroke-width: 1.4px;
+}
+
+.ec-half {
+  stroke: rgb(255 196 92 / 70%);
+  stroke-width: 1px;
+  stroke-dasharray: 4 3;
+}
+
+.ec-central path {
+  fill: #ff5a36;
+  fill-opacity: 0.9;
+}
+
+.ec-central[data-kind='annular'] path {
+  fill: #ffe14d;
+}
+
+.ec-centre-line {
+  stroke: #2a0d06;
+  stroke-width: 0.8px;
+}
+
+.ec-moon-down {
+  fill: rgb(0 0 0 / 38%);
+}
+
+.ec-greatest path {
+  fill: #fff;
+  stroke: #2a0d06;
+  stroke-width: 0.6;
+}
+
+.ec-probe circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.8;
+}
+
+.ec-greatest text,
+.ec-probe text {
+  font-family: var(--font-display);
+  font-size: 5px;
+  font-weight: 700;
+  fill: #fff;
+  paint-order: stroke;
+  stroke: #02050a;
+  stroke-width: 1px;
+}
+
+.lp-eclipse-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 8px;
+}
+
+.lp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  list-style: none;
+}
+
+.lp-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lp-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border: 1px solid var(--line);
+}
+
+.sw-partial {
+  background: linear-gradient(90deg, rgb(255 196 92 / 15%), rgb(255 196 92 / 62%));
+}
+
+.sw-limit {
+  height: 0;
+  border: 0;
+  border-top: 2px solid #ffc45c;
+}
+
+.sw-half {
+  height: 0;
+  border: 0;
+  border-top: 2px dashed rgb(255 196 92 / 70%);
+}
+
+.sw-central {
+  background: #ff5a36;
+}
+
+.sw-central.sw-annular {
+  background: #ffe14d;
+}
+
+.sw-greatest {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.sw-moon-whole {
+  background: #1d3b4f;
+}
+
+.sw-moon-part {
+  background: #11232f;
+}
+
+.sw-moon-none {
+  background: #0a141b;
+}
+
+.lp-eclipse-list .lp-pick {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.lp-eclipse-list .lp-selected td {
+  background: rgb(90 215 255 / 8%);
+}
+
+.lp-eclipse-list .lp-selected .lp-pick {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.lp-eclipse-times {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-eclipse-times th,
+.lp-eclipse-times td {
+  padding: 4px 12px 4px 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.lp-eclipse-times th {
+  font-weight: 500;
+  color: #fff;
+}
+
 .lp-place {
   grid-column: 1 / -1;
 }

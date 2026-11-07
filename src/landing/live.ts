@@ -11,6 +11,7 @@ import { compassLabel } from '../engine/notes';
 import type { I18n } from '../i18n';
 import { systemZone } from '../i18n/timeZone';
 import { au, countdown, distance, kmh, kms, lightTime, span } from './format';
+import { eclipseWidget } from './eclipse';
 import { GroundTrackMap } from './GroundTrackMap';
 import type { Place } from './observer';
 import type { Topic } from './topics';
@@ -444,9 +445,9 @@ function renderEvents(i18n: I18n, events: readonly EventJson[], now: Date): void
   void now;
 }
 
-/** Eclipses or Moon phases to come. */
+/** Moon phases to come (the eclipses have their own page script, ./eclipse.ts). */
 function eventsWidget(ctx: LiveContext): Widget {
-  const { engine, i18n, topic } = ctx;
+  const { engine, i18n } = ctx;
   let at = 0;
   let next: EventJson | undefined;
   const prov: readonly Provenance[] = [
@@ -464,18 +465,9 @@ function eventsWidget(ctx: LiveContext): Widget {
     async tick(now) {
       if (now.getTime() - at > 10 * 60_000 || (next && Date.parse(next.time) < now.getTime())) {
         at = now.getTime();
-        const place = ctx.place();
-        const eclipses = topic.focus === 'eclipses';
-        const r = engine.events({
-          start: now,
-          days: eclipses ? 366 : 120,
-          kinds: [eclipses ? 'eclipse' : 'moon'],
-          lang: i18n.lang,
-          ...(place ? { place: { latDeg: place.latDeg, lonDeg: place.lonDeg, timeZone: systemZone() } } : {}),
-        });
-        let list = r['events'] as readonly EventJson[];
-        if (!eclipses) list = list.filter((e) => !/apog|périg|perig/i.test(e.title));
-        next = eclipses ? list[0] : (list.find((e) => /full|pleine/i.test(e.title)) ?? list[0]);
+        const r = engine.events({ start: now, days: 120, kinds: ['moon'], lang: i18n.lang });
+        const list = (r['events'] as readonly EventJson[]).filter((e) => !/apog|périg|perig/i.test(e.title));
+        next = list.find((e) => /full|pleine/i.test(e.title)) ?? list[0];
         renderEvents(i18n, list.slice(0, 12), now);
       }
       setAnswer(
@@ -483,9 +475,6 @@ function eventsWidget(ctx: LiveContext): Widget {
           ? i18n.format('landing.answer.event', { title: next.title, when: localTime(i18n, next.time) })
           : i18n.t('landing.events.none'),
       );
-    },
-    placeChanged() {
-      at = 0;
     },
     provenance: () => prov,
   };
@@ -862,7 +851,7 @@ export function createWidget(ctx: LiveContext): Widget {
     case 'moon':
       return moonWidget(ctx);
     case 'events':
-      return eventsWidget(ctx);
+      return ctx.topic.focus === 'eclipses' ? eclipseWidget(ctx) : eventsWidget(ctx);
     case 'constellation':
       return constellationWidget(ctx);
     case 'around':
