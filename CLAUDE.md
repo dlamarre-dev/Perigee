@@ -510,7 +510,14 @@ the "up" vector and causes gimbal lock at the poles).
   satellites' ground track on an SVG map (`src/landing/GroundTrackMap.ts`: Natural Earth outline
   `public/landing/world.json` from `tools/geo/world-outline.ts`, night side from the subsolar point), reloads
   itself when a new build is deployed (`UpdateWatcher`, hourly) and has a dashboard mode (`?dashboard=1`: full
-  screen, large type, Wake Lock). "My location" (satellite and sky pages; `src/landing/observer.ts`):
+  screen, large type, Wake Lock). The eclipse page (`src/landing/eclipse.ts`, added 2026-11-07) shows a map in place
+  of the 3D view: the eclipse picked in its list, a solar one as its partial zone (greatest fraction of the Sun's
+  diameter covered on a 0.5–1° grid while the Sun is up, outer limit and 50 % line by marching squares,
+  `src/landing/contours.ts`) and its path of totality or annularity (umbra/antumbra footprints on WGS 84 every 20 s,
+  cut at the limb where the cone grazes the Earth, hulled in pairs), from `src/astro/eclipseMap.ts` in a worker, framed on the zone (or the whole world); a lunar one
+  as where the Moon is below the horizon at the start and end of the eclipse. The visitor's place or a clicked point
+  gets its contacts (engine `localSolarEclipse`, totality included unless the Sun is below the horizon then, `localLunarEclipse`), with the Sun's or Moon's
+  altitude and, outside the path, its distance and direction. "My location" (satellite, sky and eclipse pages; `src/landing/observer.ts`):
   geolocation on click only, rounded to 0.01°, kept in `localStorage` `perigee-observer` until "Forget", never in
   a URL; the iframe gets it through the embed API `set { observer }` (`ObserverPlace`, `View.setObserver`, a
   "You" marker in the Earth view, `src/earth/ObserverLayer.ts`), and the page lists the passes (engine `passes`,

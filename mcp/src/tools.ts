@@ -296,7 +296,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     'perigee_events',
     {
       title: 'Astronomical and mission events',
-      description: `Events over a period (default: the next 30 days, at most ${maxEventDays}): Moon phases (super and micro full Moons), lunar perigee and apogee, lunar and solar eclipses (with a place: how they look from there), equinoxes and solstices, the Earth's perihelion and aphelion, planet oppositions, conjunctions and greatest elongations, and the next key events of the missions (flybys, arrivals, launches) from Perigee's catalogue.`,
+      description: `Events over a period (default: the next 30 days, at most ${maxEventDays}): Moon phases (super and micro full Moons), lunar perigee and apogee, lunar and solar eclipses (contact times; with a place: how they look from there, with the duration of totality or annularity and the altitude of the Sun or the Moon), equinoxes and solstices, the Earth's perihelion and aphelion, planet oppositions, conjunctions and greatest elongations, and the next key events of the missions (flybys, arrivals, launches) from Perigee's catalogue.`,
       inputSchema: {
         start: date,
         days: z

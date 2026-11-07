@@ -397,6 +397,18 @@ function fill(
 }
 
 /** One topic's page in one language. */
+/** The eclipse map's frame, filled by ./eclipse.ts: the map, its legend, the zoom button and the local times. */
+function eclipseSection(i18n: I18n): string {
+  return `<section class="lp-eclipse panel" id="lp-eclipse">
+      <h2>${esc(i18n.t('landing.eclipse.title'))} <span class="lp-note" id="lp-eclipse-status" aria-live="polite"></span></h2>
+      <div class="lp-eclipse-map" id="lp-eclipse-map" role="img" aria-label="${esc(i18n.t('landing.eclipse.title'))}"></div>
+      <div class="lp-eclipse-bar"><ul class="lp-legend" id="lp-eclipse-legend"></ul><button type="button" class="btn" id="lp-eclipse-zoom" hidden></button></div>
+      <p class="lp-note">${esc(i18n.t('landing.eclipse.pick'))}</p>
+      <div id="lp-eclipse-here" aria-live="polite"></div>
+      <p class="lp-note">${esc(i18n.t('landing.eclipse.note'))}</p>
+    </section>`;
+}
+
 export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: RenderContext): string {
   const i18n = new I18n(lang);
   const o = other(lang);
@@ -452,6 +464,8 @@ export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: Ren
     .map((t) => `<li><a href="${ctx.base}${topicPath(t, lang)}">${esc(t.question[lang])}</a></li>`)
     .join('');
   const hasMap = topic.kind === 'satellite';
+  // The eclipse page shows a map of the selected eclipse in place of the 3D view (./eclipse.ts).
+  const eclipses = topic.focus === 'eclipses';
   const hasPlace = topicHasPlace(topic);
   const body = `${header(i18n, ctx, `${ctx.base}${paths[o]}`, true)}
 <main class="lp" id="lp-main">
@@ -460,14 +474,18 @@ export function renderTopic(template: string, topic: Topic, lang: Lang, ctx: Ren
   <p class="lp-answer" id="lp-answer" aria-live="polite"><span class="lp-live-dot" aria-hidden="true"></span><span id="lp-answer-text">${esc(topic.lead[lang])}</span></p>
   <noscript><p class="lp-noscript">${esc(i18n.t('landing.noscript'))}</p></noscript>
   <div class="lp-board">
-    <section class="lp-view panel">
+    ${
+      eclipses
+        ? eclipseSection(i18n)
+        : `<section class="lp-view panel">
       ${capture ? `<img class="lp-poster" src="${ctx.base}${esc(capture)}" width="${OG_WIDTH}" height="${OG_HEIGHT}" alt="${esc(viewTitle)}" fetchpriority="high" decoding="async">` : ''}
       <iframe data-src="${esc(viewSrc)}" title="${esc(viewTitle)}" allow="fullscreen"></iframe>
       <noscript><a class="lp-view-noscript" href="${esc(`${ctx.base}${viewQuery(topic.view, lang, false)}`)}">${esc(i18n.t('embed.open'))}</a></noscript>
-    </section>
+    </section>`
+    }
     <section class="lp-cards" id="lp-cards" aria-live="off"></section>
     ${hasMap ? `<section class="lp-map panel" id="lp-map"><h2>${esc(i18n.t('landing.map.title'))}</h2><div id="lp-map-svg" role="img" aria-label="${esc(i18n.format('landing.map.label', { name }))}"></div><p class="lp-note">${esc(i18n.format('landing.map.note', { name }))}</p></section>` : ''}
-    ${hasPlace ? `<section class="lp-place panel" id="lp-place"><h2>${esc(i18n.t('landing.place.title'))}</h2><p id="lp-place-why">${esc(topic.kind === 'satellite' ? i18n.format('landing.place.why', { name }) : i18n.t('landing.place.whySky'))}</p><p class="lp-place-actions"><button type="button" class="btn" id="lp-locate">${esc(i18n.t('landing.place.use'))}</button> <button type="button" class="btn" id="lp-forget" hidden>${esc(i18n.t('landing.place.forget'))}</button> <span id="lp-place-status" aria-live="polite"></span></p><div id="lp-place-out"></div><p class="lp-note">${esc(i18n.t('landing.place.note'))}</p></section>` : ''}
+    ${hasPlace ? `<section class="lp-place panel" id="lp-place"><h2>${esc(i18n.t('landing.place.title'))}</h2><p id="lp-place-why">${esc(topic.kind === 'satellite' ? i18n.format('landing.place.why', { name }) : i18n.t(eclipses ? 'landing.place.whyEclipse' : 'landing.place.whySky'))}</p><p class="lp-place-actions"><button type="button" class="btn" id="lp-locate">${esc(i18n.t('landing.place.use'))}</button> <button type="button" class="btn" id="lp-forget" hidden>${esc(i18n.t('landing.place.forget'))}</button> <span id="lp-place-status" aria-live="polite"></span></p><div id="lp-place-out"></div><p class="lp-note">${esc(i18n.t('landing.place.note'))}</p></section>` : ''}
     ${listTable(topic, i18n)}
   </div>
   <article class="lp-text">

@@ -98,8 +98,9 @@ export interface Topic {
   readonly related: readonly string[];
 }
 
-/** Earth satellites the passes and visibility are computed for (the topics that show the Earth). */
-export const topicHasPlace = (t: Topic): boolean => t.kind === 'satellite' || t.kind === 'sky';
+/** Topics that use the visitor's place: satellite passes, the sky, the eclipses as seen from there. */
+export const topicHasPlace = (t: Topic): boolean =>
+  t.kind === 'satellite' || t.kind === 'sky' || t.focus === 'eclipses';
 
 export const TOPICS: readonly Topic[] = [
   // ------------------------------------------------------------------ around the Earth
@@ -1764,8 +1765,8 @@ export const TOPICS: readonly Topic[] = [
       'Les prochaines éclipses de Soleil et de Lune, avec leurs dates et leur type, et si elles sont visibles depuis chez vous.',
     ),
     intro: L(
-      'An eclipse happens when the Sun, the Earth and the Moon line up. In a solar eclipse, the Moon passes in front of the Sun and its shadow sweeps across a strip of the Earth: only there is the eclipse total, while a much wider area sees a partial one. In a lunar eclipse, the Moon passes through the Earth’s shadow and can turn coppery red, and everyone on the night side of the Earth can see it. Because the Moon’s orbit is tilted, eclipses do not happen every month but in “seasons” about six months apart. The list gives the coming eclipses, and with your location Perigee says how much of each you would see.',
-      'Une éclipse se produit quand le Soleil, la Terre et la Lune s’alignent. Lors d’une éclipse de Soleil, la Lune passe devant le Soleil et son ombre balaie une bande de la Terre : c’est seulement là que l’éclipse est totale, alors qu’une zone bien plus large voit une éclipse partielle. Lors d’une éclipse de Lune, la Lune traverse l’ombre de la Terre et peut devenir rouge cuivré ; tout le côté nuit de la Terre peut la voir. Comme l’orbite de la Lune est inclinée, les éclipses n’ont pas lieu chaque mois mais par « saisons » espacées d’environ six mois. La liste donne les prochaines éclipses et, avec votre position, Périgée indique ce que vous en verriez.',
+      'An eclipse happens when the Sun, the Earth and the Moon line up. In a solar eclipse, the Moon passes in front of the Sun and its shadow sweeps across a strip of the Earth: only there is the eclipse total, while a much wider area sees a partial one. In a lunar eclipse, the Moon passes through the Earth’s shadow and can turn coppery red, and everyone on the night side of the Earth can see it. Because the Moon’s orbit is tilted, eclipses do not happen every month but in “seasons” about six months apart. The list gives the coming eclipses: pick one to see it on the map, with the zone of the partial eclipse and the path of totality, and its times from your location or from any point you click.',
+      'Une éclipse se produit quand le Soleil, la Terre et la Lune s’alignent. Lors d’une éclipse de Soleil, la Lune passe devant le Soleil et son ombre balaie une bande de la Terre : c’est seulement là que l’éclipse est totale, alors qu’une zone bien plus large voit une éclipse partielle. Lors d’une éclipse de Lune, la Lune traverse l’ombre de la Terre et peut devenir rouge cuivré ; tout le côté nuit de la Terre peut la voir. Comme l’orbite de la Lune est inclinée, les éclipses n’ont pas lieu chaque mois mais par « saisons » espacées d’environ six mois. La liste donne les prochaines éclipses : choisissez-en une pour la voir sur la carte, avec la zone de l’éclipse partielle et la bande de totalité, et ses heures depuis votre position ou depuis tout point cliqué.',
     ),
     faq: [
       {
