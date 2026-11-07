@@ -516,7 +516,13 @@ ${footer(i18n, ctx)}`;
       paths,
       ctx,
       ld,
-      capture ? { path: capture, alt: viewTitle } : undefined,
+      capture
+        ? {
+            path: capture,
+            // The eclipse page's capture is its map for an example eclipse (tools/screenshots/og.ts).
+            alt: topic.focus === 'eclipses' ? i18n.t('landing.eclipse.ogAlt') : viewTitle,
+          }
+        : undefined,
     ),
     body,
   );

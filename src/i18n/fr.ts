@@ -706,6 +706,8 @@ export const fr: Messages = {
   'landing.eclipse.fromYou': 'Depuis votre position',
   'landing.eclipse.fromProbe': 'Au point choisi ({coords})',
   'landing.eclipse.clearProbe': 'Effacer le point',
+  'landing.eclipse.ogAlt':
+    'Exemple : carte de l’éclipse totale de Soleil du 2 août 2027, sa zone partielle et sa bande de totalité',
   'landing.eclipse.solar.total': 'Éclipse totale ici : {duration} de totalité.',
   'landing.eclipse.solar.annular': 'Éclipse annulaire ici : {duration} d’annularité.',
   'landing.eclipse.solar.partial': 'Éclipse partielle ici : jusqu’à {pct} % du diamètre du Soleil couvert.',

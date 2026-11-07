@@ -98,6 +98,8 @@ test('the eclipse page maps the selected eclipse and gives its times at a place'
   // The total eclipse of August 2027, from a point clicked on its path (greatest eclipse, Egypt).
   await page.locator('.lp-pick', { hasText: 'Solar eclipse (total)' }).click();
   await expect(page.locator('#lp-eclipse-legend')).toContainText('Path of totality', { timeout: 30_000 });
+  // The answer line names the eclipse on the map.
+  await expect(page.locator('#lp-answer-text')).toContainText('Solar eclipse (total)');
   await page.locator('#lp-eclipse-map .ec-greatest path').click({ force: true });
   await expect(page.locator('#lp-eclipse-here')).toContainText(/Total eclipse here: 6 min \d+ s of totality/);
   await expect(page.locator('#lp-eclipse-here')).toContainText('Totality begins');
