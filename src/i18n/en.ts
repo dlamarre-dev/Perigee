@@ -688,6 +688,8 @@ export const en = {
   'landing.eclipse.fromYou': 'From your location',
   'landing.eclipse.fromProbe': 'At the chosen point ({coords})',
   'landing.eclipse.clearProbe': 'Clear the point',
+  'landing.eclipse.ogAlt':
+    'Example: map of the total solar eclipse of 2 August 2027, its partial zone and its path of totality',
   'landing.eclipse.solar.total': 'Total eclipse here: {duration} of totality.',
   'landing.eclipse.solar.annular': 'Annular eclipse here: {duration} of annularity.',
   'landing.eclipse.solar.partial': 'Partial eclipse here: up to {pct} % of the Sun’s diameter covered.',

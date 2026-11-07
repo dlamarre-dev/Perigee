@@ -228,10 +228,21 @@ export function eclipseWidget(ctx: LiveContext): Widget {
     legend.replaceChildren(...items);
   }
 
+  /** The answer line: the eclipse on the map (the next one until another is picked). */
+  function renderAnswer(): void {
+    const e = selected ?? list[0];
+    const answer = e
+      ? i18n.format('landing.answer.event', { title: e.title, when: i18n.dateTime(new Date(e.time)) })
+      : i18n.t('landing.events.none');
+    const el = $('lp-answer-text');
+    if (el && el.textContent !== answer) el.textContent = answer;
+  }
+
   async function show(e: EclipseJson): Promise<void> {
     selected = e;
     const seq = ++showSeq;
     renderList();
+    renderAnswer();
     const m = ensureMap();
     if (!m) return;
     mapBox?.setAttribute(
@@ -440,15 +451,7 @@ export function eclipseWidget(ctx: LiveContext): Widget {
         else if (list[0]) void show(list[0]);
         else renderList();
       }
-      const first = list[0];
-      const answer = first
-        ? i18n.format('landing.answer.event', {
-            title: first.title,
-            when: i18n.dateTime(new Date(first.time)),
-          })
-        : i18n.t('landing.events.none');
-      const el = $('lp-answer-text');
-      if (el && el.textContent !== answer) el.textContent = answer;
+      renderAnswer();
     },
     placeChanged(place) {
       map?.setObserver(place);
