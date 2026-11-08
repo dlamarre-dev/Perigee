@@ -122,6 +122,8 @@ export const REPOSITORY = 'https://github.com/dlamarre-dev/Perigee';
 export const GOATCOUNTER = 'https://www.goatcounter.com';
 export const ALTERNATIVETO =
   'https://alternativeto.net/software/perigee/about/?utm_source=badge&utm_medium=referral';
+export const PRODUCT_HUNT =
+  'https://www.producthunt.com/products/perigee-2/launches/perigee-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-perigee-2';
 /** Static pages in public/, one per language. */
 export const PRIVACY_PAGES: Readonly<Record<Lang, string>> = {
   en: 'privacy.html',

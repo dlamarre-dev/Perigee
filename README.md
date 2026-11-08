@@ -259,3 +259,4 @@ the development setup (`npm install`, `npm run data:pull`, `npm run dev`) and th
 ## External links
 
 <a href="https://alternativeto.net/software/perigee/about/?utm_source=badge&utm_medium=referral"><img src="https://alternativeto.net/static/badges/badge-compact-dark.svg" alt="Perigee | AlternativeTo" width="171" height="58"></a>
+<a href="https://www.producthunt.com/products/perigee-2/launches/perigee-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-perigee-2" target="_blank" rel="noopener noreferrer"><img alt="Perigee - Real-time web viewer of artificial objects in space | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1276332&amp;theme=dark&amp;t=1794151430555"></a>
