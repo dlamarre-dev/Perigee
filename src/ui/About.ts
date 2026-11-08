@@ -6,6 +6,7 @@ import {
   AUTHOR,
   DATA_CREDITS,
   GOATCOUNTER,
+  PRODUCT_HUNT,
   PRIVACY_PAGES,
   REPOSITORY,
   SOFTWARE_CREDITS,
@@ -78,15 +79,25 @@ export class About {
       this.reports,
       h('p', { class: 'small' }, [this.privacyLink]),
       h('div', { class: 'dialog-actions' }, [
-        // AlternativeTo's badge, served from this site (public/badges): no request leaves for their server until
-        // the visitor follows the link.
-        h('a', { class: 'about-badge', href: ALTERNATIVETO, target: '_blank', rel: 'noopener' }, [
-          h('img', {
-            src: `${baseUrl}badges/alternativeto.svg`,
-            alt: 'Perigee | AlternativeTo',
-            width: 171,
-            height: 58,
-          }),
+        // AlternativeTo's and Product Hunt's badges, served from this site (public/badges): no request leaves for
+        // their servers until the visitor follows a link.
+        h('div', { class: 'about-badges' }, [
+          h('a', { class: 'about-badge', href: ALTERNATIVETO, target: '_blank', rel: 'noopener' }, [
+            h('img', {
+              src: `${baseUrl}badges/alternativeto.svg`,
+              alt: 'Perigee | AlternativeTo',
+              width: 171,
+              height: 58,
+            }),
+          ]),
+          h('a', { class: 'about-badge', href: PRODUCT_HUNT, target: '_blank', rel: 'noopener noreferrer' }, [
+            h('img', {
+              src: `${baseUrl}badges/producthunt.svg`,
+              alt: 'Perigee - Real-time web viewer of artificial objects in space | Product Hunt',
+              width: 196,
+              height: 54,
+            }),
+          ]),
         ]),
         this.close,
       ]),
