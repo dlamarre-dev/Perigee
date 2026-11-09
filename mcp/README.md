@@ -8,6 +8,7 @@
   <a href="https://mcptry.com/servers/io.github.dlamarre-dev/perigee"><img src="https://mcptry.com/badge/io.github.dlamarre-dev/perigee" alt="mcptry" height="20"></a>
   <a href="https://mcprush.com/to/perigee-mcp?ref=badge"><img height="20" src="https://mcprush.com/badge/perigee-mcp/score.svg" alt="Perigee MCP on mcprush" /></a>
   <a href="https://wellknown.network/agents/perigee-mcp"><img src="https://wellknown.network/agents/perigee-mcp/badge.svg" alt="Wellknown: live" height="20"></a>
+  <a href="https://mcpservers.org/servers/dlamarre-dev/perigee"><img src="https://mcpservers.org/badge.svg" alt="Listed on mcpservers.org" height="20"></a>
 </p>
 
 An [MCP](https://modelcontextprotocol.io/) server for [Perigee](https://perigee.info/), the open-source 3D viewer of the
