@@ -94,3 +94,14 @@ jobs:
             sleep 120
           done
           echo "::warning::The MCP Registry does not see perigee-mcp $version on npm yet: re-run this job later."
+      # Glama has no API to build or release a server: remind the maintainer in the run summary (docs/mcp-publishing.md §7).
+      - name: Glama reminder
+        run: |
+          version=$(node -p "require('./mcp/package.json').version")
+          {
+            echo "### Manual step: Glama"
+            echo ""
+            echo "On https://glama.ai/mcp/servers/dlamarre-dev/Perigee (logged in): run a new build, then create the release \`$version\`."
+            echo "The build installs the latest \`perigee-mcp\` from npm, so wait until npm lists $version."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Glama::Rebuild Perigee on Glama and create the release $version (docs/mcp-publishing.md §7)."

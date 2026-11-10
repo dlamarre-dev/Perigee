@@ -82,6 +82,8 @@ file must keep its name: npm checks both.
    page then shows the provenance (link to the workflow run and the commit).
 5. It then lists the version in the [MCP Registry](https://registry.modelcontextprotocol.io/) with `mcp-publisher`
    (step 6).
+6. By hand: rebuild the server on Glama and create the release with the same version (step 7). The run summary
+   reminds you.
 
 ## 6. MCP Registry
 
@@ -100,3 +102,15 @@ code in the browser) and `mcp-publisher publish`. Check with
 
 The bundle includes the catalogues as they were at build time (names, goals, ids); positions always come from the
 data published on perigee.info, so a new MCP version is only needed for code or catalogue changes, not for fresh data.
+
+## 7. Glama (by hand, each version)
+
+Glama has no API to build or release a server, so this step stays manual. Once npm lists the new version, on
+<https://glama.ai/mcp/servers/dlamarre-dev/Perigee> (logged in as the owner):
+
+1. Run a new build. The build steps are `["npm install -g perigee-mcp"]` and the CMD is `["perigee-mcp"]`; they
+   install the latest version on npm, so the build must wait until npm lists the new one.
+2. Once the build succeeds, create a release named after the version (`1.10.0`, not `mcp-v1.10.0`), like npm and the
+   MCP Registry.
+
+Glama's connector listing (`io.github.dlamarre-dev/perigee`) follows the hosted endpoint and needs nothing.
