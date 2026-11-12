@@ -770,6 +770,8 @@ export const fr: Messages = {
   'landing.sources.title': 'D’où viennent les chiffres',
   'landing.sources.fetched': 'données obtenues le {date} (il y a {age})',
   'landing.sources.elements': 'éléments orbitaux du {date} (âgés de {age})',
+  'landing.sources.elementsAhead':
+    'éléments orbitaux datés du {date}, dans {age} (ajustés sur la trajectoire prévue par l’opérateur)',
   'landing.sources.window': 'éphéméride valide du {from} au {to}',
   'landing.sources.accuracy': 'Précision typique : {accuracy}',
   'landing.sources.refresh':

@@ -897,13 +897,16 @@ export function renderProvenance(i18n: I18n, list: readonly Provenance[], now: D
           age: span(i18n, now.getTime() - Date.parse(p.dataFetchedAt)),
         }),
       );
-    if (p.elementEpoch)
+    if (p.elementEpoch) {
+      // Supplemental GP fits to an operator's predicted ephemeris can be dated days ahead (CSS, GPS).
+      const ageMs = now.getTime() - Date.parse(p.elementEpoch);
       parts.push(
-        i18n.format('landing.sources.elements', {
+        i18n.format(ageMs < 0 ? 'landing.sources.elementsAhead' : 'landing.sources.elements', {
           date: i18n.dateTime(new Date(p.elementEpoch)),
-          age: span(i18n, now.getTime() - Date.parse(p.elementEpoch)),
+          age: span(i18n, ageMs),
         }),
       );
+    }
     if (p.validFrom && p.validTo)
       parts.push(
         i18n.format('landing.sources.window', {
