@@ -752,6 +752,8 @@ export const en = {
   'landing.sources.title': 'Where the numbers come from',
   'landing.sources.fetched': 'data fetched {date} ({age} ago)',
   'landing.sources.elements': 'orbital elements of {date} ({age} old)',
+  'landing.sources.elementsAhead':
+    'orbital elements dated {date}, {age} ahead (fitted to the operator’s predicted trajectory)',
   'landing.sources.window': 'ephemeris valid from {from} to {to}',
   'landing.sources.accuracy': 'Typical accuracy: {accuracy}',
   'landing.sources.refresh':
