@@ -1,12 +1,13 @@
 {
-  "verified": "2026-11-07",
+  "verified": "2026-11-14",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
     "https://celestrak.org/NORAD/elements/supplemental/",
     "https://celestrak.org/satcat/satcat-format.php",
     "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm",
-    "https://spaceq.ca/spacex-transporter-18-launches-three-canadian-satellites/"
+    "https://spaceq.ca/spacex-transporter-18-launches-three-canadian-satellites/",
+    "https://www.spacelaunchschedule.com/launch/starship-starlink-group-31-2-starship-flight-15"
   ],
   "owners": {
     "AB": {
@@ -422,6 +423,10 @@
     {
       "file": "starlink-g15-18b10",
       "reason": "Per-satellite post-deployment set within the Starlink G15-18 launch (2026-10-31); moves into the main \"starlink\" supplemental set within weeks"
+    },
+    {
+      "file": "starlink-g31-2",
+      "reason": "Temporary per-launch post-deployment set (Starship Flight 15 / Starlink Group 31-2, launched 2026-11-13 from Starbase); satellites move into the main \"starlink\" supplemental set within weeks"
     }
   ],
   "nameRules": [
