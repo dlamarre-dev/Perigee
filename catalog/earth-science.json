@@ -139,14 +139,16 @@
         "fr": "Chandra a été conçu pour étudier les régions les plus chaudes et les plus violentes de l'Univers, qui brillent en rayons X, arrêtés par l'atmosphère terrestre. Ses images X très fines permettent d'étudier les trous noirs, les étoiles qui ont explosé, les étoiles à neutrons et le gaz brûlant des amas de galaxies, afin de retracer la structure et l'évolution de l'Univers."
       },
       "notes": {
-        "en": "NASA's flagship X-ray observatory, on a highly elliptical orbit reaching about a third of the way to the Moon. Proposed for cancellation, it was funded again by Congress in the FY2026 budget (January 2026) and keeps observing.",
-        "fr": "Grand observatoire de rayons X de la NASA, sur une orbite très elliptique qui s'éloigne jusqu'au tiers environ de la distance de la Lune. Menacé d'annulation, il a été refinancé par le Congrès dans le budget 2026 (janvier 2026) et poursuit ses observations."
+        "en": "NASA's flagship X-ray observatory, on a highly elliptical orbit reaching about a third of the way to the Moon. Proposed for cancellation, it was funded again by Congress in the FY2026 budget (January 2026) and keeps observing; the FY2027 budget request again proposes terminating it, and a House appropriations bill advanced in May 2026 would again restore its funding, so the outcome is still unresolved.",
+        "fr": "Grand observatoire de rayons X de la NASA, sur une orbite très elliptique qui s'éloigne jusqu'au tiers environ de la distance de la Lune. Menacé d'annulation, il a été refinancé par le Congrès dans le budget 2026 (janvier 2026) et poursuit ses observations ; le projet de budget 2027 propose à nouveau d'y mettre fin, et un projet de loi de crédits de la Chambre des représentants adopté en mai 2026 rétablirait de nouveau son financement, l'issue restant donc incertaine."
       },
       "website": { "url": "https://science.nasa.gov/mission/chandra/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://science.nasa.gov/mission/chandra/",
-        "https://aas.org/posts/news/2026/01/congress-passes-fiscal-year-2026-spending-bills-nsf-nasa-and-doe"
+        "https://aas.org/posts/news/2026/01/congress-passes-fiscal-year-2026-spending-bills-nsf-nasa-and-doe",
+        "https://www.planetary.org/articles/analyzing-the-fy-2027-nasa-budget-request",
+        "https://www.planetary.org/articles/house-appropriators-advance-key-nasa-funding-bill"
       ]
     },
     {
@@ -241,7 +243,7 @@
         "en": "Carried WindSat, a polarimetric radiometer measuring ocean-surface wind speed and direction, and the SMEI solar imager (off since 2011). WindSat data production stopped in October 2020; the satellite is listed as inactive since December 2020.",
         "fr": "Portait WindSat, radiomètre polarimétrique mesurant la vitesse et la direction du vent à la surface des océans, et l'imageur solaire SMEI (éteint depuis 2011). La production des données WindSat a cessé en octobre 2020 ; le satellite est considéré inactif depuis décembre 2020."
       },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://space.oscar.wmo.int/satellites/view/coriolis",
         "https://www.ospo.noaa.gov/data/messages/2020/10/MSG_20201020_1304.html"
@@ -439,12 +441,15 @@
         "fr": "Fermi a été conçu pour explorer les lieux les plus extrêmes et les plus énergétiques de l'Univers, comme les trous noirs qui projettent de puissants jets, les pulsars et les explosions à l'origine des sursauts gamma. Les scientifiques s'en servent aussi pour découvrir d'où viennent les rayons cosmiques, mettre à l'épreuve les théories de la gravitation et chercher des traces de matière noire."
       },
       "notes": {
-        "en": "Launched as GLAST and renamed after physicist Enrico Fermi; its Large Area Telescope maps the whole gamma-ray sky every three hours, and its burst monitor catches gamma-ray bursts. Still operating.",
-        "fr": "Lancé sous le nom de GLAST puis renommé en l'honneur du physicien Enrico Fermi ; son grand télescope cartographie tout le ciel gamma toutes les trois heures et son moniteur détecte les sursauts gamma. Toujours en service."
+        "en": "Launched as GLAST and renamed after physicist Enrico Fermi; its Large Area Telescope maps the whole gamma-ray sky every three hours, and its burst monitor catches gamma-ray bursts. Still operating, in good health; like several other NASA astrophysics missions, it has appeared among the FY2027 budget's proposed cancellations, not yet decided.",
+        "fr": "Lancé sous le nom de GLAST puis renommé en l'honneur du physicien Enrico Fermi ; son grand télescope cartographie tout le ciel gamma toutes les trois heures et son moniteur détecte les sursauts gamma. Toujours en service, en bon état ; comme plusieurs autres missions d'astrophysique de la NASA, il figure parmi les annulations proposées dans le budget 2027, une décision qui reste à prendre."
       },
       "website": { "url": "https://science.nasa.gov/mission/fermi/" },
-      "verified": "2026-10-03",
-      "sources": ["https://science.nasa.gov/mission/fermi/"]
+      "verified": "2026-11-14",
+      "sources": [
+        "https://science.nasa.gov/mission/fermi/",
+        "https://www.scientificamerican.com/article/white-house-budget-puts-54-nasa-science-missions-on-the-chopping-block/"
+      ]
     },
     {
       "id": "sdo",
@@ -494,8 +499,11 @@
         "fr": "Satellite Earth Explorer de l’ESA équipé d’un altimètre radar. Toujours en service, bien au-delà de sa mission prévue de 3 ans et demi."
       },
       "website": { "url": "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat" },
-      "verified": "2026-10-03",
-      "sources": ["https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat"]
+      "verified": "2026-11-14",
+      "sources": [
+        "https://www.esa.int/Applications/Observing_the_Earth/FutureEO/CryoSat",
+        "https://earth.esa.int/eogateway/missions/cryosat"
+      ]
     },
     {
       "id": "x-sat",
@@ -619,7 +627,7 @@
         "fr": "Premier satellite autrichien et l'un des six nanosatellites de 7 kg de la constellation BRITE, qui suivent l'éclat des étoiles les plus brillantes (filtre bleu). Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
       },
       "website": { "url": "https://www.tugraz.at/en/institute/iks/space-missions/brite-austria-tugsat-1" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://brite-constellation.at/constellation/basic_information/",
         "https://link.springer.com/article/10.1007/s00502-022-00987-5"
@@ -814,10 +822,11 @@
         "fr": "Membre canadien de la constellation BRITE (filtre rouge), construit par le Space Flight Laboratory de l'Université de Toronto. Signalé comme l'un des trois encore actifs, mais son constructeur le classe parmi ses missions passées et aucune mise à jour officielle récente n'existe : statut inconnu."
       },
       "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/brite/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://www.asc-csa.gc.ca/eng/satellites/brite/",
-        "https://sflmissions.com/brite-toronto-brite-montreal/"
+        "https://sflmissions.com/brite-toronto-brite-montreal/",
+        "https://sflmissions.com/missions/current-missions/"
       ]
     },
     {
@@ -868,7 +877,7 @@
         "fr": "Membre polonais de la constellation BRITE (filtre rouge), nommé en l'honneur de l'astronome Johannes Hevelius. Signalé comme l'un des trois encore actifs, sans mise à jour officielle récente : statut inconnu."
       },
       "website": { "url": "https://brite-constellation.at/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://brite-constellation.at/constellation/basic_information/",
         "https://www.eoportal.org/satellite-missions/brite-poland"
@@ -991,7 +1000,7 @@
         "fr": "Premier observatoire spatial indien, qui observe simultanément en ultraviolet, en visible et en rayons X. Conçu pour 5 ans, il a franchi le cap des 10 ans d'exploitation en septembre 2025 et fournit toujours des données."
       },
       "website": { "url": "https://www.isro.gov.in/AstroSat.html" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": ["https://www.isro.gov.in/Celebrating_Ten_years_of_AstroSat.html"]
     },
     {
@@ -1011,12 +1020,15 @@
         "fr": "DAMPE traque des indices de la matière noire, cette matière invisible qui représente l'essentiel de la masse de l'Univers, en cherchant des anomalies dans l'énergie des électrons et des rayons gamma cosmiques. Il vise aussi à comprendre d'où viennent les rayons cosmiques les plus énergétiques et comment ils voyagent dans notre galaxie, et à ouvrir la voie à de nouvelles découvertes en astronomie gamma de haute énergie."
       },
       "notes": {
-        "en": "Dark Matter Particle Explorer, nicknamed Wukong after the Monkey King: measures high-energy cosmic-ray electrons, protons and gamma rays in search of dark-matter signatures. Designed for 3 years, still operating after 10.",
-        "fr": "Dark Matter Particle Explorer, surnommé Wukong d'après le Roi des singes : mesure les électrons, protons et rayons gamma cosmiques de haute énergie à la recherche de signatures de matière noire. Conçu pour 3 ans, toujours en service après 10 ans."
+        "en": "Dark Matter Particle Explorer, nicknamed Wukong after the Monkey King: measures high-energy cosmic-ray electrons, protons and gamma rays in search of dark-matter signatures. Designed for 3 years, still operating in good condition after 10, with a 2026 study using its data to report a charge-dependent cosmic-ray spectral feature.",
+        "fr": "Dark Matter Particle Explorer, surnommé Wukong d'après le Roi des singes : mesure les électrons, protons et rayons gamma cosmiques de haute énergie à la recherche de signatures de matière noire. Conçu pour 3 ans, toujours en bon état de service après 10 ans ; une étude de 2026 a utilisé ses données pour signaler une anomalie du spectre des rayons cosmiques dépendant de la charge électrique."
       },
       "website": { "url": "https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html" },
-      "verified": "2026-10-03",
-      "sources": ["https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html"]
+      "verified": "2026-11-14",
+      "sources": [
+        "https://www.nssdc.ac.cn/mobile/nssdc_en/html/task/wukong.html",
+        "https://english.cas.cn/newsroom/research-news/202604/t20260430_1158281.shtml"
+      ]
     },
     {
       "id": "pisat",
@@ -1089,7 +1101,7 @@
       "website": {
         "url": "https://www.irs.uni-stuttgart.de/en/research/satellitetechnology-and-instruments/smallsatelliteprogram/flying-laptop/"
       },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://www.irs.uni-stuttgart.de/en/research/satellitetechnology-and-instruments/smallsatelliteprogram/flying-laptop/",
         "https://www.eoportal.org/satellite-missions/flying-laptop"
@@ -1116,7 +1128,7 @@
         "fr": "China Seismo-Electromagnetic Satellite, doté d'instruments italiens, surveille les champs électromagnétiques et les particules de l'ionosphère, y compris leurs liens possibles avec les séismes. Depuis juin 2025, il vole en tandem avec son successeur CSES-2."
       },
       "website": { "url": "https://www.cseslimadou.it/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-14",
       "sources": [
         "https://www.eoportal.org/satellite-missions/cses",
         "https://spacenews.com/china-launches-new-seismo-electromagnetic-satellite-with-european-partners/"
