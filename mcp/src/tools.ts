@@ -131,7 +131,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Find an object',
       description:
-        'Looks up objects by name or identifier (English or French, accents optional): planets, moons, missions beyond Earth orbit, featured science satellites, any active Earth satellite (by name, NORAD or COSPAR id), landing and launch sites, named stars. Returns ids for the other tools.',
+        'Looks up objects by name or identifier (English or French, accents optional): planets, moons, missions beyond Earth orbit, featured science satellites, any active Earth satellite (by name, NORAD or COSPAR id), landing and launch sites, named stars. Returns the ids the other tools take: start here when you only have a name.',
       inputSchema: {
         query: z
           .string()
@@ -215,7 +215,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     'perigee_passes',
     {
       title: 'Satellite passes over a place',
-      description: `When an Earth satellite (ISS = 25544, Tiangong = 48274, Hubble = 20580, or any NORAD number) passes over a place: rise, highest point and set times with direction (azimuth, compass point) and elevation, and whether it can be seen with the naked eye (sunlit satellite, dark sky) and when. Give the place's latitude and longitude (degrees, east positive) and, for local times, its IANA time zone. Up to ${maxPassDays} days ahead.`,
+      description: `When an Earth satellite (ISS = 25544, Tiangong = 48274, Hubble = 20580, or any NORAD number) passes over a place: rise, highest point and set times with direction (azimuth, compass point) and elevation, and whether it can be seen with the naked eye (sunlit satellite, dark sky) and when. Give the place's latitude and longitude (degrees, east positive) and, for local times, its IANA time zone. Up to ${maxPassDays} days ahead. Perigee does no geocoding: work out the coordinates and time zone yourself. For the whole night's highlights at once, use perigee_tonight.`,
       inputSchema: {
         id,
         latitude: z.number().min(-90).max(90).describe('Observer latitude, degrees (north positive).'),
@@ -274,7 +274,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'The sky from a place',
       description:
-        'What is in the sky from a place at a date (default: now): day, twilight or night; the Sun with its next rise, set and twilights; the Moon with its phase, illuminated share, rise and set; each planet with its altitude, direction, brightness (magnitude), constellation and whether it can be seen with the naked eye; and the bright named stars above the horizon. For "what can I see tonight", give the evening time.',
+        'What is in the sky from a place at a date (default: now): day, twilight or night; the Sun with its next rise, set and twilights; the Moon with its phase, illuminated share, rise and set; each planet with its altitude, direction, brightness (magnitude), constellation and whether it can be seen with the naked eye; and the bright named stars above the horizon. A snapshot at one moment; give the coordinates of the place (Perigee does no geocoding). For a ready summary of the coming night use perigee_tonight; for dated events over days or weeks, perigee_events.',
       inputSchema: { latitude, longitude, height_m: heightM, date, time_zone: timeZone, lang },
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
@@ -296,7 +296,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     'perigee_events',
     {
       title: 'Astronomical and mission events',
-      description: `Events over a period (default: the next 30 days, at most ${maxEventDays}): Moon phases (super and micro full Moons), lunar perigee and apogee, lunar and solar eclipses (contact times; with a place: how they look from there, with the duration of totality or annularity and the altitude of the Sun or the Moon), equinoxes and solstices, the Earth's perihelion and aphelion, planet oppositions, conjunctions and greatest elongations, and the next key events of the missions (flybys, arrivals, launches) from Perigee's catalogue.`,
+      description: `Events over a period (default: the next 30 days, at most ${maxEventDays}): Moon phases (super and micro full Moons), lunar perigee and apogee, lunar and solar eclipses (contact times; with a place: how they look from there, with the duration of totality or annularity and the altitude of the Sun or the Moon), equinoxes and solstices, the Earth's perihelion and aphelion, planet oppositions, conjunctions and greatest elongations, and the next key events of the missions (flybys, arrivals, launches) from Perigee's catalogue. Worldwide dates, not what is up at a given moment (use perigee_sky).`,
       inputSchema: {
         start: date,
         days: z
@@ -341,7 +341,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Tonight from a place',
       description:
-        "What there is to see tonight from a place (the coming night, or the current one): the night's start and end, the Moon (phase, illuminated share, rise and set), the planets visible to the naked eye, the visible passes of the ISS, Tiangong and Hubble, the close pairings of the Moon and planets, and the sky's events of the night, with short highlights ready to read. Give the place's latitude and longitude and, for local times, its IANA time zone.",
+        "What there is to see tonight from a place (the coming night, or the current one): the night's start and end, the Moon (phase, illuminated share, rise and set), the planets visible to the naked eye, the visible passes of the ISS, Tiangong and Hubble, the close pairings of the Moon and planets, and the sky's events of the night, with short highlights ready to read. Give the place's latitude and longitude and, for local times, its IANA time zone (Perigee does no geocoding). It combines perigee_sky, perigee_passes, perigee_sky_conjunctions and perigee_events for one night: use those for another moment, another satellite or a longer period.",
       inputSchema: { latitude, longitude, height_m: heightM, date, time_zone: timeZone, lang },
       annotations: readOnly,
     },
@@ -363,7 +363,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     'perigee_sky_conjunctions',
     {
       title: 'Close pairings in the sky',
-      description: `Apparent close pairings seen from a place over a period (default 7 days, at most ${maxConjunctionDays}): the Moon and the planets with each other and with the bright stars near the ecliptic (Regulus, Spica, Antares, Aldebaran, Pollux…), at their closest, with where to look and whether the pair is visible (above the horizon, dark sky). With \`satellite\` (a NORAD number), that satellite passing near them during its passes over one day.`,
+      description: `Apparent close pairings seen from a place over a period (default 7 days, at most ${maxConjunctionDays}): the Moon and the planets with each other and with the bright stars near the ecliptic (Regulus, Spica, Antares, Aldebaran, Pollux…), at their closest, with where to look and whether the pair is visible (above the horizon, dark sky). With \`satellite\` (a NORAD number), that satellite passing near them during its passes over one day. Angles on the sky, not distances in space (use perigee_close_approach).`,
       inputSchema: {
         latitude,
         longitude,
@@ -499,7 +499,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     'perigee_close_approach',
     {
       title: 'Closest approach in space',
-      description: `The closest distance between two objects in space over a period (default 1 day, at most ${maxApproachDays}): when, how close (timed to a fraction of a second) and, for two Earth satellites, how fast they pass each other. For education only: public orbits are not precise enough for collision avoidance, and the answer says so.`,
+      description: `The closest distance between two objects in space over a period (default 1 day, at most ${maxApproachDays}): when, how close (timed to a fraction of a second) and, for two Earth satellites, how fast they pass each other. For education only: public orbits are not precise enough for collision avoidance, and the answer says so. Distance in space, not closeness on the sky (use perigee_sky_conjunctions).`,
       inputSchema: {
         from: id.describe('First object id.'),
         to: id.describe('Second object id.'),
@@ -583,7 +583,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Distance between two objects',
       description:
-        'Centre-to-centre distance between two objects at a date (km and astronomical units) and the light travel time, with the provenance of both positions. Example: from "earth" to "mars".',
+        'Centre-to-centre distance between two objects at a date (km and astronomical units) and the light travel time, with the provenance of both positions, at one moment. Example: from "earth" to "mars". Over a period, use perigee_distance_series; for the exact closest moment, perigee_close_approach.',
       inputSchema: { from, to, date },
       annotations: readOnly,
     },
@@ -595,7 +595,7 @@ export function createPerigeeServer(engine: Engine, options: ToolOptions): McpSe
     {
       title: 'Distance over a period',
       description:
-        'Distances between two objects sampled evenly over a period (for a table or a chart), with the closest and farthest samples. The step limits their precision: use more steps for a precise closest approach.',
+        'Distances between two objects sampled evenly over a period (for a table or a chart), with the closest and farthest samples. The step limits their precision: for the exact closest moment, use perigee_close_approach.',
       inputSchema: {
         from,
         to,
