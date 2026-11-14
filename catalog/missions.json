@@ -234,17 +234,18 @@
         "fr": "CAPSTONE est un CubeSat de la taille d’un four à micro-ondes conçu pour tester l’orbite de halo quasi rectiligne prévue pour la station lunaire Gateway de la NASA : comment s’y insérer et s’y maintenir avec peu de carburant. Il démontre aussi un système de navigation où les engins se localisent en échangeant des signaux entre eux (ici avec LRO) plutôt qu’en dépendant uniquement du suivi depuis la Terre."
       },
       "notes": {
-        "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window.",
-        "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique."
+        "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window. CelesTrak's SATCAT still lists it as tracked (no decay date) as of 2026-11-14.",
+        "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique. Le SATCAT de CelesTrak le liste toujours comme suivi (aucune date de rentrée) en date du 2026-11-14."
       },
       "website": {
         "url": "https://www.nasa.gov/smallspacecraft/capstone/"
       },
-      "verified": "2026-10-31",
+      "verified": "2026-11-14",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
-        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct"
+        "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct",
+        "https://celestrak.org/satcat/records.php?CATNR=52914&FORMAT=JSON"
       ]
     },
     {
@@ -277,15 +278,16 @@
         "fr": "Shams (Space Weather CubeSat-1) est un petit satellite saoudien conçu pour étudier la météo spatiale loin de la Terre, là où le champ magnétique terrestre ne protège plus les engins. Il mesure les radiations spatiales, les rayons X solaires, les particules solaires très énergétiques et le champ magnétique terrestre, afin de mieux comprendre l’effet de l’activité solaire sur les communications et la navigation."
       },
       "notes": {
-        "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit in October 2026 (NORAD 68540, Space-Track elements, e.g. on N2YO), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
-        "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute en octobre 2026 (NORAD 68540, éléments Space-Track, p. ex. sur N2YO), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
+        "en": "12U CubeSat deployed from the Artemis II SLS adapter (2026-04-01) to study space weather beyond Earth's magnetosphere; first Saudi/Arab spacecraft flown under the Artemis Accords. Still tracked in high Earth orbit (NORAD 68540: CelesTrak's SATCAT confirms it operational with no decay date as of 2026-11-14, orbit ~475 × 70,229 km matching the catalogued elements), but its public JPL Horizons ephemeris ended on 2026-04-07: listed here without a 3D position.",
+        "fr": "CubeSat 12U déployé depuis l'adaptateur du SLS d'Artemis II (2026-04-01) pour étudier la météo spatiale au-delà de la magnétosphère terrestre ; premier engin saoudien/arabe volant dans le cadre des Accords Artemis. Toujours suivi en orbite terrestre haute (NORAD 68540 : le SATCAT de CelesTrak le confirme opérationnel, sans date de rentrée, en date du 2026-11-14, orbite d'environ 475 × 70 229 km conforme aux éléments catalogués), mais son éphéméride publique JPL Horizons s'arrête le 2026-04-07 : listé ici sans position 3D."
       },
-      "verified": "2026-10-31",
+      "verified": "2026-11-14",
       "recheckDays": 60,
       "sources": [
         "https://www.nasa.gov/humans-in-space/artemis-ii-science/",
         "https://space.skyrocket.de/doc_sdat/swc-1.htm",
-        "https://www.n2yo.com/satellite/?s=68540"
+        "https://www.n2yo.com/satellite/?s=68540",
+        "https://celestrak.org/satcat/records.php?CATNR=68540&FORMAT=JSON"
       ]
     },
     {
@@ -1863,9 +1865,9 @@
         "fr": "Mission interstellaire, exploitation en mode économie d'énergie"
       },
       "nextEvent": {
-        "en": "'Big Bang' power-management reconfiguration (under way, completion expected in the coming months)",
-        "fr": "Reconfiguration énergétique « Big Bang » (en cours, achèvement prévu dans les prochains mois)",
-        "date": "2026"
+        "en": "Reaches one light-day from Earth (about 25.89 billion km)",
+        "fr": "Atteint une distance d'un jour-lumière de la Terre (environ 25,89 milliards de km)",
+        "date": "2026-11-18"
       },
       "ephemeris": "horizons",
       "horizonsId": "-31",
@@ -1880,17 +1882,18 @@
         "fr": "Voyager 1 a été lancée pour explorer de près Jupiter et Saturne : leur atmosphère, leurs anneaux, leur champ magnétique et leurs lunes, dont Titan, la plus grande lune de Saturne, survolée de près. Devenue l'objet le plus lointain fabriqué par l'humanité, elle mesure désormais les particules, les champs magnétiques et les ondes de plasma de l'espace interstellaire, au-delà de la bulle créée par le Soleil. Elle emporte aussi le Disque d'or, un message de la Terre."
       },
       "notes": {
-        "en": "LECP instrument switched off on 2026-04-17; only the plasma wave instrument and magnetometer remain on. The same 'Big Bang' procedure tested on Voyager 2 is being applied; if it succeeds, LECP could be switched back on.",
-        "fr": "Instrument LECP éteint le 2026-04-17 ; seuls l'instrument d'ondes de plasma et le magnétomètre restent allumés. La procédure « Big Bang » testée sur Voyager 2 est en cours d'application ; en cas de succès, le LECP pourrait être rallumé."
+        "en": "LECP instrument switched off on 2026-04-17; only the plasma wave instrument and magnetometer remain on. The 'Big Bang' power-management reconfiguration (three devices swapped for lower-power alternatives) completed in early September 2026, about six weeks after the same was done on Voyager 2; without it another instrument would likely have had to be switched off by summer 2027. On 2026-10-18/19 the Deep Space Network lost signal for two scheduled contacts after a thruster branch went offline and backup fault-protection safing activated; the signal returned on 2026-10-20 and the root cause is still under investigation, the first time this has happened.",
+        "fr": "Instrument LECP éteint le 2026-04-17 ; seuls l'instrument d'ondes de plasma et le magnétomètre restent allumés. La reconfiguration énergétique « Big Bang » (remplacement de trois dispositifs par des équivalents moins énergivores) s'est achevée début septembre 2026, environ six semaines après celle de Voyager 2 ; sans elle, un autre instrument aurait probablement dû être éteint dès l'été 2027. Les 18 et 19 octobre 2026, le Deep Space Network a perdu le signal lors de deux contacts prévus après la mise hors ligne d'une branche de propulseurs ayant déclenché une mise en sécurité automatique ; le signal est revenu le 2026-10-20 et la cause reste à l'étude, une première pour la sonde."
       },
       "website": {
         "url": "https://science.nasa.gov/mission/voyager/voyager-1/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-14",
       "sources": [
         "https://science.nasa.gov/blogs/voyager/2026/04/17/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
         "https://www.jpl.nasa.gov/news/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
         "https://science.nasa.gov/blogs/voyager/2026/08/04/nasa-engineers-help-prolong-voyager-2s-science-mission/",
+        "https://science.nasa.gov/blogs/voyager/2026/10/29/nasas-voyager-1-conserves-power-resolves-brief-communications-pause/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Voyager%201"
       ]
     },
@@ -1928,10 +1931,11 @@
       "website": {
         "url": "https://science.nasa.gov/mission/voyager/voyager-2/"
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-14",
       "sources": [
         "https://science.nasa.gov/blogs/voyager/2026/08/04/nasa-engineers-help-prolong-voyager-2s-science-mission/",
         "https://science.nasa.gov/blogs/voyager/2026/04/17/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/",
+        "https://science.nasa.gov/blogs/voyager/2026/10/29/nasas-voyager-1-conserves-power-resolves-brief-communications-pause/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=Voyager%202"
       ]
     },
@@ -2460,10 +2464,11 @@
         "en": "Rendezvous 2026-06-07 (announced by CNSA 2026-07-06). Mapping and site selection July 2026-April 2027; sample (200-1000 g) by end of April 2027, departure ~2027-04-24. Earth flyby with capsule release November 2027, then cruise to main-belt comet 311P (~2035). Launch: 2025-05-29 Beijing time (17:31 UTC on 05-28).",
         "fr": "Rendez-vous le 2026-06-07 (annoncé par la CNSA le 2026-07-06). Cartographie et choix du site juillet 2026-avril 2027 ; échantillon (200-1000 g) d'ici fin avril 2027, départ vers le 2027-04-24. Survol de la Terre avec largage de la capsule en novembre 2027, puis croisière vers la comète 311P (~2035). Lancement : 2025-05-29 heure de Pékin (17 h 31 UTC le 05-28)."
       },
-      "verified": "2026-09-27",
+      "verified": "2026-11-14",
       "sources": [
         "https://www.planetary.org/articles/chinas-tianwen-2-mission-has-probably-arrived-at-a-quasi-moon-of-earth",
-        "https://spacenews.com/tianwen-2-arrives-at-asteroid-kamooalewa-first-image-revealed/"
+        "https://spacenews.com/tianwen-2-arrives-at-asteroid-kamooalewa-first-image-revealed/",
+        "https://www.astronomy.com/space-exploration/tianwen-2-arrives-at-target-asteroid-kamo%CA%BBoalewa/"
       ]
     },
     {
@@ -2762,10 +2767,11 @@
       "website": {
         "url": "https://science.nasa.gov/mission/imap/"
       },
-      "verified": "2026-10-31",
+      "verified": "2026-11-14",
       "sources": [
         "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
-        "https://science.nasa.gov/blogs/imap/2026/08",
+        "https://science.nasa.gov/blogs/imap/2026/08/07/nasas-imap-mission-releases-new-data-from-7-science-instruments/",
+        "https://science.nasa.gov/mission/imap/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=IMAP"
       ]
     },
