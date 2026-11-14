@@ -728,10 +728,11 @@ the audit flags:
   orbiter (−152, planned 7-year life reached mid-2026 — re-check), Danuri/KPLO (−155, extended to end 2027),
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA declared the mission complete 2026-07-06, Advanced Space
   continues flying it commercially (weekly NRHO station-keeping as of mid-2026); **public Horizons ephemeris
-  stops 2026-08-14 and has not resumed**, likely permanently now that NASA's DSN-tracked mission has ended —
-  re-check periodically), SWC-1/Shams (−168540, Saudi Space Agency cislunar space-weather 12U CubeSat deployed
-  during Artemis II, launched 2026-04-01; still tracked in high Earth orbit in October 2026 (NORAD 68540,
-  Space-Track elements on N2YO, verified 2026-10-10), but its public Horizons ephemeris stops 2026-04-07, so it is
+  stops 2026-08-14 and has not resumed**, likely permanently now that NASA's DSN-tracked mission has ended — still
+  tracked per CelesTrak's SATCAT (no decay date) as of 2026-11-14 — re-check periodically), SWC-1/Shams (−168540,
+  Saudi Space Agency cislunar space-weather 12U CubeSat deployed during Artemis II, launched 2026-04-01; still
+  tracked in high Earth orbit (NORAD 68540, SATCAT confirms it operational with no decay date as of 2026-11-14,
+  orbit ~475 × 70,229 km), but its public Horizons ephemeris stops 2026-04-07, so it is
   `ephemeris: "none"`). No Horizons ephemeris: Queqiao-2,
   Tiandu-2, Queqiao-1 (L2), DRO-A; Tiandu-1 and DRO-B have left lunar orbit (Earth–Moon resonant orbits, 2025).
   ICUBE-Q: presumed lost. **Chang'e-7 did not launch**: August 2026 window lost to Typhoon Narra, postponed to
@@ -748,7 +749,9 @@ the audit flags:
   Mars arrival 2027 (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the
   probes.
 - Interplanetary (verified 2026-11-07, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
-  (−31, LECP off April 2026) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
+  (−31, LECP off April 2026; "Big Bang" power reconfiguration completed September 2026; a brief DSN signal loss
+  2026-10-18/19, thruster-branch fault-protection safing, resolved 2026-10-20, cause still under investigation;
+  reaches one light-day from Earth 2026-11-18) and 2 (−32), New Horizons (−98), Juno (−61, end date unconfirmed), Parker (−96, 6 h
   step), Solar Orbiter (−144), BepiColombo (−121, Mercury orbit insertion 2026-11-21), JUICE (−28, Earth flyby
   2026-09-28), Europa Clipper (−159), Psyche (−255, solar-electric thrusting resumed October 2026), Lucy (−49,
   entered the Jupiter Trojan asteroid swarm region 2026-10-28), OSIRIS-APEX (−64), Hera (−91, Didymos Nov 2026),
