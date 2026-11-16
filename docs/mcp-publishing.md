@@ -136,4 +136,4 @@ together) from F to A; B and above passes. The CLI is the dev dependency `mcp-td
   General, "Allow GitHub Actions to create and approve pull requests" must be on, or the PR step fails (the branch
   stays pushed: open the PR by hand).
 - **By hand:** `TDQS_API_KEY=tdqs_… npx tdqs score --command "node mcp/dist/perigee-mcp.js" --server-name Perigee
-  --hosted https://tdqs.dev` (after `npm run mcp:build`), or paste the `tools/list` result into the playground.
+--hosted https://tdqs.dev` (after `npm run mcp:build`), or paste the `tools/list` result into the playground.
