@@ -128,5 +128,9 @@ test.describe('in a French browser', () => {
     await expect(page.locator('#lp-lang-banner')).toBeHidden();
     await expect(page.locator('.lp-hub-list a')).not.toHaveCount(0);
     expect(await page.locator('.lp-hub-list a').count()).toBeGreaterThanOrEqual(40);
+    // Every guide has its thumbnail (tools/screenshots/thumbs.ts).
+    expect(await page.locator('.lp-hub-list img.lp-hub-thumb').count()).toBe(
+      await page.locator('.lp-hub-list a').count(),
+    );
   });
 });

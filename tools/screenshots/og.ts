@@ -1,6 +1,6 @@
 /**
  * Captures of each guide page's 3D view (src/landing/topics.ts), 1200 × 630: the page's Open Graph image and the
- * poster shown before the view loads (src/landing/render.ts `topicCapture`). One per topic and language, since the
+ * poster shown before the view loads (src/landing/render.ts `topicCapture`), and the index's thumbnails (thumbs.ts). One per topic and language, since the
  * view's labels follow the language. Needs the dev server (`npm run dev`), fresh data (`npm run data:pull`) and a GPU
  * (Chromium with ANGLE/D3D11 here). One page at a time. Re-run for a topic whose view changes.
  *
@@ -13,6 +13,7 @@ import { mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { viewQuery } from '../../src/landing/render';
 import { TOPICS } from '../../src/landing/topics';
+import { writeThumbnails } from './thumbs';
 
 const BASE = 'http://localhost:5173/Perigee/';
 /** The eclipse shown in the eclipse page's capture: the total eclipse of 2 August 2027 (6 min 23 s over Egypt). */
@@ -101,3 +102,5 @@ for (const lang of ['en', 'fr'] as const) {
   }
 }
 await browser.close();
+// The guides' index shows a crop of the English capture.
+await writeThumbnails(only);
