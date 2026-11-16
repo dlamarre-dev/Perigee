@@ -105,3 +105,66 @@ jobs:
             echo "The build installs the latest \`perigee-mcp\` from npm, so wait until npm lists $version."
           } >> "$GITHUB_STEP_SUMMARY"
           echo "::notice title=Glama::Rebuild Perigee on Glama and create the release $version (docs/mcp-publishing.md §7)."
+
+  # Scores the released tool definitions on tdqs.dev (Tool Definition Quality Score, one of the account's 30 daily
+  # API calls) and points the README badges at the new report through a pull request (docs/mcp-publishing.md §8).
+  # Each score is a new report with its own id: the badge cannot follow by itself.
+  tdqs:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the badge branch
+      pull-requests: write # open the PR and enable auto-merge
+      actions: write # start CI on it: a PR opened with GITHUB_TOKEN triggers no workflow
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run mcp:build
+      - name: Score on tdqs.dev
+        id: score
+        env:
+          TDQS_API_KEY: ${{ secrets.TDQS_API_KEY }}
+        run: |
+          if [ -z "$TDQS_API_KEY" ]; then
+            echo "::warning title=TDQS::No TDQS_API_KEY secret: the tools were not scored and the badge is unchanged."
+            exit 0
+          fi
+          set +e
+          npx tdqs score --command "node mcp/dist/perigee-mcp.js" --server-name Perigee --hosted https://tdqs.dev \
+            --fail-under B --format markdown --output "$RUNNER_TEMP/tdqs.md" 2> "$RUNNER_TEMP/tdqs.err"
+          status=$?
+          set -e
+          cat "$RUNNER_TEMP/tdqs.err" >&2
+          [ -f "$RUNNER_TEMP/tdqs.md" ] && cat "$RUNNER_TEMP/tdqs.md" >> "$GITHUB_STEP_SUMMARY"
+          uid=$(grep -oE 'report: https://tdqs\.dev/reports/[A-Za-z0-9_-]+' "$RUNNER_TEMP/tdqs.err" | sed 's|.*/||' | tail -n 1)
+          echo "uid=$uid" >> "$GITHUB_OUTPUT"
+          # Exit 1: scored below B (the badge still shows the real score); 2: the scoring itself failed.
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+      - name: Badge pull request
+        if: steps.score.outputs.uid != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UID_NEW: ${{ steps.score.outputs.uid }}
+        run: |
+          version=$(node -p "require('./mcp/package.json').version")
+          sed -i -E "s#tdqs\.dev/reports/[A-Za-z0-9_-]+#tdqs.dev/reports/$UID_NEW#g" README.md mcp/README.md
+          if git diff --quiet; then echo "The badges already show report $UID_NEW."; exit 0; fi
+          branch="tdqs/mcp-v$version"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -am "docs: TDQS badge for perigee-mcp $version" -m "Report: https://tdqs.dev/reports/$UID_NEW"
+          git push --force origin "$branch"
+          gh pr create --base master --head "$branch" --title "docs: TDQS badge for perigee-mcp $version" \
+            --body "The release workflow scored the tool definitions of perigee-mcp $version: https://tdqs.dev/reports/$UID_NEW. This PR points the README badges at that report; CI was started by the workflow and the PR merges itself once it passes."
+          gh workflow run ci.yml --ref "$branch"
+          gh pr merge "$branch" --auto --squash --delete-branch
+      - name: Score threshold
+        if: steps.score.outputs.status != '' && steps.score.outputs.status != '0'
+        run: |
+          echo "::error title=TDQS::tdqs score exited with ${{ steps.score.outputs.status }} (1: below B, 2: scoring failed); see the log of the Score step."
+          exit 1
