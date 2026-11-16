@@ -5,7 +5,7 @@
  * Written by the pipeline from the published files (counting, no positions) and read by the engine. Pure.
  */
 import { MS_PER_DAY } from '../astro/constants';
-import type { OrbitRegime } from '../astro/orbit';
+import { isGeostationary, type OrbitRegime } from '../astro/orbit';
 import { isStale, type SatCatalog } from './catalog';
 
 type Localized = { readonly en: string; readonly fr: string };
@@ -17,6 +17,8 @@ export interface CountRow {
   readonly country?: string;
   readonly total: number;
   readonly regimes: RegimeCounts;
+  /** Of the GEO regime, those near the equator (`isGeostationary`); absent when none (and before 2026-11-15). */
+  readonly geostationary?: number;
 }
 
 export interface SatelliteStats {
@@ -25,6 +27,8 @@ export interface SatelliteStats {
   readonly asOf: string;
   readonly total: number;
   readonly regimes: RegimeCounts;
+  /** Of the GEO regime, those near the equator (absent from statistics written before 2026-11-15). */
+  readonly geostationary?: number;
   readonly objectTypes: Record<string, number>;
   readonly owners: readonly CountRow[];
   readonly operators: readonly CountRow[];
@@ -52,18 +56,16 @@ const LEO_BANDS: readonly [string, number][] = [
 
 export function satelliteStats(catalog: SatCatalog, asOfMs: number): SatelliteStats {
   const { operators } = catalog;
-  const owners = new Map<string, { total: number; regimes: RegimeCounts }>();
-  const ops = new Map<string, { total: number; regimes: RegimeCounts }>();
-  const groups = new Map<string, { total: number; regimes: RegimeCounts }>();
-  const bump = (
-    map: Map<string, { total: number; regimes: RegimeCounts }>,
-    key: string,
-    regime: OrbitRegime,
-  ) => {
+  type Tally = { total: number; regimes: RegimeCounts; geostationary: number };
+  const owners = new Map<string, Tally>();
+  const ops = new Map<string, Tally>();
+  const groups = new Map<string, Tally>();
+  const bump = (map: Map<string, Tally>, key: string, regime: OrbitRegime, geostationary: boolean) => {
     let row = map.get(key);
-    if (!row) map.set(key, (row = { total: 0, regimes: zeroRegimes() }));
+    if (!row) map.set(key, (row = { total: 0, regimes: zeroRegimes(), geostationary: 0 }));
     row.total++;
     row.regimes[regime]++;
+    if (geostationary) row.geostationary++;
   };
   const regimes = zeroRegimes();
   const objectTypes: Record<string, number> = {};
@@ -74,13 +76,16 @@ export function satelliteStats(catalog: SatCatalog, asOfMs: number): SatelliteSt
   let last365 = 0;
   let stale = 0;
   let supplemental = 0;
+  let geostationary = 0;
   for (const o of catalog.objects) {
     regimes[o.regime]++;
+    const geo = isGeostationary(o.regime, o.inclinationRad);
+    if (geo) geostationary++;
     objectTypes[o.objectType] = (objectTypes[o.objectType] ?? 0) + 1;
-    bump(owners, o.ownerCode ?? 'UNK', o.regime);
-    if (o.operatorId) bump(ops, o.operatorId, o.regime);
+    bump(owners, o.ownerCode ?? 'UNK', o.regime, geo);
+    if (o.operatorId) bump(ops, o.operatorId, o.regime, geo);
     else withoutOperator++;
-    for (const g of o.groups) bump(groups, g, o.regime);
+    for (const g of o.groups) bump(groups, g, o.regime, geo);
     const launch = o.satcat?.LAUNCH_DATE;
     if (launch) {
       const year = launch.slice(0, 4);
@@ -97,17 +102,24 @@ export function satelliteStats(catalog: SatCatalog, asOfMs: number): SatelliteSt
     if (o.omm.SOURCE) supplemental++;
   }
   const rows = (
-    map: Map<string, { total: number; regimes: RegimeCounts }>,
+    map: Map<string, Tally>,
     label: (id: string) => { name: Localized; country?: string },
   ): CountRow[] =>
     [...map.entries()]
-      .map(([id, r]) => ({ id, ...label(id), total: r.total, regimes: r.regimes }))
+      .map(([id, r]) => ({
+        id,
+        ...label(id),
+        total: r.total,
+        regimes: r.regimes,
+        ...(r.geostationary ? { geostationary: r.geostationary } : {}),
+      }))
       .sort((a, b) => b.total - a.total || a.id.localeCompare(b.id));
   return {
     version: 1,
     asOf: new Date(asOfMs).toISOString(),
     total: catalog.objects.length,
     regimes,
+    geostationary,
     objectTypes,
     owners: rows(owners, (id) => {
       const o = operators.owners[id];

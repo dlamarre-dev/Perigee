@@ -63,6 +63,8 @@ export interface TopicView {
    * Moon, Mars or solar view: hide the spacecraft but the selected one (URL `hide=`, from the catalogue at build).
    */
   readonly hideMissions?: boolean;
+  /** Earth view: hide the launch-site markers (URL `ls=0`), which distract from the satellites. */
+  readonly hideLaunchSites?: boolean;
 }
 
 export interface Topic {
@@ -149,7 +151,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', sel: '25544', follow: true },
+    view: { view: 'earth', sel: '25544', follow: true, hideLaunchSites: true },
     related: ['iss-passes', 'tiangong', 'hubble', 'satellites'],
   },
   {
@@ -188,7 +190,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', sel: '25544', follow: true },
+    view: { view: 'earth', sel: '25544', follow: true, hideLaunchSites: true },
     related: ['iss', 'sky-tonight', 'tiangong'],
   },
   {
@@ -229,7 +231,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', sel: '48274', follow: true },
+    view: { view: 'earth', sel: '48274', follow: true, hideLaunchSites: true },
     related: ['iss', 'hubble', 'satellites'],
   },
   {
@@ -270,7 +272,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', sel: '20580', follow: true },
+    view: { view: 'earth', sel: '20580', follow: true, hideLaunchSites: true },
     related: ['jwst', 'iss', 'euclid'],
   },
   {
@@ -311,7 +313,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth' },
+    view: { view: 'earth', hideLaunchSites: true },
     related: ['starlink', 'geostationary', 'gps', 'iss'],
   },
   {
@@ -352,7 +354,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { grp: 'starlink' } },
+    view: { view: 'earth', params: { grp: 'starlink' }, hideLaunchSites: true },
     related: ['satellites', 'oneweb', 'iss'],
   },
   {
@@ -390,7 +392,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { grp: 'oneweb' } },
+    view: { view: 'earth', params: { grp: 'oneweb' }, hideLaunchSites: true },
     related: ['starlink', 'satellites', 'geostationary'],
   },
   {
@@ -428,7 +430,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { grp: 'gps-ops' } },
+    view: { view: 'earth', params: { grp: 'gps-ops', dist: '80000', pts: '5' }, hideLaunchSites: true },
     related: ['galileo', 'beidou', 'geostationary'],
   },
   {
@@ -469,7 +471,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { grp: 'galileo' } },
+    view: { view: 'earth', params: { grp: 'galileo', dist: '88000', pts: '5' }, hideLaunchSites: true },
     related: ['gps', 'beidou', 'satellites'],
   },
   {
@@ -513,7 +515,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { grp: 'beidou' } },
+    view: { view: 'earth', params: { grp: 'beidou', dist: '125000', pts: '5' }, hideLaunchSites: true },
     related: ['gps', 'galileo', 'geostationary'],
   },
   {
@@ -551,7 +553,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', params: { reg: 'GEO' } },
+    view: { view: 'earth', params: { reg: 'GEO', inc: '15', dist: '125000' }, hideLaunchSites: true },
     related: ['satellites', 'beidou', 'gps'],
   },
   // ------------------------------------------------------------------ telescopes and probes
@@ -1101,7 +1103,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'moon' },
+    view: { view: 'moon', params: { sites: '0', cam: 'earth' }, hideMissions: true },
     related: ['full-moon', 'moon-distance', 'eclipse'],
   },
   {
@@ -1142,7 +1144,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'earth', sel: 'moon', follow: true },
+    view: { view: 'earth', sel: 'moon', params: { sats: '0', earthmoon: '1' }, hideLaunchSites: true },
     related: ['moon-phase', 'moon-orbiters', 'full-moon'],
   },
   {
@@ -1189,7 +1191,7 @@ export const TOPICS: readonly Topic[] = [
         ),
       },
     ],
-    view: { view: 'moon' },
+    view: { view: 'moon', params: { sites: '0' } },
     related: ['apollo-sites', 'mars-orbiters', 'moon-distance'],
   },
   {

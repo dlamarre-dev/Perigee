@@ -104,6 +104,10 @@ export interface View {
   /** Default viewpoint, as a direction in the body-fixed frame, and its distance. */
   readonly homeDirectionBody: Vec3;
   readonly homeDistanceKm: number;
+  /** Point the default viewpoint looks at (body-fixed, km); the body centre otherwise. */
+  readonly homeTargetBody?: Vec3 | undefined;
+  /** Screen "up" of the default viewpoint (body-fixed); the body's north otherwise. */
+  readonly homeUpBody?: Vec3 | undefined;
   /** Farthest content from the body centre (km), for the far clipping plane. */
   readonly farKm: number;
   /** Distance from the camera to the nearest surface other than the central body (km), for the near plane. */

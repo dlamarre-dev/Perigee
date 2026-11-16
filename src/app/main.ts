@@ -255,11 +255,11 @@ function main(): void {
 
   const homeState = (date: Date): OrbitState => {
     if (!view) return placeholderHome;
-    const dir = quatRotate(
-      quatMultiply(sceneFromInertial(date), view.bodyOrientation(date)),
-      view.homeDirectionBody,
-    );
-    return orbitStateLookingFrom([0, 0, 0], dir, [0, 0, 1], view.homeDistanceKm);
+    const sceneFromBody = quatMultiply(sceneFromInertial(date), view.bodyOrientation(date));
+    const dir = quatRotate(sceneFromBody, view.homeDirectionBody);
+    const target = view.homeTargetBody ? quatRotate(sceneFromBody, view.homeTargetBody) : ([0, 0, 0] as Vec3);
+    const up = view.homeUpBody ? quatRotate(sceneFromBody, view.homeUpBody) : ([0, 0, 1] as Vec3);
+    return orbitStateLookingFrom(target, dir, up, view.homeDistanceKm);
   };
 
   // URL sync (on user actions only, never per frame).

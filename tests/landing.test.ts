@@ -69,6 +69,12 @@ describe('landing topics', () => {
     expect(viewQuery({ view: 'earth', sel: '25544', follow: true }, 'fr', true)).toBe(
       '?sel=25544&lang=fr&follow=1&embed=1',
     );
+    // Around the Earth: the launch-site markers off.
+    expect(viewQuery({ view: 'earth', sel: '25544', follow: true, hideLaunchSites: true }, 'en', true)).toBe(
+      '?sel=25544&ls=0&lang=en&follow=1&embed=1',
+    );
+    for (const t of TOPICS.filter((x) => x.theme === 'earth'))
+      expect(new URLSearchParams(viewQuery(t.view, 'en', true)).get('ls'), t.id).toBe('0');
     expect(viewQuery({ view: 'solar', params: { candidates: '1' } }, 'en', false)).toBe(
       '?view=solar&candidates=1&lang=en',
     );
@@ -116,7 +122,7 @@ describe('landing pages', () => {
     expect(html).toContain('hreflang="en" href="https://perigee.info/en/where-is-the-iss/"');
     expect(html).toContain('hreflang="x-default" href="https://perigee.info/en/where-is-the-iss/"');
     // The 3D view loads only once the page has (src/landing/main.ts): its address waits in data-src.
-    expect(html).toContain('data-src="/?sel=25544&amp;lang=fr&amp;follow=1&amp;embed=1"');
+    expect(html).toContain('data-src="/?sel=25544&amp;ls=0&amp;lang=fr&amp;follow=1&amp;embed=1"');
     expect(html).not.toMatch(/<iframe src=/);
     // The answer line starts with the topic's static sentence, never a "Computing…" placeholder.
     expect(html).toContain(`<span id="lp-answer-text">${TOPICS[0]?.lead.fr.replace(/'/g, '&#39;')}</span>`);
