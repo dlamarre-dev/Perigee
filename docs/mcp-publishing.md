@@ -84,6 +84,8 @@ file must keep its name: npm checks both.
    (step 6).
 6. By hand: rebuild the server on Glama and create the release with the same version (step 7). The run summary
    reminds you.
+7. A second job scores the tool definitions on tdqs.dev and opens a pull request that points the README badges at
+   the new report; it merges itself once CI passes (step 8).
 
 ## 6. MCP Registry
 
@@ -114,3 +116,24 @@ Glama has no API to build or release a server, so this step stays manual. Once n
    MCP Registry.
 
 Glama's connector listing (`io.github.dlamarre-dev/perigee`) follows the hosted endpoint and needs nothing.
+
+## 8. TDQS (Tool Definition Quality Score)
+
+[TDQS](https://tdqs.dev/) grades the tool definitions (names, descriptions, schemas, annotations, how the tools fit
+together) from F to A; B and above passes. The CLI is the dev dependency `mcp-tdqs` (Apache-2.0, command `tdqs`).
+
+- **Every CI run** lints the built server: `tdqs lint --command "node mcp/dist/perigee-mcp.js"`. The lint is local
+  (no model, no network request) and fails CI on an error; its warnings are heuristics (e.g. a cheaper tool that might
+  shadow a dearer one, which only the scored coherence can confirm) and only show in the run summary.
+- **Each release** (`mcp-release.yml`, job `tdqs`, after the publish job): `tdqs score --hosted https://tdqs.dev`
+  sends the definitions to tdqs.dev, which scores them with its own model and keeps a report with its own page and
+  badge. Every score is a new report with a new id, so the job rewrites the badge links of `README.md` and
+  `mcp/README.md`, pushes them to `tdqs/mcp-v<version>`, opens a PR, starts CI on it (`workflow_dispatch`: a pull
+  request opened with `GITHUB_TOKEN` triggers no workflow) and enables auto-merge. A score below B still updates the
+  badge but fails the job.
+- **Set up once:** an API key from <https://tdqs.dev/account/api-keys> (sign in with GitHub; free, 30 calls a day per
+  account) stored as the repository secret `TDQS_API_KEY`; without it the job only warns. In Settings → Actions →
+  General, "Allow GitHub Actions to create and approve pull requests" must be on, or the PR step fails (the branch
+  stays pushed: open the PR by hand).
+- **By hand:** `TDQS_API_KEY=tdqs_… npx tdqs score --command "node mcp/dist/perigee-mcp.js" --server-name Perigee
+  --hosted https://tdqs.dev` (after `npm run mcp:build`), or paste the `tools/list` result into the playground.
