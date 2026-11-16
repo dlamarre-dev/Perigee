@@ -193,6 +193,11 @@ export class SatellitePoints {
     this.pickPoints.layers.set(PICK_LAYER);
   }
 
+  /** Drawn point size (CSS px; 3 by default). The pick pass keeps its own. */
+  setPointSizePx(px: number): void {
+    this.uniforms.uSize.value = px;
+  }
+
   /** Uploads samples A and B (TEME km, km/s) and their validity. */
   setSamples(
     a: { pos: Float32Array; posLow: Float32Array; vel: Float32Array; ok: Uint8Array },

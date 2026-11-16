@@ -764,6 +764,7 @@ export class Engine {
           ...(r.country ? { country: r.country } : {}),
           total: r.total,
           regimes: r.regimes,
+          ...(stats.geostationary !== undefined ? { geostationary: r.geostationary ?? 0 } : {}),
         })),
       };
     };
@@ -771,6 +772,7 @@ export class Engine {
       asOf: stats.asOf,
       total: stats.total,
       regimes: stats.regimes,
+      ...(stats.geostationary !== undefined ? { geostationary: stats.geostationary } : {}),
       objectTypes: stats.objectTypes,
       owners: pick(stats.owners, options.owner),
       operators: { ...pick(stats.operators, options.operator), withoutOperator: stats.withoutOperator },
@@ -782,7 +784,7 @@ export class Engine {
       staleElements: stats.staleElements,
       supplementalElements: stats.supplementalElements,
       notes:
-        'Active satellites as CelesTrak lists them (its "active" group: operational payloads, no debris or rocket bodies). Regimes: LEO apogee below 2000 km, GEO about one revolution a day, HEO eccentricity of 0.25 or more, MEO otherwise. Object types (SATCAT): PAY payload, R/B rocket body, DEB debris, UNK unknown. Owner codes: SATCAT (US, PRC for China, CIS for Russia, ESA…).',
+        'Active satellites as CelesTrak lists them (its "active" group: operational payloads, no debris or rocket bodies). Regimes: LEO apogee below 2000 km, GEO about one revolution a day (geostationary: GEO inclined less than 15° to the equator, the inclined geosynchronous orbits left out), HEO eccentricity of 0.25 or more, MEO otherwise. Object types (SATCAT): PAY payload, R/B rocket body, DEB debris, UNK unknown. Owner codes: SATCAT (US, PRC for China, CIS for Russia, ESA…).',
       provenance: [
         {
           model: 'catalogue-counts',

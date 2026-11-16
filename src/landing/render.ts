@@ -76,6 +76,7 @@ export function viewQuery(view: TopicView, lang: Lang, embed: boolean): string {
       .sort();
     if (hide.length) p.set('hide', hide.join(','));
   }
+  if (view.hideLaunchSites && view.view === 'earth') p.set('ls', '0');
   p.set('lang', lang);
   if (view.follow) p.set('follow', '1');
   if (embed) p.set('embed', '1');

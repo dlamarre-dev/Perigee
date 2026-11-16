@@ -491,6 +491,7 @@ function constellationWidget(ctx: LiveContext): Widget {
     readonly name: string;
     readonly total: number;
     readonly regimes: Record<string, number>;
+    readonly geostationary?: number;
   }
   return {
     async tick(now) {
@@ -498,13 +499,23 @@ function constellationWidget(ctx: LiveContext): Widget {
       at = now.getTime();
       const group = topic.stats?.group;
       const regime = topic.stats?.regime;
-      const s = await engine.stats({ lang: i18n.lang, limit: 10, ...(group ? { group } : {}) });
+      // A regime's owners are ranked here: all of them, not only the largest overall.
+      const s = await engine.stats({
+        lang: i18n.lang,
+        limit: regime ? 10_000 : 10,
+        ...(group ? { group } : {}),
+      });
       prov = s['provenance'] as readonly Provenance[];
       const total = s['total'] as number;
       const regimes = s['regimes'] as Record<string, number>;
       const owners = (s['owners'] as { rows: Row[] }).rows;
       const share = (n: number): string =>
         i18n.number((100 * n) / Math.max(1, total), n / total < 0.1 ? 1 : 0);
+      // The geostationary page counts the GEO satellites near the equator (inclined geosynchronous orbits left
+      // out), once the published statistics have that count.
+      const geostationary = regime === 'GEO' ? (s['geostationary'] as number | undefined) : undefined;
+      const inRegime = (r: Row): number =>
+        geostationary !== undefined ? (r.geostationary ?? 0) : regime ? (r.regimes[regime] ?? 0) : r.total;
       let shown = regimes;
       if (group) {
         const row = (s['groups'] as { rows: Row[] }).rows.find((r) => r.id === group);
@@ -520,7 +531,7 @@ function constellationWidget(ctx: LiveContext): Widget {
         cards.set('group', i18n.t('landing.card.inGroup'), i18n.number(row.total), row.name);
         cards.set('total', i18n.t('landing.card.total'), i18n.number(total));
       } else if (regime) {
-        const n = regimes[regime] ?? 0;
+        const n = geostationary ?? regimes[regime] ?? 0;
         setAnswer(i18n.format('landing.answer.regimeCount', { count: n, share: share(n) }));
         cards.set('group', i18n.t(`landing.regime.${regime}`), i18n.number(n));
         cards.set('total', i18n.t('landing.card.total'), i18n.number(total));
@@ -535,12 +546,16 @@ function constellationWidget(ctx: LiveContext): Widget {
       }
       // Who owns them: the largest owners overall, or of the regime.
       if (!group) {
+        // A regime's list leaves out the owners with none there (the overall top 10 may have no GEO satellite).
         const rows = regime
-          ? [...owners].sort((a, b) => (b.regimes[regime] ?? 0) - (a.regimes[regime] ?? 0)).slice(0, 10)
+          ? owners
+              .filter((r) => inRegime(r) > 0)
+              .sort((a, b) => inRegime(b) - inRegime(a))
+              .slice(0, 10)
           : owners.slice(0, 10);
         renderRows(
           i18n.t('landing.card.byOwner'),
-          rows.map((r) => [r.name, i18n.number(regime ? (r.regimes[regime] ?? 0) : r.total)]),
+          rows.map((r) => [r.name, i18n.number(inRegime(r))]),
         );
       }
     },

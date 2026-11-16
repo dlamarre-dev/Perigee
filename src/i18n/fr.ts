@@ -213,6 +213,7 @@ export const fr: Messages = {
   'earth.moonNotes':
     'Le seul satellite naturel de la Terre, quatre fois plus petit qu’elle. Elle nous montre toujours la même face : elle fait un tour sur elle-même dans le temps qu’elle met à faire le tour de la Terre.',
   'earth.moon': 'Lune',
+  'earth.earth': 'Terre',
   'earth.observer': 'Vous',
   'texture.uniform':
     'Jamais photographiée en détail : couleur uniforme d’après l’albédo et le spectre mesurés',

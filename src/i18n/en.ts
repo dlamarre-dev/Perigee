@@ -205,6 +205,7 @@ export const en = {
   'earth.moonNotes':
     'The Earth’s only natural satellite, a quarter of its size. It always shows us the same face: it turns once on itself in the time it takes to go around the Earth.',
   'earth.moon': 'Moon',
+  'earth.earth': 'Earth',
   'earth.observer': 'You',
   'texture.uniform': 'Never imaged in detail: uniform colour from measured albedo and spectrum',
   'texture.unknown': 'Never imaged, colour not measured yet: illustrative neutral grey',

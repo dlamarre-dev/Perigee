@@ -151,6 +151,8 @@ export class PlanetaryView implements View {
   readonly limits: { minDistanceKm: number; maxDistanceKm: number };
   readonly bodyRadiusKm: number;
   readonly homeDistanceKm: number;
+  /** URL `cam=earth`: the default viewpoint on the Earth's side. */
+  private readonly homeFromEarth: boolean;
   readonly farKm: number;
 
   private readonly R: number;
@@ -212,6 +214,7 @@ export class PlanetaryView implements View {
     this.limits = { minDistanceKm: R * 1.02, maxDistanceKm: config.maxDistanceKm };
     this.bodyRadiusKm = R;
     this.homeDistanceKm = config.homeDistanceKm;
+    this.homeFromEarth = host.initialParams.get('cam') === 'earth';
     // Up to the Sun, drawn at its true distance (~1.53e8 km from the Moon, ~2.5e8 km from Mars).
     this.farKm = Math.max(config.farKm, config.sunMaxDistanceKm);
     this.missions = config.missions;
@@ -388,8 +391,13 @@ export class PlanetaryView implements View {
   /** Default viewpoint (body-fixed). With `homeFacesSun`, it looks at the day side, 30° after the subsolar meridian. */
   get homeDirectionBody(): Vec3 {
     const base = this.config.homeDirectionBody;
-    if (!this.config.homeFacesSun) return base;
     const date = this.host.clock.nowUtc();
+    // URL `cam=earth`: seen from the Earth's side (the Moon's phase as we see it).
+    if (this.homeFromEarth && this.config.earthFromBodyKm)
+      return normalize(
+        quatRotate(quatConjugate(this.bodyOrientation(date)), this.config.earthFromBodyKm(date)),
+      );
+    if (!this.config.homeFacesSun) return base;
     const sunBody = quatRotate(quatConjugate(this.bodyOrientation(date)), this.config.sunFromBodyKm(date));
     const lonRad = Math.atan2(sunBody[1], sunBody[0]) + 30 * DEG_TO_RAD;
     return latLonToUnit(Math.asin(Math.max(-1, Math.min(1, base[2]))), lonRad);
@@ -647,6 +655,7 @@ export class PlanetaryView implements View {
     if (!this.sitesVisible) p.set('sites', '0');
     else if (this.siteKind) p.set('sites', this.siteKind);
     writeHiddenMissions(p, this.hiddenMissions, this.missions);
+    if (this.homeFromEarth) p.set('cam', 'earth');
   }
 
   dispose(): void {

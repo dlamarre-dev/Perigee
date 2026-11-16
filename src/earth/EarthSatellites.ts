@@ -56,6 +56,8 @@ export class EarthSatellites {
   private readonly states: Float32Array;
   private filters: FilterState = EMPTY_FILTERS;
   private filterMatch: Uint8Array;
+  /** Objects inclined more than this are left out, whatever the filters (URL `inc`, guide pages). */
+  private maxInclinationRad = Infinity;
   private statesDirty = true;
   private frameAngleRad = 0;
   /** The selected object's 3D model is drawn: hide its point and ring (they would jitter around it). */
@@ -114,9 +116,15 @@ export class EarthSatellites {
     const objects = this.catalog.objects;
     for (let i = 0; i < objects.length; i++) {
       const obj = objects[i];
-      this.filterMatch[i] = obj && matchesFilters(obj, filters) ? 1 : 0;
+      this.filterMatch[i] =
+        obj && obj.inclinationRad <= this.maxInclinationRad && matchesFilters(obj, filters) ? 1 : 0;
     }
     this.statesDirty = true;
+  }
+
+  setMaxInclination(rad: number): void {
+    this.maxInclinationRad = rad;
+    this.setFilters(this.filters);
   }
 
   get currentFilters(): FilterState {

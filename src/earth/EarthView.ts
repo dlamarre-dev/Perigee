@@ -8,11 +8,12 @@ import { earthOrientation, geoMoonKm, geoSunKm, MOON_RADIUS_KM } from '../astro/
 import { Astronomy } from '../astro/astronomy';
 import { moonPhase } from '../astro/moonPhase';
 import { alignAxes, axisVector } from '../astro/attitude';
-import { QUAT_IDENTITY, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { QUAT_IDENTITY, quatConjugate, quatMultiply, quatRotate, type Quat } from '../astro/quat';
+import { BufferGeometry, Float32BufferAttribute, Line, LineDashedMaterial } from 'three';
 import { sunDirectionEci } from '../astro/sun';
 import { SUN_RADIUS_KM } from '../astro/planets';
 import { gmstRad } from '../astro/time';
-import { cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
 import type { MessageKey } from '../i18n';
 import { pickRadiusPx } from '../render/pointer';
@@ -36,7 +37,8 @@ import {
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
 import { DistantSun } from '../render/SunMesh';
-import { MoonInSky } from './MoonInSky';
+import { LabelLayer, LabelPriority } from '../render/Labels';
+import { eqdFromEqj, MoonInSky } from './MoonInSky';
 import { SceneModel, modelFollowDistanceKm, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
 import { DetailPanel, type DetailContent } from '../ui/DetailPanel';
@@ -70,6 +72,51 @@ const ARCHIVED_SETS = 2;
 const MOON_SIDEREAL_DAYS = 27.3217;
 const MOON_SYNODIC_DAYS = 29.5306;
 
+/**
+ * A viewpoint showing the Earth and the Moon together (body-fixed frame): from behind the Earth, raised out of the
+ * Moon's orbit plane and to the side, the Earth large in the foreground and the Moon beyond it, the line between them
+ * crossing the screen diagonally.
+ */
+export function earthMoonViewpoint(date: Date): {
+  directionBody: Vec3;
+  distanceKm: number;
+  targetBody: Vec3;
+  upBody: Vec3;
+} {
+  const bodyFromEqd = quatConjugate(earthOrientation(date));
+  const moonAt = (d: Date): Vec3 => quatRotate(eqdFromEqj(d), geoMoonKm(d));
+  const m0 = moonAt(date);
+  const n = normalize(cross(m0, moonAt(new Date(date.getTime() + 3_600_000))));
+  const m = quatRotate(bodyFromEqd, m0);
+  const mHat = normalize(m);
+  const nB = normalize(quatRotate(bodyFromEqd, n));
+  const side = cross(nB, mHat);
+  const raise = 33 * DEG_TO_RAD;
+  const swing = 35 * DEG_TO_RAD;
+  const off: Vec3 = normalize([
+    -Math.cos(raise) * mHat[0] + Math.sin(raise) * (Math.cos(swing) * nB[0] + Math.sin(swing) * side[0]),
+    -Math.cos(raise) * mHat[1] + Math.sin(raise) * (Math.cos(swing) * nB[1] + Math.sin(swing) * side[1]),
+    -Math.cos(raise) * mHat[2] + Math.sin(raise) * (Math.cos(swing) * nB[2] + Math.sin(swing) * side[2]),
+  ]);
+  const camera = scale(off, 6 * R);
+  const toEarth = normalize(scale(camera, -1));
+  const toMoon = normalize(sub(m, camera));
+  const axis = normalize([toEarth[0] + toMoon[0], toEarth[1] + toMoon[1], toEarth[2] + toMoon[2]]);
+  // Screen direction from the Earth to the Moon, then "up" turned so that line rises at 25° across the screen.
+  const along = sub(toMoon, toEarth);
+  const u = normalize(sub(along, scale(axis, dot(along, axis))));
+  const w = cross(axis, u);
+  const tilt = 25 * DEG_TO_RAD;
+  const upBody = normalize([
+    Math.sin(tilt) * u[0] + Math.cos(tilt) * w[0],
+    Math.sin(tilt) * u[1] + Math.cos(tilt) * w[1],
+    Math.sin(tilt) * u[2] + Math.cos(tilt) * w[2],
+  ]);
+  const distanceKm = dot(scale(camera, -1), axis);
+  const targetBody = sub(camera, scale(axis, -distanceKm));
+  return { directionBody: scale(axis, -1), distanceKm, targetBody, upBody };
+}
+
 class EarthView implements View {
   readonly id = 'earth' as const;
   /** Far enough to frame the Earth and the Moon together. */
@@ -78,9 +125,19 @@ class EarthView implements View {
   readonly maxRate = 10_000;
   readonly maxRateHint = 'time.maxRate.earth' as const;
   readonly bodyRadiusKm = R;
-  /** Over the Americas, north up. */
-  readonly homeDirectionBody = latLonToUnit(20 * DEG_TO_RAD, -73 * DEG_TO_RAD);
-  readonly homeDistanceKm = R * 3.4;
+  /** Over the Americas, north up; URL `dist=<km>` sets the distance (guide pages framing far orbits). */
+  get homeDirectionBody(): Vec3 {
+    return this.earthMoonHome?.()?.directionBody ?? latLonToUnit(20 * DEG_TO_RAD, -73 * DEG_TO_RAD);
+  }
+  get homeDistanceKm(): number {
+    return this.earthMoonHome?.()?.distanceKm ?? this.homeDistanceParamKm ?? R * 3.4;
+  }
+  get homeTargetBody(): Vec3 | undefined {
+    return this.earthMoonHome?.()?.targetBody;
+  }
+  get homeUpBody(): Vec3 | undefined {
+    return this.earthMoonHome?.()?.upBody;
+  }
   /** Highly elliptical orbits reach beyond 400 000 km. */
   /** Up to the Sun (aphelion + radius): it is drawn at its true distance. */
   readonly farKm = 1.53e8;
@@ -107,6 +164,21 @@ class EarthView implements View {
   /** Sun centre in the scene frame (km). */
   private sunSceneKm: Vec3 = [1.496e8, 0, 0];
   private readonly moon: MoonInSky;
+  /** URL `sats=0`: no satellites (not even loaded). */
+  private readonly satellitesShown: boolean;
+  private readonly homeDistanceParamKm: number | undefined;
+  /** URL `pts=<px>`: larger satellite points (guide pages framing a few far satellites). */
+  private readonly pointSizePx: number | undefined;
+  /** URL `inc=<deg>`: only satellites inclined less than this (the geostationary guide page). */
+  private readonly maxInclinationDeg: number | undefined;
+  /**
+   * URL `earthmoon=1` (guide page on the Earth–Moon distance): the Earth named like the Moon, a dashed line between
+   * their surfaces, and a default viewpoint showing both.
+   */
+  private readonly earthMoon: boolean;
+  private readonly earthMoonHome: (() => ReturnType<typeof earthMoonViewpoint>) | undefined;
+  private readonly earthLabel: LabelLayer | undefined;
+  private readonly earthMoonLine: Line<BufferGeometry, LineDashedMaterial> | undefined;
   private get moonSceneKm(): Vec3 {
     return this.moon.sceneKm;
   }
@@ -147,6 +219,36 @@ class EarthView implements View {
     this.distantSun = new DistantSun(host.renderer.scene, SUN_RADIUS_KM);
     this.moon = new MoonInSky(host.renderer.scene, host.renderer, host.baseUrl, host.i18n.t('earth.moon'));
     host.mount(this.moon.labels.element);
+    this.satellitesShown = host.initialParams.get('sats') !== '0';
+    const dist = Number(host.initialParams.get('dist'));
+    this.homeDistanceParamKm = dist > R * 1.1 && dist < R * 100 ? dist : undefined;
+    const pts = Number(host.initialParams.get('pts'));
+    this.pointSizePx = pts >= 1 && pts <= 10 ? pts : undefined;
+    const inc = Number(host.initialParams.get('inc'));
+    this.maxInclinationDeg = inc > 0 && inc < 180 ? inc : undefined;
+    this.earthMoon = host.initialParams.get('earthmoon') === '1';
+    if (this.earthMoon) {
+      this.earthMoonHome = () => earthMoonViewpoint(host.clock.nowUtc());
+      const geometry = new BufferGeometry();
+      geometry.setAttribute('position', new Float32BufferAttribute(new Float32Array(6), 3));
+      this.earthMoonLine = new Line(
+        geometry,
+        new LineDashedMaterial({
+          color: 0x7fe3ff,
+          dashSize: 6_000,
+          gapSize: 4_000,
+          transparent: true,
+          opacity: 0.8,
+        }),
+      );
+      this.earthMoonLine.frustumCulled = false;
+      host.renderer.scene.add(this.earthMoonLine);
+      this.earthLabel = new LabelLayer();
+      this.earthLabel.setItems([
+        { id: 'earth', text: host.i18n.t('earth.earth'), className: 'label-natural' },
+      ]);
+      host.mount(this.earthLabel.element);
+    }
     this.infoPanel = new InfoPanel(host.i18n, this.operators, {
       onClose: () => this.select(undefined),
       onToggleFollow: () => (host.follow.active ? host.follow.stop() : this.startFollowing()),
@@ -164,6 +266,9 @@ class EarthView implements View {
       this.launch.setLanguage(lang);
       this.observer.setLabel(host.i18n.t('earth.observer'));
       this.moon.setLabel(host.i18n.t('earth.moon'));
+      this.earthLabel?.setItems([
+        { id: 'earth', text: host.i18n.t('earth.earth'), className: 'label-natural' },
+      ]);
       if (this.selectedSite) this.showSite(this.selectedSite, false);
       if (this.moonSelected) this.moonDetail.show(this.moonContent(), false);
     });
@@ -188,7 +293,7 @@ class EarthView implements View {
       const site = this.launchSites.find((x) => x.id === sel.slice(5));
       if (site) this.selectSite(site);
     }
-    void this.loadSatellites();
+    if (this.satellitesShown) void this.loadSatellites();
   }
 
   /** Closest surface other than the Earth (the Moon), for the near clipping plane. */
@@ -245,6 +350,37 @@ class EarthView implements View {
     this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
     this.observer.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
     this.placeModel(originKm);
+    if (this.earthMoonLine) {
+      // Surface to surface, camera-relative.
+      const m = this.moon.sceneKm;
+      const u = normalize(m);
+      const a = sub(scale(u, R), originKm);
+      const b = sub(sub(m, scale(u, MOON_RADIUS_KM)), originKm);
+      const pos = this.earthMoonLine.geometry.getAttribute('position') as Float32BufferAttribute;
+      pos.setXYZ(0, a[0], a[1], a[2]);
+      pos.setXYZ(1, b[0], b[1], b[2]);
+      pos.needsUpdate = true;
+      this.earthMoonLine.computeLineDistances();
+    }
+    if (this.earthLabel) {
+      const w = canvas.clientWidth;
+      const hgt = canvas.clientHeight;
+      this.earthLabel.begin();
+      // Anchored at the centre, no occluder: the label names the globe drawn around it.
+      const centre: Vec3 = [0, 0, 0];
+      this.earthLabel.place(
+        'earth',
+        sub(centre, originKm),
+        centre,
+        this.host.renderer.camera,
+        originKm,
+        0,
+        w,
+        hgt,
+        LabelPriority.Orbiting,
+      );
+      this.earthLabel.layout(w, hgt);
+    }
   }
 
   /** The selected satellite's 3D model (LVLH attitude: nadir axis down, front along the velocity). */
@@ -320,6 +456,11 @@ class EarthView implements View {
     if (this.selectedSite) p.set('sel', `site:${this.selectedSite.id}`);
     if (this.moonSelected) p.set('sel', 'moon');
     if (!this.launch.visible) p.set('ls', '0');
+    if (!this.satellitesShown) p.set('sats', '0');
+    if (this.earthMoon) p.set('earthmoon', '1');
+    if (this.homeDistanceParamKm !== undefined) p.set('dist', String(this.homeDistanceParamKm));
+    if (this.pointSizePx !== undefined) p.set('pts', String(this.pointSizePx));
+    if (this.maxInclinationDeg !== undefined) p.set('inc', String(this.maxInclinationDeg));
   }
 
   dispose(): void {
@@ -329,6 +470,12 @@ class EarthView implements View {
     this.sceneModel.dispose();
     this.distantSun.dispose();
     this.moon.dispose();
+    this.earthLabel?.dispose();
+    if (this.earthMoonLine) {
+      this.host.renderer.scene.remove(this.earthMoonLine);
+      this.earthMoonLine.geometry.dispose();
+      this.earthMoonLine.material.dispose();
+    }
     this.launch.dispose();
     this.observer.dispose();
     if (this.sats) {
@@ -595,6 +742,8 @@ class EarthView implements View {
       this.catalog = catalog;
       this.infoPanel.setLaunchSiteNames((code) => catalog.launchSiteByCode.get(code)?.name[host.i18n.lang]);
       const layer = new EarthSatellites(catalog, host.renderer.renderer);
+      if (this.pointSizePx !== undefined) layer.points.setPointSizePx(this.pointSizePx);
+      if (this.maxInclinationDeg !== undefined) layer.setMaxInclination(this.maxInclinationDeg * DEG_TO_RAD);
       await layer.ready;
       if (this.disposed) {
         layer.dispose();
@@ -717,6 +866,8 @@ class EarthView implements View {
       if (this.disposed) return;
       const catalog = this.satCatalog(omm);
       const layer = new EarthSatellites(catalog, this.host.renderer.renderer);
+      if (this.pointSizePx !== undefined) layer.points.setPointSizePx(this.pointSizePx);
+      if (this.maxInclinationDeg !== undefined) layer.setMaxInclination(this.maxInclinationDeg * DEG_TO_RAD);
       await layer.ready;
       if (this.disposed) {
         layer.dispose();

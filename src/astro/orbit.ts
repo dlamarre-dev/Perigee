@@ -40,6 +40,17 @@ export function apsides(meanMotionRevPerDay: number, eccentricity: number): Apsi
  * - LEO: apogee below 2000 km
  * - MEO: everything else
  */
+/**
+ * Geostationary: a GEO-regime orbit (geosynchronous) near the equator. 15° keeps the old satellites whose
+ * inclination drifts once station-keeping stops (TDRS, Inmarsat-3…) and leaves out the inclined geosynchronous
+ * orbits (IGSO: BeiDou IGSO, QZSS, IRNSS…), which trace a figure eight over a wide band of latitudes.
+ */
+export const GEOSTATIONARY_MAX_INCLINATION_RAD = (15 * Math.PI) / 180;
+
+export function isGeostationary(regime: OrbitRegime, inclinationRad: number): boolean {
+  return regime === 'GEO' && inclinationRad < GEOSTATIONARY_MAX_INCLINATION_RAD;
+}
+
 export function orbitRegime(meanMotionRevPerDay: number, eccentricity: number): OrbitRegime {
   if (eccentricity >= 0.25) return 'HEO';
   if (meanMotionRevPerDay >= 0.9 && meanMotionRevPerDay <= 1.1 && eccentricity < 0.1) return 'GEO';
