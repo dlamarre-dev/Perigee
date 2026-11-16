@@ -44,6 +44,13 @@ export function topicCapture(topic: Topic, lang: Lang, ctx: RenderContext): stri
   return version ? `${path}?v=${version}` : undefined;
 }
 
+/** A topic's thumbnail for the guides' index (tools/screenshots/thumbs.ts), when it exists: path with its version. */
+export function topicThumbnail(topic: Topic, ctx: RenderContext): string | undefined {
+  const path = `landing/thumbs/${topic.id}.webp`;
+  const version = ctx.assets?.[path];
+  return version ? `${path}?v=${version}` : undefined;
+}
+
 const LANGS: readonly Lang[] = ['en', 'fr'];
 const other = (lang: Lang): Lang => (lang === 'en' ? 'fr' : 'en');
 
@@ -537,10 +544,14 @@ export function renderHub(template: string, lang: Lang, ctx: RenderContext): str
   const title = `${i18n.t('landing.hubTitle')} | ${BRAND[lang]}`;
   const sections = THEMES.map((theme) => {
     const items = TOPICS.filter((t) => t.theme === theme.id)
-      .map(
-        (t) =>
-          `<li><a href="${ctx.base}${topicPath(t, lang)}"><strong>${esc(t.question[lang])}</strong><span>${esc(t.description[lang])}</span></a></li>`,
-      )
+      .map((t) => {
+        const thumb = topicThumbnail(t, ctx);
+        // Decorative: the question beside it names the page.
+        const img = thumb
+          ? `<img class="lp-hub-thumb" src="${ctx.base}${thumb}" alt="" width="112" height="84" loading="lazy" decoding="async">`
+          : '';
+        return `<li><a href="${ctx.base}${topicPath(t, lang)}">${img}<span class="lp-hub-text"><strong>${esc(t.question[lang])}</strong><span>${esc(t.description[lang])}</span></span></a></li>`;
+      })
       .join('\n      ');
     return `<section class="lp-hub-theme"><h2>${esc(theme.name[lang])}</h2><ul class="lp-hub-list">
       ${items}

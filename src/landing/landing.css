@@ -790,7 +790,7 @@ h3 {
 
 .lp-hub-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 10px;
   margin: 0;
   padding: 0;
@@ -799,8 +799,8 @@ h3 {
 
 .lp-hub-list a {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 12px;
   height: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line);
@@ -809,11 +809,27 @@ h3 {
   text-decoration: none;
 }
 
+.lp-hub-thumb {
+  flex: none;
+  width: 112px;
+  height: 84px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
+.lp-hub-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
 .lp-hub-list strong {
   color: #fff;
 }
 
-.lp-hub-list span {
+.lp-hub-text span {
   font-size: 13px;
   color: var(--text-muted);
 }
@@ -912,5 +928,10 @@ h3 {
 
   .lp-cards {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .lp-hub-thumb {
+    width: 88px;
+    height: 66px;
   }
 }
