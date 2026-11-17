@@ -56,7 +56,6 @@ export const en = {
   'tutorial.count': 'Guided tour · {n} / {total}',
   'tutorial.next': 'Next',
   'tutorial.finish': 'Finish',
-  'tutorial.skip': 'Skip',
   'tutorial.quit': 'Quit the tour',
   'tutorial.loading': 'Loading…',
   'tutorial.openMenu': 'Open the menu.',

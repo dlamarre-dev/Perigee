@@ -59,7 +59,6 @@ export const fr: Messages = {
   'tutorial.count': 'Visite guidée · {n} / {total}',
   'tutorial.next': 'Suivant',
   'tutorial.finish': 'Terminer',
-  'tutorial.skip': 'Passer',
   'tutorial.quit': 'Quitter la visite',
   'tutorial.loading': 'Chargement…',
   'tutorial.openMenu': 'Ouvrez le menu.',

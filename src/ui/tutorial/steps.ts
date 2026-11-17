@@ -57,7 +57,8 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     target: 'button.result[data-site="curiosity-current"]',
     done: () => view() === 'mars' && param('sel') === 'site:curiosity-current',
   },
-  { text: 'tutorial.mars.observe', observe: 'follow' },
+  // A site on the ground: the camera glides to it, no following.
+  { text: 'tutorial.mars.observe', observe: 'look' },
   // The solar system: Saturn, then Voyager 1.
   {
     text: 'tutorial.solar.tab',

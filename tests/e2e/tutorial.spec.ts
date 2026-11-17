@@ -7,7 +7,8 @@ test('the welcome window shows once; "Explore freely" remembers it', async ({ pa
   // Automated browsers never get it unasked (navigator.webdriver): ?welcome=1 forces it.
   await page.goto('./?lang=en&welcome=1');
   const welcome = page.locator('dialog.welcome');
-  await expect(welcome).toBeVisible();
+  // It opens once the first view has loaded.
+  await expect(welcome).toBeVisible({ timeout: 30_000 });
   await expect(welcome.getByRole('heading')).toHaveText('Welcome to Perigee');
   await welcome.getByRole('button', { name: 'Explore freely' }).click();
   await expect(welcome).toBeHidden();
@@ -17,7 +18,10 @@ test('the welcome window shows once; "Explore freely" remembers it', async ({ pa
 
 test('the guided tour lights one control at a time and can be quit', async ({ page }) => {
   await page.goto('./?lang=en&welcome=1');
-  await page.locator('dialog.welcome').getByRole('button', { name: 'Take the tour' }).click();
+  await page
+    .locator('dialog.welcome')
+    .getByRole('button', { name: 'Take the tour' })
+    .click({ timeout: 30_000 });
   await expect(card(page)).toContainText('Guided tour · 1 /');
   await expect(card(page)).toContainText('Tick the International Space Station', { timeout: 30_000 });
   // A click outside the lit control does nothing: no Moon view, no selection.
@@ -32,9 +36,14 @@ test('the guided tour lights one control at a time and can be quit', async ({ pa
   // Observe: free camera, Next.
   await expect(card(page)).toContainText('follows the ISS');
   await expect(ring(page)).toBeHidden();
+  // The top bar's way-out controls stay disabled while the camera is free, until a step asks for one.
+  for (const control of ['.view-tabs button[data-view="moon"]', '.favorites-button', '.settings-button'])
+    await expect(page.locator(control)).toBeDisabled();
   await card(page).getByRole('button', { name: 'Next' }).click();
   await expect(card(page)).toContainText('open the Moon view');
   await expect(ring(page)).toBeVisible();
+  await expect(page.locator('.view-tabs button[data-view="moon"]')).toBeEnabled();
+  await expect(page.locator('.view-tabs button[data-view="mars"]')).toBeDisabled();
   await page.locator('.view-tabs button[data-view="moon"]').click();
   await expect(page).toHaveURL(/view=moon/);
   await card(page).getByRole('button', { name: 'Quit the tour' }).click();

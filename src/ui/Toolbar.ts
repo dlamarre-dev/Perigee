@@ -86,8 +86,8 @@ export class Toolbar {
     h('span', { class: 'favorites-icon', 'aria-hidden': 'true' }),
     this.favoritesText,
   ]);
-  private readonly about = h('button', { type: 'button', class: 'btn' });
-  private readonly report = h('button', { type: 'button', class: 'btn' });
+  private readonly about = h('button', { type: 'button', class: 'btn about-button' });
+  private readonly report = h('button', { type: 'button', class: 'btn report-button' });
   /** Camera icon on large screens, "Photo" in the phone menu. */
   private readonly photoText = h('span', { class: 'photo-text' });
   private readonly photo = h('button', { type: 'button', class: 'btn photo-button' }, [

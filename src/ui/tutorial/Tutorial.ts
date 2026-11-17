@@ -22,6 +22,12 @@ export interface TutorialHost {
 
 /** Space between a lit control and the hole's edge (px). */
 const HOLE_PAD_PX = 4;
+/**
+ * Top-bar controls that would leave the tour's path (another view, a window): disabled (greyed) for the whole tour,
+ * except the one a step lights.
+ */
+const LOCKED_CONTROLS =
+  '.view-tabs button, .guides-button, .favorites-button, .settings-button, .photo-button, .about-button, .report-button';
 const CARD_GAP_PX = 12;
 /** Pointer events the dimmed layer swallows, so nothing under it reacts (menus closing on outside clicks…). */
 const BLOCKED_EVENTS = [
@@ -71,12 +77,11 @@ export class Tutorial {
   private readonly count = h('p', { class: 'tutorial-count' });
   private readonly text = h('p', { class: 'tutorial-text', 'aria-live': 'polite' });
   private readonly next = h('button', { type: 'button', class: 'btn primary tutorial-next' });
-  private readonly skip = h('button', { type: 'button', class: 'btn tutorial-skip' });
   private readonly quit = h('button', { type: 'button', class: 'btn tutorial-quit' });
   private readonly card = h('div', { class: 'panel tutorial-card' }, [
     this.count,
     this.text,
-    h('div', { class: 'tutorial-actions' }, [this.quit, this.skip, this.next]),
+    h('div', { class: 'tutorial-actions' }, [this.quit, this.next]),
   ]);
   private index = 0;
   private active = false;
@@ -84,6 +89,8 @@ export class Tutorial {
   /** The dialog the layer was last shown in (undefined: the page). */
   private host: HTMLDialogElement | undefined;
   private lastTarget: Element | undefined;
+  /** Controls disabled by the tour, with their own state to restore. */
+  private readonly locked = new Map<HTMLButtonElement, boolean>();
   private readonly onKey = (e: KeyboardEvent): void => this.key(e);
 
   constructor(
@@ -97,13 +104,12 @@ export class Tutorial {
         type,
         (e) => {
           e.stopPropagation();
-          if (e.target !== this.next && e.target !== this.skip && e.target !== this.quit && e.cancelable)
+          if (e.target !== this.next && e.target !== this.quit && e.cancelable)
             if (type === 'wheel' || type === 'contextmenu' || type === 'touchmove') e.preventDefault();
         },
         { passive: false },
       );
     this.next.addEventListener('click', () => this.go(this.index + 1));
-    this.skip.addEventListener('click', () => this.go(this.index + 1));
     this.quit.addEventListener('click', () => this.stop());
   }
 
@@ -133,6 +139,8 @@ export class Tutorial {
     if (this.layer.matches(':popover-open')) this.layer.hidePopover();
     this.layer.remove();
     this.host = undefined;
+    for (const [button, disabled] of this.locked) button.disabled = disabled;
+    this.locked.clear();
   }
 
   private go(index: number): void {
@@ -171,6 +179,7 @@ export class Tutorial {
       return;
     }
     if (!step.target) {
+      this.lock(undefined);
       this.layout(undefined, true);
       return;
     }
@@ -180,7 +189,17 @@ export class Tutorial {
       this.text,
       this.i18n.t(reached ? (reached.caption ?? step.text) : target ? step.text : 'tutorial.loading'),
     );
+    this.lock(reached?.el);
     this.layout(reached?.el, false);
+  }
+
+  /** Disables the top bar's way-out controls, all but `lit` (the step's own control), restoring it when lit. */
+  private lock(lit: Element | undefined): void {
+    for (const button of document.querySelectorAll<HTMLButtonElement>(LOCKED_CONTROLS)) {
+      if (!this.locked.has(button)) this.locked.set(button, button.disabled);
+      const disabled = button === lit ? (this.locked.get(button) ?? false) : true;
+      if (button.disabled !== disabled) button.disabled = disabled;
+    }
   }
 
   /** The control to light so that `el` can be used: `el` itself, or what hides it. */
@@ -236,10 +255,8 @@ export class Tutorial {
     setText(this.text, this.i18n.t(step.text));
     const last = this.index === total - 1;
     setText(this.next, this.i18n.t(last ? 'tutorial.finish' : 'tutorial.next'));
-    setText(this.skip, this.i18n.t('tutorial.skip'));
     setText(this.quit, this.i18n.t('tutorial.quit'));
     this.next.hidden = Boolean(step.target);
-    this.skip.hidden = !step.target;
     this.quit.hidden = last;
     this.layer.classList.toggle('observing', !step.target);
   }
