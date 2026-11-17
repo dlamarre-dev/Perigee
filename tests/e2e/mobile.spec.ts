@@ -91,9 +91,16 @@ test('a tapped button does not stay highlighted, and the bars are not selectable
   expect(await page.locator('#time-jump').evaluate((e) => getComputedStyle(e).userSelect)).not.toBe('none');
 });
 
-test('the guided tour opens the menu, then the panel, before the filters', async ({ page }) => {
+test('the guided tour: speed list, then the menu and the panel before the filters', async ({ page }) => {
   await page.goto('./?lang=en&tutorial=1');
   const card = page.locator('.tutorial .tutorial-card');
+  // On phones the speed is a list.
+  await expect(card).toContainText('choose ×10', { timeout: 30_000 });
+  await page.locator('.time-control .rate-select').selectOption('10');
+  await expect(card).toContainText('choose ×1000');
+  await page.locator('.time-control .rate-select').selectOption('1000');
+  await expect(card).toContainText('press Now');
+  await page.locator('.time-control .now-button').tap();
   await expect(card).toContainText('Open the menu.', { timeout: 30_000 });
   await page.locator('.menu-toggle').tap();
   await expect(card).toContainText('Open the panel.');

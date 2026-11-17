@@ -47,12 +47,15 @@ export class WelcomeDialog {
     private readonly i18n: I18n,
     onTutorial: () => void,
   ) {
+    // Stored at once (the dialog's `close` event comes a task later): a reload right after does not show it again.
     this.tutorial.addEventListener('click', () => {
       this.choice = 'tutorial';
+      markSeen();
       this.element.close();
     });
     this.explore.addEventListener('click', () => {
       this.choice = 'explore';
+      markSeen();
       this.element.close();
     });
     this.element = h('dialog', { class: 'panel about welcome', 'aria-labelledby': 'welcome-title' }, [
@@ -63,8 +66,12 @@ export class WelcomeDialog {
     ]);
     scrollingDialog(this.element);
     this.element.addEventListener('click', (e) => {
-      if (e.target === this.element) this.element.close();
+      if (e.target === this.element) {
+        markSeen();
+        this.element.close();
+      }
     });
+    this.element.addEventListener('cancel', () => markSeen());
     this.element.addEventListener('close', () => {
       markSeen();
       if (this.choice === 'tutorial') onTutorial();

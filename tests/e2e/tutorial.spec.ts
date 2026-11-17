@@ -23,7 +23,18 @@ test('the guided tour lights one control at a time and can be quit', async ({ pa
     .getByRole('button', { name: 'Take the tour' })
     .click({ timeout: 30_000 });
   await expect(card(page)).toContainText('Guided tour · 1 /');
+  // Time first: the 3D view is blocked but not darkened, so the speed-up shows.
+  await expect(card(page)).toContainText('choose ×10');
+  await expect(page.locator('.tutorial')).toHaveClass(/clear/);
+  await page.locator('.time-control button[data-rate="10"]').click();
+  await expect(card(page)).toContainText('choose ×1000');
+  await page.locator('.time-control button[data-rate="1000"]').click();
+  await expect(page).toHaveURL(/rate=1000/);
+  await expect(card(page)).toContainText('press Now');
+  await page.locator('.time-control .now-button').click();
+  await expect(page).not.toHaveURL(/rate=/);
   await expect(card(page)).toContainText('Tick the International Space Station', { timeout: 30_000 });
+  await expect(page.locator('.tutorial')).not.toHaveClass(/clear/);
   // A click outside the lit control does nothing: no Moon view, no selection.
   await page.locator('.view-tabs button[data-view="moon"]').click({ force: true });
   await expect(page).not.toHaveURL(/view=moon/);

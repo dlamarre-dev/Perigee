@@ -27,7 +27,9 @@ const HOLE_PAD_PX = 4;
  * except the one a step lights.
  */
 const LOCKED_CONTROLS =
-  '.view-tabs button, .guides-button, .favorites-button, .settings-button, .photo-button, .about-button, .report-button';
+  '.view-tabs button, .guides-button, .favorites-button, .settings-button, .photo-button, .about-button, .report-button, #quality-select';
+
+type Lockable = HTMLButtonElement | HTMLSelectElement;
 const CARD_GAP_PX = 12;
 /** Pointer events the dimmed layer swallows, so nothing under it reacts (menus closing on outside clicks…). */
 const BLOCKED_EVENTS = [
@@ -43,6 +45,13 @@ const BLOCKED_EVENTS = [
   'touchmove',
 ] as const;
 
+interface Box {
+  readonly x0: number;
+  readonly y0: number;
+  readonly x1: number;
+  readonly y1: number;
+}
+
 interface Reached {
   readonly el: Element;
   /** Caption for an intermediate control (menu, panel…); the step's own text otherwise. */
@@ -52,9 +61,11 @@ interface Reached {
 const visible = (el: Element): boolean =>
   typeof el.checkVisibility === 'function' ? el.checkVisibility() : el.getClientRects().length > 0;
 
+/** The first visible element matching `selector` (alternatives for desktop and phone), else the first one. */
 const query = (selector: string): Element | null => {
   try {
-    return document.querySelector(selector);
+    const all = [...document.querySelectorAll(selector)];
+    return all.find(visible) ?? all[0] ?? null;
   } catch {
     return null;
   }
@@ -90,7 +101,7 @@ export class Tutorial {
   private host: HTMLDialogElement | undefined;
   private lastTarget: Element | undefined;
   /** Controls disabled by the tour, with their own state to restore. */
-  private readonly locked = new Map<HTMLButtonElement, boolean>();
+  private readonly locked = new Map<Lockable, boolean>();
   private readonly onKey = (e: KeyboardEvent): void => this.key(e);
 
   constructor(
@@ -179,6 +190,7 @@ export class Tutorial {
       return;
     }
     if (!step.target) {
+      this.layer.classList.remove('clear');
       this.lock(undefined);
       this.layout(undefined, true);
       return;
@@ -190,12 +202,15 @@ export class Tutorial {
       this.i18n.t(reached ? (reached.caption ?? step.text) : target ? step.text : 'tutorial.loading'),
     );
     this.lock(reached?.el);
-    this.layout(reached?.el, false);
+    // A step may open a wider hole (a whole window to read) than the control it lights.
+    const hole = reached && !reached.caption && step.hole ? (query(step.hole) ?? undefined) : undefined;
+    this.layer.classList.toggle('clear', step.dim === false);
+    this.layout(reached?.el, false, hole);
   }
 
   /** Disables the top bar's way-out controls, all but `lit` (the step's own control), restoring it when lit. */
   private lock(lit: Element | undefined): void {
-    for (const button of document.querySelectorAll<HTMLButtonElement>(LOCKED_CONTROLS)) {
+    for (const button of document.querySelectorAll<Lockable>(LOCKED_CONTROLS)) {
       if (!this.locked.has(button)) this.locked.set(button, button.disabled);
       const disabled = button === lit ? (this.locked.get(button) ?? false) : true;
       if (button.disabled !== disabled) button.disabled = disabled;
@@ -261,8 +276,11 @@ export class Tutorial {
     this.layer.classList.toggle('observing', !step.target);
   }
 
-  /** Places the four blocks around `el` (or over everything while it loads), the ring and the card. */
-  private layout(el: Element | undefined, free: boolean): void {
+  /**
+   * Places the four blocks around `el` (or around `holeEl` when given, or over everything while `el` loads), the
+   * ring around `el` and the card.
+   */
+  private layout(el: Element | undefined, free: boolean, holeEl?: Element): void {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     if (el && el !== this.lastTarget) {
@@ -287,30 +305,43 @@ export class Tutorial {
       this.placeCard(undefined, vw, vh);
       return;
     }
-    const r = el.getBoundingClientRect();
-    const x0 = Math.max(0, r.left - HOLE_PAD_PX);
-    const y0 = Math.max(0, r.top - HOLE_PAD_PX);
-    const x1 = Math.min(vw, r.right + HOLE_PAD_PX);
-    const y1 = Math.min(vh, r.bottom + HOLE_PAD_PX);
-    place(top, 0, 0, vw, y0);
-    place(bottom, 0, y1, vw, vh - y1);
-    place(left, 0, y0, x0, y1 - y0);
-    place(right, x1, y0, vw - x1, y1 - y0);
-    place(this.ring, x0, y0, x1 - x0, y1 - y0);
-    this.placeCard({ x0, y0, x1, y1 }, vw, vh);
+    const box = (e: Element): Box => {
+      const r = e.getBoundingClientRect();
+      return {
+        x0: Math.max(0, r.left - HOLE_PAD_PX),
+        y0: Math.max(0, r.top - HOLE_PAD_PX),
+        x1: Math.min(vw, r.right + HOLE_PAD_PX),
+        y1: Math.min(vh, r.bottom + HOLE_PAD_PX),
+      };
+    };
+    const lit = box(el);
+    const hole = holeEl ? box(holeEl) : lit;
+    place(top, 0, 0, vw, hole.y0);
+    place(bottom, 0, hole.y1, vw, vh - hole.y1);
+    place(left, 0, hole.y0, hole.x0, hole.y1 - hole.y0);
+    place(right, hole.x1, hole.y0, vw - hole.x1, hole.y1 - hole.y0);
+    place(this.ring, lit.x0, lit.y0, lit.x1 - lit.x0, lit.y1 - lit.y0);
+    this.placeCard(lit, vw, vh, holeEl ? hole : undefined);
   }
 
-  /** Below the hole if it fits, else above; at the top centre with no hole. */
-  private placeCard(
-    hole: { x0: number; y0: number; x1: number; y1: number } | undefined,
-    vw: number,
-    vh: number,
-  ): void {
+  /**
+   * Beside a wide hole (a window) when there is room, else in its top right corner; else below the lit control if it
+   * fits, else above it; at the top centre with nothing lit.
+   */
+  private placeCard(hole: Box | undefined, vw: number, vh: number, wide?: Box): void {
     const w = this.card.offsetWidth;
     const hgt = this.card.offsetHeight;
     let x = (vw - w) / 2;
     let y = Math.min(72, vh / 8);
-    if (hole) {
+    const room = w + 2 * CARD_GAP_PX;
+    if (wide && (vw - wide.x1 >= room || wide.x0 >= room)) {
+      x = vw - wide.x1 >= room ? wide.x1 + CARD_GAP_PX : wide.x0 - CARD_GAP_PX - w;
+      y = Math.min(Math.max(8, wide.y0), vh - hgt - 8);
+    } else if (wide) {
+      // No room beside the window: its top right corner, under the title (the settings' disabled quality list).
+      x = wide.x1 - w - CARD_GAP_PX;
+      y = Math.min(wide.y0 + 4 * CARD_GAP_PX, vh - hgt - 8);
+    } else if (hole) {
       x = Math.min(Math.max(8, hole.x0), vw - w - 8);
       y =
         hole.y1 + CARD_GAP_PX + hgt <= vh - 8

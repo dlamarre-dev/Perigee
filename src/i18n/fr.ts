@@ -66,6 +66,12 @@ export const fr: Messages = {
   'tutorial.closeInfo': 'Fermez ce panneau pour revenir à la liste.',
   'tutorial.expand': 'Agrandissez le panneau.',
   'tutorial.openSection': 'Ouvrez cette section.',
+  'tutorial.time.x10':
+    'Le temps défile ici en direct. Accélérez-le : choisissez ×10 et regardez bouger les satellites.',
+  'tutorial.time.x1000': 'Plus vite encore : choisissez ×1000. La Terre tourne sous les orbites.',
+  'tutorial.time.now': 'Retour au temps réel : appuyez sur Maintenant.',
+  'tutorial.stars.siriusObserve':
+    'La caméra se tourne vers Sirius, à 8,6 années-lumière, et le panneau la décrit. Explorez, puis appuyez sur Suivant.',
   'tutorial.iss.filter':
     'Ce panneau filtre les milliers de satellites par opérateur, pays, orbite… Cochez la Station spatiale internationale.',
   'tutorial.iss.select': 'Il ne reste que l’ISS dans la liste : sélectionnez-la.',

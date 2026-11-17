@@ -63,6 +63,11 @@ export const en = {
   'tutorial.closeInfo': 'Close this panel to get back to the list.',
   'tutorial.expand': 'Expand the panel.',
   'tutorial.openSection': 'Open this section.',
+  'tutorial.time.x10': 'Time runs live here. Speed it up: choose ×10 and watch the satellites move.',
+  'tutorial.time.x1000': 'Faster still: choose ×1000. The Earth turns under the orbits.',
+  'tutorial.time.now': 'Back to real time: press Now.',
+  'tutorial.stars.siriusObserve':
+    'The camera turns towards Sirius, 8.6 light-years away, and the panel describes it. Look around, then press Next.',
   'tutorial.iss.filter':
     'This panel filters the thousands of satellites by operator, country, orbit… Tick the International Space Station.',
   'tutorial.iss.select': 'Only the ISS is left in the list: select it.',

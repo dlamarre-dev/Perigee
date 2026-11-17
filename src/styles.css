@@ -2687,6 +2687,11 @@ body.music-open .altimeter {
   pointer-events: auto;
 }
 
+/* Steps where the 3D view must be seen (time running faster): blocked, not darkened. */
+.tutorial.clear .tutorial-block {
+  background: transparent;
+}
+
 .tutorial-ring {
   position: absolute;
   top: 0;

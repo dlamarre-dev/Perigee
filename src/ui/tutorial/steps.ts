@@ -14,6 +14,10 @@ export interface TutorialStep {
   readonly done?: () => boolean;
   /** Observe step: free camera and a Next button; `follow` first follows the selection. */
   readonly observe?: 'follow' | 'look';
+  /** A wider hole than the lit control (a whole window to read); clicks still reach only what is inside. */
+  readonly hole?: string;
+  /** False: the blocked part is not darkened (the 3D view must be seen, e.g. time running faster). */
+  readonly dim?: boolean;
 }
 
 const param = (key: string): string | null => new URLSearchParams(window.location.search).get(key);
@@ -22,6 +26,25 @@ const isOpen = (selector: string): boolean => document.querySelector(`${selector
 const checked = (id: string): boolean => document.querySelector<HTMLInputElement>(`#${id}`)?.checked === true;
 
 export const TUTORIAL_STEPS: readonly TutorialStep[] = [
+  // Time: faster, much faster, then back to now (the rate buttons on large screens, the rate list on phones).
+  {
+    text: 'tutorial.time.x10',
+    target: '.time-control button[data-rate="10"], .time-control .rate-select',
+    done: () => param('rate') === '10',
+    dim: false,
+  },
+  {
+    text: 'tutorial.time.x1000',
+    target: '.time-control button[data-rate="1000"], .time-control .rate-select',
+    done: () => param('rate') === '1000',
+    dim: false,
+  },
+  {
+    text: 'tutorial.time.now',
+    target: '.time-control .now-button',
+    done: () => !param('rate') && !param('t'),
+    dim: false,
+  },
   // Earth: the ISS through the filters.
   {
     text: 'tutorial.iss.filter',
@@ -88,6 +111,8 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     target: '#star-list button.result[data-star="sirius"]',
     done: () => param('sel') === 'star:sirius',
   },
+  // Stars are not followable: the camera turns towards Sirius.
+  { text: 'tutorial.stars.siriusObserve', observe: 'look' },
   {
     text: 'tutorial.stars.map',
     target: '.side-panel.info:not([hidden]) .star-map-button',
@@ -120,6 +145,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   {
     text: 'tutorial.settings.close',
     target: 'dialog.settings[open] .settings-close',
+    hole: 'dialog.settings[open]',
     done: () => !isOpen('dialog.settings'),
   },
   { text: 'tutorial.end' },
