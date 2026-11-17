@@ -48,7 +48,7 @@ export class TimeControl {
     class: 'btn pause-toggle',
     'data-testid': 'pause',
   });
-  private readonly nowButton = h('button', { type: 'button', class: 'btn' });
+  private readonly nowButton = h('button', { type: 'button', class: 'btn now-button' });
   private readonly rateGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly rateButtons: HTMLButtonElement[];
   private readonly jumpLabel = h('label', { class: 'visually-hidden', for: 'time-jump' });

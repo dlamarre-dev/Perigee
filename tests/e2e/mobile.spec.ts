@@ -90,3 +90,32 @@ test('a tapped button does not stay highlighted, and the bars are not selectable
   // The date field stays editable.
   expect(await page.locator('#time-jump').evaluate((e) => getComputedStyle(e).userSelect)).not.toBe('none');
 });
+
+test('the guided tour: speed list, then the menu and the panel before the filters', async ({ page }) => {
+  await page.goto('./?lang=en&tutorial=1');
+  const card = page.locator('.tutorial .tutorial-card');
+  // On phones the speed is a list.
+  await expect(card).toContainText('choose ×10', { timeout: 30_000 });
+  await page.locator('.time-control .rate-select').selectOption('10');
+  await expect(card).toContainText('choose ×1000');
+  await page.locator('.time-control .rate-select').selectOption('1000');
+  await expect(card).toContainText('press Now');
+  await page.locator('.time-control .now-button').tap();
+  await expect(card).toContainText('Open the menu.', { timeout: 30_000 });
+  await page.locator('.menu-toggle').tap();
+  await expect(card).toContainText('Open the panel.');
+  await page.locator('button[aria-controls="side-panel"]').tap();
+  await expect(card).toContainText('Tick the International Space Station');
+  // A sheet lowered during the tour: the whole of it is lit, and a tap anywhere on it raises it again.
+  const sheet = page.locator('.side-panel.filters');
+  await sheet.locator('.sheet-grab').dispatchEvent('click');
+  await expect(sheet).toHaveClass(/collapsed/);
+  await expect(card).toContainText('Expand the panel.');
+  const box = await sheet.boundingBox();
+  if (!box) throw new Error('no sheet');
+  await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height - 12);
+  await expect(sheet).not.toHaveClass(/collapsed/);
+  await expect(card).toContainText('Tick the International Space Station');
+  await page.locator('#f-science-25544').tap();
+  await expect(page.locator('#f-science-25544')).toBeChecked();
+});

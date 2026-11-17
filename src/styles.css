@@ -2645,3 +2645,125 @@ body.music-open .altimeter {
 .about-badges ~ .btn {
   align-self: center;
 }
+
+/* Welcome window (src/ui/WelcomeDialog.ts), shown once to a new visitor. */
+.btn.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn.primary:hover,
+.btn.primary:focus-visible {
+  background: var(--accent-strong);
+}
+
+.about.welcome .welcome-lang {
+  display: flex;
+  margin: 4px 0 8px;
+}
+
+.about.welcome {
+  max-width: min(480px, calc(100vw - 32px));
+}
+
+/* Guided tour (src/ui/tutorial/Tutorial.ts): a dimmed layer with a hole around the control to use. */
+.tutorial[popover] {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  pointer-events: none;
+}
+
+.tutorial-block {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgb(0 4 10 / 72%);
+  pointer-events: auto;
+}
+
+/* Steps where the 3D view must be seen (time running faster): blocked, not darkened. */
+.tutorial.clear .tutorial-block {
+  background: transparent;
+}
+
+.tutorial-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 2px solid var(--accent);
+  box-shadow:
+    var(--accent-glow),
+    inset 0 0 8px rgb(90 215 255 / 35%);
+  pointer-events: none;
+  animation: tutorial-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes tutorial-pulse {
+  50% {
+    box-shadow:
+      0 0 22px rgb(90 215 255 / 80%),
+      inset 0 0 12px rgb(90 215 255 / 50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-ring {
+    animation: none;
+  }
+}
+
+.tutorial-catcher {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.tutorial-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(380px, calc(100vw - 16px));
+  padding: 12px 14px;
+  pointer-events: auto;
+}
+
+.tutorial .tutorial-count {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tutorial .tutorial-text {
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.tutorial-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tutorial-quit {
+  margin-right: auto;
+}
+
+.tutorial [hidden] {
+  display: none !important;
+}

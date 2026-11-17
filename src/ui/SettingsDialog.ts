@@ -115,6 +115,8 @@ export interface SettingsOptions {
   readonly detectedTier: QualityTier;
   /** Quality chosen (the page reloads to apply it). */
   readonly onQualityChange: (choice: QualityChoice) => void;
+  /** Starts the guided tour (src/ui/tutorial/Tutorial.ts); the window closes first. */
+  readonly onTutorial: () => void;
 }
 
 export class SettingsDialog {
@@ -126,7 +128,8 @@ export class SettingsDialog {
   private readonly effectsNote = h('p', { class: 'muted small effects-note' });
   private readonly controlsTitle = h('h3');
   private readonly controls = h('div', { class: 'controls' });
-  private readonly close = h('button', { type: 'button', class: 'btn' });
+  private readonly close = h('button', { type: 'button', class: 'btn settings-close' });
+  private readonly tutorial = h('button', { type: 'button', class: 'btn settings-tutorial' });
   private platform = detectPlatform();
 
   constructor(
@@ -150,6 +153,10 @@ export class SettingsDialog {
     });
     this.effectsNote.hidden = effectsOn;
     this.close.addEventListener('click', () => this.element.close());
+    this.tutorial.addEventListener('click', () => {
+      this.element.close();
+      options.onTutorial();
+    });
     this.element = h('dialog', { class: 'panel about settings', 'aria-labelledby': 'settings-title' }, [
       this.title,
       h('div', { class: 'quality-row' }, [this.qualityLabel, this.qualitySelect]),
@@ -157,7 +164,7 @@ export class SettingsDialog {
       this.effectsNote,
       this.controlsTitle,
       this.controls,
-      h('div', { class: 'dialog-actions' }, [this.close]),
+      h('div', { class: 'dialog-actions' }, [this.tutorial, this.close]),
     ]);
     scrollingDialog(this.element);
     this.element.addEventListener('click', (e) => {
@@ -192,6 +199,8 @@ export class SettingsDialog {
     this.effectsNote.textContent = t('effects.highOnly');
     this.controlsTitle.textContent = t('controls.title');
     this.close.textContent = t('about.close');
+    this.tutorial.textContent = t('tutorial.start');
+    this.tutorial.title = t('tutorial.start.hint');
     this.renderControls();
   }
 

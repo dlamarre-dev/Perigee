@@ -93,7 +93,7 @@ export class DetailPanel {
   private readonly sourcesTitle = h('h3', { class: 'results-title' });
   private readonly sources = h('ul', { class: 'sources small' });
   private readonly footnote = h('p', { class: 'muted small' });
-  private readonly follow = h('button', { type: 'button', class: 'btn' });
+  private readonly follow = h('button', { type: 'button', class: 'btn follow-button' });
   private readonly action = h('button', { type: 'button', class: 'btn' });
   private actionRun: (() => void) | undefined;
   private readonly close = h('button', { type: 'button', class: 'btn' });

@@ -35,6 +35,8 @@ import { About } from '../ui/About';
 import { SettingsDialog } from '../ui/SettingsDialog';
 import { FavoritesDialog } from '../ui/FavoritesDialog';
 import { GuidesDialog } from '../ui/GuidesDialog';
+import { WelcomeDialog, welcomeSeen } from '../ui/WelcomeDialog';
+import type { Tutorial } from '../ui/tutorial/Tutorial';
 import { watchKeyboardLayout } from '../ui/keyboardLayout';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setSimTime } from '../render/simTime';
@@ -481,6 +483,7 @@ function main(): void {
       // Applied from startup (MSAA, textures and models are chosen once): reload in place, view and camera kept.
       reloadKeepingView();
     },
+    onTutorial: () => void startTutorial(),
   });
   const report = new ReportDialog(i18n);
   // The headless engine (src/engine), loaded on first use: favorites' names and the embed API's details.
@@ -490,6 +493,30 @@ function main(): void {
       m.createEngine({ baseUrl: new URL(import.meta.env.BASE_URL, window.location.origin).href }),
     ));
   const guides = new GuidesDialog(i18n, import.meta.env.BASE_URL);
+  // Guided tour (src/ui/tutorial/Tutorial.ts), loaded on first use: from the welcome window, the settings or ?tutorial=1.
+  let tutorial: Promise<Tutorial> | undefined;
+  const startTutorial = async (): Promise<void> => {
+    tutorial ??= import('../ui/tutorial/Tutorial').then(
+      (m) =>
+        new m.Tutorial(i18n, {
+          openLink: (query) => openLink(query),
+          startFollow: () => {
+            if (!follow.active) view?.toggleFollow();
+          },
+          select: (sel) => void view?.selectId(sel),
+        }),
+    );
+    await (await tutorial).start();
+  };
+  const welcome = new WelcomeDialog(
+    i18n,
+    () => void startTutorial(),
+    (lang) => {
+      explicitLang = lang;
+      i18n.setLang(lang);
+      syncUrl();
+    },
+  );
   const favorites = new FavoritesDialog(i18n, {
     appUrl: () => new URL(import.meta.env.BASE_URL, window.location.origin).href,
     currentLink: () => {
@@ -610,6 +637,7 @@ function main(): void {
     about.element,
     settings.element,
     guides.element,
+    welcome.element,
     favorites.element,
     toast,
     report.element,
@@ -758,7 +786,18 @@ function main(): void {
   }
   // ?follow=1: follow the selection once it has a position (as after an update reload).
   if (startParams.get('follow') === '1') resumeFollowUntilMs = Date.now() + 20_000;
-  void switchView(viewId).then(() => embedApi?.ready());
+  void switchView(viewId).then(() => {
+    embedApi?.ready();
+    if (embed) return;
+    if (startParams.get('tutorial') === '1') void startTutorial();
+    // Once, for a new visitor opening the app itself: not for a shared link (it opens on its object), nor for
+    // automated browsers (tests); ?welcome=1 forces it.
+    else if (
+      startParams.get('welcome') === '1' ||
+      (!welcomeSeen() && !startParams.has('sel') && !startParams.has('e2e') && !navigator.webdriver)
+    )
+      welcome.open();
+  });
 
   // Clicks: select (click) and follow (double-click); drags are not clicks.
   let downAt: { x: number; y: number } | undefined;

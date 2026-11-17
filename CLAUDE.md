@@ -431,6 +431,14 @@ the "up" vector and causes gimbal lock at the poles).
   sets the date (or real time), rate and frame, then selects in place when the view and its filters are the same
   (the camera glides), else rebuilds the view from the link; `follow=1` resumes following like a page load.
 - Accessibility: keyboard-readable info panel, text list of filtered objects, AA contrast.
+- Welcome and guided tour: a new visitor gets a welcome window once (`src/ui/WelcomeDialog.ts`, `localStorage`
+  `perigee-welcome`; not for shared links with `sel=`, embeds, `?e2e` or automated browsers; `?welcome=1` forces it)
+  offering the guided tour or free exploration. The tour (`src/ui/tutorial/`, loaded on demand; also from the settings
+  window and `?tutorial=1`) lights one control at a time in a dimmed top-layer popover that blocks everything else
+  (moved into a modal dialog while one is open), then lets the visitor look around while following each object:
+  the ISS through the filters, LRO, Curiosity, Saturn, Voyager 1, Sirius and its star map, Apollo 11 from the
+  favorites, the settings. Steps are selectors and URL/DOM done-signals (`steps.ts`); what hides a target (the ☰
+  menu, a closed panel, a phone's detail sheet, a closed section) is lit first.
 - Machine interface (for AI teaching assistants): `src/engine/` is a headless engine (no DOM or WebGL) over the
   published data and the same `src/astro` models: `find`, `describe`, `state`, `distance`, `series`, `define`,
   `viewUrl`, `about`; every answer carries its provenance (`src/engine/provenance.ts`: model, sources, fetch time,

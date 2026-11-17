@@ -58,7 +58,7 @@ test('about panel shows the build version and the data refresh date', async ({ p
   await page.goto('./?lang=en');
   await page.getByRole('button', { name: 'About' }).click();
   const about = page.locator(
-    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides)',
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides):not(.welcome)',
   );
   await expect(about).toContainText(/Version \d+\.\d+\.\d+ · commit \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
@@ -138,7 +138,7 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   const menu = page.locator('.toolbar .menu-toggle');
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
   const dialog = page.locator(
-    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides)',
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides):not(.welcome)',
   );
   const isOpen = (): Promise<boolean> => dialog.evaluate((d) => (d as HTMLDialogElement).open);
   await expect(async () => {

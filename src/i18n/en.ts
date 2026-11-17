@@ -44,6 +44,72 @@ export const en = {
   'guides.intro':
     'Pages that answer common questions live (where is the ISS, how far is Voyager 1, what to see tonight…), with a 3D view to explore. Pick a topic:',
   'guides.all': 'All guides',
+  'welcome.title': 'Welcome to Perigee',
+  'welcome.text':
+    'Perigee shows, in real time and in 3D, the satellites around the Earth, the spacecraft around the Moon and Mars, and the probes crossing the solar system, computed in your browser from public data.',
+  'welcome.question':
+    'A short guided tour shows the main controls in a few minutes. You can replay it any time from the settings.',
+  'welcome.tutorial': 'Take the tour',
+  'welcome.explore': 'Explore freely',
+  'welcome.language': 'Language',
+  'tutorial.start': 'Guided tour',
+  'tutorial.start.hint': 'Replay the guided tour of the main controls',
+  'tutorial.count': 'Guided tour · {n} / {total}',
+  'tutorial.next': 'Next',
+  'tutorial.finish': 'Finish',
+  'tutorial.quit': 'Quit the tour',
+  'tutorial.loading': 'Loading…',
+  'tutorial.openMenu': 'Open the menu.',
+  'tutorial.openPanel': 'Open the panel.',
+  'tutorial.closeInfo': 'Close this panel to get back to the list.',
+  'tutorial.expand': 'Expand the panel.',
+  'tutorial.openSection': 'Open this section.',
+  'tutorial.time.x10': 'Time runs live here. Speed it up: choose ×10 and watch the satellites move.',
+  'tutorial.time.x1000': 'Faster still: choose ×1000. The Earth turns under the orbits.',
+  'tutorial.time.now': 'Back to real time: press Now.',
+  'tutorial.stars.siriusObserve':
+    'The camera turns towards Sirius, 8.6 light-years away, and the panel describes it. Look around, then press Next.',
+  'tutorial.iss.filter':
+    'This panel filters the thousands of satellites by operator, country, orbit… Tick the International Space Station.',
+  'tutorial.iss.select': 'Only the ISS is left in the list: select it.',
+  'tutorial.iss.observe':
+    'Here is the ISS, about 400 km up; the panel gives its altitude, speed and how fresh its data are. Look around: drag to turn, scroll or pinch to zoom, then press Next.',
+  'tutorial.iss.follow': 'The ISS goes round the Earth in 90 minutes. To stay with it, press Follow.',
+  'tutorial.iss.followObserve': 'The camera now follows the ISS as it moves. Look around, then press Next.',
+  'tutorial.moon.tab': 'Let’s go to the Moon: open the Moon view.',
+  'tutorial.moon.lro':
+    'Select LRO, NASA’s Lunar Reconnaissance Orbiter, which has been mapping the Moon since 2009.',
+  'tutorial.moon.observe': 'Here is LRO on its low orbit around the Moon. Take your time, then press Next.',
+  'tutorial.mars.tab': 'Now Mars: open the Mars view.',
+  'tutorial.mars.curiosity':
+    'The rovers are listed with the landing sites: select Curiosity, at its last known place.',
+  'tutorial.mars.observe':
+    'Curiosity has been driving in Gale crater since 2012. Zoom in on the ground around it.',
+  'tutorial.solar.tab': 'Further out: open the solar system view.',
+  'tutorial.solar.saturn': 'Select Saturn.',
+  'tutorial.solar.saturnObserve':
+    'Saturn, its rings and its moons, where they are today. Look around, then press Next.',
+  'tutorial.solar.saturnFollow': 'Follow Saturn too: press Follow.',
+  'tutorial.solar.saturnFollowObserve':
+    'The camera now stays with Saturn along its orbit. Look around, then press Next.',
+  'tutorial.solar.voyager': 'Now select Voyager 1, the farthest spacecraft from the Earth.',
+  'tutorial.solar.voyagerObserve':
+    'Voyager 1 left the planets behind in 1980 and is still sending data. Zoom out to see how far it is.',
+  'tutorial.stars.toggle': 'Perigee also names the stars: tick “Identify the bright stars”.',
+  'tutorial.stars.sirius': 'Select Sirius, the brightest star of the night sky.',
+  'tutorial.stars.map': 'The picture of the star opens a 3D map of the nearby stars: open it.',
+  'tutorial.stars.mapObserve':
+    'Every star of the catalogue is placed at its true distance around the Sun. Drag to turn the map, then press Next.',
+  'tutorial.stars.mapClose': 'Close the map.',
+  'tutorial.favorites.open': 'Favorites keep views you like. Open them.',
+  'tutorial.favorites.apollo': 'Pick Apollo 11 among the examples.',
+  'tutorial.favorites.observe':
+    'The Moon view opens on the Apollo 11 landing site, where people first walked on the Moon in 1969.',
+  'tutorial.settings.open': 'Last stop: open the settings.',
+  'tutorial.settings.close':
+    'Here are the image quality, the effects, the controls, and the button to replay this tour. Close the window.',
+  'tutorial.end':
+    'That’s it! Explore freely: every object can be clicked, and the Guides button answers common questions live.',
   'favorites.title': 'Favorites',
   'favorites.intro': 'Pick a view to go there. Your own favorites are kept in this browser only.',
   'favorites.live': 'real time',

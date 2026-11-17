@@ -42,7 +42,7 @@ export class InfoPanel {
   private readonly sources = h('ul', { class: 'sources small' });
   private readonly footnote = h('p', { class: 'muted small' });
   private lastSourcesKey = '';
-  private readonly follow = h('button', { type: 'button', class: 'btn' });
+  private readonly follow = h('button', { type: 'button', class: 'btn follow-button' });
   private readonly close = h('button', { type: 'button', class: 'btn' });
   private object: SatObject | undefined;
   private state: TemeState | undefined;
