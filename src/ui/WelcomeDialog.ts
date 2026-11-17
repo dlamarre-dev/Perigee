@@ -44,7 +44,7 @@ export class WelcomeDialog {
   private readonly tutorial = h('button', { type: 'button', class: 'btn primary welcome-tutorial' });
   private readonly explore = h('button', { type: 'button', class: 'btn welcome-explore' });
   /** The language, in case the browser's was not the visitor's (each name in its own language). */
-  private readonly langLabel = h('span', { class: 'group-label', id: 'welcome-lang-label' });
+  private readonly langGroup = h('div', { class: 'segmented', role: 'group' });
   private readonly langButtons = LANGS.map((lang) =>
     h('button', { type: 'button', class: 'btn', lang, 'data-lang': lang }, [LANG_NAMES[lang]]),
   );
@@ -55,6 +55,7 @@ export class WelcomeDialog {
     onTutorial: () => void,
     onLangChange: (lang: Lang) => void,
   ) {
+    this.langGroup.append(...this.langButtons);
     for (const button of this.langButtons)
       button.addEventListener('click', () => {
         const lang = button.dataset['lang'] as Lang;
@@ -73,14 +74,7 @@ export class WelcomeDialog {
     });
     this.element = h('dialog', { class: 'panel about welcome', 'aria-labelledby': 'welcome-title' }, [
       this.title,
-      h('div', { class: 'welcome-lang' }, [
-        this.langLabel,
-        h(
-          'div',
-          { class: 'segmented', role: 'group', 'aria-labelledby': 'welcome-lang-label' },
-          this.langButtons,
-        ),
-      ]),
+      h('div', { class: 'welcome-lang' }, [this.langGroup]),
       this.text,
       this.question,
       h('div', { class: 'dialog-actions welcome-actions' }, [this.explore, this.tutorial]),
@@ -114,7 +108,8 @@ export class WelcomeDialog {
     setText(this.question, t('welcome.question'));
     setText(this.tutorial, t('welcome.tutorial'));
     setText(this.explore, t('welcome.explore'));
-    setText(this.langLabel, t('welcome.language'));
+    // No visible label (the names speak for themselves); assistive technologies still hear what the group is.
+    this.langGroup.setAttribute('aria-label', t('welcome.language'));
     for (const button of this.langButtons)
       button.setAttribute('aria-pressed', String(button.dataset['lang'] === this.i18n.lang));
   }

@@ -2660,9 +2660,6 @@ body.music-open .altimeter {
 
 .about.welcome .welcome-lang {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
   margin: 4px 0 8px;
 }
 
@@ -2735,7 +2732,7 @@ body.music-open .altimeter {
   pointer-events: auto;
 }
 
-.tutorial-count {
+.tutorial .tutorial-count {
   margin: 0 0 4px;
   color: var(--accent);
   font-size: 11px;
@@ -2743,7 +2740,7 @@ body.music-open .altimeter {
   text-transform: uppercase;
 }
 
-.tutorial-text {
+.tutorial .tutorial-text {
   margin: 0 0 10px;
   line-height: 1.4;
 }
