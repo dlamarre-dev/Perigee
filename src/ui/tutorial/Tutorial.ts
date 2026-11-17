@@ -66,6 +66,18 @@ const visible = (el: Element): boolean =>
   typeof el.checkVisibility === 'function' ? el.checkVisibility() : el.getClientRects().length > 0;
 
 /** The first visible element matching `selector` (alternatives for desktop and phone), else the first one. */
+/**
+ * True when `el` lies outside its scrolling panel or window body (content loading above it, such as a panel's
+ * image, pushes it out after the first scroll), or outside the screen.
+ */
+const outOfView = (el: Element): boolean => {
+  const r = el.getBoundingClientRect();
+  const box = el.closest('.panel-body, .dialog-body')?.getBoundingClientRect();
+  const top = Math.max(0, box?.top ?? 0);
+  const bottom = Math.min(window.innerHeight, box?.bottom ?? window.innerHeight);
+  return r.top < top - 1 || r.bottom > bottom + 1;
+};
+
 const query = (selector: string): Element | null => {
   try {
     const all = [...document.querySelectorAll(selector)];
@@ -300,7 +312,7 @@ export class Tutorial {
   private layout(el: Element | undefined, free: boolean, holeEl?: Element): void {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    if (el && el !== this.lastTarget) {
+    if (el && (el !== this.lastTarget || outOfView(el))) {
       this.lastTarget = el;
       el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
