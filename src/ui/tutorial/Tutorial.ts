@@ -10,7 +10,7 @@
  * first. Nothing is stored; the steps live in ./steps.ts.
  */
 import type { I18n, MessageKey } from '../../i18n';
-import { h, setText } from '../dom';
+import { h, setPanelCollapsed, setText } from '../dom';
 import { TUTORIAL_STEPS, type TutorialStep } from './steps';
 
 export interface TutorialHost {
@@ -56,6 +56,8 @@ interface Reached {
   readonly el: Element;
   /** Caption for an intermediate control (menu, panel…); the step's own text otherwise. */
   readonly caption?: MessageKey | undefined;
+  /** A collapsed sheet: the whole of it is lit, and a tap anywhere on it expands it. */
+  readonly expand?: HTMLElement | undefined;
 }
 
 const visible = (el: Element): boolean =>
@@ -85,6 +87,9 @@ export class Tutorial {
     h('div', { class: 'tutorial-block' }),
   ];
   private readonly ring = h('div', { class: 'tutorial-ring', 'aria-hidden': 'true' });
+  /** Over a collapsed sheet: its grab bar is a thin target, so any tap on the sheet expands it. */
+  private readonly catcher = h('div', { class: 'tutorial-catcher', 'aria-hidden': 'true' });
+  private expandSheet: HTMLElement | undefined;
   private readonly count = h('p', { class: 'tutorial-count' });
   private readonly text = h('p', { class: 'tutorial-text', 'aria-live': 'polite' });
   private readonly next = h('button', { type: 'button', class: 'btn primary tutorial-next' });
@@ -109,7 +114,10 @@ export class Tutorial {
     private readonly app: TutorialHost,
     private readonly steps: readonly TutorialStep[] = TUTORIAL_STEPS,
   ) {
-    this.layer.append(...this.blocks, this.ring, this.card);
+    this.layer.append(...this.blocks, this.ring, this.catcher, this.card);
+    this.catcher.addEventListener('click', () => {
+      if (this.expandSheet) setPanelCollapsed(this.expandSheet, false);
+    });
     for (const type of BLOCKED_EVENTS)
       this.layer.addEventListener(
         type,
@@ -205,6 +213,7 @@ export class Tutorial {
       this.text,
       this.i18n.t(reached ? (reached.caption ?? step.text) : target ? step.text : 'tutorial.loading'),
     );
+    this.expandSheet = reached?.expand;
     this.lock(reached?.el);
     // A step may open a wider hole (a whole window to read) than the control it lights.
     const hole = reached && !reached.caption && step.hole ? (query(step.hole) ?? undefined) : undefined;
@@ -226,8 +235,7 @@ export class Tutorial {
     const sheet = el.closest<HTMLElement>('.side-panel.collapsed');
     if (visible(el) && !sheet) return { el, caption };
     if (sheet) {
-      const toggle = [...sheet.querySelectorAll('[data-panel-toggle]')].find(visible);
-      if (toggle) return { el: toggle, caption: 'tutorial.expand' };
+      if (visible(sheet)) return { el: sheet, caption: 'tutorial.expand', expand: sheet };
     }
     // A summary is visible in its closed section: look from the section's parent.
     const from = el.matches('details > summary') ? el.parentElement?.parentElement : el.parentElement;
@@ -298,6 +306,7 @@ export class Tutorial {
       b.style.height = `${Math.max(0, hgt)}px`;
     };
     for (const b of this.blocks) b.hidden = free;
+    this.catcher.hidden = free || !el || !this.expandSheet;
     this.ring.hidden = free || !el;
     if (free) {
       this.placeCard(undefined, vw, vh);
@@ -325,6 +334,7 @@ export class Tutorial {
     place(left, 0, hole.y0, hole.x0, hole.y1 - hole.y0);
     place(right, hole.x1, hole.y0, vw - hole.x1, hole.y1 - hole.y0);
     place(this.ring, lit.x0, lit.y0, lit.x1 - lit.x0, lit.y1 - lit.y0);
+    place(this.catcher, lit.x0, lit.y0, lit.x1 - lit.x0, lit.y1 - lit.y0);
     this.placeCard(lit, vw, vh, holeEl ? hole : undefined);
   }
 

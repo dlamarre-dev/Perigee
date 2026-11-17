@@ -2723,6 +2723,14 @@ body.music-open .altimeter {
   }
 }
 
+.tutorial-catcher {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 .tutorial-card {
   position: absolute;
   top: 0;

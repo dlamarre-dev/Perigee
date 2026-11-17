@@ -106,6 +106,16 @@ test('the guided tour: speed list, then the menu and the panel before the filter
   await expect(card).toContainText('Open the panel.');
   await page.locator('button[aria-controls="side-panel"]').tap();
   await expect(card).toContainText('Tick the International Space Station');
+  // A sheet lowered during the tour: the whole of it is lit, and a tap anywhere on it raises it again.
+  const sheet = page.locator('.side-panel.filters');
+  await sheet.locator('.sheet-grab').dispatchEvent('click');
+  await expect(sheet).toHaveClass(/collapsed/);
+  await expect(card).toContainText('Expand the panel.');
+  const box = await sheet.boundingBox();
+  if (!box) throw new Error('no sheet');
+  await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height - 12);
+  await expect(sheet).not.toHaveClass(/collapsed/);
+  await expect(card).toContainText('Tick the International Space Station');
   await page.locator('#f-science-25544').tap();
   await expect(page.locator('#f-science-25544')).toBeChecked();
 });
