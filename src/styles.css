@@ -2658,6 +2658,14 @@ body.music-open .altimeter {
   background: var(--accent-strong);
 }
 
+.about.welcome .welcome-lang {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 4px 0 8px;
+}
+
 .about.welcome {
   max-width: min(480px, calc(100vw - 32px));
 }

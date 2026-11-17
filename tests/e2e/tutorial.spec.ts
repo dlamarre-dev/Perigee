@@ -10,6 +10,12 @@ test('the welcome window shows once; "Explore freely" remembers it', async ({ pa
   // It opens once the first view has loaded.
   await expect(welcome).toBeVisible({ timeout: 30_000 });
   await expect(welcome.getByRole('heading')).toHaveText('Welcome to Perigee');
+  // The language can be switched from the window itself.
+  await welcome.getByRole('button', { name: 'Français' }).click();
+  await expect(welcome.getByRole('heading')).toHaveText('Bienvenue sur Périgée');
+  await expect(page).toHaveURL(/lang=fr/);
+  await welcome.getByRole('button', { name: 'English' }).click();
+  await expect(welcome.getByRole('heading')).toHaveText('Welcome to Perigee');
   await welcome.getByRole('button', { name: 'Explore freely' }).click();
   await expect(welcome).toBeHidden();
   expect(await page.evaluate(() => localStorage.getItem('perigee-welcome'))).toBe('1');
@@ -47,6 +53,12 @@ test('the guided tour lights one control at a time and can be quit', async ({ pa
   // Observe: free camera, Next.
   await expect(card(page)).toContainText('follows the ISS');
   await expect(ring(page)).toBeHidden();
+  // The card follows a language switch.
+  await page.locator('.toolbar [data-lang="fr"]').click();
+  await expect(card(page)).toContainText('La caméra suit maintenant l’ISS');
+  await expect(card(page)).toContainText('Visite guidée');
+  await page.locator('.toolbar [data-lang="en"]').click();
+  await expect(card(page)).toContainText('follows the ISS');
   // The top bar's way-out controls stay disabled while the camera is free, until a step asks for one.
   for (const control of ['.view-tabs button[data-view="moon"]', '.favorites-button', '.settings-button'])
     await expect(page.locator(control)).toBeDisabled();

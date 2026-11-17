@@ -3,10 +3,12 @@
  * shows, then two choices, the guided tour (src/ui/tutorial/Tutorial.ts) or exploring freely. However it closes
  * (a choice, Escape, the backdrop), `perigee-welcome` is stored so it does not come back.
  */
-import type { I18n } from '../i18n';
+import { LANGS, type I18n, type Lang } from '../i18n';
 import { h, scrollingDialog, setText } from './dom';
 
 export const WELCOME_KEY = 'perigee-welcome';
+
+const LANG_NAMES: Record<Lang, string> = { en: 'English', fr: 'Français' };
 
 function storage(): Storage | undefined {
   try {
@@ -41,12 +43,23 @@ export class WelcomeDialog {
   private readonly question = h('p', { class: 'muted' });
   private readonly tutorial = h('button', { type: 'button', class: 'btn primary welcome-tutorial' });
   private readonly explore = h('button', { type: 'button', class: 'btn welcome-explore' });
+  /** The language, in case the browser's was not the visitor's (each name in its own language). */
+  private readonly langLabel = h('span', { class: 'group-label', id: 'welcome-lang-label' });
+  private readonly langButtons = LANGS.map((lang) =>
+    h('button', { type: 'button', class: 'btn', lang, 'data-lang': lang }, [LANG_NAMES[lang]]),
+  );
   private choice: 'tutorial' | 'explore' = 'explore';
 
   constructor(
     private readonly i18n: I18n,
     onTutorial: () => void,
+    onLangChange: (lang: Lang) => void,
   ) {
+    for (const button of this.langButtons)
+      button.addEventListener('click', () => {
+        const lang = button.dataset['lang'] as Lang;
+        if (lang !== this.i18n.lang) onLangChange(lang);
+      });
     // Stored at once (the dialog's `close` event comes a task later): a reload right after does not show it again.
     this.tutorial.addEventListener('click', () => {
       this.choice = 'tutorial';
@@ -60,6 +73,14 @@ export class WelcomeDialog {
     });
     this.element = h('dialog', { class: 'panel about welcome', 'aria-labelledby': 'welcome-title' }, [
       this.title,
+      h('div', { class: 'welcome-lang' }, [
+        this.langLabel,
+        h(
+          'div',
+          { class: 'segmented', role: 'group', 'aria-labelledby': 'welcome-lang-label' },
+          this.langButtons,
+        ),
+      ]),
       this.text,
       this.question,
       h('div', { class: 'dialog-actions welcome-actions' }, [this.explore, this.tutorial]),
@@ -93,5 +114,8 @@ export class WelcomeDialog {
     setText(this.question, t('welcome.question'));
     setText(this.tutorial, t('welcome.tutorial'));
     setText(this.explore, t('welcome.explore'));
+    setText(this.langLabel, t('welcome.language'));
+    for (const button of this.langButtons)
+      button.setAttribute('aria-pressed', String(button.dataset['lang'] === this.i18n.lang));
   }
 }

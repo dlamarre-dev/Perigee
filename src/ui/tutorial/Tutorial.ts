@@ -122,6 +122,10 @@ export class Tutorial {
       );
     this.next.addEventListener('click', () => this.go(this.index + 1));
     this.quit.addEventListener('click', () => this.stop());
+    // The visitor may switch the language mid-tour (top bar, free steps): the card follows.
+    i18n.onChange(() => {
+      if (this.active) this.render();
+    });
   }
 
   get running(): boolean {

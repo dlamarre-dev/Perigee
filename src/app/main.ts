@@ -507,7 +507,15 @@ function main(): void {
     );
     await (await tutorial).start();
   };
-  const welcome = new WelcomeDialog(i18n, () => void startTutorial());
+  const welcome = new WelcomeDialog(
+    i18n,
+    () => void startTutorial(),
+    (lang) => {
+      explicitLang = lang;
+      i18n.setLang(lang);
+      syncUrl();
+    },
+  );
   const favorites = new FavoritesDialog(i18n, {
     appUrl: () => new URL(import.meta.env.BASE_URL, window.location.origin).href,
     currentLink: () => {

@@ -54,6 +54,7 @@ export const fr: Messages = {
     'Une courte visite guidée présente les principales commandes en quelques minutes. Vous pourrez la refaire à tout moment depuis les réglages.',
   'welcome.tutorial': 'Faire la visite',
   'welcome.explore': 'Explorer librement',
+  'welcome.language': 'Langue',
   'tutorial.start': 'Visite guidée',
   'tutorial.start.hint': 'Refaire la visite guidée des principales commandes',
   'tutorial.count': 'Visite guidée · {n} / {total}',

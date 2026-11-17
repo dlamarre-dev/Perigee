@@ -51,6 +51,7 @@ export const en = {
     'A short guided tour shows the main controls in a few minutes. You can replay it any time from the settings.',
   'welcome.tutorial': 'Take the tour',
   'welcome.explore': 'Explore freely',
+  'welcome.language': 'Language',
   'tutorial.start': 'Guided tour',
   'tutorial.start.hint': 'Replay the guided tour of the main controls',
   'tutorial.count': 'Guided tour · {n} / {total}',
