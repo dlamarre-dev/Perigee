@@ -77,7 +77,11 @@ export const fr: Messages = {
     'Ce panneau filtre les milliers de satellites par opérateur, pays, orbite… Cochez la Station spatiale internationale.',
   'tutorial.iss.select': 'Il ne reste que l’ISS dans la liste : sélectionnez-la.',
   'tutorial.iss.observe':
-    'La caméra suit maintenant l’ISS, à environ 400 km d’altitude. Explorez : faites glisser pour tourner, utilisez la molette ou pincez pour zoomer. Le panneau donne son altitude, sa vitesse et la fraîcheur de ses données.',
+    'Voici l’ISS, à environ 400 km d’altitude ; le panneau donne son altitude, sa vitesse et la fraîcheur de ses données. Explorez : faites glisser pour tourner, utilisez la molette ou pincez pour zoomer, puis appuyez sur Suivant.',
+  'tutorial.iss.follow':
+    'L’ISS fait le tour de la Terre en 90 minutes. Pour rester avec elle, appuyez sur Suivre.',
+  'tutorial.iss.followObserve':
+    'La caméra suit maintenant l’ISS dans son déplacement. Explorez, puis appuyez sur Suivant.',
   'tutorial.moon.tab': 'Direction la Lune : ouvrez la vue Lune.',
   'tutorial.moon.lro':
     'Sélectionnez LRO, le Lunar Reconnaissance Orbiter de la NASA, qui cartographie la Lune depuis 2009.',
@@ -92,6 +96,9 @@ export const fr: Messages = {
   'tutorial.solar.saturn': 'Sélectionnez Saturne.',
   'tutorial.solar.saturnObserve':
     'Saturne, ses anneaux et ses lunes, là où ils sont aujourd’hui. Explorez, puis appuyez sur Suivant.',
+  'tutorial.solar.saturnFollow': 'Suivez Saturne aussi : appuyez sur Suivre.',
+  'tutorial.solar.saturnFollowObserve':
+    'La caméra reste maintenant avec Saturne le long de son orbite. Explorez, puis appuyez sur Suivant.',
   'tutorial.solar.voyager': 'Sélectionnez maintenant Voyager 1, l’engin le plus éloigné de la Terre.',
   'tutorial.solar.voyagerObserve':
     'Voyager 1 a laissé les planètes derrière elle en 1980 et envoie encore des données. Dézoomez pour voir à quelle distance elle se trouve.',

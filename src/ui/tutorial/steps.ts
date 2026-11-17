@@ -24,6 +24,10 @@ const param = (key: string): string | null => new URLSearchParams(window.locatio
 const view = (): string => param('view') ?? 'earth';
 const isOpen = (selector: string): boolean => document.querySelector(`${selector}[open]`) !== null;
 const checked = (id: string): boolean => document.querySelector<HTMLInputElement>(`#${id}`)?.checked === true;
+/** The open info panel's Follow button (Earth satellites: InfoPanel; other objects: DetailPanel). */
+const FOLLOW_BUTTON = '.side-panel.info:not([hidden]) .follow-button';
+const following = (): boolean =>
+  document.querySelector(FOLLOW_BUTTON)?.getAttribute('aria-pressed') === 'true';
 
 export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   // Time: faster, much faster, then back to now (the rate buttons on large screens, the rate list on phones).
@@ -56,7 +60,10 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     target: 'button.result[data-norad="25544"]',
     done: () => param('sel') === '25544',
   },
-  { text: 'tutorial.iss.observe', observe: 'follow' },
+  { text: 'tutorial.iss.observe', observe: 'look' },
+  // Following, taught once on the ISS and once on Saturn.
+  { text: 'tutorial.iss.follow', target: FOLLOW_BUTTON, done: following },
+  { text: 'tutorial.iss.followObserve', observe: 'look' },
   // The Moon: LRO.
   {
     text: 'tutorial.moon.tab',
@@ -68,7 +75,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     target: 'button.result[data-mission="lro"]',
     done: () => view() === 'moon' && param('sel') === 'lro',
   },
-  { text: 'tutorial.moon.observe', observe: 'follow' },
+  { text: 'tutorial.moon.observe', observe: 'look' },
   // Mars: Curiosity, at its last known place.
   {
     text: 'tutorial.mars.tab',
@@ -93,13 +100,15 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     target: 'button.result[data-planet="saturn"]',
     done: () => view() === 'solar' && param('sel') === 'saturn',
   },
-  { text: 'tutorial.solar.saturnObserve', observe: 'follow' },
+  { text: 'tutorial.solar.saturnObserve', observe: 'look' },
+  { text: 'tutorial.solar.saturnFollow', target: FOLLOW_BUTTON, done: following },
+  { text: 'tutorial.solar.saturnFollowObserve', observe: 'look' },
   {
     text: 'tutorial.solar.voyager',
     target: 'button.result[data-mission="voyager-1"]',
     done: () => view() === 'solar' && param('sel') === 'voyager-1',
   },
-  { text: 'tutorial.solar.voyagerObserve', observe: 'follow' },
+  { text: 'tutorial.solar.voyagerObserve', observe: 'look' },
   // The stars: Sirius and the 3D star map.
   {
     text: 'tutorial.stars.toggle',

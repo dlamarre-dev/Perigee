@@ -73,7 +73,9 @@ export const en = {
     'This panel filters the thousands of satellites by operator, country, orbit… Tick the International Space Station.',
   'tutorial.iss.select': 'Only the ISS is left in the list: select it.',
   'tutorial.iss.observe':
-    'The camera now follows the ISS, about 400 km up. Look around: drag to turn, scroll or pinch to zoom. The panel gives its altitude, speed and how fresh its data are.',
+    'Here is the ISS, about 400 km up; the panel gives its altitude, speed and how fresh its data are. Look around: drag to turn, scroll or pinch to zoom, then press Next.',
+  'tutorial.iss.follow': 'The ISS goes round the Earth in 90 minutes. To stay with it, press Follow.',
+  'tutorial.iss.followObserve': 'The camera now follows the ISS as it moves. Look around, then press Next.',
   'tutorial.moon.tab': 'Let’s go to the Moon: open the Moon view.',
   'tutorial.moon.lro':
     'Select LRO, NASA’s Lunar Reconnaissance Orbiter, which has been mapping the Moon since 2009.',
@@ -87,6 +89,9 @@ export const en = {
   'tutorial.solar.saturn': 'Select Saturn.',
   'tutorial.solar.saturnObserve':
     'Saturn, its rings and its moons, where they are today. Look around, then press Next.',
+  'tutorial.solar.saturnFollow': 'Follow Saturn too: press Follow.',
+  'tutorial.solar.saturnFollowObserve':
+    'The camera now stays with Saturn along its orbit. Look around, then press Next.',
   'tutorial.solar.voyager': 'Now select Voyager 1, the farthest spacecraft from the Earth.',
   'tutorial.solar.voyagerObserve':
     'Voyager 1 left the planets behind in 1980 and is still sending data. Zoom out to see how far it is.',

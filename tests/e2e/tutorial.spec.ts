@@ -51,17 +51,24 @@ test('the guided tour lights one control at a time and can be quit', async ({ pa
   await page.locator('button.result[data-norad="25544"]').click();
   await expect(page).toHaveURL(/sel=25544/);
   // Observe: free camera, Next.
-  await expect(card(page)).toContainText('follows the ISS');
+  await expect(card(page)).toContainText('Here is the ISS');
   await expect(ring(page)).toBeHidden();
   // The card follows a language switch.
   await page.locator('.toolbar [data-lang="fr"]').click();
-  await expect(card(page)).toContainText('La caméra suit maintenant l’ISS');
+  await expect(card(page)).toContainText('Voici l’ISS');
   await expect(card(page)).toContainText('Visite guidée');
   await page.locator('.toolbar [data-lang="en"]').click();
-  await expect(card(page)).toContainText('follows the ISS');
+  await expect(card(page)).toContainText('Here is the ISS');
   // The top bar's way-out controls stay disabled while the camera is free, until a step asks for one.
   for (const control of ['.view-tabs button[data-view="moon"]', '.favorites-button', '.settings-button'])
     await expect(page.locator(control)).toBeDisabled();
+  await card(page).getByRole('button', { name: 'Next' }).click();
+  // Following is taught: the Follow button, then a look around.
+  await expect(card(page)).toContainText('press Follow');
+  const followButton = page.locator('.side-panel.info:not([hidden]) .follow-button');
+  await followButton.click();
+  await expect(followButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(card(page)).toContainText('follows the ISS as it moves');
   await card(page).getByRole('button', { name: 'Next' }).click();
   await expect(card(page)).toContainText('open the Moon view');
   await expect(ring(page)).toBeVisible();
