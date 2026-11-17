@@ -15,6 +15,8 @@ export interface ToolbarCallbacks {
   readonly onSettings: () => void;
   /** Favorite views (src/ui/FavoritesDialog.ts). */
   readonly onFavorites: () => void;
+  /** The guides' sections (src/ui/GuidesDialog.ts). */
+  readonly onGuides: () => void;
   readonly onTogglePanel: () => void;
   /** Soundtrack player (menu entry on phones, where its floating button is hidden). */
   readonly onSoundtrack: () => void;
@@ -71,6 +73,12 @@ export class Toolbar {
   private readonly settings = h('button', { type: 'button', class: 'btn settings-button' }, [
     h('span', { class: 'settings-icon', 'aria-hidden': 'true' }),
     this.settingsText,
+  ]);
+  /** Guides: a book icon on large screens, "Guides" in the phone menu. */
+  private readonly guidesText = h('span', { class: 'guides-text' });
+  private readonly guides = h('button', { type: 'button', class: 'btn guides-button' }, [
+    h('span', { class: 'guides-icon', 'aria-hidden': 'true' }),
+    this.guidesText,
   ]);
   /** Favorites: a star icon on large screens, "Favorites" in the phone menu. */
   private readonly favoritesText = h('span', { class: 'favorites-text' });
@@ -150,6 +158,7 @@ export class Toolbar {
 
     this.settings.addEventListener('click', callbacks.onSettings);
     this.favorites.addEventListener('click', callbacks.onFavorites);
+    this.guides.addEventListener('click', callbacks.onGuides);
 
     this.soundtrack.addEventListener('click', callbacks.onSoundtrack);
     this.menu.append(
@@ -157,6 +166,7 @@ export class Toolbar {
       this.recenter,
       h('div', { class: 'toolbar-group' }, [this.frameLabel, this.frameGroup]),
       this.langGroup,
+      this.guides,
       this.favorites,
       this.settings,
       this.photo,
@@ -243,6 +253,9 @@ export class Toolbar {
     this.photoText.textContent = t('toolbar.photo');
     this.photo.title = t('toolbar.photo.hint');
     this.photo.setAttribute('aria-label', t('toolbar.photo.hint'));
+    this.guidesText.textContent = t('toolbar.guides');
+    this.guides.title = t('toolbar.guides.hint');
+    this.guides.setAttribute('aria-label', t('toolbar.guides.hint'));
     this.favoritesText.textContent = t('toolbar.favorites');
     this.favorites.title = t('toolbar.favorites.hint');
     this.favorites.setAttribute('aria-label', t('toolbar.favorites.hint'));

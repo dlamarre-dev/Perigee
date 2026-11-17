@@ -500,7 +500,9 @@ the "up" vector and causes gimbal lock at the poles).
   listing every credit of `src/data/credits.ts`), the hubs `en/` and `fr/`,
   and `sitemap.xml` (written at build, no longer in `public/`; a page's `lastmod` is the latest of the last commit
   touching `src/landing/` and its catalogue entries' `verified`, so the deploy checks out the history without blobs);
-  the dev server renders the same pages. Each topic's 3D view is captured at 1200 × 630 per language by
+  the dev server renders the same pages. Each section of the hub (`src/landing/themes.ts`: name, slug, the topic whose
+  thumbnail stands for it) also has its own page `<lang>/<slug>/` (`renderTheme`, linked from the hub's headings);
+  the app's Guides window (book button of the top bar, `src/ui/GuidesDialog.ts`, About's frame) links to them. Each topic's 3D view is captured at 1200 × 630 per language by
   `tools/screenshots/og.ts` (local GPU, committed in `public/landing/og/<lang>/<id>.jpg`): its Open Graph image (with
   `og:image:alt`) and the poster shown until the iframe, which loads only after the page and once in sight (at once
   in the dashboard), says `ready`. One fixed

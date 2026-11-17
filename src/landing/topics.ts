@@ -6,6 +6,9 @@
  * students: the intro explains, the live widgets give the numbers.
  */
 import type { ViewId } from '../app/urlState';
+import type { ThemeId } from './themes';
+
+export { THEMES, themePath, type Theme, type ThemeId } from './themes';
 
 export interface Localized {
   readonly en: string;
@@ -40,17 +43,6 @@ export type TopicKind =
   | 'sky'
   /** Upcoming astronomical events. */
   | 'events';
-
-export type ThemeId = 'earth' | 'deep' | 'moon' | 'mars' | 'solar' | 'sky';
-
-export const THEMES: readonly { readonly id: ThemeId; readonly name: Localized }[] = [
-  { id: 'earth', name: L('Around the Earth', 'Autour de la Terre') },
-  { id: 'deep', name: L('Telescopes and space probes', 'Télescopes et sondes spatiales') },
-  { id: 'moon', name: L('The Moon', 'La Lune') },
-  { id: 'mars', name: L('Mars', 'Mars') },
-  { id: 'solar', name: L('The solar system', 'Le système solaire') },
-  { id: 'sky', name: L('The sky tonight', 'Le ciel ce soir') },
-];
 
 /** The 3D view embedded on the page (an app link in embed mode). */
 export interface TopicView {

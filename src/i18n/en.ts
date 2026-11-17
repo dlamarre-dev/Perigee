@@ -38,6 +38,12 @@ export const en = {
   'effects.modelLighting': '3D spacecraft: sunlight and shadows',
   'toolbar.favorites': 'Favorites',
   'toolbar.favorites.hint': 'Favorite views',
+  'toolbar.guides': 'Guides',
+  'toolbar.guides.hint': 'Guides: live answers by topic',
+  'guides.title': 'Guides',
+  'guides.intro':
+    'Pages that answer common questions live (where is the ISS, how far is Voyager 1, what to see tonight…), with a 3D view to explore. Pick a topic:',
+  'guides.all': 'All guides',
   'favorites.title': 'Favorites',
   'favorites.intro': 'Pick a view to go there. Your own favorites are kept in this browser only.',
   'favorites.live': 'real time',
@@ -544,6 +550,7 @@ export const en = {
   'app.refresh': 'Refresh',
   'unit.days': 'd',
   'landing.guides': 'Guides',
+  'landing.allGuides': '← All guides',
   'landing.hubTitle': 'Space, live: where is it now?',
   'landing.hubDescription':
     'Live answers to common questions about satellites, space probes, the Moon, Mars, the planets and tonight’s sky, with 3D views and the data sources.',

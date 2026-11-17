@@ -34,6 +34,7 @@ import { loadManifest } from '../data/loader';
 import { About } from '../ui/About';
 import { SettingsDialog } from '../ui/SettingsDialog';
 import { FavoritesDialog } from '../ui/FavoritesDialog';
+import { GuidesDialog } from '../ui/GuidesDialog';
 import { watchKeyboardLayout } from '../ui/keyboardLayout';
 import { ReportDialog, qualitySummary } from '../ui/ReportDialog';
 import { setSimTime } from '../render/simTime';
@@ -488,6 +489,7 @@ function main(): void {
     (engine ??= import('../engine').then((m) =>
       m.createEngine({ baseUrl: new URL(import.meta.env.BASE_URL, window.location.origin).href }),
     ));
+  const guides = new GuidesDialog(i18n, import.meta.env.BASE_URL);
   const favorites = new FavoritesDialog(i18n, {
     appUrl: () => new URL(import.meta.env.BASE_URL, window.location.origin).href,
     currentLink: () => {
@@ -559,6 +561,7 @@ function main(): void {
     onPhoto: () => void takePhoto(),
     onSettings: () => settings.open(),
     onFavorites: () => favorites.open(),
+    onGuides: () => guides.open(),
     onTogglePanel: () => {
       if (panelToggle) toolbar.setPanelOpen(panelToggle());
     },
@@ -606,6 +609,7 @@ function main(): void {
     offline,
     about.element,
     settings.element,
+    guides.element,
     favorites.element,
     toast,
     report.element,

@@ -12,7 +12,7 @@ import {
   topicCatalogueDate,
   viewQuery,
 } from '../src/landing/render';
-import { THEMES, TOPICS, topicPath } from '../src/landing/topics';
+import { THEMES, TOPICS, themePath, topicPath } from '../src/landing/topics';
 
 class MemoryStorage {
   private readonly map = new Map<string, string>();
@@ -98,8 +98,8 @@ describe('landing topics', () => {
 describe('landing pages', () => {
   const pages = renderAll(TEMPLATE, CTX);
 
-  it('are written for every topic and language, plus the two indexes and the credits', () => {
-    expect(pages.size).toBe(TOPICS.length * 2 + 4);
+  it('are written for every topic and language, plus the two indexes, the sections and the credits', () => {
+    expect(pages.size).toBe(TOPICS.length * 2 + THEMES.length * 2 + 4);
     expect(pages.has('en/where-is-the-iss/index.html')).toBe(true);
     expect(pages.has('fr/ou-est-la-station-spatiale/index.html')).toBe(true);
     expect(pages.has('fr/index.html')).toBe(true);
@@ -110,6 +110,21 @@ describe('landing pages', () => {
     const topic = pages.get('fr/ou-est-la-station-spatiale/index.html') ?? '';
     expect(topic).toContain(`href="/${CREDITS_PATHS.fr}"`);
     expect(topic).not.toContain('Solar System Scope');
+  });
+
+  it('give each section a page with its topics only, linked from the index', () => {
+    const hub = pages.get('fr/index.html') ?? '';
+    for (const theme of THEMES) expect(hub).toContain(`href="/${themePath(theme, 'fr')}"`);
+    const moon = THEMES.find((t) => t.id === 'moon');
+    if (!moon) throw new Error('no moon theme');
+    const html = pages.get(`${themePath(moon, 'fr')}index.html`) ?? '';
+    expect(html).toContain('<h1>La Lune</h1>');
+    expect(html).toContain('href="/fr/">← Tous les guides');
+    expect(html).toContain('hreflang="en" href="https://perigee.info/en/the-moon/"');
+    for (const t of TOPICS) {
+      if (t.theme === 'moon') expect(html).toContain(`href="/${topicPath(t, 'fr')}"`);
+      else expect(html).not.toContain(`href="/${topicPath(t, 'fr')}"`);
+    }
   });
 
   it('carry their title, canonical, hreflang pair and structured data', () => {

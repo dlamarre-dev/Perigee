@@ -41,6 +41,12 @@ export const fr: Messages = {
   'effects.modelLighting': 'Engins 3D : lumière du Soleil et ombres',
   'toolbar.favorites': 'Favoris',
   'toolbar.favorites.hint': 'Vues favorites',
+  'toolbar.guides': 'Guides',
+  'toolbar.guides.hint': 'Guides : réponses en direct par thème',
+  'guides.title': 'Guides',
+  'guides.intro':
+    'Des pages qui répondent en direct aux questions courantes (où est l’ISS, à quelle distance est Voyager 1, que voir ce soir…), avec une vue 3D à explorer. Choisissez un thème :',
+  'guides.all': 'Tous les guides',
   'favorites.title': 'Favoris',
   'favorites.intro':
     'Choisissez une vue pour vous y rendre. Vos propres favoris sont gardés dans ce navigateur seulement.',
@@ -558,6 +564,7 @@ export const fr: Messages = {
   'app.refresh': 'Actualiser',
   'unit.days': 'j',
   'landing.guides': 'Guides',
+  'landing.allGuides': '← Tous les guides',
   'landing.hubTitle': 'L’espace en direct : où est-il en ce moment ?',
   'landing.hubDescription':
     'Réponses en direct aux questions courantes sur les satellites, les sondes spatiales, la Lune, Mars, les planètes et le ciel de ce soir, avec vues 3D et sources des données.',

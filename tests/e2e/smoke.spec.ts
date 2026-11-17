@@ -58,7 +58,7 @@ test('about panel shows the build version and the data refresh date', async ({ p
   await page.goto('./?lang=en');
   await page.getByRole('button', { name: 'About' }).click();
   const about = page.locator(
-    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm)',
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides)',
   );
   await expect(about).toContainText(/Version \d+\.\d+\.\d+ · commit \w+/);
   await expect(about).toContainText(/Data last refreshed: satellites \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC/);
@@ -138,7 +138,7 @@ test('a long dialog scrolls its body, its frame stays put', async ({ page }) => 
   const menu = page.locator('.toolbar .menu-toggle');
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
   const dialog = page.locator(
-    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm)',
+    'dialog.about:not(.report):not(.settings):not(.favorites):not(.favorites-confirm):not(.guides)',
   );
   const isOpen = (): Promise<boolean> => dialog.evaluate((d) => (d as HTMLDialogElement).open);
   await expect(async () => {
@@ -236,4 +236,19 @@ test('search metadata follow the language and view; robots, sitemap and llms fil
     expect(await res.text()).toContain(text);
   }
   expect((await request.get('./og-image.jpg')).headers()['content-type']).toBe('image/jpeg');
+});
+
+test('the Guides window lists the sections and opens one', async ({ page }) => {
+  await page.goto('./?lang=fr');
+  await page.locator('.guides-button').click();
+  const dialog = page.locator('dialog.guides');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('.guides-tile')).toHaveCount(6);
+  await expect(dialog.locator('.guides-tile img')).toHaveCount(6);
+  await dialog.locator('.guides-tile[data-theme="moon"]').click();
+  await expect(page).toHaveURL(/\/fr\/la-lune\/$/);
+  await expect(page.locator('h1')).toHaveText('La Lune');
+  expect(await page.locator('.lp-hub-list a').count()).toBeLessThan(10);
+  await page.locator('.lp-hub-back a').click();
+  await expect(page).toHaveURL(/\/fr\/$/);
 });

@@ -16,7 +16,16 @@ import { LICENCES } from '../data/licences';
 import { isInactiveMission } from '../data/schemas';
 import { catalogs, imageOf, resolve, type ObjectRef } from '../engine/objects';
 import { I18n, type Lang, type MessageKey } from '../i18n';
-import { THEMES, TOPICS, topicHasPlace, topicPath, type Topic, type TopicView } from './topics';
+import {
+  THEMES,
+  TOPICS,
+  themePath,
+  topicHasPlace,
+  topicPath,
+  type Theme,
+  type Topic,
+  type TopicView,
+} from './topics';
 
 export interface RenderContext {
   /** Absolute site address for canonical links and structured data (https://perigee.info/). */
@@ -536,47 +545,74 @@ ${footer(i18n, ctx)}`;
   );
 }
 
-/** The guides' index in one language: every topic by theme. */
-export function renderHub(template: string, lang: Lang, ctx: RenderContext): string {
-  const i18n = new I18n(lang);
-  const o = other(lang);
-  const paths = { en: 'en/', fr: 'fr/' } as Record<Lang, string>;
-  const title = `${i18n.t('landing.hubTitle')} | ${BRAND[lang]}`;
-  const sections = THEMES.map((theme) => {
-    const items = TOPICS.filter((t) => t.theme === theme.id)
-      .map((t) => {
-        const thumb = topicThumbnail(t, ctx);
-        // Decorative: the question beside it names the page.
-        const img = thumb
-          ? `<img class="lp-hub-thumb" src="${ctx.base}${thumb}" alt="" width="112" height="84" loading="lazy" decoding="async">`
-          : '';
-        return `<li><a href="${ctx.base}${topicPath(t, lang)}">${img}<span class="lp-hub-text"><strong>${esc(t.question[lang])}</strong><span>${esc(t.description[lang])}</span></span></a></li>`;
-      })
-      .join('\n      ');
-    return `<section class="lp-hub-theme"><h2>${esc(theme.name[lang])}</h2><ul class="lp-hub-list">
+/** One section of the guides' list: its heading (a link to its own page on the hub) and its topics. */
+function themeSection(theme: Theme, lang: Lang, ctx: RenderContext, linkHeading: boolean): string {
+  const items = TOPICS.filter((t) => t.theme === theme.id)
+    .map((t) => {
+      const thumb = topicThumbnail(t, ctx);
+      // Decorative: the question beside it names the page.
+      const img = thumb
+        ? `<img class="lp-hub-thumb" src="${ctx.base}${thumb}" alt="" width="112" height="84" loading="lazy" decoding="async">`
+        : '';
+      return `<li><a href="${ctx.base}${topicPath(t, lang)}">${img}<span class="lp-hub-text"><strong>${esc(t.question[lang])}</strong><span>${esc(t.description[lang])}</span></span></a></li>`;
+    })
+    .join(`${NL}      `);
+  const heading = linkHeading
+    ? `<h2><a href="${ctx.base}${themePath(theme, lang)}">${esc(theme.name[lang])}</a></h2>`
+    : '';
+  return `<section class="lp-hub-theme">${heading}<ul class="lp-hub-list">
       ${items}
     </ul></section>`;
-  }).join('\n  ');
-  const ld = [
+}
+
+/**
+ * The guides' index in one language: every topic by theme (`theme` absent), or one section's page with its topics
+ * only and a link back to the index.
+ */
+function renderGuides(template: string, lang: Lang, ctx: RenderContext, theme?: Theme): string {
+  const i18n = new I18n(lang);
+  const o = other(lang);
+  const paths = theme
+    ? ({ en: themePath(theme, 'en'), fr: themePath(theme, 'fr') } as Record<Lang, string>)
+    : ({ en: 'en/', fr: 'fr/' } as Record<Lang, string>);
+  const heading = theme ? theme.name[lang] : i18n.t('landing.hubTitle');
+  const description = theme ? theme.description[lang] : i18n.t('landing.hubDescription');
+  const title = `${heading} | ${theme ? `${i18n.t('landing.guides')} | ` : ''}${BRAND[lang]}`;
+  const sections = (theme ? [theme] : THEMES).map((t) => themeSection(t, lang, ctx, !theme)).join(`${NL}  `);
+  const topics = TOPICS.filter((t) => !theme || t.theme === theme.id);
+  const ld: unknown[] = [
     {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: i18n.t('landing.hubTitle'),
-      description: i18n.t('landing.hubDescription'),
+      name: heading,
+      description,
       url: `${ctx.site}${paths[lang]}`,
       inLanguage: lang,
       isPartOf: { '@type': 'WebSite', name: BRAND[lang], url: ctx.site },
-      hasPart: TOPICS.map((t) => ({
+      hasPart: topics.map((t) => ({
         '@type': 'WebPage',
         name: t.question[lang],
         url: `${ctx.site}${topicPath(t, lang)}`,
       })),
     },
   ];
+  if (theme)
+    ld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: BRAND[lang], item: ctx.site },
+        { '@type': 'ListItem', position: 2, name: i18n.t('landing.guides'), item: `${ctx.site}${lang}/` },
+        { '@type': 'ListItem', position: 3, name: heading, item: `${ctx.site}${paths[lang]}` },
+      ],
+    });
+  const back = theme
+    ? `${NL}  <p class="lp-hub-back"><a href="${ctx.base}${lang}/">${esc(i18n.t('landing.allGuides'))}</a></p>`
+    : '';
   const body = `${header(i18n, ctx, `${ctx.base}${paths[o]}`, false)}
 <main class="lp lp-hub" id="lp-main">
-  <h1>${esc(i18n.t('landing.hubTitle'))}</h1>
-  <p class="lp-intro">${esc(i18n.t('landing.hubIntro'))}</p>
+  <h1>${esc(heading)}</h1>
+  <p class="lp-intro">${esc(i18n.t('landing.hubIntro'))}</p>${back}
   ${sections}
 </main>
 ${footer(i18n, ctx)}`;
@@ -584,9 +620,19 @@ ${footer(i18n, ctx)}`;
     template,
     lang,
     { 'data-hub': '1', 'data-base': ctx.base, 'data-other': `${ctx.base}${paths[o]}` },
-    headTags(title, i18n.t('landing.hubDescription'), lang, paths, ctx, ld),
+    headTags(title, description, lang, paths, ctx, ld),
     body,
   );
+}
+
+/** The guides' index in one language: every topic by theme. */
+export function renderHub(template: string, lang: Lang, ctx: RenderContext): string {
+  return renderGuides(template, lang, ctx);
+}
+
+/** One section's page: the index restricted to that theme. */
+export function renderTheme(template: string, theme: Theme, lang: Lang, ctx: RenderContext): string {
+  return renderGuides(template, lang, ctx, theme);
 }
 
 /** Every data source and software credit, the list of the app's About dialog. */
@@ -632,13 +678,15 @@ ${footer(i18n, ctx)}`;
 }
 
 /**
- * Every page: `<lang>/<slug>/index.html`, the two hubs `<lang>/index.html` and the credits pages, keyed by output
- * path.
+ * Every page: `<lang>/<slug>/index.html`, the two hubs `<lang>/index.html`, the sections' pages and the credits
+ * pages, keyed by output path.
  */
 export function renderAll(template: string, ctx: RenderContext): Map<string, string> {
   const out = new Map<string, string>();
   for (const lang of LANGS) {
     out.set(`${lang}/index.html`, renderHub(template, lang, ctx));
+    for (const theme of THEMES)
+      out.set(`${themePath(theme, lang)}index.html`, renderTheme(template, theme, lang, ctx));
     out.set(`${CREDITS_PATHS[lang]}index.html`, renderCredits(template, lang, ctx));
     for (const topic of TOPICS)
       out.set(`${topicPath(topic, lang)}index.html`, renderTopic(template, topic, lang, ctx));
@@ -651,6 +699,8 @@ export function renderPath(template: string, path: string, ctx: RenderContext): 
   const clean = path.replace(/index\.html$/, '');
   for (const lang of LANGS) {
     if (clean === `${lang}/`) return renderHub(template, lang, ctx);
+    const theme = THEMES.find((t) => themePath(t, lang) === clean);
+    if (theme) return renderTheme(template, theme, lang, ctx);
     if (clean === CREDITS_PATHS[lang]) return renderCredits(template, lang, ctx);
     const topic = TOPICS.find((t) => topicPath(t, lang) === clean);
     if (topic) return renderTopic(template, topic, lang, ctx);
@@ -685,6 +735,9 @@ ${LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${esc(
   const topicDate = (t: Topic): string =>
     [landingDate, topicCatalogueDate(t) ?? ''].sort().at(-1) ?? landingDate;
   const hubs = entry({ en: 'en/', fr: 'fr/' }, 'en/', '0.9', landingDate);
+  const themes = THEMES.map((t) =>
+    entry({ en: themePath(t, 'en'), fr: themePath(t, 'fr') }, themePath(t, 'en'), '0.8', landingDate),
+  );
   const topics = TOPICS.map((t) =>
     entry({ en: topicPath(t, 'en'), fr: topicPath(t, 'fr') }, topicPath(t, 'en'), '0.8', topicDate(t)),
   );
@@ -694,7 +747,7 @@ ${LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${esc(
 <!-- Written at build time (src/landing/render.ts): one URL per app view and language (the other URL parameters
      are not indexed), the guides and their pages, the privacy and credits pages. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${[...views, hubs, ...topics, privacy, credits].join(NL)}
+${[...views, hubs, ...themes, ...topics, privacy, credits].join(NL)}
 </urlset>
 `;
 }
