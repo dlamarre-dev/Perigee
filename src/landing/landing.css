@@ -788,6 +788,24 @@ h3 {
   margin: 26px 0;
 }
 
+.lp-hub-theme h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lp-hub-theme h2 a::after {
+  content: ' ›';
+}
+
+.lp-hub-theme h2 a:hover,
+.lp-hub-theme h2 a:focus-visible {
+  text-decoration: underline;
+}
+
+.lp-hub-back {
+  margin: 10px 0 0;
+}
+
 .lp-hub-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
