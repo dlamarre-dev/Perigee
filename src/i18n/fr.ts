@@ -47,6 +47,63 @@ export const fr: Messages = {
   'guides.intro':
     'Des pages qui répondent en direct aux questions courantes (où est l’ISS, à quelle distance est Voyager 1, que voir ce soir…), avec une vue 3D à explorer. Choisissez un thème :',
   'guides.all': 'Tous les guides',
+  'welcome.title': 'Bienvenue sur Périgée',
+  'welcome.text':
+    'Périgée montre en temps réel et en 3D les satellites autour de la Terre, les sondes autour de la Lune et de Mars, et celles qui traversent le système solaire, calculés dans votre navigateur à partir de données publiques.',
+  'welcome.question':
+    'Une courte visite guidée présente les principales commandes en quelques minutes. Vous pourrez la refaire à tout moment depuis les réglages.',
+  'welcome.tutorial': 'Faire la visite',
+  'welcome.explore': 'Explorer librement',
+  'tutorial.start': 'Visite guidée',
+  'tutorial.start.hint': 'Refaire la visite guidée des principales commandes',
+  'tutorial.count': 'Visite guidée · {n} / {total}',
+  'tutorial.next': 'Suivant',
+  'tutorial.finish': 'Terminer',
+  'tutorial.skip': 'Passer',
+  'tutorial.quit': 'Quitter la visite',
+  'tutorial.loading': 'Chargement…',
+  'tutorial.openMenu': 'Ouvrez le menu.',
+  'tutorial.openPanel': 'Ouvrez le panneau.',
+  'tutorial.closeInfo': 'Fermez ce panneau pour revenir à la liste.',
+  'tutorial.expand': 'Agrandissez le panneau.',
+  'tutorial.openSection': 'Ouvrez cette section.',
+  'tutorial.iss.filter':
+    'Ce panneau filtre les milliers de satellites par opérateur, pays, orbite… Cochez la Station spatiale internationale.',
+  'tutorial.iss.select': 'Il ne reste que l’ISS dans la liste : sélectionnez-la.',
+  'tutorial.iss.observe':
+    'La caméra suit maintenant l’ISS, à environ 400 km d’altitude. Explorez : faites glisser pour tourner, utilisez la molette ou pincez pour zoomer. Le panneau donne son altitude, sa vitesse et la fraîcheur de ses données.',
+  'tutorial.moon.tab': 'Direction la Lune : ouvrez la vue Lune.',
+  'tutorial.moon.lro':
+    'Sélectionnez LRO, le Lunar Reconnaissance Orbiter de la NASA, qui cartographie la Lune depuis 2009.',
+  'tutorial.moon.observe':
+    'Voici LRO sur son orbite basse autour de la Lune. Prenez votre temps, puis appuyez sur Suivant.',
+  'tutorial.mars.tab': 'Maintenant Mars : ouvrez la vue Mars.',
+  'tutorial.mars.curiosity':
+    'Les rovers sont listés avec les sites d’atterrissage : sélectionnez Curiosity, à sa dernière position connue.',
+  'tutorial.mars.observe':
+    'Curiosity roule dans le cratère Gale depuis 2012. Zoomez sur le sol autour de lui.',
+  'tutorial.solar.tab': 'Plus loin : ouvrez la vue du système solaire.',
+  'tutorial.solar.saturn': 'Sélectionnez Saturne.',
+  'tutorial.solar.saturnObserve':
+    'Saturne, ses anneaux et ses lunes, là où ils sont aujourd’hui. Explorez, puis appuyez sur Suivant.',
+  'tutorial.solar.voyager': 'Sélectionnez maintenant Voyager 1, l’engin le plus éloigné de la Terre.',
+  'tutorial.solar.voyagerObserve':
+    'Voyager 1 a laissé les planètes derrière elle en 1980 et envoie encore des données. Dézoomez pour voir à quelle distance elle se trouve.',
+  'tutorial.stars.toggle': 'Périgée nomme aussi les étoiles : cochez « Identifier les étoiles brillantes ».',
+  'tutorial.stars.sirius': 'Sélectionnez Sirius, l’étoile la plus brillante du ciel nocturne.',
+  'tutorial.stars.map': 'L’image de l’étoile ouvre une carte 3D des étoiles proches : ouvrez-la.',
+  'tutorial.stars.mapObserve':
+    'Chaque étoile du catalogue est placée à sa vraie distance autour du Soleil. Faites glisser pour tourner la carte, puis appuyez sur Suivant.',
+  'tutorial.stars.mapClose': 'Fermez la carte.',
+  'tutorial.favorites.open': 'Les favoris gardent les vues que vous aimez. Ouvrez-les.',
+  'tutorial.favorites.apollo': 'Choisissez Apollo 11 parmi les exemples.',
+  'tutorial.favorites.observe':
+    'La vue Lune s’ouvre sur le site d’Apollo 11, où des humains ont marché sur la Lune pour la première fois en 1969.',
+  'tutorial.settings.open': 'Dernière étape : ouvrez les réglages.',
+  'tutorial.settings.close':
+    'Voici la qualité d’image, les effets, les commandes, et le bouton pour refaire cette visite. Fermez la fenêtre.',
+  'tutorial.end':
+    'C’est tout ! Explorez librement : chaque objet est cliquable, et le bouton Guides répond en direct aux questions courantes.',
   'favorites.title': 'Favoris',
   'favorites.intro':
     'Choisissez une vue pour vous y rendre. Vos propres favoris sont gardés dans ce navigateur seulement.',

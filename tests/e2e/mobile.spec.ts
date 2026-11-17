@@ -90,3 +90,15 @@ test('a tapped button does not stay highlighted, and the bars are not selectable
   // The date field stays editable.
   expect(await page.locator('#time-jump').evaluate((e) => getComputedStyle(e).userSelect)).not.toBe('none');
 });
+
+test('the guided tour opens the menu, then the panel, before the filters', async ({ page }) => {
+  await page.goto('./?lang=en&tutorial=1');
+  const card = page.locator('.tutorial .tutorial-card');
+  await expect(card).toContainText('Open the menu.', { timeout: 30_000 });
+  await page.locator('.menu-toggle').tap();
+  await expect(card).toContainText('Open the panel.');
+  await page.locator('button[aria-controls="side-panel"]').tap();
+  await expect(card).toContainText('Tick the International Space Station');
+  await page.locator('#f-science-25544').tap();
+  await expect(page.locator('#f-science-25544')).toBeChecked();
+});
