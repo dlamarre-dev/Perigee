@@ -62,7 +62,11 @@ test('the guided tour lights one control at a time and can be quit', async ({ pa
   // The top bar's way-out controls stay disabled while the camera is free, until a step asks for one.
   for (const control of ['.view-tabs button[data-view="moon"]', '.favorites-button', '.settings-button'])
     await expect(page.locator(control)).toBeDisabled();
+  // Closing the object's panel while looking around: Next brings it back for the Follow step.
+  await page.locator('.side-panel.info:not([hidden]) .panel-actions .btn:not(.panel-minimize)').click();
+  await expect(page).not.toHaveURL(/sel=25544/);
   await card(page).getByRole('button', { name: 'Next' }).click();
+  await expect(page).toHaveURL(/sel=25544/);
   // Following is taught: the Follow button, then a look around.
   await expect(card(page)).toContainText('press Follow');
   const followButton = page.locator('.side-panel.info:not([hidden]) .follow-button');

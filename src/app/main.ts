@@ -503,6 +503,7 @@ function main(): void {
           startFollow: () => {
             if (!follow.active) view?.toggleFollow();
           },
+          select: (sel) => void view?.selectId(sel),
         }),
     );
     await (await tutorial).start();

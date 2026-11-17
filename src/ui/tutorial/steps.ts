@@ -18,6 +18,8 @@ export interface TutorialStep {
   readonly hole?: string;
   /** False: the blocked part is not darkened (the 3D view must be seen, e.g. time running faster). */
   readonly dim?: boolean;
+  /** The selection the step needs (URL id): restored on entering it if the visitor closed the object's panel. */
+  readonly select?: string;
 }
 
 const param = (key: string): string | null => new URLSearchParams(window.location.search).get(key);
@@ -62,7 +64,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   },
   { text: 'tutorial.iss.observe', observe: 'look' },
   // Following, taught once on the ISS and once on Saturn.
-  { text: 'tutorial.iss.follow', target: FOLLOW_BUTTON, done: following },
+  { text: 'tutorial.iss.follow', target: FOLLOW_BUTTON, select: '25544', done: following },
   { text: 'tutorial.iss.followObserve', observe: 'look' },
   // The Moon: LRO.
   {
@@ -101,7 +103,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     done: () => view() === 'solar' && param('sel') === 'saturn',
   },
   { text: 'tutorial.solar.saturnObserve', observe: 'look' },
-  { text: 'tutorial.solar.saturnFollow', target: FOLLOW_BUTTON, done: following },
+  { text: 'tutorial.solar.saturnFollow', target: FOLLOW_BUTTON, select: 'saturn', done: following },
   { text: 'tutorial.solar.saturnFollowObserve', observe: 'look' },
   {
     text: 'tutorial.solar.voyager',
@@ -124,6 +126,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   { text: 'tutorial.stars.siriusObserve', observe: 'look' },
   {
     text: 'tutorial.stars.map',
+    select: 'star:sirius',
     target: '.side-panel.info:not([hidden]) .star-map-button',
     done: () => isOpen('dialog.star-map'),
   },

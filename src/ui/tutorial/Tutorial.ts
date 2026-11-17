@@ -18,6 +18,8 @@ export interface TutorialHost {
   readonly openLink: (query: string) => Promise<void>;
   /** Follows the current selection, when it is not followed yet. */
   readonly startFollow: () => void;
+  /** Selects an object of the current view by its URL id (its panel opens). */
+  readonly select: (sel: string) => void;
 }
 
 /** Space between a lit control and the hole's edge (px). */
@@ -174,6 +176,9 @@ export class Tutorial {
     this.index = index;
     this.lastTarget = undefined;
     const step = this.steps[index];
+    // The visitor may have closed the object's panel (or picked another) while looking around: bring it back.
+    if (step?.select && new URLSearchParams(window.location.search).get('sel') !== step.select)
+      this.app.select(step.select);
     if (step?.observe === 'follow') this.app.startFollow();
     this.render();
   }
