@@ -221,8 +221,8 @@ summary,
   --tone: var(--accent-strong);
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 2px 10px 2px 8px;
+  gap: 5px;
+  padding: 2px 7px 2px 6px;
   border-bottom: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
   background: color-mix(in srgb, var(--tone) 9%, transparent);
   clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
@@ -247,10 +247,13 @@ summary,
   text-transform: uppercase;
 }
 
-/* Status next to the clock (live / paused / ×rate): fixed width so switching states does not move the bar. */
+/*
+ * Status next to the clock (live / paused / ×rate): fixed width so switching states does not move the bar; the
+ * widest English state (×100,000) with its diamond. The bar is tight at 1280 px (src/ui/fit.ts).
+ */
 .time-readout .badge {
   justify-content: center;
-  min-width: 14ch;
+  min-width: 13ch;
 }
 
 /* Play ↔ pause labels differ in width (and by language). */
