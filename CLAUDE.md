@@ -550,7 +550,10 @@ the "up" vector and causes gimbal lock at the poles).
 - Screen-sized markers on a body surface (sites) do not depth-test: occlusion is computed on the CPU
   (`occludedBySphere`), otherwise the flat sprite sinks into the curved surface when seen from afar. The same holds for
   their selection ring (`SelectionMarker` surface mode). In the solar view the Sun, planets and small bodies hide
-  the markers and labels behind them (`occludedBySphereAt`); in the Moon view the Earth does too.
+  the markers and labels behind them (`occludedBySphereAt`); in the Moon view the Earth does too. In every view the
+  selected object's 3D model, while drawn, hides the markers and labels behind it (`SceneModel.hides`: a coarse
+  occupancy grid of the model built once at load, `src/render/voxelGrid.ts`, walked along the camera ray;
+  `LabelLayer.occluders`). Markers are HUD waypoints (diamonds, `MarkerPoints`), the selection a four-chevron reticle.
 - **Quality tiers** (`src/render/quality.ts`): high (desktop-class GPU), medium (touch devices, < 8 GB, no MSAA),
   low (≤ 4 GB, ≤ 4 cores, max texture < 8192, software GPU, data saver), decided at startup from cheap signals
   (WebGL caps and GPU name from a throwaway context, `deviceMemory`, cores, pointer, saveData). The tier sets the

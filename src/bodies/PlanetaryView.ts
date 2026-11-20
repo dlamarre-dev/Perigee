@@ -30,7 +30,7 @@ import {
   type TrackSample,
 } from '../astro/track';
 import type { EphemerisTable } from '../astro/hermite';
-import { add, cross, dot, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
+import { add, cross, length, normalize, scale, sub, type Vec3 } from '../astro/vec3';
 import { bodyFollow, orbitStateLookingFrom, type CameraObstacle } from '../camera/orbitMath';
 import { datasetKey, ephemerisKey, ephemerisPastKey } from '../app/updates';
 import { loadEphemeris, loadManifest, loadOptionalDataset } from '../data/loader';
@@ -582,31 +582,33 @@ export class PlanetaryView implements View {
           }
         : undefined,
     );
+    // The labels behind the model go too.
+    this.labels.occluders =
+      shown && scene && entry
+        ? [
+            {
+              centreKm: scene,
+              radiusKm: (entry.sizeM / 1000) * 0.6,
+              hides: (cameraKm, pointKm, key) => this.sceneModel.hides(cameraKm, pointKm, scene, key),
+            },
+          ]
+        : [];
     if (shown && scene && entry) {
       hideMarker();
-      this.hideBehindModel(originKm, scene, entry.sizeM / 1000);
+      this.hideBehindModel(originKm, scene);
     }
   }
 
   /**
-   * Markers drawn without depth test (sites, other spacecraft) would show through a 3D model: hide those behind
-   * it, within its bounding circle on screen.
+   * Markers drawn without depth test (sites, other spacecraft) would show through a 3D model: hide those its
+   * mesh covers.
    */
-  private hideBehindModel(originKm: Vec3, modelScene: Vec3, sizeKm: number): void {
-    const toModel = sub(modelScene, originKm);
-    const distKm = length(toModel);
-    if (distKm === 0) return;
-    const radiusRad = Math.atan2(sizeKm * 0.6, distKm);
-    const dir = scale(toModel, 1 / distKm);
-    const behind = (p: Vec3): boolean => {
-      const v = sub(p, originKm);
-      const d = length(v);
-      return d > distKm && Math.acos(Math.min(1, dot(v, dir) / d)) < radiusRad;
-    };
+  private hideBehindModel(originKm: Vec3, modelScene: Vec3): void {
+    const behind = (p: Vec3, key: string): boolean => this.sceneModel.hides(originKm, p, modelScene, key);
     let sites = false;
-    this.sites.forEach((_, i) => {
+    this.sites.forEach((site, i) => {
       const p = this.siteScene[i];
-      if (p && behind(p)) {
+      if (p && behind(p, `s:${site.id}`)) {
         this.siteMarkers.hide(i);
         sites = true;
       }
@@ -614,7 +616,7 @@ export class PlanetaryView implements View {
     if (sites) this.siteMarkers.commit();
     let missions = false;
     for (const t of this.tracked) {
-      if (t.scene && t.scene !== modelScene && behind(t.scene)) {
+      if (t.scene && t.scene !== modelScene && behind(t.scene, `m:${t.mission.id}`)) {
         this.missionMarkers.hide(t.index);
         missions = true;
       }

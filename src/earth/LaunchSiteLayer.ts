@@ -10,7 +10,13 @@ import { quatRotate, type Quat } from '../astro/quat';
 import { length, scale, sub, type Vec3 } from '../astro/vec3';
 import type { LaunchSite } from '../data/schemas';
 import type { Lang } from '../i18n';
-import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
+import {
+  LabelLayer,
+  LabelPriority,
+  occludedByAny,
+  occludedBySphere,
+  type OccluderSphere,
+} from '../render/Labels';
 import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
@@ -33,6 +39,8 @@ export class LaunchSiteLayer {
   private selectedId: string | undefined;
   private visibleValue = true;
   private readonly v = new Vector3();
+  /** The selected satellite's 3D model, hiding the sites and labels behind it. */
+  private occluders: readonly OccluderSphere[] = [];
 
   constructor(readonly sites: readonly LaunchSite[]) {
     this.bodyKm = sites.map((s) => scale(latLonToUnit(s.latDeg * DEG_TO_RAD, s.lonDeg * DEG_TO_RAD), R + 2));
@@ -74,13 +82,26 @@ export class LaunchSiteLayer {
     return this.sceneKm[this.sites.findIndex((s) => s.id === id)];
   }
 
-  placeOrigin(originKm: Vec3, camera: PerspectiveCamera, widthCss: number, heightCss: number): void {
+  placeOrigin(
+    originKm: Vec3,
+    camera: PerspectiveCamera,
+    widthCss: number,
+    heightCss: number,
+    occluders: readonly OccluderSphere[] = [],
+  ): void {
     this.originKm = originKm;
+    this.occluders = occluders;
+    this.labels.occluders = occluders;
     this.labels.begin();
     this.sites.forEach((site, i) => {
       const scene = this.sceneKm[i];
       const body = this.bodyKm[i];
-      const shown = this.visibleValue && scene && body && !occludedBySphere(originKm, scene, R);
+      const shown =
+        this.visibleValue &&
+        scene &&
+        body &&
+        !occludedBySphere(originKm, scene, R) &&
+        !occludedByAny(originKm, scene, occluders, `launch:${site.id}`);
       if (shown) this.markers.setPosition(i, body[0], body[1], body[2]);
       else this.markers.hide(i);
       if (site.id === this.selectedId) this.ring.setOccluded(!shown);
@@ -114,7 +135,12 @@ export class LaunchSiteLayer {
     let best: { site: LaunchSite; distancePx: number } | undefined;
     this.sites.forEach((site, i) => {
       const scene = this.sceneKm[i];
-      if (!scene || occludedBySphere(this.originKm, scene, R)) return;
+      if (
+        !scene ||
+        occludedBySphere(this.originKm, scene, R) ||
+        occludedByAny(this.originKm, scene, this.occluders, `launch:${site.id}`)
+      )
+        return;
       const r = sub(scene, this.originKm);
       this.v.set(r[0], r[1], r[2]).project(camera);
       if (this.v.z > 1) return;
