@@ -126,10 +126,12 @@ test.describe('immersive effects', () => {
     expect(errors).toEqual([]);
   });
 
-  test('are greyed out below the high tier', async ({ page }) => {
+  test('are greyed out below their tier (sunspots from medium)', async ({ page }) => {
     await page.goto('./?lang=fr&view=solar&quality=medium');
     await page.getByRole('button', { name: /^Réglages/ }).click();
     await expect(page.getByLabel('Relief')).toBeDisabled();
-    await expect(page.getByText('Disponible en qualité élevée seulement.')).toBeVisible();
+    await expect(page.getByLabel('Éblouissement du Soleil et reflets d’objectif')).toBeDisabled();
+    await expect(page.getByLabel('Taches solaires (NOAA)')).toBeEnabled();
+    await expect(page.getByText('Les effets grisés demandent une qualité plus élevée.')).toBeVisible();
   });
 });
