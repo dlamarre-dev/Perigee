@@ -37,7 +37,7 @@ import {
 import type { BodyMesh } from '../render/BodyMesh';
 import { createEarthMesh } from '../render/earthMesh';
 import { DistantSun } from '../render/SunMesh';
-import { LabelLayer, LabelPriority } from '../render/Labels';
+import { LabelLayer, LabelPriority, type OccluderSphere } from '../render/Labels';
 import { eqdFromEqj, MoonInSky } from './MoonInSky';
 import { SceneModel, modelFollowDistanceKm, modelFor, modelMinDistance } from '../render/models';
 import { countryName } from '../ui/countries';
@@ -339,6 +339,10 @@ class EarthView implements View {
     this.sats?.placeOrigin(originKm);
     this.distantSun.place(this.sunSceneKm, originKm);
     const canvasEl = this.host.renderer.canvas;
+    // The selected satellite's 3D model (as drawn last frame) hides the markers and labels behind it.
+    const occluders = this.modelOccluders();
+    this.moon.labels.occluders = occluders;
+    if (this.earthLabel) this.earthLabel.occluders = occluders;
     this.moon.place(
       originKm,
       this.host.renderer.camera,
@@ -347,8 +351,20 @@ class EarthView implements View {
       canvasEl.clientHeight,
     );
     const canvas = this.host.renderer.canvas;
-    this.launch.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
-    this.observer.placeOrigin(originKm, this.host.renderer.camera, canvas.clientWidth, canvas.clientHeight);
+    this.launch.placeOrigin(
+      originKm,
+      this.host.renderer.camera,
+      canvas.clientWidth,
+      canvas.clientHeight,
+      occluders,
+    );
+    this.observer.placeOrigin(
+      originKm,
+      this.host.renderer.camera,
+      canvas.clientWidth,
+      canvas.clientHeight,
+      occluders,
+    );
     this.placeModel(originKm);
     if (this.earthMoonLine) {
       // Surface to surface, camera-relative.
@@ -381,6 +397,22 @@ class EarthView implements View {
       );
       this.earthLabel.layout(w, hgt);
     }
+  }
+
+  /** The selected satellite's 3D model while drawn (its mesh, at this frame's position). */
+  private modelOccluders(): OccluderSphere[] {
+    if (this.sceneModel.shownSizePx === 0 || this.selectedNorad === undefined) return [];
+    const entry = modelFor(`norad:${this.selectedNorad}`);
+    const pos = entry ? this.sats?.selectedWorldPositionKm(this.frameAngleRad) : undefined;
+    return entry && pos
+      ? [
+          {
+            centreKm: pos,
+            radiusKm: entry.sizeM / 2000,
+            hides: (cameraKm, pointKm, key) => this.sceneModel.hides(cameraKm, pointKm, pos, key),
+          },
+        ]
+      : [];
   }
 
   /** The selected satellite's 3D model (LVLH attitude: nadir axis down, front along the velocity). */

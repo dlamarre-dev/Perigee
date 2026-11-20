@@ -461,7 +461,13 @@ class SolarView implements View {
   private readonly offMapVariant: () => void;
   private readonly ring: SelectionMarker;
   /** Spheres that hide what is behind them this frame (scene km); rebuilt in placeOrigin. */
-  private occluders: { readonly id: string; readonly sceneKm: Vec3; readonly radiusKm: number }[] = [];
+  /** `model`: the selected 3D model (its mesh hides markers and labels; no camera obstacle). */
+  private occluders: {
+    readonly id: string;
+    readonly sceneKm: Vec3;
+    readonly radiusKm: number;
+    readonly model?: true;
+  }[] = [];
   /** Frame the selection once its position is known (next update). */
   private pendingFrame = false;
   private readonly loadedData = new Map<string, string>();
@@ -830,7 +836,7 @@ class SolarView implements View {
   /** The "body-fixed" frame of this view is the J2000 ecliptic. */
   /** The Sun, planets, moons and small bodies drawn at true scale (the same set that hides markers). */
   cameraObstacles(): readonly CameraObstacle[] {
-    return this.occluders.map((o) => ({ centreKm: o.sceneKm, radiusKm: o.radiusKm }));
+    return this.occluders.filter((o) => !o.model).map((o) => ({ centreKm: o.sceneKm, radiusKm: o.radiusKm }));
   }
 
   distancesToScale(): boolean {
@@ -1004,6 +1010,9 @@ class SolarView implements View {
           });
       }
     }
+    // The selected spacecraft's or asteroid's 3D model hides the markers and labels behind it, like a body.
+    const model = this.modelOccluder();
+    if (model) this.occluders.push(model);
     this.placeMoons(rel);
     this.placeSites();
     // A followed body seen large names itself: no marker or ring over its disc (as for its label).
@@ -1069,6 +1078,30 @@ class SolarView implements View {
       if (this.logScale) c.tail.hide();
       else c.tail.place(r, c.scene, quatRotate(q, s.velKmS), [camera.x, camera.y, camera.z], c.entry?.m1);
     }
+  }
+
+  /**
+   * The 3D model drawn last frame, at its selection's current place (its mesh is tested; the radius, enclosing it,
+   * is only informative).
+   */
+  private modelOccluder(): { id: string; sceneKm: Vec3; radiusKm: number; model: true } | undefined {
+    const sel = this.selection;
+    if (this.logScale || this.sceneModel.shownSizePx === 0 || !sel) return undefined;
+    if (sel.kind === 'mission') {
+      const probe = this.probes.find((t) => t.mission.id === sel.mission.id);
+      const entry = modelFor(`mission:${sel.mission.id}`);
+      return probe?.scene && entry
+        ? { id: sel.mission.id, sceneKm: probe.scene, radiusKm: entry.sizeM / 2000, model: true }
+        : undefined;
+    }
+    if (sel.kind === 'asteroid') {
+      const c = this.smallBodyOf(sel);
+      const entry = c && modelFor(smallBodyKey(c));
+      return c?.scene && entry
+        ? { id: smallBodyKey(c), sceneKm: c.scene, radiusKm: entry.sizeM / 2000, model: true }
+        : undefined;
+    }
+    return undefined;
   }
 
   /** The selected spacecraft's or asteroid's 3D model, in place of its marker when close (true scale only). */
@@ -1869,10 +1902,17 @@ class SolarView implements View {
     orbit.key = key;
   }
 
-  /** True when the Sun, a planet or a small body (other than `selfId`) hides `sceneKm` from the camera. */
-  private behindBody(sceneKm: Vec3, selfId: string): boolean {
+  /**
+   * True when the Sun, a planet or a small body (other than `selfId`) hides `sceneKm` from the camera. `key`
+   * (default `selfId`) names the point for the hold after the selected 3D model hid it.
+   */
+  private behindBody(sceneKm: Vec3, selfId: string, key = selfId): boolean {
     return this.occluders.some(
-      (o) => o.id !== selfId && occludedBySphereAt(this.originKm, sceneKm, o.sceneKm, o.radiusKm),
+      (o) =>
+        o.id !== selfId &&
+        (o.model
+          ? this.sceneModel.hides(this.originKm, sceneKm, o.sceneKm, key)
+          : occludedBySphereAt(this.originKm, sceneKm, o.sceneKm, o.radiusKm)),
     );
   }
 
@@ -1972,7 +2012,7 @@ class SolarView implements View {
   private starRender(s: StarObject): Vec3 | undefined {
     const dir = quatRotate(this.sceneQ, s.dirEqj);
     const far = add(this.originKm, scale(dir, STAR_TEST_DISTANCE_KM));
-    if (this.behindBody(far, '')) return undefined;
+    if (this.behindBody(far, '', `*:${s.star.id}`)) return undefined;
     return scale(dir, this.host.renderer.camera.near * 4);
   }
 

@@ -1,5 +1,5 @@
 /**
- * A small set of round, screen-sized markers (missions, landing sites). Positions and colours are updated
+ * A small set of screen-sized waypoint markers (missions, landing sites). Positions and colours are updated
  * from the CPU; uses PointsMaterial so logarithmic depth and colour management come for free.
  */
 import {
@@ -13,26 +13,37 @@ import {
 } from 'three';
 import { PIXEL_RATIO_UNIFORM } from './pixelRatio';
 
-let discTexture: Texture | undefined;
+let markerTexture: Texture | undefined;
 
-/** Anti-aliased white disc with a dark outline, shared by all marker sets. */
-function disc(): Texture {
-  if (discTexture) return discTexture;
+/**
+ * HUD waypoint (Halo-like) shared by all marker sets: a diamond with a thin dark outline, a bright rim, a dimmed
+ * inside and a bright core. White, tinted by each marker's colour; every layer is opaque enough for alphaTest.
+ */
+function waypoint(): Texture {
+  if (markerTexture) return markerTexture;
   const size = 64;
+  const c = size / 2;
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    ctx.beginPath();
-    ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-    ctx.stroke();
+    const diamond = (r: number, fill: string): void => {
+      ctx.beginPath();
+      ctx.moveTo(c, c - r);
+      ctx.lineTo(c + r, c);
+      ctx.lineTo(c, c + r);
+      ctx.lineTo(c - r, c);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+    };
+    diamond(31, 'rgba(0,0,0,0.8)');
+    diamond(26, '#ffffff');
+    diamond(18, 'rgb(70,70,70)');
+    diamond(10, '#ffffff');
   }
-  discTexture = new CanvasTexture(canvas);
-  return discTexture;
+  markerTexture = new CanvasTexture(canvas);
+  return markerTexture;
 }
 
 export class MarkerPoints {
@@ -62,7 +73,7 @@ export class MarkerPoints {
         size: sizePx,
         sizeAttenuation: false,
         vertexColors: true,
-        map: disc(),
+        map: waypoint(),
         alphaTest: 0.5,
         depthTest: options.depthTest ?? true,
       }),

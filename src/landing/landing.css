@@ -742,12 +742,13 @@ h3 {
 
 .lp-prov-state {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   margin-left: 6px;
-  border-radius: 50%;
   background: var(--live);
   vertical-align: middle;
+  /* A waypoint diamond, like the 3D view's markers. */
+  transform: rotate(45deg);
 }
 
 .lp-prov-state.state-stale,

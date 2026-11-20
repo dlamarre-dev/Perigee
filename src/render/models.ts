@@ -20,6 +20,8 @@ import {
   Group,
   PCFShadowMap,
   PMREMGenerator,
+  Quaternion,
+  Vector3,
   type BufferGeometry,
   type Mesh,
   type MeshStandardMaterial,
@@ -40,6 +42,11 @@ import type { Quat } from '../astro/quat';
 import type { Vec3 } from '../astro/vec3';
 import { ModelsCatalogSchema, type ModelEntry } from '../data/schemas';
 import { assetUrl } from './assetUrl';
+import { occludedBySphereAt } from './Labels';
+import { segmentBlocked, voxelize, type VoxelGrid } from './voxelGrid';
+
+/** A marker or label hidden by the model stays hidden this long after it was last behind it (ms). */
+const HIDE_HOLD_MS = 500;
 
 const catalog = ModelsCatalogSchema.parse(modelsJson);
 const byTarget = new Map<string, ModelEntry>();
@@ -261,6 +268,12 @@ export class SceneModel {
   shownSizePx = 0;
   /** Bounds of the loaded model in its own frame (metres). */
   private bounds: Box3 | undefined;
+  /** Coarse occupancy of the loaded model (its frame, metres), for `hides`. */
+  private grid: VoxelGrid | undefined;
+  private readonly qInv = new Quaternion();
+  /** Per marker or label id: until when it stays hidden after it was last behind the model (performance.now). */
+  private readonly heldUntilMs = new Map<string, number>();
+  private readonly v = new Vector3();
 
   /**
    * How far the loaded model reaches from its origin along a model-frame unit axis (metres), e.g. the wheels
@@ -271,6 +284,52 @@ export class SceneModel {
     if (!b || !this.object) return undefined;
     const pick = (i: 0 | 1 | 2, key: 'x' | 'y' | 'z'): number => (axis[i] >= 0 ? b.max[key] : b.min[key]);
     return axis[0] * pick(0, 'x') + axis[1] * pick(1, 'y') + axis[2] * pick(2, 'z');
+  }
+
+  /**
+   * True when the drawn model hides `pointKm` from `cameraKm`, the model standing at `centreKm` (all in one frame,
+   * km; the centre of this frame, the orientation of the last update). Markers and labels behind the model go,
+   * not those merely near its parts: an enclosing-sphere test, then a walk through the model's coarse occupancy
+   * grid (built once at load; a cell, 1/32 of the model's size, is the precision). With a `key` (the marker's or
+   * label's id), a point stays hidden for HIDE_HOLD_MS after it was last behind the model: sweeping the model
+   * across a dense group of markers would otherwise make them flicker.
+   */
+  hides(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3, key?: string): boolean {
+    if (this.shownSizePx === 0) {
+      this.heldUntilMs.clear();
+      return false;
+    }
+    const hit = this.blocks(cameraKm, pointKm, centreKm);
+    if (key === undefined) return hit;
+    const now = performance.now();
+    if (hit) {
+      this.heldUntilMs.set(key, now + HIDE_HOLD_MS);
+      return true;
+    }
+    const until = this.heldUntilMs.get(key);
+    if (until === undefined) return false;
+    if (now < until) return true;
+    this.heldUntilMs.delete(key);
+    return false;
+  }
+
+  /** The occlusion test of `hides`, without the hold. */
+  private blocks(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3): boolean {
+    const grid = this.grid;
+    const entry = this.entry;
+    if (!grid || !entry) return false;
+    if (!occludedBySphereAt(cameraKm, pointKm, centreKm, (entry.sizeM / 1000) * 0.6)) return false;
+    // Into the model's frame (metres): undo the group's place, orientation and scale.
+    const scale = 1 / this.group.scale.x;
+    this.qInv.copy(this.group.quaternion).invert();
+    const local = (p: Vec3): [number, number, number] => {
+      this.v
+        .set(p[0] - centreKm[0], p[1] - centreKm[1], p[2] - centreKm[2])
+        .applyQuaternion(this.qInv)
+        .multiplyScalar(scale);
+      return [this.v.x, this.v.y, this.v.z];
+    };
+    return segmentBlocked(grid, local(cameraKm), local(pointKm));
   }
 
   constructor(
@@ -310,6 +369,8 @@ export class SceneModel {
       if (this.object) this.group.remove(this.object);
       this.object = undefined;
       this.bounds = undefined;
+      this.grid = undefined;
+      this.heldUntilMs.clear();
       this.dropHigh();
       this.entry = entry;
     }
@@ -323,6 +384,8 @@ export class SceneModel {
         this.object = obj;
         // Model-frame bounds (metres), before it joins the scaled group.
         this.bounds = new Box3().setFromObject(obj, true);
+        const { min, max } = this.bounds;
+        this.grid = voxelize(obj, [min.x, min.y, min.z], [max.x, max.y, max.z]);
         castShadows(obj);
         this.group.add(obj);
       });

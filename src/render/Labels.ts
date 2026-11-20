@@ -40,6 +40,29 @@ export function occludedBySphereAt(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3
   return occludedBySphere(sub(cameraKm, centreKm), sub(pointKm, centreKm), radiusKm);
 }
 
+/**
+ * Something in the scene frame hiding what lies behind it: a sphere, or (a selected object's 3D model) an exact
+ * test `hides` in its place.
+ */
+export interface OccluderSphere {
+  readonly centreKm: Vec3;
+  readonly radiusKm: number;
+  /** `key`: the marker's or label's id, for a hold after it was hidden (see SceneModel.hides). */
+  readonly hides?: (cameraKm: Vec3, pointKm: Vec3, key?: string) => boolean;
+}
+
+/** True if one of `occluders` hides `pointKm` from the camera (a point inside a sphere is not hidden by it). */
+export function occludedByAny(
+  cameraKm: Vec3,
+  pointKm: Vec3,
+  occluders: readonly OccluderSphere[],
+  key?: string,
+): boolean {
+  return occluders.some((o) =>
+    o.hides ? o.hides(cameraKm, pointKm, key) : occludedBySphereAt(cameraKm, pointKm, o.centreKm, o.radiusKm),
+  );
+}
+
 export interface Rect {
   readonly x: number;
   readonly y: number;
@@ -195,6 +218,8 @@ export class LabelLayer {
   private candidates: Candidate[] = [];
   private obstacles: (Rect & { priority: number })[] = [];
   private readonly v = new Vector3();
+  /** Besides the central body, spheres hiding the labels behind them (scene frame), set by the view each frame. */
+  occluders: readonly OccluderSphere[] = [];
 
   constructor() {
     this.element = document.createElement('div');
@@ -280,8 +305,11 @@ export class LabelLayer {
     bodyRadiusKm: number,
     widthCss: number,
     heightCss: number,
+    /** The label's id, for the hold after an occluder hid it. */
+    key?: string,
   ): { x: number; y: number } | undefined {
     if (occludedBySphere(cameraKm, sceneKm, bodyRadiusKm)) return undefined;
+    if (occludedByAny(cameraKm, sceneKm, this.occluders, key)) return undefined;
     this.v.set(renderKm[0], renderKm[1], renderKm[2]).project(camera);
     if (this.v.z > 1 || Math.abs(this.v.x) > 1.05 || Math.abs(this.v.y) > 1.05) return undefined;
     return { x: ((this.v.x + 1) / 2) * widthCss, y: ((1 - this.v.y) / 2) * heightCss };
@@ -304,7 +332,16 @@ export class LabelLayer {
     priority: number = LabelPriority.Site,
   ): void {
     if (!renderKm || !sceneKm) return;
-    const p = this.project(renderKm, sceneKm, camera, cameraKm, bodyRadiusKm, widthCss, heightCss);
+    const p = this.project(
+      renderKm,
+      sceneKm,
+      camera,
+      cameraKm,
+      bodyRadiusKm,
+      widthCss,
+      heightCss,
+      `label:${id}`,
+    );
     if (p) this.candidates.push({ id, x: p.x, y: p.y, priority, order: this.candidates.length });
   }
 

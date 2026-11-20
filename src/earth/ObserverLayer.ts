@@ -9,7 +9,13 @@ import { latLonToUnit } from '../astro/frames';
 import { quatRotate, type Quat } from '../astro/quat';
 import { scale, sub, type Vec3 } from '../astro/vec3';
 import type { ObserverPlace } from '../app/embedApi';
-import { LabelLayer, LabelPriority, occludedBySphere } from '../render/Labels';
+import {
+  LabelLayer,
+  LabelPriority,
+  occludedByAny,
+  occludedBySphere,
+  type OccluderSphere,
+} from '../render/Labels';
 import { MarkerPoints } from '../render/MarkerPoints';
 
 const R = EARTH_EQUATORIAL_RADIUS_KM;
@@ -47,10 +53,20 @@ export class ObserverLayer {
     this.sceneKm = this.bodyKm && quatRotate(sceneFromBody, this.bodyKm);
   }
 
-  placeOrigin(originKm: Vec3, camera: PerspectiveCamera, widthCss: number, heightCss: number): void {
+  placeOrigin(
+    originKm: Vec3,
+    camera: PerspectiveCamera,
+    widthCss: number,
+    heightCss: number,
+    occluders: readonly OccluderSphere[] = [],
+  ): void {
     const body = this.bodyKm;
     const scene = this.sceneKm;
-    const shown = body !== undefined && scene !== undefined && !occludedBySphere(originKm, scene, R);
+    const shown =
+      body !== undefined &&
+      scene !== undefined &&
+      !occludedBySphere(originKm, scene, R) &&
+      !occludedByAny(originKm, scene, occluders, 'observer');
     if (shown) this.marker.setPosition(0, body[0], body[1], body[2]);
     else this.marker.hide(0);
     this.marker.commit();

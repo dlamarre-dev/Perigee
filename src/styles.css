@@ -212,22 +212,48 @@ summary,
   }
 }
 
+/*
+ * State badges (time status, the panels' data freshness): HUD tags with a waypoint diamond in the state's colour
+ * (`--tone`), a faint tint, an underline and one chamfered corner. Solid diamond: good; hollow and dashed: degraded.
+ */
+.badge,
+.freshness {
+  --tone: var(--accent-strong);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px 2px 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+  background: color-mix(in srgb, var(--tone) 9%, transparent);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+
+.badge::before,
+.freshness::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  background: var(--tone);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--tone) 70%, transparent);
+  transform: rotate(45deg);
+}
+
 .badge {
-  padding: 2px 8px;
-  border-left: 3px solid currentcolor;
-  background: rgb(255 255 255 / 5%);
-  color: var(--accent-strong);
+  color: var(--tone);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-/* Status next to the clock (live / paused / ×rate): fixed width so switching states does not move the bar. */
+/*
+ * Status next to the clock (live / paused / ×rate): fixed width so switching states does not move the bar; the
+ * widest English state (×100,000) with its diamond. The bar is tight at 1280 px (src/ui/fit.ts).
+ */
 .time-readout .badge {
-  display: inline-block;
-  min-width: 14ch;
-  text-align: center;
+  justify-content: center;
+  min-width: 13ch;
 }
 
 /* Play ↔ pause labels differ in width (and by language). */
@@ -236,11 +262,11 @@ summary,
 }
 
 .badge[data-state='live'] {
-  color: var(--live);
+  --tone: var(--live);
 }
 
 .badge[data-state='paused'] {
-  color: var(--paused);
+  --tone: var(--paused);
 }
 
 .time-buttons,
@@ -660,30 +686,42 @@ h2[tabindex='-1']:focus {
   line-height: 1.5;
 }
 
+/* A sentence, possibly on two lines: the diamond stays on the first one. */
 .freshness {
+  display: flex;
+  align-items: flex-start;
   margin: 0;
-  padding: 5px 9px;
-  border: 1px solid currentcolor;
-  border-left-width: 4px;
-  background: rgb(255 255 255 / 4%);
+  padding-block: 3px;
+  color: color-mix(in srgb, var(--tone) 35%, var(--text));
   font-size: 12px;
   letter-spacing: 0.02em;
 }
 
+.freshness::before {
+  margin-top: 0.55em;
+}
+
 .freshness[data-state='fresh'] {
-  color: var(--live);
+  --tone: var(--live);
 }
 
 .freshness[data-state='stale'] {
-  color: var(--paused);
-  border-style: dashed;
-  border-left-style: solid;
+  --tone: var(--paused);
 }
 
 .freshness[data-state='invalid'] {
-  color: var(--danger);
-  border-style: dashed;
-  border-left-style: solid;
+  --tone: var(--danger);
+}
+
+.freshness[data-state='stale'],
+.freshness[data-state='invalid'] {
+  border-bottom-style: dashed;
+}
+
+.freshness[data-state='stale']::before,
+.freshness[data-state='invalid']::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--tone);
 }
 
 .toast {

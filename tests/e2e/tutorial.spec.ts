@@ -23,6 +23,8 @@ test('the welcome window shows once; "Explore freely" remembers it', async ({ pa
 });
 
 test('the guided tour lights one control at a time and can be quit', async ({ page }) => {
+  // Ten steps across three view loads and a 3D model on CI's software WebGL: more than the default 30 s.
+  test.setTimeout(60_000);
   await page.goto('./?lang=en&welcome=1');
   await page
     .locator('dialog.welcome')
