@@ -86,6 +86,10 @@ export class MarkerPoints {
     if (options.depthTest === false) {
       this.points.renderOrder = 10;
       this.points.material.transparent = true;
+    } else {
+      // After the Sun's window tint (src/render/SunGlare.ts, opaque pass, renderOrder 4), which dims the sky and
+      // the bodies only: markers stay as bright as the lines and labels.
+      this.points.renderOrder = 5;
     }
     // Hidden markers are moved outside the clip volume in the shader. (Moving them "far away" is not enough:
     // with the near plane at metres and the far plane at the Sun, the Float32 projection has an effectively

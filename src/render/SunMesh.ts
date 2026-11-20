@@ -23,6 +23,7 @@ import {
   type Scene,
 } from 'three';
 import { effectUniform } from './effects';
+import { SunGlare } from './SunGlare';
 import type { Vec3 } from '../astro/vec3';
 
 const vertexShader = /* glsl */ `
@@ -51,6 +52,7 @@ const fragmentShader = /* glsl */ `
   // Per group: x east-west spread (rad), y strength (0–1), z seed, w number of spots drawn (0: plage only).
   uniform vec4 spotB[MAX_SPOT_GROUPS];
   uniform vec3 sunPole;
+  uniform float uOpacity;
   varying vec3 vObject;
   varying vec3 vNormalW;
   varying vec3 vPositionW;
@@ -137,6 +139,9 @@ const fragmentShader = /* glsl */ `
     vec3 centre = vec3(1.0, 0.62, 0.2);
     vec3 edge = vec3(0.8, 0.2, 0.025);
     vec3 color = mix(edge, centre, pow(mu, 0.6)) * intensity;
+    // Fading in or out (src/render/SunGlare.ts): from the glare's white-hot disc, always opaque, so the stars
+    // behind never show through.
+    color = mix(vec3(1.0, 0.97, 0.9), color, uOpacity);
     gl_FragColor = vec4(color, 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
@@ -156,6 +161,7 @@ export class SunMesh {
         spotA: { value: Array.from({ length: MAX_SPOT_GROUPS }, () => new Vector4()) },
         spotB: { value: Array.from({ length: MAX_SPOT_GROUPS }, () => new Vector4()) },
         sunPole: { value: new Vector3(0, 0, 1) },
+        uOpacity: { value: 1 },
       },
       vertexShader,
       fragmentShader,
@@ -166,6 +172,12 @@ export class SunMesh {
       const uniform = material.uniforms['uTime'];
       if (uniform) uniform.value = (performance.now() / 1000) % 100_000;
     };
+  }
+
+  /** 0 hidden … 1 drawn (the glare's fade, src/render/SunGlare.ts: white-hot towards 0, never see-through). */
+  setOpacity(opacity: number): void {
+    (this.mesh.material.uniforms['uOpacity'] as { value: number }).value = opacity;
+    this.mesh.visible = opacity > 0;
   }
 
   /** Sunspot groups to draw (largest first; beyond MAX_SPOT_GROUPS dropped), in the scene frame. */
@@ -245,6 +257,7 @@ export function createSunGlow(screenFraction = 0.05): Sprite {
 export class DistantSun {
   readonly sun: SunMesh;
   readonly glow: Sprite;
+  readonly glare: SunGlare;
 
   constructor(
     private readonly scene: Scene,
@@ -253,7 +266,8 @@ export class DistantSun {
   ) {
     this.sun = new SunMesh(radiusKm);
     this.glow = createSunGlow(glowFraction);
-    scene.add(this.sun.mesh, this.glow);
+    this.glare = new SunGlare(this.sun, radiusKm);
+    scene.add(this.sun.mesh, this.glow, ...this.glare.objects);
   }
 
   /** `sceneKm`: the Sun centre in the scene frame; `originKm`: the camera (floating origin). */
@@ -266,8 +280,9 @@ export class DistantSun {
   }
 
   dispose(): void {
-    this.scene.remove(this.sun.mesh, this.glow);
+    this.scene.remove(this.sun.mesh, this.glow, ...this.glare.objects);
     this.sun.dispose();
+    this.glare.dispose();
     this.glow.material.map?.dispose();
     this.glow.material.dispose();
   }
