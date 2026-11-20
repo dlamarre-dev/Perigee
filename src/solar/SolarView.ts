@@ -114,6 +114,7 @@ import { pickRadiusPx } from '../render/pointer';
 import { MarkerPoints } from '../render/MarkerPoints';
 import { SelectionMarker } from '../render/OrbitLine';
 import { SunMesh, createSunGlow } from '../render/SunMesh';
+import { SunGlare } from '../render/SunGlare';
 import { RingMesh } from '../render/RingMesh';
 import { textureLevels } from '../render/textureLevels';
 import { loadProgressiveTexture, placeholderTexture } from '../render/textures';
@@ -411,6 +412,8 @@ class SolarView implements View {
   private readonly lineGroup = new Group();
   private readonly sun = new SunMesh(SUN_RADIUS_KM);
   private readonly glow: Sprite;
+  /** Glare and lens flare (high tier). */
+  private readonly sunGlare: SunGlare;
   private readonly planets: PlanetObject[] = [];
   private readonly probes: ProbeObject[] = [];
   private readonly moons: MoonObject[] = [];
@@ -498,7 +501,8 @@ class SolarView implements View {
     const renderer = host.renderer;
 
     this.glow = createSunGlow(0.05);
-    renderer.scene.add(this.sun.mesh, this.glow, this.lineGroup);
+    this.sunGlare = new SunGlare(this.sun, SUN_RADIUS_KM);
+    renderer.scene.add(this.sun.mesh, this.glow, ...this.sunGlare.objects, this.lineGroup);
 
     this.planetMarkers = new MarkerPoints(PLANETS.length, 10, { depthTest: false });
     this.probeMarkers = new MarkerPoints(Math.max(1, this.missions.length), 9, {
@@ -1014,6 +1018,15 @@ class SolarView implements View {
     const model = this.modelOccluder();
     if (model) this.occluders.push(model);
     this.placeMoons(rel);
+    // The Sun's glare: the bodies in front of it and the selected model.
+    this.sunGlare.update(
+      originKm,
+      [0, 0, 0],
+      this.occluders
+        .filter((o) => !o.model && o.id !== 'sun')
+        .map((o) => ({ centreKm: o.sceneKm, radiusKm: o.radiusKm })),
+      model ? (p) => this.sceneModel.blocks(originKm, p, model.sceneKm) : undefined,
+    );
     this.placeSites();
     // A followed body seen large names itself: no marker or ring over its disc (as for its label).
     const large = this.followedBodyLarge();
@@ -1272,11 +1285,13 @@ class SolarView implements View {
     scene.remove(
       this.sun.mesh,
       this.glow,
+      ...this.sunGlare.objects,
       this.lineGroup,
       this.planetMarkers.points,
       this.probeMarkers.points,
     );
     this.sun.dispose();
+    this.sunGlare.dispose();
     this.sceneModel.dispose();
     for (const p of this.planets) {
       scene.remove(p.mesh.mesh);

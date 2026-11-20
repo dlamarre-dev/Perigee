@@ -568,7 +568,7 @@ the "up" vector and causes gimbal lock at the poles).
   device; nothing is configurable; `?quality=` overrides for tests; `?debug=perf` shows the tier,
   reasons, GPU and frame rate; problem reports carry the tier. `tools/perf/bench.ts` measures main-thread cost
   per view (`--throttle 4` to approach a phone).
-- **Immersive effects** (high tier only; each switchable live in the settings window, remembered
+- **Immersive effects** (high tier; sunspots from the medium tier, `MIN_TIER`; each switchable live in the settings window, remembered
   per browser in `perigee-effects`; `src/render/effects.ts`, shared strength uniforms, no rebuild):
   - *Relief*: normal maps (east/north/up, linear UASTC KTX2 `normal-*`, ≤ 4k) from elevation models (Moon LOLA,
     Mars MOLA MEGDR, Mercury MESSENGER, Ceres Dawn; `tools/textures/normals.ts`, uncompressed int16 GeoTIFFs read
@@ -591,6 +591,19 @@ the "up" vector and causes gimbal lock at the poles).
     fills cut to a trace), with self-shadowing from a shadow map fitted to the model each frame (the renderer's
     shadow map is enabled on the high tier; only model parts cast, and only while the effect is on) and the
     central body's shadow (`src/astro/eclipse.ts`, umbra and penumbra; orbiters only, not surface sites).
+  - *Sun glare* (all views, `src/render/SunGlare.ts`): one full-screen additive pass drawn last: white-hot core,
+    bloom, diffraction spikes, a cyan anamorphic streak, a faint veil and aperture ghosts along the line through
+    the screen centre. Its strength is the visible part of the Sun's disc, computed on the CPU from the views'
+    spheres in front (exact disc overlap, smooth in eclipses) and the selected 3D model (`SceneModel.blocks` on 9
+    rays; `src/render/sunVisibility.ts`), so markers and satellites never make it flicker, times a power falling
+    with the distance from the Sun (`glarePower`: ~0.7 at 7 au, 0.2 at 30 au, 2 % at Voyager 1). Beyond 10 million
+    km from the Sun its mesh is hidden and the glare draws a white-hot disc; within, selected or not, the mesh
+    fades in from white-hot (always opaque: no star shows through; sunspots stay readable, the glare starting at
+    the limb) while a second pass multiplies the frame like an airliner's electrochromic window, both over 0.6 s
+    (tint creeping in from the edges, dark blue outside the disc, the Sun kept bright). The window is drawn in the
+    opaque pass at renderOrder 4: it dims the sky, the stars and the bodies, not the depth-tested markers
+    (renderOrder 5), the transparent pass (lines, glare, which dims itself) or the labels. Without the
+    effect the mesh is always drawn.
   Clouds and gas follow the simulation clock (`src/render/simTime.ts`, set by the frame loop): two layers each
   drift for a cycle (clouds 2 days, gas 4 days) and cross-fade into the next (`layerCycle`); a cloud layer's
   next drawing is a new seed (tab seed + cycle number), so a date shows the same clouds in every view and a layer

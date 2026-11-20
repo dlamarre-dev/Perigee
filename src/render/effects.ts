@@ -1,19 +1,37 @@
 /**
  * Immersive effects (relief from normal maps, Earth clouds, moving gas on Venus and the giant planets, sunspots,
- * spacecraft models lit by the Sun alone with self-shadowing):
- * high quality tier only, each switchable by the visitor (top bar, remembered per browser). They apply live:
- * every shader that draws an effect shares its strength uniform (0 off, 1 on), so no material is rebuilt.
+ * spacecraft models lit by the Sun alone with self-shadowing, the Sun's glare and lens flare):
+ * high quality tier (sunspots from the medium tier), each switchable by the visitor (settings window, remembered
+ * per browser). They apply live: every shader that draws an effect shares its strength uniform (0 off, 1 on), so
+ * no material is rebuilt.
  */
-import { quality } from './quality';
+import { quality, type QualityTier } from './quality';
 
-export type EffectName = 'relief' | 'clouds' | 'gasMotion' | 'sunspots' | 'modelLighting';
+export type EffectName = 'relief' | 'clouds' | 'gasMotion' | 'sunspots' | 'modelLighting' | 'sunGlare';
 export const EFFECT_NAMES: readonly EffectName[] = [
   'relief',
   'clouds',
   'gasMotion',
   'sunspots',
+  'sunGlare',
   'modelLighting',
 ];
+
+/** Lowest tier drawing each effect. Sunspots are cheap: a loop over a few groups on the Sun's pixels only. */
+const MIN_TIER: Readonly<Record<EffectName, QualityTier>> = {
+  relief: 'high',
+  clouds: 'high',
+  gasMotion: 'high',
+  sunspots: 'medium',
+  modelLighting: 'high',
+  sunGlare: 'high',
+};
+const TIER_RANK: Readonly<Record<QualityTier, number>> = { low: 0, medium: 1, high: 2 };
+
+/** Whether the quality tier in effect can draw the effect (the visitor may still switch it off). */
+export function effectAvailable(name: EffectName): boolean {
+  return TIER_RANK[quality().tier] >= TIER_RANK[MIN_TIER[name]];
+}
 
 export type EffectPrefs = Readonly<Record<EffectName, boolean>>;
 
@@ -52,9 +70,9 @@ export function effectPrefs(): EffectPrefs {
   return (prefs ??= readPrefs());
 }
 
-/** Whether the effect is drawn: the quality tier allows effects and the visitor left it on. */
+/** Whether the effect is drawn: the quality tier allows it and the visitor left it on. */
 export function effectEnabled(name: EffectName): boolean {
-  return quality().immersiveEffects && effectPrefs()[name];
+  return effectAvailable(name) && effectPrefs()[name];
 }
 
 /** Shared strength uniform of an effect (1 drawn, 0 not): put the same object in every material that draws it. */
@@ -91,7 +109,8 @@ export function onEffectsChange(listener: () => void): () => void {
 
 /** One line for problem reports and ?debug=perf. */
 export function effectsSummary(): string {
-  if (!quality().immersiveEffects) return 'effects off (tier)';
+  const available = EFFECT_NAMES.filter(effectAvailable);
+  if (available.length === 0) return 'effects off (tier)';
   const p = effectPrefs();
-  return `effects ${EFFECT_NAMES.map((n) => (p[n] ? n : `-${n}`)).join(' ')}`;
+  return `effects ${available.map((n) => (p[n] ? n : `-${n}`)).join(' ')}`;
 }

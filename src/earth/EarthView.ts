@@ -342,6 +342,14 @@ class EarthView implements View {
     // The selected satellite's 3D model (as drawn last frame) hides the markers and labels behind it.
     const occluders = this.modelOccluders();
     this.moon.labels.occluders = occluders;
+    // The Sun's glare: the Earth and the Moon in front of it, and the selected satellite's model.
+    const model = occluders[0];
+    this.distantSun.glare.update(
+      originKm,
+      this.sunSceneKm,
+      this.cameraObstacles(),
+      model ? (p) => this.sceneModel.blocks(originKm, p, model.centreKm) : undefined,
+    );
     if (this.earthLabel) this.earthLabel.occluders = occluders;
     this.moon.place(
       originKm,

@@ -5,8 +5,14 @@
  * configurable: the controls are those of src/camera/QuaternionOrbitControls.ts and src/app/main.ts.
  */
 import type { I18n, MessageKey } from '../i18n';
-import { EFFECT_NAMES, effectPrefs, setEffectEnabled, type EffectName } from '../render/effects';
-import { QUALITY_CHOICES, quality, type QualityChoice, type QualityTier } from '../render/quality';
+import {
+  EFFECT_NAMES,
+  effectAvailable,
+  effectPrefs,
+  setEffectEnabled,
+  type EffectName,
+} from '../render/effects';
+import { QUALITY_CHOICES, type QualityChoice, type QualityTier } from '../render/quality';
 import { h, scrollingDialog } from './dom';
 import { keyLabel, onKeyboardLayoutChange } from './keyboardLayout';
 
@@ -141,17 +147,21 @@ export class SettingsDialog {
     this.qualitySelect.addEventListener('change', () =>
       options.onQualityChange(this.qualitySelect.value as QualityChoice),
     );
-    const effectsOn = quality().immersiveEffects;
     const prefs = effectPrefs();
     const effectRows = EFFECT_NAMES.map((name) => {
       const id = `effect-${name}`;
-      const box = h('input', { type: 'checkbox', id, checked: prefs[name], disabled: !effectsOn });
+      const box = h('input', {
+        type: 'checkbox',
+        id,
+        checked: prefs[name],
+        disabled: !effectAvailable(name),
+      });
       box.addEventListener('change', () => setEffectEnabled(name, box.checked));
       const label = h('label', { for: id });
       this.effectLabels.set(name, label);
       return h('div', { class: 'effect-row' }, [box, label]);
     });
-    this.effectsNote.hidden = effectsOn;
+    this.effectsNote.hidden = EFFECT_NAMES.every(effectAvailable);
     this.close.addEventListener('click', () => this.element.close());
     this.tutorial.addEventListener('click', () => {
       this.element.close();

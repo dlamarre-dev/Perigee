@@ -313,8 +313,8 @@ export class SceneModel {
     return false;
   }
 
-  /** The occlusion test of `hides`, without the hold. */
-  private blocks(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3): boolean {
+  /** The occlusion test of `hides`, without the hold (the Sun's glare: smooth, no lingering). */
+  blocks(cameraKm: Vec3, pointKm: Vec3, centreKm: Vec3): boolean {
     const grid = this.grid;
     const entry = this.entry;
     if (!grid || !entry) return false;

@@ -41,7 +41,7 @@ describe('immersive effect preferences', () => {
     expect(parseEffectPrefs('-nonsense,relief')).toEqual(all);
   });
 
-  it('are drawn on the high tier only', () => {
+  it('are drawn on the high tier only, sunspots from the medium tier', () => {
     for (const tier of ['high', 'medium', 'low'] as const) {
       setQuality({
         choice: tier,
@@ -50,6 +50,8 @@ describe('immersive effect preferences', () => {
         signals,
       });
       expect(effectEnabled('relief')).toBe(tier === 'high');
+      expect(effectEnabled('sunGlare')).toBe(tier === 'high');
+      expect(effectEnabled('sunspots')).toBe(tier !== 'low');
     }
   });
 });

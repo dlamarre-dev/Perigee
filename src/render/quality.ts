@@ -43,7 +43,7 @@ export interface QualitySettings {
   readonly idleFps: number | undefined;
   /** Frame rate of the spinning model preview. */
   readonly previewFps: number;
-  /** Immersive effects (relief, clouds, moving gas, sunspots; src/render/effects.ts), each switchable. */
+  /** Immersive effects (relief, clouds, moving gas, glare…; src/render/effects.ts `MIN_TIER`: sunspots also on medium). */
   readonly immersiveEffects: boolean;
 }
 

@@ -597,6 +597,13 @@ export class PlanetaryView implements View {
       hideMarker();
       this.hideBehindModel(originKm, scene);
     }
+    // The Sun's glare: the body, its moons and the Earth in front of it, and the selected model.
+    this.distantSun.glare.update(
+      originKm,
+      this.sunSceneKm,
+      this.cameraObstacles(),
+      shown && scene && entry ? (p) => this.sceneModel.blocks(originKm, p, scene) : undefined,
+    );
   }
 
   /**
