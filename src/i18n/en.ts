@@ -33,6 +33,7 @@ export const en = {
   'effects.highOnly': 'Greyed-out effects need a higher quality.',
   'effects.sunGlare': 'Sun glare and lens flare',
   'effects.glass': 'Spacecraft window glass',
+  'effects.warp': 'Warp bubble beyond the speed of light',
   'effects.relief': 'Relief',
   'effects.clouds': 'Earth clouds (illustrative)',
   'effects.gasMotion': 'Moving gas (Venus, giant planets)',

@@ -176,6 +176,8 @@ export class SatellitePoints {
     );
     this.points.name = 'satellites';
     this.points.frustumCulled = false;
+    // With the depth-tested markers: after the window's dimming and the warp bubble (SunGlare, WarpBubble).
+    this.points.renderOrder = 5;
 
     // The pick pass shares the interpolation uniforms but uses a fixed, generous point size.
     const pickUniforms: SatUniforms = { ...this.uniforms, uSize: { value: 7 } };

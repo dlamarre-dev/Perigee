@@ -610,6 +610,15 @@ the "up" vector and causes gimbal lock at the poles).
     not the picking pass) is magnified a little with a faint colour fringe (HTML labels are not); then a faint
     cool haze, smudges and sparse dust and polishing scratches, nearly invisible until the Sun (even just off
     screen) lights them.
+  - *Warp bubble* (all views, `src/render/WarpBubble.ts`, set up by the shell): the camera's own speed (its motion
+    minus the followed object's, measured across frames; cuts such as a view switch, a frame change or a link are
+    skipped, `controls.cuts`) beyond the speed of light dims the hemisphere behind the motion by half (soft edge,
+    full from ~3 c, in and out in 0.2 s; a quick reversal fades it out and back in, from the averaged heading's
+    length, which fades to zero below c so a new move starts from its own direction) and streaks the light ahead away from the direction of motion (from ~2 c, full at 100 000 c; 0.6 rad at
+    90° heading into the view, a fifth of that sideways, eased over 0.15 s). One full-screen pass in the opaque list (renderOrder 4.5) redraws a
+    copy of the frame (sky, stars, bodies, the Sun, models), streaked by four off-screen max-of-8 passes (steps
+    δ, 8δ, 64δ, 512δ: continuous streaks); markers and satellites (renderOrder 5), lines, rings, the glare and the Sun's
+    halo (dimmed by `warpFront` when the Sun is behind) and labels are drawn after it, untouched.
   Clouds and gas follow the simulation clock (`src/render/simTime.ts`, set by the frame loop): two layers each
   drift for a cycle (clouds 2 days, gas 4 days) and cross-fade into the next (`layerCycle`); a cloud layer's
   next drawing is a new seed (tab seed + cycle number), so a date shows the same clouds in every view and a layer

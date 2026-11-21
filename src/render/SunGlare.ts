@@ -36,6 +36,7 @@ import {
 import type { SunMesh } from './SunMesh';
 import type { Vec3 } from '../astro/vec3';
 import { effectUniform } from './effects';
+import { warpFront } from './WarpBubble';
 import { glarePower, sunDiscSamples, sunDiscVisible, type SunOccluderSphere } from './sunVisibility';
 
 /** Distance from the Sun's centre within which its mesh is drawn and the window dims (km), and the one beyond
@@ -425,10 +426,13 @@ export class SunGlare {
     const on = (u['uStrength'] as { value: number }).value > 0;
     const front = this.place(renderer, camera);
     const discPx = on && front?.onScreen ? front.discPx : undefined;
-    if (discPx !== undefined) vis.value = this.visible * this.power;
-    (this.glass.material.uniforms['uSunLight'] as { value: number }).value = front
-      ? this.visible * this.power * (1 - 0.85 * (u['uDim'] as { value: number }).value)
+    // Beyond the speed of light, no light comes from behind the motion (warp bubble).
+    const seen = front
+      ? this.visible * this.power * warpFront(this.view.copy(this.world).sub(camera.position))
       : 0;
+    if (discPx !== undefined) vis.value = seen;
+    (this.glass.material.uniforms['uSunLight'] as { value: number }).value =
+      seen * (1 - 0.85 * (u['uDim'] as { value: number }).value);
     // Near the Sun: the mesh fades in (far away the glare alone draws it; without the effect the mesh always
     // does) and the window dims while the Sun is in sight, both at the same pace.
     const now = performance.now();

@@ -24,6 +24,7 @@ import {
 } from 'three';
 import { effectUniform } from './effects';
 import { SunGlare } from './SunGlare';
+import { warpFront } from './WarpBubble';
 import type { Vec3 } from '../astro/vec3';
 
 const vertexShader = /* glsl */ `
@@ -244,6 +245,12 @@ export function createSunGlow(screenFraction = 0.05): Sprite {
   );
   glow.scale.set(screenFraction, screenFraction, 1);
   glow.name = 'sun-glow';
+  // Drawn after the warp bubble's pass (transparent): fades by itself when the Sun is behind the motion.
+  const toSun = new Vector3();
+  glow.onBeforeRender = (_renderer, _scene, camera) => {
+    glow.getWorldPosition(toSun).sub(camera.position);
+    glow.material.opacity = warpFront(toSun);
+  };
   // Part of the Sun's look: kept in the photo without markers.
   keepInPhoto(glow);
   return glow;

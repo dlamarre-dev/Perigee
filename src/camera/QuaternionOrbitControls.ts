@@ -269,7 +269,18 @@ export class QuaternionOrbitControls {
     this.home = home;
   }
 
+  /** Counts the cuts (setState): the camera jumped rather than moved (warp bubble, src/render/WarpBubble.ts). */
+  get cuts(): number {
+    return this.cutCount;
+  }
+
+  /** The followed point as of the last update (undefined when not following). */
+  get followedKm(): Vec3 | undefined {
+    return this.lastFollowedKm;
+  }
+
   setState(state: OrbitState): void {
+    this.cutCount++;
     this.fly = undefined;
     this.pendingKeyTurn = [0, 0, 0];
     this.zoomTargetKm = undefined;
@@ -306,6 +317,9 @@ export class QuaternionOrbitControls {
     this.follow = target;
   }
 
+  private cutCount = 0;
+  private lastFollowedKm: Vec3 | undefined;
+
   get following(): boolean {
     return this.follow !== undefined;
   }
@@ -325,6 +339,7 @@ export class QuaternionOrbitControls {
   /** Advances inertia, follow and fly-to animations. Call once per frame. */
   update(dtS: number): void {
     const followed = this.follow?.();
+    this.lastFollowedKm = followed;
     const previous = this.stateValue;
     if (this.fly) {
       this.fly.elapsedS += dtS;

@@ -25,6 +25,7 @@ import {
   type OrbitState,
 } from '../camera/orbitMath';
 import { GuardianGrid } from '../render/GuardianGrid';
+import { WarpBubble } from '../render/WarpBubble';
 import { I18n, detectLang, type Lang, type MessageKey } from '../i18n';
 import { Renderer, WebGLUnavailableError } from '../render/Renderer';
 import { SkyMesh } from '../render/SkyMesh';
@@ -238,6 +239,8 @@ function main(): void {
   // Faces of the cube the camera cannot leave, shown as it comes near one (src/render/GuardianGrid.ts).
   const guardian = new GuardianGrid();
   renderer.scene.add(guardian.group);
+  const warp = new WarpBubble();
+  renderer.scene.add(warp.mesh);
 
   const placeholderHome: OrbitState = orbitStateLookingFrom([0, 0, 0], [1, 0, 0], [0, 0, 1], 20_000);
   const controls = new QuaternionOrbitControls(renderer.canvas, {
@@ -1004,6 +1007,10 @@ ${
   // Frame loop
   let uiTimerS = 0;
   let wasFollowing = false;
+  // What the warp bubble measures the camera's motion across (a change means a cut, not a move).
+  let warpView: View | undefined;
+  let warpFrame = frame;
+  let warpCuts = controls.cuts;
   renderer.start((dtS) => {
     framesDrawn++;
     const nowMs = clock.nowMs();
@@ -1045,6 +1052,11 @@ ${
       const originKm: Vec3 = controls.cameraPositionKm;
       v.placeOrigin(originKm);
       guardian.update(originKm, controls.limits.boundsHalfKm);
+      const jumped = v !== warpView || frame !== warpFrame || controls.cuts !== warpCuts;
+      warpView = v;
+      warpFrame = frame;
+      warpCuts = controls.cuts;
+      warp.update(originKm, controls.followedKm, dtS, jumped);
       // Height above the nearest drawn surface, for the near clipping plane.
       const altitudeKm = obstacles.length
         ? Math.min(...obstacles.map((o) => heightAboveKm(originKm, o)))
