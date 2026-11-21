@@ -1,0 +1,287 @@
+{
+  "generatedAt": "2026-11-21T03:28:34.669Z",
+  "items": [
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "capstone",
+      "summary": "CAPSTONE: public Horizons ephemeris ended 2026-08-14 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-1176",
+        "coverageEnd": "2026-08-14T11:58:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ended-active",
+      "key": "swc-1",
+      "summary": "SWC-1 (Shams): public Horizons ephemeris ended 2026-04-07 but status is \"active\" — check whether the mission ended or the ephemeris is just late",
+      "details": {
+        "horizonsId": "-168540",
+        "coverageEnd": "2026-04-07T14:31:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "mmx",
+      "summary": "Martian Moons eXploration (MMX): public Horizons ephemeris ends 2026-12-21 (within 30 days)",
+      "details": {
+        "horizonsId": "-239",
+        "coverageEnd": "2026-12-21T00:01:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "soho",
+      "summary": "SOHO: public Horizons ephemeris ends 2026-12-14 (within 30 days)",
+      "details": {
+        "horizonsId": "-21",
+        "coverageEnd": "2026-12-14T23:51:00.000Z"
+      }
+    },
+    {
+      "kind": "ephemeris-ending",
+      "key": "imap",
+      "summary": "IMAP: public Horizons ephemeris ends 2026-12-14 (within 30 days)",
+      "details": {
+        "horizonsId": "-43",
+        "coverageEnd": "2026-12-14T00:01:00.000Z"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:cassiope",
+      "summary": "CASSIOPE (e-POP / Swarm-Echo) (NORAD 39265, unknown): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:gcom-w",
+      "summary": "GCOM-W \"Shizuku\" (NORAD 38337, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:hinode",
+      "summary": "Hinode (Solar-B) (NORAD 29479, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:hubble",
+      "summary": "Hubble Space Telescope (HST) (NORAD 20580, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:insight-hxmt",
+      "summary": "Insight-HXMT (Huiyan) (NORAD 42758, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:iris",
+      "summary": "IRIS (NORAD 39197, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:iss",
+      "summary": "International Space Station (ISS) (NORAD 25544, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:ixpe",
+      "summary": "Imaging X-ray Polarimetry Explorer (IXPE) (NORAD 49954, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:mms-1",
+      "summary": "Magnetospheric Multiscale 1 (MMS 1) (NORAD 40482, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:mms-2",
+      "summary": "Magnetospheric Multiscale 2 (MMS 2) (NORAD 40483, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:mms-3",
+      "summary": "Magnetospheric Multiscale 3 (MMS 3) (NORAD 40484, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:mms-4",
+      "summary": "Magnetospheric Multiscale 4 (MMS 4) (NORAD 40485, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:neossat",
+      "summary": "NEOSSat (NORAD 39089, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:nustar",
+      "summary": "NuSTAR (NORAD 38358, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "earth-science:oco-2",
+      "summary": "Orbiting Carbon Observatory-2 (OCO-2) (NORAD 40059, active): last verified 2026-10-03 (49 days ago)",
+      "details": {
+        "verified": "2026-10-03"
+      }
+    },
+    {
+      "kind": "stale-verification",
+      "key": "missions:deferred",
+      "summary": "43 more entries are due and deferred to next week (at most 15 per audit)",
+      "details": {
+        "deferred": [
+          "earth-science:pisat",
+          "earth-science:salsat",
+          "earth-science:scisat",
+          "earth-science:sdo",
+          "earth-science:shijian-6-02a",
+          "earth-science:shijian-6-02b",
+          "earth-science:smile",
+          "earth-science:stsat-3",
+          "earth-science:swarm-a",
+          "earth-science:swarm-b",
+          "earth-science:swarm-c",
+          "earth-science:swas",
+          "earth-science:swift",
+          "earth-science:terra",
+          "earth-science:timed",
+          "earth-science:x-sat",
+          "earth-science:xmm-newton",
+          "mission:roman",
+          "earth-science:tiangong",
+          "mission:aditya-l1",
+          "mission:artemis-p1",
+          "mission:artemis-p2",
+          "mission:bepicolombo",
+          "mission:chandrayaan-2",
+          "mission:change-7",
+          "mission:danuri",
+          "mission:dro-a",
+          "mission:dro-b",
+          "mission:icube-q",
+          "mission:mmx",
+          "mission:queqiao-1",
+          "mission:queqiao-2",
+          "mission:tiandu-1",
+          "mission:tiandu-2",
+          "mission:2026-ed138",
+          "mission:ceres",
+          "mission:eris",
+          "mission:gonggong",
+          "mission:haumea",
+          "mission:makemake",
+          "mission:orcus",
+          "mission:quaoar",
+          "mission:sedna"
+        ]
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "C/2026 P3",
+      "summary": "C/2026 P3 (SWAN): perihelion 2026-09-03, q 0.33 au, M1 14.3: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "C/2026 P3",
+        "horizonsId": "DES=C/2026 P3;CAP;NOFRAG",
+        "qAu": 0.325,
+        "e": 0.9981,
+        "tpTdbJd": 2461287.19,
+        "m1": 14.3
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "P/2018 VN2",
+      "summary": "P/2018 VN2 (Leonard): perihelion 2026-08-15, q 2.12 au, M1 9.7: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "P/2018 VN2",
+        "horizonsId": "DES=P/2018 VN2;CAP;NOFRAG",
+        "qAu": 2.118,
+        "e": 0.4785,
+        "tpTdbJd": 2461267.8,
+        "m1": 9.7
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "P/2026 N2",
+      "summary": "P/2026 N2: perihelion 2026-09-26, q 2.42 au, M1 9.2: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "P/2026 N2",
+        "horizonsId": "DES=P/2026 N2;CAP;NOFRAG",
+        "qAu": 2.421,
+        "e": 0.2122,
+        "tpTdbJd": 2461309.72,
+        "m1": 9.2
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "C/2026 AZ17",
+      "summary": "C/2026 AZ17 (Bok): perihelion 2026-11-23, q 2.47 au, M1 9.5: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "C/2026 AZ17",
+        "horizonsId": "DES=C/2026 AZ17;CAP;NOFRAG",
+        "qAu": 2.473,
+        "e": 0.9619,
+        "tpTdbJd": 2461367.72,
+        "m1": 9.5
+      }
+    },
+    {
+      "kind": "comet-candidate",
+      "key": "P/2021 N1",
+      "summary": "P/2021 N1 (ZTF): perihelion 2026-07-28, q 0.97 au, M1 19.2: add to catalog/comets.json if it is a good target (bright, or newsworthy)",
+      "details": {
+        "designation": "P/2021 N1",
+        "horizonsId": "DES=P/2021 N1;CAP;NOFRAG",
+        "qAu": 0.966,
+        "e": 0.6759,
+        "tpTdbJd": 2461250,
+        "m1": 19.2
+      }
+    }
+  ]
+}
