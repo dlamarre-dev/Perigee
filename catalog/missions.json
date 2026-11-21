@@ -234,16 +234,17 @@
         "fr": "CAPSTONE est un CubeSat de la taille d’un four à micro-ondes conçu pour tester l’orbite de halo quasi rectiligne prévue pour la station lunaire Gateway de la NASA : comment s’y insérer et s’y maintenir avec peu de carburant. Il démontre aussi un système de navigation où les engins se localisent en échangeant des signaux entre eux (ici avec LRO) plutôt qu’en dépendant uniquement du suivi depuis la Terre."
       },
       "notes": {
-        "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window. CelesTrak's SATCAT still lists it as tracked (no decay date) as of 2026-11-14.",
-        "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique. Le SATCAT de CelesTrak le liste toujours comme suivi (aucune date de rentrée) en date du 2026-11-14."
+        "en": "NASA’s mission ended June 2026 (declared complete 2026-07-06); Advanced Space continues flying the spacecraft commercially, station-keeping in the NRHO roughly weekly as of mid-2026. The public Horizons ephemeris stops on 2026-08-14 and has not resumed, likely because orbit-determination data is no longer submitted to JPL now that NASA's DSN-tracked mission has ended; shown as extrapolated/hidden per CLAUDE.md §5.2 beyond the public window. CelesTrak's SATCAT still lists it as tracked (no decay date) as of 2026-11-14. Advanced Space announced a CAPSTONE 02 follow-on mission (two new spacecraft built with Terran Orbital, planned for a 2027 launch, to demonstrate rendezvous and proximity operations in cislunar space), implying CAPSTONE itself keeps flying in the meantime.",
+        "fr": "La mission de la NASA s’est terminée en juin 2026 (déclarée achevée le 2026-07-06) ; Advanced Space continue d’exploiter l’engin commercialement, avec un maintien d’orbite hebdomadaire dans la NRHO à la mi-2026. L’éphéméride publique Horizons s’arrête le 2026-08-14 et n’a pas repris, probablement parce que les données d’orbitographie ne sont plus soumises au JPL maintenant que la mission suivie par le DSN de la NASA est terminée ; affichée comme extrapolée/masquée selon le §5.2 du CLAUDE.md au-delà de la fenêtre publique. Le SATCAT de CelesTrak le liste toujours comme suivi (aucune date de rentrée) en date du 2026-11-14. Advanced Space a annoncé une mission de suite, CAPSTONE 02 (deux nouveaux engins construits avec Terran Orbital, lancement prévu en 2027, pour démontrer des opérations de rendez-vous et de proximité en espace cislunaire), ce qui laisse entendre que CAPSTONE continue de voler entretemps."
       },
       "website": {
         "url": "https://www.nasa.gov/smallspacecraft/capstone/"
       },
-      "verified": "2026-11-14",
+      "verified": "2026-11-21",
       "sources": [
         "https://www.nasa.gov/technology/space-comms/nasas-capstone-completes-extended-mission-testing-lunar-technologies/",
         "https://advancedspace.com/advanced-spaces-resilient-capstone-mission-for-nasa-is-operating-at-the-moon-for-445-days-continues-to-transform-exploration-with-cutting-edge-technology/",
+        "https://advancedspace.com/advanced-space-is-heading-back-to-the-moon-for-nasa-with-new-mission-capstone-02/",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=CAPSTONE&group=sct",
         "https://celestrak.org/satcat/records.php?CATNR=52914&FORMAT=JSON"
       ]
@@ -955,15 +956,16 @@
         "fr": "MMX (Martian Moons eXploration) est une mission japonaise vers Phobos et Deimos, les deux lunes de Mars. Elle étudiera de près les deux lunes, se posera sur Phobos pour y prélever au moins 10 grammes de sol et les rapporter sur Terre, afin de savoir si ces lunes sont des astéroïdes capturés ou des débris d'un impact géant sur Mars. Elle emporte IDEFIX, un petit rover franco-allemand."
       },
       "notes": {
-        "en": "Launched 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; the rocket placed MMX into its planned orbit about 71 minutes after liftoff. Carries the CNES/DLR IDEFIX rover and NASA MEGANE. NORAD 101109 / COSPAR 2026-236A; centred on the Sun during the heliocentric cruise (switches to Mars once in the Martian system).",
-        "fr": "Lancée le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; la fusée a placé MMX sur son orbite prévue environ 71 minutes après le décollage. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA). NORAD 101109 / COSPAR 2026-236A ; centrée sur le Soleil pendant la croisière héliocentrique (passera à Mars une fois dans le système martien)."
+        "en": "Launched 2026-10-20 04:41:03 JST (= 2026-10-19 19:41:03 UTC) on H3 F10 from Tanegashima; the rocket placed MMX into its planned orbit about 71 minutes after liftoff. Carries the CNES/DLR IDEFIX rover and NASA MEGANE. NORAD 101109 / COSPAR 2026-236A; centred on the Sun during the heliocentric cruise (switches to Mars once in the Martian system). JAXA declared the initial critical operations phase complete on 2026-10-21, with the spacecraft in good health after deploying its solar array paddles, achieving three-axis attitude control and releasing the medium-gain antenna hold-down mechanism; it now runs initial functional checks before outbound cruise operations.",
+        "fr": "Lancée le 2026-10-20 à 04:41:03 JST (= 2026-10-19 19:41:03 UTC) sur H3 F10 depuis Tanegashima ; la fusée a placé MMX sur son orbite prévue environ 71 minutes après le décollage. Emporte le rover IDEFIX (CNES/DLR) et MEGANE (NASA). NORAD 101109 / COSPAR 2026-236A ; centrée sur le Soleil pendant la croisière héliocentrique (passera à Mars une fois dans le système martien). Le JAXA a déclaré la phase critique initiale terminée le 2026-10-21, l'engin étant en bonne santé après le déploiement des panneaux solaires, l'obtention d'un contrôle d'attitude trois axes et la libération du mécanisme de maintien de l'antenne à gain moyen ; il procède maintenant aux vérifications fonctionnelles initiales avant la croisière vers Mars."
       },
       "website": {
         "url": "https://www.mmx.jaxa.jp/en/"
       },
-      "verified": "2026-10-24",
+      "verified": "2026-11-21",
       "sources": [
         "https://global.jaxa.jp/press/2026/08/20260820-1_e.html",
+        "https://global.jaxa.jp/press/2026/10/20261021-1_e.html",
         "https://mmx-news.isas.jaxa.jp/?p=2753",
         "https://www.mmx.jaxa.jp/en/",
         "https://www.nippon.com/en/news/yjj2026102000118/japan-successfully-launches-rocket-with-martian-moon-probe.html",
@@ -2585,8 +2587,8 @@
         "fr": "SOHO, un observatoire commun de l'ESA et de la NASA, surveille le Soleil sans interruption depuis un point situé à environ 1,5 million de km de la Terre. Il étudie l'astre de son cœur, sondé grâce aux vibrations de sa surface, jusqu'à sa haute atmosphère brûlante (la couronne) et au vent solaire qui s'échappe dans l'espace. Ses images des tempêtes solaires aident aussi à prévoir la météo spatiale."
       },
       "notes": {
-        "en": "Extension endorsed by ESA's Science Programme Committee on 10-11 June 2026 (13 missions). End date of the new extension not stated in the opened source.",
-        "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA les 10-11 juin 2026 (13 missions). Date de fin de la nouvelle extension non précisée dans la source consultée."
+        "en": "Extension endorsed by ESA's Science Programme Committee on 10-11 June 2026, one of 13 missions extended (BepiColombo, Cheops, Einstein Probe, Hinode, Hubble, IRIS, Mars Express, Proba-3, SOHO, Solar Orbiter, Webb, XMM-Newton, XRISM). End date of the new extension still not stated in any source read so far.",
+        "fr": "Prolongation approuvée par le Comité du programme scientifique de l'ESA les 10-11 juin 2026, l'une de 13 missions prolongées (BepiColombo, Cheops, Einstein Probe, Hinode, Hubble, IRIS, Mars Express, Proba-3, SOHO, Solar Orbiter, Webb, XMM-Newton, XRISM). Date de fin de la nouvelle extension toujours non précisée dans les sources consultées à ce jour."
       },
       "website": {
         "url": "https://www.esa.int/Science_Exploration/Space_Science/SOHO"
@@ -2594,10 +2596,11 @@
       "model3d": {
         "url": "https://scifleet.esa.int/model/soho/"
       },
-      "verified": "2026-10-31",
+      "verified": "2026-11-21",
       "sources": [
         "https://www.esa.int/Science_Exploration/Space_Science/ESA_science_missions_get_green_light_for_new_discoveries",
         "https://www.esa.int/Science_Exploration/Space_Science/SOHO/SOHO_overview",
+        "https://agenceurope.eu/en/bulletin/article/13886/29/esa-extends-13-scientific-missions",
         "https://ssd.jpl.nasa.gov/api/horizons_lookup.api?sstr=SOHO"
       ]
     },
@@ -2767,7 +2770,7 @@
       "website": {
         "url": "https://science.nasa.gov/mission/imap/"
       },
-      "verified": "2026-11-14",
+      "verified": "2026-11-21",
       "sources": [
         "https://science.nasa.gov/blogs/imap/2026/01/12/nasas-imap-mission-reaches-its-destination/",
         "https://science.nasa.gov/blogs/imap/2026/08/07/nasas-imap-mission-releases-new-data-from-7-science-instruments/",
