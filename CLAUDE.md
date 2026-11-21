@@ -593,7 +593,8 @@ the "up" vector and causes gimbal lock at the poles).
     central body's shadow (`src/astro/eclipse.ts`, umbra and penumbra; orbiters only, not surface sites).
   - *Sun glare* (all views, `src/render/SunGlare.ts`): one full-screen additive pass drawn last: white-hot core,
     bloom, diffraction spikes, a cyan anamorphic streak, a faint veil and aperture ghosts along the line through
-    the screen centre. Its strength is the visible part of the Sun's disc, computed on the CPU from the views'
+    the screen centre (stacked on the Sun when it is centred, the solar view's default; they fade out as the Sun's
+    mesh fades in). Its strength is the visible part of the Sun's disc, computed on the CPU from the views'
     spheres in front (exact disc overlap, smooth in eclipses) and the selected 3D model (`SceneModel.blocks` on 9
     rays; `src/render/sunVisibility.ts`), so markers and satellites never make it flicker, times a power falling
     with the distance from the Sun (`glarePower`: ~0.7 at 7 au, 0.2 at 30 au, 2 % at Voyager 1). Beyond 10 million
@@ -604,6 +605,11 @@ the "up" vector and causes gimbal lock at the poles).
     opaque pass at renderOrder 4: it dims the sky, the stars and the bodies, not the depth-tested markers
     (renderOrder 5), the transparent pass (lines, glare, which dims itself) or the labels. Without the
     effect the mesh is always drawn.
+  - *Spacecraft window* (all views, `refract` and `glass` passes of `SunGlare`, drawn last): a frameless,
+    slightly curved pane. Near the view's edges the frame (copied with `copyFramebufferToTexture`, canvas only,
+    not the picking pass) is magnified a little with a faint colour fringe (HTML labels are not); then a faint
+    cool haze, smudges and sparse dust and polishing scratches, nearly invisible until the Sun (even just off
+    screen) lights them.
   Clouds and gas follow the simulation clock (`src/render/simTime.ts`, set by the frame loop): two layers each
   drift for a cycle (clouds 2 days, gas 4 days) and cross-fade into the next (`layerCycle`); a cloud layer's
   next drawing is a new seed (tab seed + cycle number), so a date shows the same clouds in every view and a layer
