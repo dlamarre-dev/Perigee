@@ -16,11 +16,11 @@
         "fr": "La station permet à des équipages de vivre et de travailler dans l'espace sans interruption, pour mener des expériences impossibles au sol : en apesanteur, le corps humain, les liquides, les flammes et les matériaux se comportent autrement. Elle sert aussi à tester les technologies et à étudier les effets sur la santé des longs voyages vers la Lune et Mars, tout en montrant que de nombreux pays peuvent bâtir et exploiter ensemble un projet complexe."
       },
       "notes": {
-        "en": "Permanently crewed since November 2000, the station hosts research in biology, physics, materials and Earth observation. Its first module, Zarya, was launched on 20 November 1998.",
-        "fr": "Occupée en permanence depuis novembre 2000, la station accueille des recherches en biologie, en physique, sur les matériaux et en observation de la Terre. Son premier module, Zarya, a été lancé le 20 novembre 1998."
+        "en": "Permanently crewed since November 2000, the station hosts research in biology, physics, materials and Earth observation. Its first module, Zarya, was launched on 20 November 1998. It passed 25 years of continuous human presence on 2025-11-02; Expedition 75 began 2026-07-26 and runs into spring 2027.",
+        "fr": "Occupée en permanence depuis novembre 2000, la station accueille des recherches en biologie, en physique, sur les matériaux et en observation de la Terre. Son premier module, Zarya, a été lancé le 20 novembre 1998. Elle a franchi 25 ans de présence humaine continue le 2025-11-02 ; l'Expédition 75 a commencé le 2026-07-26 et se poursuit jusqu'au printemps 2027."
       },
       "website": { "url": "https://www.nasa.gov/international-space-station/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://www.nasa.gov/international-space-station/"]
     },
     {
@@ -61,17 +61,18 @@
         "fr": "Hubble a été conçu pour observer l'Univers au-dessus de l'atmosphère terrestre, qui brouille les images, en lumière visible, ultraviolette et proche infrarouge. L'un de ses objectifs fondateurs était de mesurer la vitesse d'expansion de l'Univers; il étudie aussi la formation et l'évolution des galaxies, des étoiles et des planètes, les trous noirs et l'atmosphère de planètes d'autres étoiles, et ses observations ont contribué à la découverte de l'énergie sombre."
       },
       "notes": {
-        "en": "Launched by Space Shuttle Discovery and serviced five times by astronauts. Since June 2024 it observes in one-gyro mode to save its remaining gyroscopes, which limits some targets but keeps science going.",
-        "fr": "Lancé par la navette Discovery et réparé cinq fois par des astronautes. Depuis juin 2024, il observe avec un seul gyroscope pour ménager les autres, ce qui limite certaines cibles sans arrêter la science."
+        "en": "Launched by Space Shuttle Discovery and serviced five times by astronauts. Since June 2024 it observes in reduced gyro mode (RGM) to save its remaining gyroscopes: one enhanced gyro (Gyro-6) drives pointing with a second (Gyro-4) powered on as backup, covering about half the sky at a time (the full sky over a year, versus 82% before RGM) while keeping science going.",
+        "fr": "Lancé par la navette Discovery et réparé cinq fois par des astronautes. Depuis juin 2024, il observe en mode à gyroscopes réduits (RGM) pour ménager ses gyroscopes restants : un gyroscope amélioré (Gyro-6) assure le pointage, un second (Gyro-4) restant sous tension en réserve, ce qui couvre environ la moitié du ciel à la fois (le ciel entier sur un an, contre 82 % avant le RGM) sans arrêter la science."
       },
       "website": { "url": "https://science.nasa.gov/mission/hubble/" },
       "model3d": {
         "url": "https://scifleet.esa.int/model/hst/"
       },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://science.nasa.gov/mission/hubble/",
-        "https://science.nasa.gov/missions/hubble/nasas-hubble-pauses-science-due-to-gyro-issue/"
+        "https://science.nasa.gov/missions/hubble/nasas-hubble-pauses-science-due-to-gyro-issue/",
+        "https://hst-docs.stsci.edu/hstos"
       ]
     },
     {
@@ -362,14 +363,15 @@
         "fr": "Hinode a été conçu pour comprendre comment les champs magnétiques du Soleil naissent et se déplacent, et comment ils transportent l'énergie de la surface visible jusqu'à l'atmosphère extérieure, la couronne, chauffée à des millions de degrés. Il cherche aussi ce qui déclenche les éruptions solaires et les éjections de masse coronale, à l'origine de la météo spatiale qui peut perturber satellites et réseaux électriques sur Terre."
       },
       "notes": {
-        "en": "Japanese solar observatory with optical, X-ray and EUV telescopes built with US and UK partners, studying the Sun's magnetic fields and the heating of the corona. Still operating after nearly 20 years.",
-        "fr": "Observatoire solaire japonais doté de télescopes optique, X et UV extrême construits avec des partenaires américains et britanniques ; il étudie les champs magnétiques du Soleil et le chauffage de la couronne. Toujours en service après près de 20 ans."
+        "en": "Japanese solar observatory with optical, X-ray and EUV telescopes built with US and UK partners, studying the Sun's magnetic fields and the heating of the corona. Still operating after nearly 20 years: ESA’s Science Programme Committee endorsed an extension for Hinode (one of 13 international science missions) on 10-11 June 2026.",
+        "fr": "Observatoire solaire japonais doté de télescopes optique, X et UV extrême construits avec des partenaires américains et britanniques ; il étudie les champs magnétiques du Soleil et le chauffage de la couronne. Toujours en service après près de 20 ans : le Comité du programme scientifique de l’ESA a approuvé une prolongation pour Hinode (l’une de 13 missions scientifiques internationales) les 10-11 juin 2026."
       },
       "website": { "url": "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hinode.html" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://www.isas.jaxa.jp/en/missions/spacecraft/current/hinode.html",
-        "https://hinode.nao.ac.jp/en/"
+        "https://hinode.nao.ac.jp/en/",
+        "https://agenceurope.eu/en/bulletin/article/13886/29/esa-extends-13-scientific-missions"
       ]
     },
     {
@@ -551,12 +553,15 @@
         "fr": "GCOM-W fait partie d'un programme japonais qui suit, sur de longues années, la circulation de l'eau entre les océans, l'atmosphère et les terres, et la façon dont ce cycle évolue avec le réchauffement. Ses mesures continues alimentent les modèles météorologiques et climatiques afin d'améliorer les prévisions et d'anticiper les effets du réchauffement sur la pluie, la neige et la banquise."
       },
       "notes": {
-        "en": "Global Change Observation Mission – Water: its AMSR2 radiometer measures rainfall, water vapour, sea-surface temperature, sea ice and soil moisture day and night. Still operating in good health past its 5-year design life.",
-        "fr": "Global Change Observation Mission – Water : son radiomètre AMSR2 mesure jour et nuit les précipitations, la vapeur d'eau, la température de la mer, la banquise et l'humidité des sols. Toujours en service et en bon état, au-delà de sa durée de vie prévue de 5 ans."
+        "en": "Global Change Observation Mission – Water: its AMSR2 radiometer measures rainfall, water vapour, sea-surface temperature, sea ice and soil moisture day and night. Still operating in good health past its 5-year design life, in its “latter phase in operation.” A September 2026 operations change temporarily reduced some standard products to under one scene per day while JAXA assesses the issue.",
+        "fr": "Global Change Observation Mission – Water : son radiomètre AMSR2 mesure jour et nuit les précipitations, la vapeur d'eau, la température de la mer, la banquise et l'humidité des sols. Toujours en service et en bon état, au-delà de sa durée de vie prévue de 5 ans, en « phase tardive d’exploitation ». Un changement d’exploitation de septembre 2026 a temporairement réduit certains produits standards à moins d’une scène par jour pendant que le JAXA évalue le problème."
       },
-      "website": { "url": "https://www.eorc.jaxa.jp/AMSR/satellite/gcom-w_en.html" },
-      "verified": "2026-10-03",
-      "sources": ["https://www.eorc.jaxa.jp/AMSR/satellite/gcom-w_en.html"]
+      "website": { "url": "https://global.jaxa.jp/projects/sat/gcom_w/" },
+      "verified": "2026-11-21",
+      "sources": [
+        "https://global.jaxa.jp/projects/sat/gcom_w/",
+        "https://www.eorc.jaxa.jp/AMSR/news/n05_topics_en.html"
+      ]
     },
     {
       "id": "nustar",
@@ -572,12 +577,12 @@
         "fr": "NuSTAR a été conçu pour observer l'Univers en rayons X de haute énergie, la lumière émise par la matière chauffée à des températures extrêmes près des trous noirs et dans les étoiles qui explosent. Il cherche notamment à repérer des trous noirs cachés derrière la poussière et le gaz, à mesurer la vitesse de rotation des trous noirs et à comprendre comment explosent les étoiles massives en cartographiant les éléments radioactifs qu'elles laissent derrière elles."
       },
       "notes": {
-        "en": "Nuclear Spectroscopic Telescope Array, the first telescope to focus high-energy X-rays, using optics on a 10-metre deployable mast. Studies black holes, neutron stars and supernova remnants; still operating.",
-        "fr": "Nuclear Spectroscopic Telescope Array, premier télescope à focaliser les rayons X de haute énergie, grâce à un mât déployable de 10 mètres. Étudie les trous noirs, les étoiles à neutrons et les restes de supernova ; toujours en service."
+        "en": "Nuclear Spectroscopic Telescope Array, the first telescope to focus high-energy X-rays, using optics on a 10-metre deployable mast. Studies black holes, neutron stars and supernova remnants; still operating, currently observing the nearby Type Ia supernova SN2026ahvu, with Cycle 12 observations under way and Cycle 13 proposals closed September 2026 for observations beginning February 2027.",
+        "fr": "Nuclear Spectroscopic Telescope Array, premier télescope à focaliser les rayons X de haute énergie, grâce à un mât déployable de 10 mètres. Étudie les trous noirs, les étoiles à neutrons et les restes de supernova ; toujours en service, observant actuellement la supernova de type Ia proche SN2026ahvu, avec les observations du cycle 12 en cours et les propositions du cycle 13 closes en septembre 2026 pour des observations débutant en février 2027."
       },
       "website": { "url": "https://science.nasa.gov/mission/nustar/" },
-      "verified": "2026-10-03",
-      "sources": ["https://science.nasa.gov/mission/nustar/"]
+      "verified": "2026-11-21",
+      "sources": ["https://science.nasa.gov/mission/nustar/", "https://www.nustar.caltech.edu/"]
     },
     {
       "id": "neossat",
@@ -600,7 +605,7 @@
         "fr": "Satellite de surveillance des objets géocroiseurs, petit télescope spatial canadien de la taille d’une valise. Son programme d’observateurs invités se poursuivait en 2026."
       },
       "website": { "url": "https://www.asc-csa.gc.ca/eng/satellites/neossat/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://www.asc-csa.gc.ca/eng/satellites/neossat/",
         "https://www.asc-csa.gc.ca/eng/funding-programs/funding-opportunities/ao/2025-neossat-science-guest-observation-program-cycle-10.asp"
@@ -651,7 +656,7 @@
         "fr": "Interface Region Imaging Spectrograph : observe la chromosphère et la région de transition, les couches où l'énergie passe de la surface du Soleil à sa couronne brûlante. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/iris/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/iris/"]
     },
     {
@@ -695,14 +700,15 @@
         "fr": "Les instruments e-POP ont été conçus pour étudier en détail les tempêtes spatiales et les particules chargées qui s'échappent de la haute atmosphère vers l'espace. Le but est de mieux comprendre la météo spatiale et ses effets sur les radiocommunications, la navigation GPS et d'autres technologies. CASSIOPE a aussi servi à démontrer la première plateforme canadienne de petit satellite polyvalent."
       },
       "notes": {
-        "en": "Canadian satellite carrying the e-POP plasma instruments, which joined ESA's Swarm mission as Swarm-Echo in 2018. Routine science ended after a reaction-wheel failure in December 2021; limited data collection continued, with an end of life planned for December 2025, unconfirmed.",
-        "fr": "Satellite canadien portant les instruments de plasma e-POP, intégré en 2018 à la mission Swarm de l'ESA sous le nom de Swarm-Echo. Les opérations scientifiques régulières ont cessé après une panne de roue de réaction en décembre 2021 ; une collecte limitée s'est poursuivie, avec une fin de vie prévue en décembre 2025, non confirmée."
+        "en": "Canadian satellite carrying the e-POP plasma instruments, which joined ESA's Swarm mission as Swarm-Echo in 2018. Routine science ended after a reaction-wheel failure in December 2021; limited data collection continued; the planned December 2025 end of life has now passed without reentry — lower-than-usual solar activity kept the satellite higher and slower to decay than expected, and the principal investigator now projects reentry around 2028–2029.",
+        "fr": "Satellite canadien portant les instruments de plasma e-POP, intégré en 2018 à la mission Swarm de l'ESA sous le nom de Swarm-Echo. Les opérations scientifiques régulières ont cessé après une panne de roue de réaction en décembre 2021 ; une collecte limitée s'est poursuivie ; la fin de vie prévue en décembre 2025 est maintenant passée sans rentrée — une activité solaire plus faible qu'à l'habitude a maintenu le satellite plus haut et ralenti sa décroissance orbitale, et le chercheur principal prévoit maintenant une rentrée vers 2028–2029."
       },
       "website": { "url": "https://epop.phys.ucalgary.ca/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://epop.phys.ucalgary.ca/routine-cassiope-swarm-echo-science-operations-come-to-an-end/",
-        "https://www.eoportal.org/satellite-missions/cassiope"
+        "https://www.eoportal.org/satellite-missions/cassiope",
+        "https://universityaffairs.ca/news/u-of-calgary-satellite-still-orbiting-after-10-years/"
       ]
     },
     {
@@ -846,13 +852,14 @@
         "fr": "OCO-2 doit établir où le dioxyde de carbone, principal gaz responsable du réchauffement climatique d'origine humaine, entre dans l'atmosphère et où il en sort : quelles régions en émettent, quelles forêts, quels océans ou sols l'absorbent, et comment cela varie au fil des saisons. La faible lueur de la photosynthèse qu'il mesure aussi aide à suivre la santé des plantes, les sécheresses et les récoltes."
       },
       "notes": {
-        "en": "Maps carbon dioxide in the atmosphere and plant fluorescence from space. Threatened with termination in 2025, it kept operating; in August 2026 NASA selected Caltech to run OCO-2 and OCO-3 for up to five years.",
-        "fr": "Cartographie depuis l'espace le dioxyde de carbone de l'atmosphère et la fluorescence des plantes. Menacé d'arrêt en 2025, il a continué de fonctionner ; en août 2026, la NASA a confié à Caltech l'exploitation d'OCO-2 et d'OCO-3 pour un maximum de cinq ans."
+        "en": "Maps carbon dioxide in the atmosphere and plant fluorescence from space. Threatened with termination in 2025, it kept operating; on 2026-08-14 NASA and Caltech (including JPL staff) signed Space Act Agreements for Caltech to run OCO-2 and OCO-3, and their data systems, for up to five years, with NASA retaining ownership of both spacecraft.",
+        "fr": "Cartographie depuis l'espace le dioxyde de carbone de l'atmosphère et la fluorescence des plantes. Menacé d'arrêt en 2025, il a continué de fonctionner ; le 2026-08-14, la NASA et Caltech (y compris du personnel du JPL) ont signé des accords (Space Act Agreements) confiant à Caltech l'exploitation d'OCO-2 et d'OCO-3, ainsi que de leurs systèmes de données, pour un maximum de cinq ans, la NASA restant propriétaire des deux engins."
       },
       "website": { "url": "https://ocov2.jpl.nasa.gov/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://ocov2.jpl.nasa.gov/",
+        "https://science.nasa.gov/blogs/oco-2/2026/08/24/nasa-caltech-partner-on-two-earth-science-missions/",
         "https://www.earthdata.nasa.gov/data/alerts-outages/oco-2-instrument-anomaly-from-july-28-august-13-2026"
       ]
     },
@@ -904,7 +911,7 @@
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/mms/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
     {
@@ -928,7 +935,7 @@
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/mms/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
     {
@@ -952,7 +959,7 @@
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/mms/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
     {
@@ -976,7 +983,7 @@
         "fr": "L'un des quatre engins identiques volant en tétraèdre serré sur une orbite très elliptique pour étudier la reconnexion magnétique, libération explosive d'énergie à l'origine des aurores et de la météo spatiale. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/mms/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/mms/"]
     },
     {
@@ -1068,14 +1075,15 @@
         "fr": "Insight-HXMT a été construit pour étudier le comportement de la matière dans la gravité et les champs magnétiques extrêmes qui entourent trous noirs et étoiles à neutrons, en observant les rayons X des systèmes d'étoiles doubles. Il balaie aussi le plan de la Voie lactée pour découvrir de nouvelles sources qui s'illuminent soudain et suivre les sources variables connues, et il guette les sursauts gamma, les explosions les plus puissantes de l'Univers."
       },
       "notes": {
-        "en": "Hard X-ray Modulation Telescope, China's first X-ray astronomy satellite, studying black holes, neutron stars and gamma-ray bursts. Still operating: its Cycle 9 call for observations was issued in May 2026.",
-        "fr": "Hard X-ray Modulation Telescope, premier satellite chinois d'astronomie X, qui étudie trous noirs, étoiles à neutrons et sursauts gamma. Toujours en service : son 9e appel à observations a été publié en mai 2026."
+        "en": "Hard X-ray Modulation Telescope, China's first X-ray astronomy satellite, studying black holes, neutron stars and gamma-ray bursts. Still operating: its Cycle 9 call for observations was issued in May 2026, and its HE instrument kept detecting gamma-ray bursts through at least August 2026.",
+        "fr": "Hard X-ray Modulation Telescope, premier satellite chinois d'astronomie X, qui étudie trous noirs, étoiles à neutrons et sursauts gamma. Toujours en service : son 9e appel à observations a été publié en mai 2026, et son instrument HE a continué de détecter des sursauts gamma au moins jusqu'en août 2026."
       },
       "website": { "url": "https://hxmt.nssdc.ac.cn/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": [
         "https://hxmt.nssdc.ac.cn/",
-        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2017-034A"
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2017-034A",
+        "https://gcn.nasa.gov/circulars/45144"
       ]
     },
     {
@@ -1182,7 +1190,7 @@
         "fr": "Construit avec l’Agence spatiale italienne. Toujours en service."
       },
       "website": { "url": "https://science.nasa.gov/mission/ixpe/" },
-      "verified": "2026-10-03",
+      "verified": "2026-11-21",
       "sources": ["https://science.nasa.gov/mission/ixpe/"]
     },
     {

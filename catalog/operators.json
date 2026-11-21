@@ -1,5 +1,5 @@
 {
-  "verified": "2026-11-14",
+  "verified": "2026-11-21",
   "sources": [
     "https://celestrak.org/satcat/sources.php",
     "https://celestrak.org/NORAD/elements/",
@@ -465,6 +465,24 @@
       "sources": [
         "https://space.skyrocket.de/doc_sdat/ghgsat-c9.htm",
         "https://celestrak.org/satcat/records.php?CATNR=58336&FORMAT=JSON"
+      ]
+    },
+    {
+      "norad": 64529,
+      "operator": "ghgsat",
+      "name": "GHGSat-C12 (Pierre)",
+      "sources": [
+        "https://www.newswire.com/news/ghgsat-successfully-launches-two-new-satellites-unlocking-22596869",
+        "https://celestrak.org/satcat/records.php?CATNR=64529&FORMAT=JSON"
+      ]
+    },
+    {
+      "norad": 64548,
+      "operator": "ghgsat",
+      "name": "GHGSat-C13 (Valmay)",
+      "sources": [
+        "https://www.newswire.com/news/ghgsat-successfully-launches-two-new-satellites-unlocking-22596869",
+        "https://celestrak.org/satcat/records.php?CATNR=64548&FORMAT=JSON"
       ]
     },
     {

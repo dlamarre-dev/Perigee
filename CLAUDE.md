@@ -762,7 +762,8 @@ the audit flags:
   ARTEMIS P1/P2 (−192/−193), CAPSTONE (−1176; NASA declared the mission complete 2026-07-06, Advanced Space
   continues flying it commercially (weekly NRHO station-keeping as of mid-2026); **public Horizons ephemeris
   stops 2026-08-14 and has not resumed**, likely permanently now that NASA's DSN-tracked mission has ended — still
-  tracked per CelesTrak's SATCAT (no decay date) as of 2026-11-14 — re-check periodically), SWC-1/Shams (−168540,
+  tracked per CelesTrak's SATCAT (no decay date) as of 2026-11-14 — re-check periodically; Advanced Space announced
+  a CAPSTONE 02 follow-on mission (two new spacecraft with Terran Orbital, 2027 launch planned)), SWC-1/Shams (−168540,
   Saudi Space Agency cislunar space-weather 12U CubeSat deployed during Artemis II, launched 2026-04-01; still
   tracked in high Earth orbit (NORAD 68540, SATCAT confirms it operational with no decay date as of 2026-11-14,
   orbit ~475 × 70,229 km), but its public Horizons ephemeris stops 2026-04-07, so it is
@@ -779,7 +780,8 @@ the audit flags:
   mission declared over 2026-06-03; Horizons coverage ends 2026-03-01 (shown as last known trajectory). ESCAPADE
   Blue/Gold: launched 2025-11-13, waiting near Sun–Earth L2, Earth-departure burns Nov 2026, Mars arrival Sept
   2027. MMX (JAXA): launched 2026-10-19 19:41 UTC (H3 F10) into its planned trajectory; heliocentric cruise,
-  Mars arrival 2027 (NORAD 101109, Horizons ID −239). Phobos (401) and Deimos (402) come from Horizons like the
+  Mars arrival 2027 (NORAD 101109, Horizons ID −239); initial critical operations phase completed 2026-10-21,
+  spacecraft in good health. Phobos (401) and Deimos (402) come from Horizons like the
   probes.
 - Interplanetary (verified 2026-11-07, details in `catalog/missions.json`, heliocentric Horizons IDs): Voyager 1
   (−31, LECP off April 2026; "Big Bang" power reconfiguration completed September 2026; a brief DSN signal loss
