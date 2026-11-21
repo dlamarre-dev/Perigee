@@ -1,19 +1,21 @@
 /**
  * Immersive effects (relief from normal maps, Earth clouds, moving gas on Venus and the giant planets, sunspots,
- * spacecraft models lit by the Sun alone with self-shadowing, the Sun's glare and lens flare):
+ * spacecraft models lit by the Sun alone with self-shadowing, the Sun's glare and lens flare, a spacecraft window):
  * high quality tier (sunspots from the medium tier), each switchable by the visitor (settings window, remembered
  * per browser). They apply live: every shader that draws an effect shares its strength uniform (0 off, 1 on), so
  * no material is rebuilt.
  */
 import { quality, type QualityTier } from './quality';
 
-export type EffectName = 'relief' | 'clouds' | 'gasMotion' | 'sunspots' | 'modelLighting' | 'sunGlare';
+export type EffectName =
+  'relief' | 'clouds' | 'gasMotion' | 'sunspots' | 'modelLighting' | 'sunGlare' | 'glass';
 export const EFFECT_NAMES: readonly EffectName[] = [
   'relief',
   'clouds',
   'gasMotion',
   'sunspots',
   'sunGlare',
+  'glass',
   'modelLighting',
 ];
 
@@ -25,6 +27,7 @@ const MIN_TIER: Readonly<Record<EffectName, QualityTier>> = {
   sunspots: 'medium',
   modelLighting: 'high',
   sunGlare: 'high',
+  glass: 'high',
 };
 const TIER_RANK: Readonly<Record<QualityTier, number>> = { low: 0, medium: 1, high: 2 };
 

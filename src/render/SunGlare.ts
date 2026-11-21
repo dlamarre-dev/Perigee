@@ -19,7 +19,10 @@ import {
   BufferGeometry,
   CustomBlending,
   Float32BufferAttribute,
+  FramebufferTexture,
+  LinearFilter,
   Mesh,
+  NoBlending,
   ShaderMaterial,
   SrcColorFactor,
   Vector2,
@@ -101,23 +104,25 @@ const fragmentShader = /* glsl */ `
     // Veiling glare over the whole view.
     glare += vec3(1.0, 0.9, 0.75) * 0.07 * exp(-r / (0.9 * u));
 
-    // Aperture ghosts along the line from the Sun through the centre of the view, and a thin chromatic ring.
+    // Aperture ghosts along the line from the Sun through the centre of the view (stacked on the Sun when it is
+    // looked at straight on), and a thin chromatic ring.
     vec2 axis = uViewport.xy + 0.5 * uViewport.zw - uSun;
     vec3 ghosts = vec3(0.0);
-    ghosts += vec3(1.0, 0.55, 0.25) * 0.16 * ghost(frag, uSun + axis * 0.35, 0.018 * u, 0.0);
-    ghosts += vec3(0.35, 0.75, 0.45) * 0.08 * ghost(frag, uSun + axis * 0.7, 0.045 * u, 1.0);
-    ghosts += vec3(0.55, 0.4, 1.0) * 0.1 * ghost(frag, uSun + axis * 1.25, 0.03 * u, 1.0);
-    ghosts += vec3(0.3, 0.6, 1.0) * 0.05 * ghost(frag, uSun + axis * 1.55, 0.09 * u, 0.0);
-    ghosts += vec3(1.0, 0.75, 0.35) * 0.15 * ghost(frag, uSun + axis * 1.85, 0.02 * u, 0.0);
-    ghosts += vec3(0.8, 0.35, 0.6) * 0.06 * ghost(frag, uSun + axis * 2.2, 0.06 * u, 1.0);
+    ghosts += vec3(1.0, 0.55, 0.25) * 0.22 * ghost(frag, uSun + axis * 0.35, 0.018 * u, 0.0);
+    ghosts += vec3(0.35, 0.75, 0.45) * 0.12 * ghost(frag, uSun + axis * 0.7, 0.045 * u, 1.0);
+    ghosts += vec3(0.55, 0.4, 1.0) * 0.14 * ghost(frag, uSun + axis * 1.25, 0.03 * u, 1.0);
+    ghosts += vec3(0.3, 0.6, 1.0) * 0.07 * ghost(frag, uSun + axis * 1.55, 0.09 * u, 0.0);
+    ghosts += vec3(1.0, 0.75, 0.35) * 0.2 * ghost(frag, uSun + axis * 1.85, 0.02 * u, 0.0);
+    ghosts += vec3(0.8, 0.35, 0.6) * 0.09 * ghost(frag, uSun + axis * 2.2, 0.06 * u, 1.0);
     vec3 ring = vec3(
       exp(-pow((r - 0.337 * u) / (0.01 * u), 2.0)),
       exp(-pow((r - 0.33 * u) / (0.01 * u), 2.0)),
       exp(-pow((r - 0.323 * u) / (0.01 * u), 2.0)));
     ghosts += ring * 0.06;
 
+    // The lens flare follows the glare's power and fades out as the Sun's mesh fades in (near the Sun).
     // The window dims the glare too (it is drawn after the window's pass, like the markers and lines).
-    vec3 color = ((glare * dazzle + ghosts * seen * mix(1.0, 0.25, resolved)) * outside + disc) * (1.0 - 0.85 * uDim);
+    vec3 color = ((glare * dazzle + ghosts * seen * (1.0 - uMesh)) * outside + disc) * (1.0 - 0.85 * uDim);
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -145,10 +150,110 @@ const dimFragmentShader = /* glsl */ `
   }
 `;
 
+/**
+ * Spacecraft window (immersive effect `glass`, high tier, all views): a faint cool haze, smudges, dust and fine
+ * polishing scratches on a pane with no visible frame, almost invisible until the Sun lights them up around its
+ * place on screen (even just off screen).
+ */
+const glassVertexShader = /* glsl */ `
+  uniform float uGlass;
+  void main() {
+    gl_Position = uGlass > 0.0 ? vec4(position.xy, 0.0, 1.0) : vec4(2.0, 2.0, 2.0, 1.0);
+  }
+`;
+
+const glassFragmentShader = /* glsl */ `
+  uniform float uGlass;
+  uniform vec4 uViewport;
+  uniform vec2 uSun;
+  uniform float uSunLight;
+
+  float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+  }
+  float fbm(vec2 p) {
+    float s = 0.0;
+    float a = 0.5;
+    for (int i = 0; i < 4; i++) {
+      s += a * noise(p);
+      p = p * 2.03 + 17.1;
+      a *= 0.5;
+    }
+    return s;
+  }
+
+  void main() {
+    vec2 frag = gl_FragCoord.xy - uViewport.xy;
+    float u = min(uViewport.z, uViewport.w);
+    // Pane coordinates: fixed to the screen, independent of its size.
+    vec2 p = frag / u;
+    // Smudges: soft blotches at two scales.
+    float smudge = smoothstep(0.55, 0.85, fbm(p * 2.6 + 7.3)) * 0.7 + smoothstep(0.6, 0.9, fbm(p * 8.0 + 1.7)) * 0.3;
+    // Dust: sparse specks.
+    vec2 cell = floor(p * 70.0);
+    vec2 offset = vec2(hash(cell + 3.1), hash(cell + 9.7)) - 0.5;
+    float speck = step(0.996, hash(cell)) * (1.0 - smoothstep(0.05, 0.18, length(fract(p * 70.0) - 0.5 - offset * 0.5)));
+    // Polishing scratches: hairline arcs around a point off the pane, in short broken segments.
+    vec2 c = p - vec2(-0.6, 1.7);
+    float ring = length(c) * 55.0;
+    float hair = 1.0 - smoothstep(0.0, 0.06, abs(fract(ring + 0.4 * noise(p * 6.0)) - 0.5));
+    float scratch = hair * smoothstep(0.88, 0.97, noise(vec2(floor(ring) * 3.7, atan(c.y, c.x) * 30.0)));
+    // Sunlight scattered by the dirt, strongest around the Sun's place.
+    float dist = length(gl_FragCoord.xy - uSun) / u;
+    float light = uSunLight * (exp(-dist / 0.22) + 0.12 * exp(-dist / 0.9));
+    vec3 lit = vec3(1.0, 0.93, 0.8) * (0.22 * smudge + 0.2 * speck + 0.1 * scratch) * light;
+    // Unlit: a faint cool haze, barely visible smudges and a soft diagonal sheen of the glass.
+    float sheen = exp(-pow((p.x * 0.6 + p.y - 0.9) / 0.35, 2.0));
+    vec3 ambient = vec3(0.004, 0.007, 0.01) + vec3(0.7, 0.85, 1.0) * (0.006 * smudge + 0.008 * sheen);
+    gl_FragColor = vec4((lit + ambient) * uGlass, 1.0);
+  }
+`;
+
+/**
+ * The pane is slightly curved: near the edges of the view the image is magnified a little, with a faint colour
+ * fringe, from a copy of the frame (glare included) taken just before this pass. The centre is left untouched.
+ */
+const refractFragmentShader = /* glsl */ `
+  uniform sampler2D uFrame;
+  uniform vec2 uFrameSize;
+  uniform vec4 uViewport;
+  void main() {
+    vec2 frag = gl_FragCoord.xy - uViewport.xy;
+    vec2 q = frag / uViewport.zw * 2.0 - 1.0;
+    // Rounded-rectangle distance from the centre: 0 there, 1 on the edges, more in the corners.
+    vec2 a = abs(q);
+    float s = pow(pow(a.x, 4.0) + pow(a.y, 4.0), 0.25);
+    float w = smoothstep(0.6, 1.25, s);
+    w *= w;
+    if (w <= 0.0) discard;
+    // Sampled towards the centre: the content near the edges is stretched outwards.
+    vec2 shift = q / max(s, 1e-3) * w * 0.009 * min(uViewport.z, uViewport.w);
+    vec2 px = 1.0 / uFrameSize;
+    vec3 color = vec3(
+      texture2D(uFrame, (gl_FragCoord.xy - shift * 0.9) * px).r,
+      texture2D(uFrame, (gl_FragCoord.xy - shift) * px).g,
+      texture2D(uFrame, (gl_FragCoord.xy - shift * 1.12) * px).b);
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
+
 export class SunGlare {
   readonly mesh: Mesh<BufferGeometry, ShaderMaterial>;
   /** The window tint (multiplies the frame), drawn before the markers, lines and glare. */
   readonly dim: Mesh<BufferGeometry, ShaderMaterial>;
+  /** The spacecraft window's pane, drawn last. */
+  readonly glass: Mesh<BufferGeometry, ShaderMaterial>;
+  /** The pane's curved edges, redrawing a copy of the frame. */
+  readonly refract: Mesh<BufferGeometry, ShaderMaterial>;
+  private frame: FramebufferTexture | undefined;
   private readonly world = new Vector3();
   private readonly view = new Vector3();
   private readonly viewport = new Vector4();
@@ -218,11 +323,72 @@ export class SunGlare {
     // depth-tested markers (5) and the whole transparent pass (the Sun, lines, rings, glare): only the
     // background and the other objects are dimmed, the markers, lines and labels stay readable.
     this.dim.renderOrder = 4;
+    this.glass = new Mesh(
+      geometry,
+      new ShaderMaterial({
+        uniforms: {
+          uSun: shared.uSun,
+          uViewport: shared.uViewport,
+          uSunLight: { value: 0 },
+          uGlass: effectUniform('glass'),
+        },
+        vertexShader: glassVertexShader,
+        fragmentShader: glassFragmentShader,
+        blending: AdditiveBlending,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+      }),
+    );
+    this.glass.name = 'window-glass';
+    this.glass.frustumCulled = false;
+    // After the refraction: the dirt is on the pane's surface.
+    this.glass.renderOrder = 1e9 + 2;
+    const glassOn = effectUniform('glass');
+    const refractOn = { value: 0 };
+    const frameSize = new Vector2();
+    this.refract = new Mesh(
+      geometry,
+      new ShaderMaterial({
+        uniforms: {
+          uGlass: refractOn,
+          uViewport: shared.uViewport,
+          uFrame: { value: null },
+          uFrameSize: { value: frameSize },
+        },
+        vertexShader: glassVertexShader,
+        fragmentShader: refractFragmentShader,
+        blending: NoBlending,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+      }),
+    );
+    this.refract.name = 'window-refraction';
+    this.refract.frustumCulled = false;
+    this.refract.renderOrder = 1e9 + 1;
+    this.refract.onBeforeRender = (renderer) => {
+      // The canvas only (not the picking pass): the frame drawn so far, glare included, is copied and redrawn
+      // through the curved edges.
+      refractOn.value = glassOn.value > 0 && renderer.getRenderTarget() === null ? 1 : 0;
+      if (refractOn.value === 0) return;
+      renderer.getDrawingBufferSize(frameSize);
+      const w = Math.floor(frameSize.x);
+      const h = Math.floor(frameSize.y);
+      if (this.frame?.image.width !== w || this.frame.image.height !== h) {
+        this.frame?.dispose();
+        this.frame = new FramebufferTexture(w, h);
+        this.frame.minFilter = LinearFilter;
+        this.frame.magFilter = LinearFilter;
+        (this.refract.material.uniforms['uFrame'] as { value: unknown }).value = this.frame;
+      }
+      renderer.copyFramebufferToTexture(this.frame);
+    };
   }
 
-  /** Both passes, to add to and remove from the scene. */
+  /** The passes, to add to and remove from the scene. */
   get objects(): readonly Object3D[] {
-    return [this.mesh, this.dim];
+    return [this.mesh, this.dim, this.refract, this.glass];
   }
 
   /**
@@ -257,8 +423,12 @@ export class SunGlare {
     const vis = u['uVis'] as { value: number };
     vis.value = 0;
     const on = (u['uStrength'] as { value: number }).value > 0;
-    const discPx = on ? this.place(renderer, camera) : undefined;
+    const front = this.place(renderer, camera);
+    const discPx = on && front?.onScreen ? front.discPx : undefined;
     if (discPx !== undefined) vis.value = this.visible * this.power;
+    (this.glass.material.uniforms['uSunLight'] as { value: number }).value = front
+      ? this.visible * this.power * (1 - 0.85 * (u['uDim'] as { value: number }).value)
+      : 0;
     // Near the Sun: the mesh fades in (far away the glare alone draws it; without the effect the mesh always
     // does) and the window dims while the Sun is in sight, both at the same pace.
     const now = performance.now();
@@ -276,16 +446,19 @@ export class SunGlare {
     (this.dim.material.uniforms['uDim'] as { value: number }).value = ease(this.dimProgress);
   }
 
-  /** Puts the Sun on the screen (uniforms); its disc radius in device px, undefined when not in front. */
-  private place(renderer: WebGLRenderer, camera: Camera): number | undefined {
+  /**
+   * Puts the Sun on the screen (uniforms): undefined when behind the camera; else its disc radius in device px
+   * and whether part of the disc is on screen.
+   */
+  private place(renderer: WebGLRenderer, camera: Camera): { discPx: number; onScreen: boolean } | undefined {
     const u = this.mesh.material.uniforms;
+    renderer.getCurrentViewport(this.viewport);
+    const vp = this.viewport;
     this.sun.mesh.getWorldPosition(this.world);
     const v = this.view.copy(this.world).applyMatrix4(camera.matrixWorldInverse);
     if (v.z >= 0) return undefined;
     const distanceKm = v.length();
     if (distanceKm <= this.radiusKm) return undefined;
-    renderer.getCurrentViewport(this.viewport);
-    const vp = this.viewport;
     v.applyMatrix4(camera.projectionMatrix);
     const x = vp.x + (v.x * 0.5 + 0.5) * vp.z;
     const y = vp.y + (v.y * 0.5 + 0.5) * vp.w;
@@ -294,20 +467,23 @@ export class SunGlare {
       (camera.projectionMatrix.elements[5] ?? 1) *
       vp.w *
       0.5;
-    // The flare needs the centre on screen (fading over the last 4 %); the window only part of the disc.
+    // The flare needs the centre on screen (fading over the last 4 %); the window only part of the disc; the
+    // pane's dirt is lit from just off screen too.
     const edgePx = Math.min(x - vp.x, vp.x + vp.z - x, y - vp.y, vp.y + vp.w - y);
-    if (edgePx <= -discPx) return undefined;
     const t = Math.min(1, Math.max(0, edgePx / (Math.min(vp.z, vp.w) * 0.04)));
     (u['uEdge'] as { value: number }).value = t * t * (3 - 2 * t);
     (u['uSun']?.value as Vector2).set(x, y);
     (u['uDisc'] as { value: number }).value = discPx;
     (u['uTime'] as { value: number }).value = (performance.now() / 1000) % 100_000;
-    return discPx;
+    return { discPx, onScreen: edgePx > -discPx };
   }
 
   dispose(): void {
     this.mesh.geometry.dispose();
     this.mesh.material.dispose();
     this.dim.material.dispose();
+    this.glass.material.dispose();
+    this.refract.material.dispose();
+    this.frame?.dispose();
   }
 }

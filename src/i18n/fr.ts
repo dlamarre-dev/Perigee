@@ -35,6 +35,7 @@ export const fr: Messages = {
   'quality.low': 'Économie',
   'effects.highOnly': 'Les effets grisés demandent une qualité plus élevée.',
   'effects.sunGlare': 'Éblouissement du Soleil et reflets d’objectif',
+  'effects.glass': 'Vitre de vaisseau spatial',
   'effects.relief': 'Relief',
   'effects.clouds': 'Nuages terrestres (illustratifs)',
   'effects.gasMotion': 'Gaz en mouvement (Vénus, géantes)',

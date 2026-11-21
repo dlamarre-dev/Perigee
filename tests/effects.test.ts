@@ -51,6 +51,7 @@ describe('immersive effect preferences', () => {
       });
       expect(effectEnabled('relief')).toBe(tier === 'high');
       expect(effectEnabled('sunGlare')).toBe(tier === 'high');
+      expect(effectEnabled('glass')).toBe(tier === 'high');
       expect(effectEnabled('sunspots')).toBe(tier !== 'low');
     }
   });

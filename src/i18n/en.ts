@@ -32,6 +32,7 @@ export const en = {
   'quality.low': 'Saver',
   'effects.highOnly': 'Greyed-out effects need a higher quality.',
   'effects.sunGlare': 'Sun glare and lens flare',
+  'effects.glass': 'Spacecraft window glass',
   'effects.relief': 'Relief',
   'effects.clouds': 'Earth clouds (illustrative)',
   'effects.gasMotion': 'Moving gas (Venus, giant planets)',
